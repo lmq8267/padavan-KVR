@@ -1,7 +1,9 @@
 # Padavan
 
 fork于fightroad的仓库 https://github.com/fightroad/Padavan-KVR.git 
+
 最终也是是vb1948  https://github.com/vb1980/Padavan-KVR.git
+
 透明主题使用的是yuos-bit  https://github.com/yuos-bit/Padavan.git
 
 
