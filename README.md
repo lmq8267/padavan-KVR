@@ -6,7 +6,8 @@ fork于fightroad的仓库 https://github.com/fightroad/Padavan-KVR.git
 
 透明主题使用的是yuos-bit  https://github.com/yuos-bit/Padavan.git
 
-
+### UI预览 ###
+![](https://github.com/lmq8267/padavan-KVR/raw/main/.github/workflows/%E6%8D%95%E8%8E%B7(1).PNG)
 
 
 基于hanwckf,chongshengB以及padavanonly的源码整合而来，支持7603/7615/7915的kvr  
