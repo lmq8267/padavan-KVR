@@ -1,0 +1,22 @@
+--- a/Makefile.am	2020-09-24 10:01:26.761032900 +0300
++++ b/Makefile.am	2020-09-24 10:01:00.708504700 +0300
+@@ -5,7 +5,7 @@
+ AUTOMAKE_OPTIONS = foreign 1.11 dist-zip dist-xz
+ ACLOCAL_AMFLAGS = -I m4
+ 
+-SUBDIRS = src include doc
++SUBDIRS = src include
+ 
+ m4datadir = $(datadir)/aclocal
+ m4data_DATA = ogg.m4
+--- a/Makefile.in	2020-09-24 10:01:26.776681400 +0300
++++ b/Makefile.in	2020-09-24 10:01:11.572432800 +0300
+@@ -372,7 +372,7 @@
+ #AUTOMAKE_OPTIONS = foreign 1.6 dist-zip
+ AUTOMAKE_OPTIONS = foreign 1.11 dist-zip dist-xz
+ ACLOCAL_AMFLAGS = -I m4
+-SUBDIRS = src include doc
++SUBDIRS = src include
+ m4datadir = $(datadir)/aclocal
+ m4data_DATA = ogg.m4
+ pkgconfigdir = $(libdir)/pkgconfig

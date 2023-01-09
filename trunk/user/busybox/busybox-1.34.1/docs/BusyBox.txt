@@ -1,0 +1,2019 @@
+NAME
+    BusyBox - The Swiss Army Knife of Embedded Linux
+
+SYNTAX
+     busybox <applet> [arguments...]  # or
+
+     <applet> [arguments...]          # if symlinked
+
+DESCRIPTION
+    BusyBox combines tiny versions of many common UNIX utilities into a
+    single small executable. It provides minimalist replacements for most of
+    the utilities you usually find in GNU coreutils, util-linux, etc. The
+    utilities in BusyBox generally have fewer options than their
+    full-featured GNU cousins; however, the options that are included
+    provide the expected functionality and behave very much like their GNU
+    counterparts.
+
+    BusyBox has been written with size-optimization and limited resources in
+    mind. It is also extremely modular so you can easily include or exclude
+    commands (or features) at compile time. This makes it easy to customize
+    your embedded systems. To create a working system, just add /dev, /etc,
+    and a Linux kernel. BusyBox provides a fairly complete POSIX environment
+    for any small or embedded system.
+
+    BusyBox is extremely configurable. This allows you to include only the
+    components you need, thereby reducing binary size. Run 'make config' or
+    'make menuconfig' to select the functionality that you wish to enable.
+    Then run 'make' to compile BusyBox using your configuration.
+
+    After the compile has finished, you should use 'make install' to install
+    BusyBox. This will install the 'bin/busybox' binary, in the target
+    directory specified by CONFIG_PREFIX. CONFIG_PREFIX can be set when
+    configuring BusyBox, or you can specify an alternative location at
+    install time (i.e., with a command line like 'make
+    CONFIG_PREFIX=/tmp/foo install'). If you enabled any applet installation
+    scheme (either as symlinks or hardlinks), these will also be installed
+    in the location pointed to by CONFIG_PREFIX.
+
+USAGE
+    BusyBox is a multi-call binary. A multi-call binary is an executable
+    program that performs the same job as more than one utility program.
+    That means there is just a single BusyBox binary, but that single binary
+    acts like a large number of utilities. This allows BusyBox to be smaller
+    since all the built-in utility programs (we call them applets) can share
+    code for many common operations.
+
+    You can also invoke BusyBox by issuing a command as an argument on the
+    command line. For example, entering
+
+            /bin/busybox ls
+
+    will also cause BusyBox to behave as 'ls'.
+
+    Of course, adding '/bin/busybox' into every command would be painful. So
+    most people will invoke BusyBox using links to the BusyBox binary.
+
+    For example, entering
+
+            ln -s /bin/busybox ls
+            ./ls
+
+    will cause BusyBox to behave as 'ls' (if the 'ls' command has been
+    compiled into BusyBox). Generally speaking, you should never need to
+    make all these links yourself, as the BusyBox build system will do this
+    for you when you run the 'make install' command.
+
+    If you invoke BusyBox with no arguments, it will provide you with a list
+    of the applets that have been compiled into your BusyBox binary.
+
+COMMON OPTIONS
+    Most BusyBox applets support the --help argument to provide a terse
+    runtime description of their behavior. If the
+    CONFIG_FEATURE_VERBOSE_USAGE option has been enabled, more detailed
+    usage information will also be available.
+
+COMMANDS
+    Currently available applets include:
+
+            addgroup, adduser, arp, arping, ascii, ash, awk, base64, basename,
+            bash, brctl, bunzip2, bzcat, bzip2, cat, chgrp, chmod, chown,
+            chpasswd, chroot, clear, cp, crc32, crond, crontab, cut, date, dd,
+            df, dhcp6c, dirname, dmesg, dnsdomainname, dos2unix, du, echo,
+            egrep, eject, env, ether-wake, expr, false, fdisk, fgrep, find,
+            flock, free, fuser, getopt, grep, gunzip, gzip, head, hexdump,
+            hostname, hwclock, ifconfig, inetd, insmod, kill, killall, klogd,
+            ln, logger, login, ls, lsmod, lsof, md5sum, mdev, microcom, mkdir,
+            mknod, mkswap, modinfo, modprobe, more, mount, mountpoint, mv, nc,
+            netstat, nice, nohup, nslookup, ntpd, passwd, pgrep, pidof, ping,
+            ping6, printf, ps, pwd, rm, rmdir, rmmod, route, sed, sendmail, seq,
+            sh, sha256sum, sleep, sort, start-stop-daemon, stat, strings,
+            swapoff, swapon, switch_root, sync, sysctl, syslogd, tail, tar, tee,
+            telnet, telnetd, test, time, top, touch, tr, traceroute,
+            traceroute6, true, udhcpc, umount, uname, uniq, unix2dos, unlink,
+            unzip, uptime, usleep, vconfig, vi, watch, wc, wget, which, whoami,
+            xargs, yes, zcat, zcip
+
+COMMAND DESCRIPTIONS
+    addgroup
+        addgroup [-g GID] [-S] [USER] GROUP
+
+        Add a group or add a user to a group
+
+                -g GID  Group id
+                -S      Create a system group
+
+    adduser
+        adduser [OPTIONS] USER [GROUP]
+
+        Create new user, or add USER to GROUP
+
+                -h DIR          Home directory
+                -g GECOS        GECOS field
+                -s SHELL        Login shell
+                -G GRP          Group
+                -S              Create a system user
+                -D              Don't assign a password
+                -H              Don't create home directory
+                -u UID          User id
+                -k SKEL         Skeleton directory (/etc/skel)
+
+    arp arp [-vn] [-H HWTYPE] [-i IF] -a [HOSTNAME] [-v] [-i IF] -d HOSTNAME
+        [pub] [-v] [-H HWTYPE] [-i IF] -s HOSTNAME HWADDR [temp] [-v] [-H
+        HWTYPE] [-i IF] -s HOSTNAME HWADDR [netmask MASK] pub [-v] [-H
+        HWTYPE] [-i IF] -Ds HOSTNAME IFACE [netmask MASK] pub
+
+        Manipulate ARP cache
+
+                -a              Display (all) hosts
+                -d              Delete ARP entry
+                -s              Set new entry
+                -v              Verbose
+                -n              Don't resolve names
+                -i IF           Network interface
+                -D              Read HWADDR from IFACE
+                -A,-p AF        Protocol family
+                -H HWTYPE       Hardware address type
+
+    arping
+        arping [-fqbDUA] [-c CNT] [-w TIMEOUT] [-I IFACE] [-s SRC_IP] DST_IP
+
+        Send ARP requests/replies
+
+                -f              Quit on first ARP reply
+                -q              Quiet
+                -b              Keep broadcasting, don't go unicast
+                -D              Exit with 1 if DST_IP replies
+                -U              Unsolicited ARP mode, update your neighbors
+                -A              ARP answer mode, update your neighbors
+                -c N            Stop after sending N ARP requests
+                -w TIMEOUT      Seconds to wait for ARP reply
+                -I IFACE        Interface to use (default br0)
+                -s SRC_IP       Sender IP address
+                DST_IP          Target IP address
+
+    ash ash [-il] [-|+Cabefmnuvx] [-|+o OPT]... [-c 'SCRIPT' [ARG0 ARGS] |
+        FILE [ARGS] | -s [ARGS]]
+
+        Unix shell interpreter
+
+    awk awk [OPTIONS] [AWK_PROGRAM] [FILE]...
+
+                -v VAR=VAL      Set variable
+                -F SEP          Use SEP as field separator
+                -f FILE         Read program from FILE
+                -e AWK_PROGRAM
+
+    base64
+        base64 [-d] [-w COL] [FILE]
+
+        Base64 encode or decode FILE to standard output
+
+                -d      Decode data
+                -w COL  Wrap lines at COL (default 76, 0 disables)
+
+    basename
+        basename FILE [SUFFIX]
+
+        Strip directory path and .SUFFIX from FILE
+
+    bash
+        bash [-il] [-|+Cabefmnuvx] [-|+o OPT]... [-c 'SCRIPT' [ARG0 ARGS] |
+        FILE [ARGS] | -s [ARGS]]
+
+        Unix shell interpreter
+
+    brctl
+        brctl COMMAND [BRIDGE [ARGS]]
+
+        Manage ethernet bridges Commands:
+
+                show [BRIDGE]...        Show bridges
+                addbr BRIDGE            Create BRIDGE
+                delbr BRIDGE            Delete BRIDGE
+                addif BRIDGE IFACE      Add IFACE to BRIDGE
+                delif BRIDGE IFACE      Delete IFACE from BRIDGE
+                showmacs BRIDGE                 List MAC addresses
+                showstp BRIDGE                  Show STP info
+                stp BRIDGE 1/yes/on|0/no/off    Set STP on/off
+                setageing BRIDGE SECONDS        Set ageing time
+                setfd BRIDGE SECONDS            Set bridge forward delay
+                sethello BRIDGE SECONDS         Set hello time
+                setmaxage BRIDGE SECONDS        Set max message age
+                setbridgeprio BRIDGE PRIO       Set bridge priority
+                setportprio BRIDGE IFACE PRIO   Set port priority
+                setpathcost BRIDGE IFACE COST   Set path cost
+
+    bunzip2
+        bunzip2 [-cfk] [FILE]...
+
+        Decompress FILEs (or stdin)
+
+                -c      Write to stdout
+                -f      Force
+                -k      Keep input files
+                -t      Test integrity
+
+    bzcat
+        bzcat [FILE]...
+
+        Decompress to stdout
+
+    bzip2
+        bzip2 [-cfkdt123456789] [FILE]...
+
+        Compress FILEs (or stdin) with bzip2 algorithm
+
+                -1..9   Compression level
+                -d      Decompress
+                -c      Write to stdout
+                -f      Force
+                -k      Keep input files
+                -t      Test integrity
+
+    cat cat [FILE]...
+
+        Print FILEs to stdout
+
+    chgrp
+        chgrp [-Rh]... GROUP FILE...
+
+        Change the group membership of FILEs to GROUP
+
+                -h      Affect symlinks instead of symlink targets
+                -R      Recurse
+
+    chmod
+        chmod [-R] MODE[,MODE]... FILE...
+
+        MODE is octal number (bit pattern sstrwxrwxrwx) or
+        [ugoa]{+|-|=}[rwxXst]
+
+                -R      Recurse
+
+    chown
+        chown [-Rh]... USER[:[GRP]] FILE...
+
+        Change the owner and/or group of FILEs to USER and/or GRP
+
+                -h      Affect symlinks instead of symlink targets
+                -R      Recurse
+
+    chpasswd
+        chpasswd [-me] [-c ALG] [-R DIR]
+
+        Read user:password from stdin and update /etc/passwd
+
+                -e      Supplied passwords are in encrypted form
+                -m      Encrypt using md5, not des
+                -c ALG  des,md5,sha256/512 (default m)
+                -R DIR  Directory to chroot into
+
+    chroot
+        chroot NEWROOT [PROG ARGS]
+
+        Run PROG with root directory set to NEWROOT
+
+    clear
+        clear
+
+        Clear screen
+
+    cp  cp [-arPLHpfinlsTu] SOURCE DEST or: cp [-arPLHpfinlsu] SOURCE... {
+        -t DIRECTORY | DIRECTORY }
+
+        Copy SOURCEs to DEST
+
+                -a      Same as -dpR
+                -R,-r   Recurse
+                -d,-P   Preserve symlinks (default if -R)
+                -L      Follow all symlinks
+                -H      Follow symlinks on command line
+                -p      Preserve file attributes if possible
+                -f      Overwrite
+                -i      Prompt before overwrite
+                -n      Don't overwrite
+                -l,-s   Create (sym)links
+                -T      Refuse to copy if DEST is a directory
+                -t DIR  Copy all SOURCEs into DIR
+                -u      Copy only newer files
+
+    crc32
+        crc32 FILE...
+
+        Calculate CRC32 checksum of FILEs
+
+    crond
+        crond [-fbS] [-l N] [-d N] [-L LOGFILE] [-c DIR]
+
+                -f      Foreground
+                -b      Background (default)
+                -S      Log to syslog (default)
+                -l N    Set log level. Most verbose 0, default 8
+                -d N    Set log level, log to stderr
+                -L FILE Log to FILE
+                -c DIR  Cron dir. Default:/etc/storage/cron/crontabs
+
+    crontab
+        crontab [-c DIR] [-u USER] [-ler]|[FILE]
+
+                -c      Crontab directory
+                -u      User
+                -l      List crontab
+                -e      Edit crontab
+                -r      Delete crontab
+                FILE    Replace crontab by FILE ('-': stdin)
+
+    cut cut [OPTIONS] [FILE]...
+
+        Print selected fields from FILEs to stdout
+
+                -b LIST Output only bytes from LIST
+                -c LIST Output only characters from LIST
+                -d SEP  Field delimiter for input (default -f TAB, -F run of whitespace)
+                -O SEP  Field delimeter for output (default = -d for -f, one space for -F)
+                -D      Don't sort/collate sections or match -fF lines without delimeter
+                -f LIST Print only these fields (-d is single char)
+                -F LIST Print only these fields (-d is regex)
+                -s      Output only lines containing delimiter
+                -n      Ignored
+
+    date
+        date [OPTIONS] [+FMT] [[-s] TIME]
+
+        Display time (using +FMT), or set time
+
+                -u              Work in UTC (don't convert to local time)
+                [-s] TIME       Set time to TIME
+                -d TIME         Display TIME, not 'now'
+                -D FMT          FMT (strptime format) for -s/-d TIME conversion
+                -r FILE         Display last modification time of FILE
+                -R              Output RFC-2822 date
+                -I[SPEC]        Output ISO-8601 date
+                                SPEC=date (default), hours, minutes, seconds or ns
+
+        Recognized TIME formats:
+
+                @seconds_since_1970
+                hh:mm[:ss]
+                [YYYY.]MM.DD-hh:mm[:ss]
+                YYYY-MM-DD hh:mm[:ss]
+                [[[[[YY]YY]MM]DD]hh]mm[.ss]
+                'date TIME' form accepts MMDDhhmm[[YY]YY][.ss] instead
+
+    dd  dd [if=FILE] [of=FILE] [bs=N] [count=N] [skip=N] [seek=N]
+
+        Copy a file with converting and formatting
+
+                if=FILE         Read from FILE instead of stdin
+                of=FILE         Write to FILE instead of stdout
+                bs=N            Read and write N bytes at a time
+                count=N         Copy only N input blocks
+                skip=N          Skip N input blocks
+                seek=N          Skip N output blocks
+                status=noxfer   Suppress rate output
+                status=none     Suppress all output
+
+        N may be suffixed by c (1), w (2), b (512), kB (1000), k (1024), MB,
+        M, GB, G
+
+    df  df [-PkmhTai] [-B SIZE] [-t TYPE] [FILESYSTEM]...
+
+        Print filesystem usage statistics
+
+                -P      POSIX output format
+                -k      1024-byte blocks (default)
+                -m      1M-byte blocks
+                -h      Human readable (e.g. 1K 243M 2G)
+                -T      Print filesystem type
+                -t TYPE Print only mounts of this type
+                -a      Show all filesystems
+                -i      Inodes
+                -B SIZE Blocksize
+
+    dhcp6c
+        dhcp6c [-vfi] [-c FILE] [-D LL|LLT] [-p FILE] interface
+
+                -v         Print debugging messages(may be repeated)
+                -f         Foreground mode
+                -i         Info-req(information-only) mode
+                -c FILE    Use FILE as the configuration file
+                -D LL|LLT  Use LL or LLT to override default(LLT) DUID type generation
+                -p FILE    Use FILE to dump the process ID of dhcp6c
+
+    dirname
+        dirname FILENAME
+
+        Strip non-directory suffix from FILENAME
+
+    dmesg
+        dmesg [-cr] [-n LEVEL] [-s SIZE]
+
+        Print or control the kernel ring buffer
+
+                -c              Clear ring buffer after printing
+                -n LEVEL        Set console logging level
+                -s SIZE         Buffer size
+                -r              Print raw message buffer
+
+    dos2unix
+        dos2unix [-ud] [FILE]
+
+        Convert FILE in-place from DOS to Unix format. When no file is
+        given, use stdin/stdout.
+
+                -u      dos2unix
+                -d      unix2dos
+
+    du  du [-aHLdclsxhmk] [FILE]...
+
+        Summarize disk space used for FILEs (or directories)
+
+                -a      Show file sizes too
+                -b      Apparent size (including holes)
+                -L      Follow all symlinks
+                -H      Follow symlinks on command line
+                -d N    Limit output to directories (and files with -a) of depth < N
+                -c      Show grand total
+                -l      Count sizes many times if hard linked
+                -s      Display only a total for each argument
+                -x      Skip directories on different filesystems
+                -h      Sizes in human readable format (e.g., 1K 243M 2G)
+                -m      Sizes in megabytes
+                -k      Sizes in kilobytes (default)
+
+    echo
+        echo [-neE] [ARG]...
+
+        Print ARGs to stdout
+
+                -n      No trailing newline
+                -e      Interpret backslash escapes (\t=tab etc)
+                -E      Don't interpret backslash escapes (default)
+
+    eject
+        eject [-t] [-T] [DEVICE]
+
+        Eject DEVICE or default /dev/cdrom
+
+                -s      SCSI device
+                -t      Close tray
+                -T      Open/close tray (toggle)
+
+    env env [-i0] [-u NAME]... [-] [NAME=VALUE]... [PROG ARGS]
+
+        Print current environment or run PROG after setting up environment
+
+                -, -i   Start with empty environment
+                -0      NUL terminated output
+                -u NAME Remove variable from environment
+
+    ether-wake
+        ether-wake [-b] [-i IFACE] [-p aa:bb:cc:dd[:ee:ff]/a.b.c.d] MAC
+
+        Send a magic packet to wake up sleeping machines. MAC must be a
+        station address (00:11:22:33:44:55) or a hostname with a known
+        'ethers' entry.
+
+                -b              Broadcast the packet
+                -i IFACE        Interface to use (default eth0)
+                -p PASSWORD     Append four or six byte PASSWORD to the packet
+
+    expr
+        expr EXPRESSION
+
+        Print the value of EXPRESSION
+
+        EXPRESSION may be:
+
+                ARG1 | ARG2     ARG1 if it is neither null nor 0, otherwise ARG2
+                ARG1 & ARG2     ARG1 if neither argument is null or 0, otherwise 0
+                ARG1 < ARG2     1 if ARG1 is less than ARG2, else 0. Similarly:
+                ARG1 <= ARG2
+                ARG1 = ARG2
+                ARG1 != ARG2
+                ARG1 >= ARG2
+                ARG1 > ARG2
+                ARG1 + ARG2     Sum of ARG1 and ARG2. Similarly:
+                ARG1 - ARG2
+                ARG1 * ARG2
+                ARG1 / ARG2
+                ARG1 % ARG2
+                STRING : REGEXP         Anchored pattern match of REGEXP in STRING
+                match STRING REGEXP     Same as STRING : REGEXP
+                substr STRING POS LEN   Substring of STRING, POS counts from 1
+                index STRING CHARS      Index in STRING where any CHARS is found, or 0
+                length STRING           Length of STRING
+                quote TOKEN             Interpret TOKEN as a string, even if
+                                        it is a keyword like 'match' or an
+                                        operator like '/'
+                (EXPRESSION)            Value of EXPRESSION
+
+        Beware that many operators need to be escaped or quoted for shells.
+        Comparisons are arithmetic if both ARGs are numbers, else
+        lexicographical. Pattern matches return the string matched between
+        \( and \) or null; if \( and \) are not used, they return the number
+        of characters matched or 0.
+
+    fdisk
+        fdisk [-ul] [-C CYLINDERS] [-H HEADS] [-S SECTORS] [-b SSZ] DISK
+
+        Change partition table
+
+                -u              Start and End are in sectors (instead of cylinders)
+                -l              Show partition table for each DISK, then exit
+                -b 2048         (for certain MO disks) use 2048-byte sectors
+                -C CYLINDERS    Set number of cylinders/heads/sectors
+                -H HEADS        Typically 255
+                -S SECTORS      Typically 63
+
+    find
+        find [-HL] [PATH]... [OPTIONS] [ACTIONS]
+
+        Search for files and perform actions on them. First failed action
+        stops processing of current file. Defaults: PATH is current
+        directory, action is '-print'
+
+                -L,-follow      Follow symlinks
+                -H              ...on command line only
+                -xdev           Don't descend directories on other filesystems
+                -maxdepth N     Descend at most N levels. -maxdepth 0 applies
+                                actions to command line arguments only
+                -mindepth N     Don't act on first N levels
+                -depth          Act on directory *after* traversing it
+
+        Actions:
+
+                ( ACTIONS )     Group actions for -o / -a
+                ! ACT           Invert ACT's success/failure
+                ACT1 [-a] ACT2  If ACT1 fails, stop, else do ACT2
+                ACT1 -o ACT2    If ACT1 succeeds, stop, else do ACT2
+                                Note: -a has higher priority than -o
+                -name PATTERN   Match file name (w/o directory name) to PATTERN
+                -iname PATTERN  Case insensitive -name
+                -path PATTERN   Match path to PATTERN
+                -ipath PATTERN  Case insensitive -path
+                -regex PATTERN  Match path to regex PATTERN
+                -type X         File type is X (one of: f,d,l,b,c,s,p)
+                -executable     File is executable
+                -perm MASK      At least one mask bit (+MASK), all bits (-MASK),
+                                or exactly MASK bits are set in file's mode
+                -mtime DAYS     mtime is greater than (+N), less than (-N),
+                                or exactly N days in the past
+                -mmin MINS      mtime is greater than (+N), less than (-N),
+                                or exactly N minutes in the past
+                -newer FILE     mtime is more recent than FILE's
+                -inum N         File has inode number N
+                -user NAME/ID   File is owned by given user
+                -group NAME/ID  File is owned by given group
+                -size N[bck]    File size is N (c:bytes,k:kbytes,b:512 bytes(def.))
+                                +/-N: file size is bigger/smaller than N
+                -links N        Number of links is greater than (+N), less than (-N),
+                                or exactly N
+                -empty          Match empty file/directory
+                -prune          If current file is directory, don't descend into it
+        If none of the following actions is specified, -print is assumed
+                -print          Print file name
+                -print0         Print file name, NUL terminated
+                -exec CMD ARG ; Run CMD with all instances of {} replaced by
+                                file name. Fails if CMD exits with nonzero
+                -exec CMD ARG + Run CMD with {} replaced by list of file names
+                -delete         Delete current file/directory. Turns on -depth option
+                -quit           Exit
+
+    flock
+        flock [-sxun] FD | { FILE [-c] PROG ARGS }
+
+        [Un]lock file descriptor, or lock FILE, run PROG
+
+                -s      Shared lock
+                -x      Exclusive lock (default)
+                -u      Unlock FD
+                -n      Fail rather than wait
+
+    free
+        free
+
+        Display free and used memory
+
+    fuser
+        fuser [-msk46] [-SIGNAL] FILE or PORT/PROTO
+
+        Find processes which use FILEs or PORTs
+
+                -m      Find processes which use same fs as FILEs
+                -4,-6   Search only IPv4/IPv6 space
+                -s      Don't display PIDs
+                -k      Kill found processes
+                -SIGNAL Signal to send (default: KILL)
+
+    getopt
+        getopt [OPTIONS] [--] OPTSTRING PARAMS
+
+                -a              Allow long options starting with single -
+                -l LOPT[,...]   Long options to recognize
+                -n PROGNAME     The name under which errors are reported
+                -o OPTSTRING    Short options to recognize
+                -q              No error messages on unrecognized options
+                -Q              No normal output
+                -s SHELL        Set shell quoting conventions
+                -T              Version test (exits with 4)
+                -u              Don't quote output
+
+        Example:
+
+        O=`getopt -l bb: -- ab:c:: "$@"` || exit 1 eval set -- "$O" while
+        true; do case "$1" in -a) echo A; shift;; -b|--bb) echo "B:'$2'";
+        shift 2;; -c) case "$2" in "") echo C; shift 2;; *) echo "C:'$2'";
+        shift 2;; esac;; --) shift; break;; *) echo Error; exit 1;; esac
+        done
+
+    grep
+        grep [-HhnlLoqvsrRiwFE] [-m N] [-A|B|C N] { PATTERN | -e PATTERN...
+        | -f FILE... } [FILE]...
+
+        Search for PATTERN in FILEs (or stdin)
+
+                -H      Add 'filename:' prefix
+                -h      Do not add 'filename:' prefix
+                -n      Add 'line_no:' prefix
+                -l      Show only names of files that match
+                -L      Show only names of files that don't match
+                -c      Show only count of matching lines
+                -o      Show only the matching part of line
+                -q      Quiet. Return 0 if PATTERN is found, 1 otherwise
+                -v      Select non-matching lines
+                -s      Suppress open and read errors
+                -r      Recurse
+                -R      Recurse and dereference symlinks
+                -i      Ignore case
+                -w      Match whole words only
+                -x      Match whole lines only
+                -F      PATTERN is a literal (not regexp)
+                -E      PATTERN is an extended regexp
+                -m N    Match up to N times per file
+                -A N    Print N lines of trailing context
+                -B N    Print N lines of leading context
+                -C N    Same as '-A N -B N'
+                -e PTRN Pattern to match
+                -f FILE Read pattern from file
+
+    gunzip
+        gunzip [-cfkt] [FILE]...
+
+        Decompress FILEs (or stdin)
+
+                -c      Write to stdout
+                -f      Force
+                -k      Keep input files
+                -t      Test integrity
+
+    gzip
+        gzip [-cfkdt] [FILE]...
+
+        Compress FILEs (or stdin)
+
+                -d      Decompress
+                -c      Write to stdout
+                -f      Force
+                -k      Keep input files
+                -t      Test integrity
+
+    head
+        head [OPTIONS] [FILE]...
+
+        Print first 10 lines of FILEs (or stdin). With more than one FILE,
+        precede each with a filename header.
+
+                -n N[bkm]       Print first N lines
+                -n -N[bkm]      Print all except N last lines
+                -c [-]N[bkm]    Print first N bytes
+                                (b:*512 k:*1024 m:*1024^2)
+                -q              Never print headers
+                -v              Always print headers
+
+    hexdump
+        hexdump [-bcdoxCv] [-e FMT] [-f FMT_FILE] [-n LEN] [-s OFS]
+        [FILE]...
+
+        Display FILEs (or stdin) in a user specified format
+
+                -b              1-byte octal display
+                -c              1-byte character display
+                -d              2-byte decimal display
+                -o              2-byte octal display
+                -x              2-byte hex display
+                -C              hex+ASCII 16 bytes per line
+                -v              Show all (no dup folding)
+                -e FORMAT_STR   Example: '16/1 "%02x|""\n"'
+                -f FORMAT_FILE
+                -n LENGTH       Show only first LENGTH bytes
+                -s OFFSET       Skip OFFSET bytes
+
+    hostname
+        hostname [-sidf] [HOSTNAME | -F FILE]
+
+        Show or set hostname or DNS domain name
+
+                -s      Short
+                -i      Addresses for the hostname
+                -d      DNS domain name
+                -f      Fully qualified domain name
+                -F FILE Use FILE's content as hostname
+
+    hwclock
+        hwclock [-swul] [--systz] [-f DEV]
+
+        Show or set hardware clock (RTC)
+
+                -s      Set system time from RTC
+                -w      Set RTC from system time
+                --systz Set in-kernel timezone, correct system time
+                        if RTC is kept in local time
+                -f DEV  Use specified device (e.g. /dev/rtc2)
+                -u      Assume RTC is kept in UTC
+                -l      Assume RTC is kept in local time
+                        (if neither is given, read from /etc/adjtime)
+
+    ifconfig
+        ifconfig [-a] [IFACE] [ADDRESS]
+
+        Configure a network interface
+
+                [add ADDRESS[/PREFIXLEN]]
+                [del ADDRESS[/PREFIXLEN]]
+                [[-]broadcast [ADDRESS]] [[-]pointopoint [ADDRESS]]
+                [netmask ADDRESS] [dstaddr ADDRESS]
+                [hw ether ADDRESS] [metric NN] [mtu NN]
+                [[-]trailers] [[-]arp] [[-]allmulti]
+                [multicast] [[-]promisc] [txqueuelen NN] [[-]dynamic]
+                [mem_start NN] [io_addr NN] [irq NN]
+                [up|down] ...
+
+    inetd
+        inetd [-fe] [-q N] [-R N] [CONFFILE]
+
+        Listen for network connections and launch programs
+
+                -f      Run in foreground
+                -e      Log to stderr
+                -q N    Socket listen queue (default 128)
+                -R N    Pause services after N connects/min
+                        (default 0 - disabled)
+                Default CONFFILE is /etc/inetd.conf
+
+    insmod
+        insmod FILE [SYMBOL=VALUE]...
+
+        Load kernel module
+
+    kill
+        kill [-l] [-SIG] PID...
+
+        Send a signal (default: TERM) to given PIDs
+
+                -l      List all signal names and numbers
+
+    killall
+        killall [-lq] [-SIG] PROCESS_NAME...
+
+        Send a signal (default: TERM) to given processes
+
+                -l      List all signal names and numbers
+                -q      Don't complain if no processes were killed
+
+    klogd
+        klogd [-c N] [-n]
+
+        Log kernel messages to syslog
+
+                -c N    Print to console messages more urgent than prio N (1-8)
+                -n      Run in foreground
+
+    ln  ln [-sfnbtv] [-S SUF] TARGET... LINK|DIR
+
+        Create a link LINK or DIR/TARGET to the specified TARGET(s)
+
+                -s      Make symlinks instead of hardlinks
+                -f      Remove existing destinations
+                -n      Don't dereference symlinks - treat like normal file
+                -b      Make a backup of the target (if exists) before link operation
+                -S SUF  Use suffix instead of ~ when making backup files
+                -T      Treat LINK as a file, not DIR
+                -v      Verbose
+
+    logger
+        logger [-s] [-t TAG] [-p PRIO] [MESSAGE]
+
+        Write MESSAGE (or stdin) to syslog
+
+                -s      Log to stderr as well as the system log
+                -t TAG  Log using the specified tag (defaults to user name)
+                -p PRIO Priority (number or FACILITY.LEVEL pair)
+
+    login
+        login [-p] [-h HOST] [[-f] USER]
+
+        Begin a new session on the system
+
+                -f      Don't authenticate (user already authenticated)
+                -h HOST Host user came from (for network logins)
+                -p      Preserve environment
+
+        $LOGIN_TIMEOUT Seconds (default 60, 0 - disable)
+
+    ls  ls [-1AaCxdLHRFplinshrSXvctu] [-w WIDTH] [FILE]...
+
+        List directory contents
+
+                -1      One column output
+                -a      Include names starting with .
+                -A      Like -a, but exclude . and ..
+                -x      List by lines
+                -d      List directory names, not contents
+                -L      Follow symlinks
+                -H      Follow symlinks on command line
+                -R      Recurse
+                -p      Append / to directory names
+                -F      Append indicator (one of */=@|) to names
+                -l      Long format
+                -i      List inode numbers
+                -n      List numeric UIDs and GIDs instead of names
+                -s      List allocated blocks
+                -lc     List ctime
+                -lu     List atime
+                --full-time     List full date/time
+                -h      Human readable sizes (1K 243M 2G)
+                --group-directories-first
+                -S      Sort by size
+                -X      Sort by extension
+                -v      Sort by version
+                -t      Sort by mtime
+                -tc     Sort by ctime
+                -tu     Sort by atime
+                -r      Reverse sort order
+                -w N    Format N columns wide
+                --color[={always,never,auto}]
+
+    lsmod
+        lsmod
+
+        List loaded kernel modules
+
+    lsof
+        lsof
+
+        Show all open files
+
+    md5sum
+        md5sum [-c[sw]] [FILE]...
+
+        Print or check MD5 checksums
+
+                -c      Check sums against list in FILEs
+                -s      Don't output anything, status code shows success
+                -w      Warn about improperly formatted checksum lines
+
+    mdev
+        mdev [-vS] [-s]
+
+                -v      verbose
+                -S      log to syslog too
+                -s      scan /sys and populate /dev
+
+        Bare mdev is a kernel hotplug helper. To activate it: echo
+        /sbin/mdev >/proc/sys/kernel/hotplug
+
+        It uses /etc/mdev.conf with lines [-][ENV=regex;]...DEVNAME UID:GID
+        PERM [@|$|*PROG] where DEVNAME is device name regex,
+        @major,minor[-minor2], or environment variable regex. A common use
+        of the latter is to load modules for hotplugged devices:
+
+                $MODALIAS=.* 0:0 660 @modprobe "$MODALIAS"
+
+        If /dev/mdev.seq file exists, mdev will wait for its value to match
+        $SEQNUM variable. This prevents plug/unplug races. To activate this
+        feature, create empty /dev/mdev.seq at boot.
+
+        If /dev/mdev.log file exists, debug log will be appended to it.
+
+    microcom
+        microcom [-d DELAY_MS] [-t TIMEOUT_MS ] [-s SPEED] [-X] TTY
+
+        Copy bytes from stdin to TTY and from TTY to stdout
+
+                -d DELAY        Wait up to DELAY ms for TTY output before sending
+                                every next byte to it
+                -t TIMEOUT      Exit if both stdin and TTY are silent for TIMEOUT ms
+                -s SPEED        Set serial line to SPEED
+                -X              Disable special meaning of NUL and Ctrl-X from stdin
+
+    mkdir
+        mkdir [-m MODE] [-p] DIRECTORY...
+
+        Create DIRECTORY
+
+                -m MODE Mode
+                -p      No error if exists; make parent directories as needed
+
+    mknod
+        mknod [-m MODE] NAME TYPE [MAJOR MINOR]
+
+        Create a special file (block, character, or pipe)
+
+                -m MODE Creation mode (default a=rw)
+        TYPE:
+                b       Block device
+                c or u  Character device
+                p       Named pipe (MAJOR MINOR must be omitted)
+
+    mkswap
+        mkswap [-L LBL] BLOCKDEV [KBYTES]
+
+        Prepare BLOCKDEV to be used as swap partition
+
+                -L LBL  Label
+
+    modinfo
+        modinfo [-adlpn0] [-F keyword] MODULE
+
+                -a              Shortcut for '-F author'
+                -d              Shortcut for '-F description'
+                -l              Shortcut for '-F license'
+                -p              Shortcut for '-F parm'
+                -F keyword      Keyword to look for
+                -0              NUL terminated output
+
+    modprobe
+        modprobe [-alrqvsD] MODULE [SYMBOL=VALUE]...
+
+                -a      Load multiple MODULEs
+                -l      List (MODULE is a pattern)
+                -r      Remove MODULE (stacks) or do autoclean
+                -q      Quiet
+                -v      Verbose
+                -s      Log to syslog
+                -D      Show dependencies
+
+    more
+        more [FILE]...
+
+        View FILE (or stdin) one screenful at a time
+
+    mount
+        mount [OPTIONS] [-o OPT] DEVICE NODE
+
+        Mount a filesystem. Filesystem autodetection requires /proc.
+
+                -a              Mount all filesystems in fstab
+                -f              Dry run
+                -v              Verbose
+                -r              Read-only mount
+                -t FSTYPE[,...] Filesystem type(s)
+                -O OPT          Mount only filesystems with option OPT (-a only)
+        -o OPT:
+                loop            Ignored (loop devices are autodetected)
+                [a]sync         Writes are [a]synchronous
+                [no]atime       Disable/enable updates to inode access times
+                [no]diratime    Disable/enable atime updates to directories
+                [no]relatime    Disable/enable atime updates relative to modification time
+                [no]dev         (Dis)allow use of special device files
+                [no]exec        (Dis)allow use of executable files
+                [no]suid        (Dis)allow set-user-id-root programs
+                [r]shared       Convert [recursively] to a shared subtree
+                [r]slave        Convert [recursively] to a slave subtree
+                [r]private      Convert [recursively] to a private subtree
+                [un]bindable    Make mount point [un]able to be bind mounted
+                [r]bind         Bind a file or directory [recursively] to another location
+                move            Relocate an existing mount point
+                remount         Remount a mounted filesystem, changing flags
+                ro              Same as -r
+
+        There are filesystem-specific -o flags.
+
+    mountpoint
+        mountpoint [-q] { [-dn] DIR | -x DEVICE }
+
+        Check if DIR is a mountpoint
+
+                -q      Quiet
+                -d      Print major:minor of the filesystem
+                -n      Print device name of the filesystem
+                -x      Print major:minor of DEVICE
+
+    mv  mv [-finT] SOURCE DEST or: mv [-fin] SOURCE... { -t DIRECTORY |
+        DIRECTORY }
+
+        Rename SOURCE to DEST, or move SOURCEs to DIRECTORY
+
+                -f      Don't prompt before overwriting
+                -i      Interactive, prompt before overwrite
+                -n      Don't overwrite an existing file
+                -T      Refuse to move if DEST is a directory
+                -t DIR  Move all SOURCEs into DIR
+
+    nc  nc [-iN] [-wN] [-l] [-p PORT] [-f FILE|IPADDR PORT] [-e PROG]
+
+        Open a pipe to IP:PORT or FILE
+
+                -l      Listen mode, for inbound connects
+                        (use -ll with -e for persistent server)
+                -p PORT Local port
+                -w SEC  Connect timeout
+                -i SEC  Delay interval for lines sent
+                -f FILE Use file (ala /dev/ttyS0) instead of network
+                -e PROG Run PROG after connect
+
+    netstat
+        netstat [-ral] [-tuwx] [-enWp]
+
+        Display networking information
+
+                -r      Routing table
+                -a      All sockets
+                -l      Listening sockets
+                        Else: connected sockets
+                -t      TCP sockets
+                -u      UDP sockets
+                -w      Raw sockets
+                -x      Unix sockets
+                        Else: all socket types
+                -e      Other/more information
+                -n      Don't resolve names
+                -W      Wide display
+                -p      Show PID/program name for sockets
+
+    nice
+        nice [-n ADJUST] [PROG ARGS]
+
+        Change scheduling priority, run PROG
+
+                -n ADJUST       Adjust priority by ADJUST
+
+    nohup
+        nohup PROG ARGS
+
+        Run PROG immune to hangups, with output to a non-tty
+
+    nslookup
+        nslookup HOST [DNS_SERVER]
+
+        Query DNS about HOST
+
+    ntpd
+        ntpd [-dnqNwt] [-S PROG] [-p PEER]...
+
+        NTP client/server
+
+                -d[d]   Verbose
+                -n      Do not daemonize
+                -q      Quit after clock is set
+                -N      Run at high priority
+                -w      Do not set time (only query peers), implies -n
+                -t      Trust network and server, no RFC-4330 cross-checks
+                -S PROG Run PROG after stepping time, stratum change, and every 11 min
+                -p PEER Obtain time from PEER (may be repeated)
+
+    passwd
+        passwd [-a ALG] [-dlu] [USER]
+
+        Change USER's password (default: current user)
+
+                -a ALG  des,md5,sha256/512 (default m)
+                -d      Set password to ''
+                -l      Lock (disable) account
+                -u      Unlock (enable) account
+
+    pgrep
+        pgrep [-flanovx] [-s SID|-P PPID|PATTERN]
+
+        Display process(es) selected by regex PATTERN
+
+                -l      Show command name too
+                -a      Show command line too
+                -f      Match against entire command line
+                -n      Show the newest process only
+                -o      Show the oldest process only
+                -v      Negate the match
+                -x      Match whole name (not substring)
+                -s      Match session ID (0 for current)
+                -P      Match parent process ID
+
+    pidof
+        pidof [-s] [-o PID] [NAME]...
+
+        List PIDs of all processes with names that match NAMEs
+
+                -s      Show only one PID
+                -o PID  Omit given pid
+                        Use %PPID to omit pid of pidof's parent
+
+    ping
+        ping [OPTIONS] HOST
+
+        Send ICMP ECHO_REQUESTs to HOST
+
+                -4,-6           Force IP or IPv6 name resolution
+                -c CNT          Send only CNT pings
+                -s SIZE         Send SIZE data bytes in packets (default 56)
+                -i SECS         Interval
+                -A              Ping as soon as reply is recevied
+                -t TTL          Set TTL
+                -I IFACE/IP     Source interface or IP address
+                -W SEC          Seconds to wait for the first response (default 10)
+                                (after all -c CNT packets are sent)
+                -w SEC          Seconds until ping exits (default:infinite)
+                                (can exit earlier with -c CNT)
+                -q              Quiet, only display output at start/finish
+                -p HEXBYTE      Payload pattern
+
+    ping6
+        ping6 [OPTIONS] HOST
+
+        Send ICMP ECHO_REQUESTs to HOST
+
+                -c CNT          Send only CNT pings
+                -s SIZE         Send SIZE data bytes in packets (default 56)
+                -i SECS         Interval
+                -A              Ping as soon as reply is recevied
+                -I IFACE/IP     Source interface or IP address
+                -W SEC          Seconds to wait for the first response (default 10)
+                                (after all -c CNT packets are sent)
+                -w SEC          Seconds until ping exits (default:infinite)
+                                (can exit earlier with -c CNT)
+                -q              Quiet, only display output at start/finish
+                -p HEXBYTE      Payload pattern
+
+    printf
+        printf FORMAT [ARG]...
+
+        Format and print ARG(s) according to FORMAT (a-la C printf)
+
+    ps  ps
+
+        Show list of processes
+
+                w       Wide output
+                l       Long output
+                T       Show threads
+
+    pwd pwd
+
+        Print the full filename of the current working directory
+
+    rm  rm [-irf] FILE...
+
+        Remove (unlink) FILEs
+
+                -i      Always prompt before removing
+                -f      Never prompt
+                -R,-r   Recurse
+
+    rmdir
+        rmdir [-p] DIRECTORY...
+
+        Remove DIRECTORY if it is empty
+
+                -p      Include parents
+                --ignore-fail-on-non-empty
+
+    rmmod
+        rmmod [-wfa] [MODULE]...
+
+        Unload kernel modules
+
+                -w      Wait until the module is no longer used
+                -f      Force unload
+                -a      Remove all unused modules (recursively)
+
+    route
+        route [-ne] [-A inet[6]] [{add|del} [-net|-host] TARGET [netmask
+        MASK] [gw GATEWAY] [metric N] [mss BYTES] [window BYTES] [reject]
+        [IFACE]]
+
+        Show or edit kernel routing tables
+
+                -n      Don't resolve names
+                -e      Display other/more information
+                -A inet[6]      Select address family
+
+    sed sed [-i[SFX]] [-nrE] [-f FILE]... [-e CMD]... [FILE]... or: sed
+        [-i[SFX]] [-nrE] CMD [FILE]...
+
+                -e CMD  Add CMD to sed commands to be executed
+                -f FILE Add FILE contents to sed commands to be executed
+                -i[SFX] Edit files in-place (otherwise write to stdout)
+                        Optionally back files up, appending SFX
+                -n      Suppress automatic printing of pattern space
+                -r,-E   Use extended regex syntax
+
+        If no -e or -f, the first non-option argument is the sed command
+        string. Remaining arguments are input files (stdin if none).
+
+    sendmail
+        sendmail [-tv] [-f SENDER] [-amLOGIN 4<user_pass.txt | -auUSER
+        -apPASS] [-w SECS] [-H 'PROG ARGS' | -S HOST] [RECIPIENT_EMAIL]...
+
+        Read email from stdin and send it
+
+        Standard options:
+
+                -t              Read additional recipients from message body
+                -f SENDER       For use in MAIL FROM:<sender>. Can be empty string
+                                Default: -auUSER, or username of current UID
+                -o OPTIONS      Various options. -oi implied, others are ignored
+                -i              -oi synonym, implied and ignored
+
+        Busybox specific options:
+
+                -v              Verbose
+                -w SECS         Network timeout
+                -H 'PROG ARGS'  Run connection helper. Examples:
+                        openssl s_client -quiet -tls1 -starttls smtp -connect smtp.gmail.com:25
+                        openssl s_client -quiet -tls1 -connect smtp.gmail.com:465
+                                $SMTP_ANTISPAM_DELAY: seconds to wait after helper connect
+                -S HOST[:PORT]  Server (default $SMTPHOST or 127.0.0.1)
+                -amLOGIN        Log in using AUTH LOGIN
+                -amPLAIN        or AUTH PLAIN
+                                (-amCRAM-MD5 not supported)
+                -auUSER         Username for AUTH
+                -apPASS         Password for AUTH
+
+        If no -a options are given, authentication is not done. If -amLOGIN
+        is given but no -au/-ap, user/password is read from fd #4. Other
+        options are silently ignored; -oi is implied.
+
+    seq seq [-w] [-s SEP] [FIRST [INC]] LAST
+
+        Print numbers from FIRST to LAST, in steps of INC. FIRST, INC
+        default to 1.
+
+                -w      Pad to last with leading zeros
+                -s SEP  String separator
+
+    sh  sh [-il] [-|+Cabefmnuvx] [-|+o OPT]... [-c 'SCRIPT' [ARG0 ARGS] |
+        FILE [ARGS] | -s [ARGS]]
+
+        Unix shell interpreter
+
+    sha256sum
+        sha256sum [-c[sw]] [FILE]...
+
+        Print or check SHA256 checksums
+
+                -c      Check sums against list in FILEs
+                -s      Don't output anything, status code shows success
+                -w      Warn about improperly formatted checksum lines
+
+    sleep
+        sleep [N]...
+
+        Pause for a time equal to the total of the args given, where each
+        arg can have an optional suffix of (s)econds, (m)inutes, (h)ours, or
+        (d)ays
+
+    sort
+        sort [-nru] [FILE]...
+
+        Sort lines of text
+
+                -n      Sort numbers
+                -r      Reverse sort order
+                -s      Stable (don't sort ties alphabetically)
+                -u      Suppress duplicate lines
+                -z      NUL terminated input and output
+
+    start-stop-daemon
+        start-stop-daemon [OPTIONS] [-S|-K] ... [-- ARGS...]
+
+        Search for matching processes, and then -K: stop all matching
+        processes -S: start a process unless a matching process is found
+
+        Process matching:
+
+                -u USERNAME|UID Match only this user's processes
+                -n NAME         Match processes with NAME
+                                in comm field in /proc/PID/stat
+                -x EXECUTABLE   Match processes with this command
+                                in /proc/PID/cmdline
+                -p FILE         Match a process with PID from FILE
+                All specified conditions must match
+        -S only:
+                -x EXECUTABLE   Program to run
+                -a NAME         Zeroth argument
+                -b              Background
+                -N N            Change nice level
+                -c USER[:[GRP]] Change user/group
+                -m              Write PID to pidfile specified by -p
+        -K only:
+                -s SIG          Signal to send
+                -t              Match only, exit with 0 if found
+        Other:
+
+                -o              Exit with status 0 if nothing is done
+                -v              Verbose
+                -q              Quiet
+
+    stat
+        stat [-lt] [-c FMT] FILE...
+
+        Display file status
+
+                -c FMT  Use the specified format
+                -L      Follow links
+                -t      Terse display
+
+        FMT sequences:
+
+         %a     Access rights in octal
+         %A     Access rights in human readable form
+         %b     Number of blocks allocated (see %B)
+         %B     Size in bytes of each block reported by %b
+         %d     Device number in decimal
+         %D     Device number in hex
+         %f     Raw mode in hex
+         %F     File type
+         %g     Group ID
+         %G     Group name
+         %h     Number of hard links
+         %i     Inode number
+         %n     File name
+         %N     File name, with -> TARGET if symlink
+         %o     I/O block size
+         %s     Total size in bytes
+         %t     Major device type in hex
+         %T     Minor device type in hex
+         %u     User ID
+         %U     User name
+         %x     Time of last access
+         %X     Time of last access as seconds since Epoch
+         %y     Time of last modification
+         %Y     Time of last modification as seconds since Epoch
+         %z     Time of last change
+         %Z     Time of last change as seconds since Epoch
+
+    strings
+        strings [-fo] [-t o|d|x] [-n LEN] [FILE]...
+
+        Display printable strings in a binary file
+
+                -f              Precede strings with filenames
+                -o              Precede strings with octal offsets
+                -t o|d|x        Precede strings with offsets in base 8/10/16
+                -n LEN          At least LEN characters form a string (default 4)
+
+    swapoff
+        swapoff [-a] [DEVICE]
+
+        Stop swapping on DEVICE
+
+                -a      Stop swapping on all swap devices
+
+    swapon
+        swapon [-a] [-e] [-d[POL]] [DEVICE]
+
+        Start swapping on DEVICE
+
+                -a      Start swapping on all swap devices
+                -d[POL] Discard blocks at swapon (POL=once),
+                        as freed (POL=pages), or both (POL omitted)
+                -e      Silently skip devices that do not exist
+
+    switch_root
+        switch_root [-c CONSOLE_DEV] NEW_ROOT NEW_INIT [ARGS]
+
+        Free initramfs and switch to another root fs:
+
+        chroot to NEW_ROOT, delete all in /, move NEW_ROOT to /, execute
+        NEW_INIT. PID must be 1. NEW_ROOT must be a mountpoint.
+
+                -c DEV  Reopen stdio to DEV after switch
+
+    sync
+        sync
+
+        Write all buffered blocks to disk
+
+    sysctl
+        sysctl [-enq] { -a | -p [FILE]... | [-w] [KEY[=VALUE]]... }
+
+        Show/set kernel parameters
+
+                -e      Don't warn about unknown keys
+                -n      Don't show key names
+                -q      Quiet
+                -a      Show all values
+                -p      Set values from FILEs (default /etc/sysctl.conf)
+                -w      Set values
+
+    syslogd
+        syslogd [OPTIONS]
+
+        System logging utility (this version of syslogd ignores
+        /etc/syslog.conf)
+
+                -n              Run in foreground
+                -R HOST[:PORT]  Log to HOST:PORT (default PORT:514)
+                -L              Log locally and via network (default is network only if -R)
+                -C[size_kb]     Log to shared mem buffer (use logread to read it)
+                -O FILE         Log to FILE (default: /var/log/messages, stdout if -)
+                -s SIZE         Max size (KB) before rotation (default 200KB, 0=off)
+                -b N            N rotated logs to keep (default 1, max 99, 0=purge)
+                -l N            Log only messages more urgent than prio N (1-8)
+                -S              Smaller output
+                -t              Strip client-generated timestamps
+                -D              Drop duplicates
+
+    tail
+        tail [OPTIONS] [FILE]...
+
+        Print last 10 lines of FILEs (or stdin) to. With more than one FILE,
+        precede each with a filename header.
+
+                -c [+]N[bkm]    Print last N bytes
+                -n N[bkm]       Print last N lines
+                -n +N[bkm]      Start on Nth line and print the rest
+                                (b:*512 k:*1024 m:*1024^2)
+                -q              Never print headers
+                -v              Always print headers
+                -f              Print data as file grows
+                -F              Same as -f, but keep retrying
+                -s SECONDS      Wait SECONDS between reads with -f
+
+    tar tar c|x|t [-zjahvokO] [-f TARFILE] [-C DIR] [-T FILE] [-X FILE]
+        [FILE]...
+
+        Create, extract, or list files from a tar file
+
+                c       Create
+                x       Extract
+                t       List
+                -f FILE Name of TARFILE ('-' for stdin/out)
+                -C DIR  Change to DIR before operation
+                -v      Verbose
+                -O      Extract to stdout
+                -o      Don't restore user:group
+                -k      Don't replace existing files
+                -z      (De)compress using gzip
+                -j      (De)compress using bzip2
+                -a      (De)compress based on extension
+                -h      Follow symlinks
+                -T FILE File with names to include
+                -X FILE File with glob patterns to exclude
+
+    tee tee [-ai] [FILE]...
+
+        Copy stdin to each FILE, and also to stdout
+
+                -a      Append to the given FILEs, don't overwrite
+                -i      Ignore interrupt signals (SIGINT)
+
+    telnet
+        telnet [-a] [-l USER] HOST [PORT]
+
+        Connect to telnet server
+
+                -a      Automatic login with $USER variable
+                -l USER Automatic login as USER
+
+    telnetd
+        telnetd [OPTIONS]
+
+        Handle incoming telnet connections
+
+                -l LOGIN        Exec LOGIN on connect
+                -f ISSUE_FILE   Display ISSUE_FILE instead of /etc/issue
+                -K              Close connection as soon as login exits
+                                (normally wait until all programs close slave pty)
+                -p PORT         Port to listen on
+                -b ADDR[:PORT]  Address to bind to
+                -F              Run in foreground
+                -i              Inetd mode
+
+    time
+        time [-vpa] [-o FILE] PROG ARGS
+
+        Run PROG, display resource usage when it exits
+
+                -v      Verbose
+                -p      POSIX output format
+                -f FMT  Custom format
+                -o FILE Write result to FILE
+                -a      Append (else overwrite)
+
+    top top [-bmH] [-n COUNT] [-d SECONDS]
+
+        Show a view of process activity in real time. Read the status of all
+        processes from /proc each SECONDS and show a screenful of them.
+        Keys:
+
+                N/M/P/T: show CPU usage, sort by pid/mem/cpu/time
+                S: show memory
+                R: reverse sort
+                H: toggle threads, 1: toggle SMP
+                Q,^C: exit
+        Options:
+
+                -b      Batch mode
+                -n N    Exit after N iterations
+                -d SEC  Delay between updates
+                -m      Same as 's' key
+                -H      Show threads
+
+    touch
+        touch [-cham] [-d DATE] [-t DATE] [-r FILE] FILE...
+
+        Update mtime of FILEs
+
+                -c      Don't create files
+                -h      Don't follow links
+                -a      Change only atime
+                -m      Change only mtime
+                -d DT   Date/time to use
+                -t DT   Date/time to use
+                -r FILE Use FILE's date/time
+
+    tr  tr [-cds] STRING1 [STRING2]
+
+        Translate, squeeze, or delete characters from stdin, writing to
+        stdout
+
+                -c      Take complement of STRING1
+                -d      Delete input characters coded STRING1
+                -s      Squeeze multiple output characters of STRING2 into one character
+
+    traceroute
+        traceroute [-46IFlnrv] [-f 1ST_TTL] [-m MAXTTL] [-q PROBES] [-p
+        PORT] [-t TOS] [-w WAIT_SEC] [-s SRC_IP] [-i IFACE] [-z PAUSE_MSEC]
+        HOST [BYTES]
+
+        Trace the route to HOST
+
+                -4,-6   Force IP or IPv6 name resolution
+                -F      Set don't fragment bit
+                -I      Use ICMP ECHO instead of UDP datagrams
+                -l      Display TTL value of the returned packet
+                -n      Print numeric addresses
+                -r      Bypass routing tables, send directly to HOST
+                -v      Verbose
+                -f N    First number of hops (default 1)
+                -m N    Max number of hops
+                -q N    Number of probes per hop (default 3)
+                -p N    Base UDP port number used in probes
+                        (default 33434)
+                -s IP   Source address
+                -i IFACE Source interface
+                -t N    Type-of-service in probe packets (default 0)
+                -w SEC  Wait for a response (default 3)
+                -z MSEC Wait before each send
+
+    traceroute6
+        traceroute6 [-Inrv] [-f 1ST_TTL] [-m MAXTTL] [-q PROBES] [-p PORT]
+        [-t TOS] [-w WAIT_SEC] [-s SRC_IP] [-i IFACE] [-z PAUSE_MSEC] HOST
+        [BYTES]
+
+        Trace the route to HOST
+
+                -I      Use ICMP ECHO instead of UDP datagrams
+                -n      Print numeric addresses
+                -r      Bypass routing tables, send directly to HOST
+                -v      Verbose
+                -f N    First number of hops (default 1)
+                -m N    Max number of hops
+                -q N    Number of probes per hop (default 3)
+                -p N    Base UDP port number used in probes
+                        (default 33434)
+                -s IP   Source address
+                -i IFACE Source interface
+                -t N    Type-of-service in probe packets (default 0)
+                -w SEC  Wait for a response (default 3)
+                -z MSEC Wait before each send
+
+    udhcpc
+        udhcpc [-fbqvRB] [-a[MSEC]] [-t N] [-T SEC] [-A SEC|-n] [-i IFACE]
+        [-s PROG] [-p PIDFILE] [-oC] [-r IP] [-V VENDOR] [-F NAME] [-x
+        OPT:VAL]... [-O OPT]...
+
+                -i IFACE        Interface to use (default br0)
+                -s PROG         Run PROG at DHCP events (default /tmp/udhcpc.script)
+                -p FILE         Create pidfile
+                -B              Request broadcast replies
+                -t N            Send up to N discover packets (default 3)
+                -T SEC          Pause between packets (default 3)
+                -A SEC          Wait if lease is not obtained (default 20)
+                -b              Background if lease is not obtained
+                -d              Background after run
+                -n              Exit if lease is not obtained
+                -q              Exit after obtaining lease
+                -R              Release IP on exit
+                -f              Run in foreground
+                -S              Log to syslog too
+                -a[MSEC]        Validate offered address with ARP ping
+                -r IP           Request this IP address
+                -o              Don't request any options (unless -O is given)
+                -O OPT          Request option OPT from server (cumulative)
+                -x OPT:VAL      Include option OPT in sent packets (cumulative)
+                                Examples of string, numeric, and hex byte opts:
+                                -x hostname:bbox - option 12
+                                -x lease:3600 - option 51 (lease time)
+                                -x 0x3d:0100BEEFC0FFEE - option 61 (client id)
+                                -x 14:'"dumpfile"' - option 14 (shell-quoted)
+                -F NAME         Ask server to update DNS mapping for NAME
+                -V VENDOR       Vendor identifier (default 'udhcp VERSION')
+                -C              Don't send MAC as client identifier
+                -v              Verbose
+        Signals:
+
+                USR1    Renew lease
+                USR2    Release lease
+
+    umount
+        umount [-rlfd] [-t FSTYPE] FILESYSTEM|DIRECTORY
+
+        Unmount filesystems
+
+                -r      Remount devices read-only if mount is busy
+                -l      Lazy umount (detach filesystem)
+                -f      Force umount (i.e., unreachable NFS server)
+                -d      Free loop device if it has been used
+                -t FSTYPE[,...] Unmount only these filesystem type(s)
+
+    uname
+        uname [-amnrspvio]
+
+        Print system information
+
+                -a      Print all
+                -m      Machine (hardware) type
+                -n      Hostname
+                -r      Kernel release
+                -s      Kernel name (default)
+                -p      Processor type
+                -v      Kernel version
+                -i      Hardware platform
+                -o      OS name
+
+    uniq
+        uniq [-cduiz] [-f,s,w N] [FILE [OUTFILE]]
+
+        Discard duplicate lines
+
+                -c      Prefix lines by the number of occurrences
+                -d      Only print duplicate lines
+                -u      Only print unique lines
+                -i      Ignore case
+                -z      NUL terminated output
+                -f N    Skip first N fields
+                -s N    Skip first N chars (after any skipped fields)
+                -w N    Compare N characters in line
+
+    unix2dos
+        unix2dos [-ud] [FILE]
+
+        Convert FILE in-place from Unix to DOS format. When no file is
+        given, use stdin/stdout.
+
+                -u      dos2unix
+                -d      unix2dos
+
+    unlink
+        unlink FILE
+
+        Delete FILE by calling unlink()
+
+    unzip
+        unzip [-lnojpq] FILE[.zip] [FILE]... [-x FILE]... [-d DIR]
+
+        Extract FILEs from ZIP archive
+
+                -l      List contents (with -q for short form)
+                -n      Never overwrite files (default: ask)
+                -o      Overwrite
+                -j      Do not restore paths
+                -p      Write to stdout
+                -t      Test
+                -q      Quiet
+                -x FILE Exclude FILEs
+                -d DIR  Extract into DIR
+
+    uptime
+        uptime
+
+        Display the time since the last boot
+
+    usleep
+        usleep N
+
+        Pause for N microseconds
+
+    vconfig
+        vconfig COMMAND [OPTIONS]
+
+        Create and remove virtual ethernet devices
+
+                add IFACE VLAN_ID
+                rem VLAN_NAME
+                set_flag IFACE 0|1 VLAN_QOS
+                set_egress_map VLAN_NAME SKB_PRIO VLAN_QOS
+                set_ingress_map VLAN_NAME SKB_PRIO VLAN_QOS
+                set_name_type NAME_TYPE
+
+    vi  vi [-c CMD] [-R] [-H] [FILE]...
+
+        Edit FILE
+
+                -c CMD  Initial command to run ($EXINIT also available)
+                -R      Read-only
+                -H      List available features
+
+    watch
+        watch [-n SEC] [-t] PROG ARGS
+
+        Run PROG periodically
+
+                -n SEC  Period (default 2)
+                -t      Don't print header
+
+    wc  wc [-cmlwL] [FILE]...
+
+        Count lines, words, and bytes for FILEs (or stdin)
+
+                -c      Count bytes
+                -m      Count characters
+                -l      Count newlines
+                -w      Count words
+                -L      Print longest line length
+
+    wget
+        wget [-cqS] [--spider] [-O FILE] [-o LOGFILE] [--header 'HEADER:
+        VALUE'] [-Y on/off] [--no-check-certificate] [-P DIR] [-U AGENT] [-T
+        SEC] URL...
+
+        Retrieve files via HTTP or FTP
+
+                --spider        Only check URL existence: $? is 0 if exists
+                --no-check-certificate  Don't validate the server's certificate
+                -c              Continue retrieval of aborted transfer
+                -q              Quiet
+                -P DIR          Save to DIR (default .)
+                -S              Show server response
+                -T SEC          Network read timeout is SEC seconds
+                -O FILE         Save to FILE ('-' for stdout)
+                -o LOGFILE      Log messages to FILE
+                -U STR          Use STR for User-Agent header
+                -Y on/off       Use proxy
+
+    which
+        which COMMAND...
+
+        Locate COMMAND
+
+    whoami
+        whoami
+
+        Print the user name associated with the current effective user id
+
+    xargs
+        xargs [OPTIONS] [PROG ARGS]
+
+        Run PROG on every item given by stdin
+
+                -0      Input is separated by NULs
+                -r      Don't run command if input is empty
+                -t      Print the command on stderr before execution
+                -p      Ask user whether to run each command
+                -E STR,-e[STR]  STR stops input processing
+                -I STR  Replace STR within PROG ARGS with input line
+                -n N    Pass no more than N args to PROG
+                -s N    Pass command line of no more than N bytes
+                -x      Exit if size is exceeded
+
+    yes yes [STRING]
+
+        Repeatedly print a line with STRING, or 'y'
+
+    zcat
+        zcat [FILE]...
+
+        Decompress to stdout
+
+    zcip
+        zcip [OPTIONS] IFACE SCRIPT
+
+        Manage a ZeroConf IPv4 link-local address
+
+                -f              Run in foreground
+                -q              Quit after obtaining address
+                -r 169.254.x.x  Request this address first
+                -l x.x.0.0      Use this range instead of 169.254
+                -v              Verbose
+
+        $LOGGING=none Suppress logging $LOGGING=syslog Log to syslog
+
+        With no -q, runs continuously monitoring for ARP conflicts, exits
+        only on I/O errors (link down etc)
+
+LIBC NSS
+    GNU Libc (glibc) uses the Name Service Switch (NSS) to configure the
+    behavior of the C library for the local environment, and to configure
+    how it reads system data, such as passwords and group information. This
+    is implemented using an /etc/nsswitch.conf configuration file, and using
+    one or more of the /lib/libnss_* libraries. BusyBox tries to avoid using
+    any libc calls that make use of NSS. Some applets however, such as login
+    and su, will use libc functions that require NSS.
+
+    If you enable CONFIG_USE_BB_PWD_GRP, BusyBox will use internal functions
+    to directly access the /etc/passwd, /etc/group, and /etc/shadow files
+    without using NSS. This may allow you to run your system without the
+    need for installing any of the NSS configuration files and libraries.
+
+    When used with glibc, the BusyBox 'networking' applets will similarly
+    require that you install at least some of the glibc NSS stuff (in
+    particular, /etc/nsswitch.conf, /lib/libnss_dns*, /lib/libnss_files*,
+    and /lib/libresolv*).
+
+    Shameless Plug: As an alternative, one could use a C library such as
+    uClibc. In addition to making your system significantly smaller, uClibc
+    does not require the use of any NSS support files or libraries.
+
+MAINTAINER
+    Denis Vlasenko <vda.linux@googlemail.com>
+
+AUTHORS
+    The following people have contributed code to BusyBox whether they know
+    it or not. If you have written code included in BusyBox, you should
+    probably be listed here so you can obtain your bit of eternal glory. If
+    you should be listed here, or the description of what you have done
+    needs more detail, or is incorrect, please send in an update.
+
+    Emanuele Aina <emanuele.aina@tiscali.it>
+
+        run-parts
+
+    Erik Andersen <andersen@codepoet.org>
+
+        Tons of new stuff, major rewrite of most of the
+        core apps, tons of new apps as noted in header files.
+        Lots of tedious effort writing these boring docs that
+        nobody is going to actually read.
+
+    Laurence Anderson <l.d.anderson@warwick.ac.uk>
+
+        rpm2cpio, unzip, get_header_cpio, read_gz interface, rpm
+
+    Jeff Angielski <jeff@theptrgroup.com>
+
+        ftpput, ftpget
+
+    Edward Betts <edward@debian.org>
+
+        expr, hostid, logname, whoami
+
+    John Beppu <beppu@codepoet.org>
+
+        du, nslookup, sort
+
+    Brian Candler <B.Candler@pobox.com>
+
+        tiny-ls(ls)
+
+    Randolph Chung <tausq@debian.org>
+
+        fbset, ping, hostname
+
+    Dave Cinege <dcinege@psychosis.com>
+
+        more(v2), makedevs, dutmp, modularization, auto links file,
+        various fixes, Linux Router Project maintenance
+
+    Jordan Crouse <jordan@cosmicpenguin.net>
+
+        ipcalc
+
+    Magnus Damm <damm@opensource.se>
+
+        tftp client insmod powerpc support
+
+    Larry Doolittle <ldoolitt@recycle.lbl.gov>
+
+        pristine source directory compilation, lots of patches and fixes.
+
+    Glenn Engel <glenne@engel.org>
+
+        httpd
+
+    Gennady Feldman <gfeldman@gena01.com>
+
+        Sysklogd (single threaded syslogd, IPC Circular buffer support,
+        logread), various fixes.
+
+    Karl M. Hegbloom <karlheg@debian.org>
+
+        cp_mv.c, the test suite, various fixes to utility.c, &c.
+
+    Daniel Jacobowitz <dan@debian.org>
+
+        mktemp.c
+
+    Matt Kraai <kraai@alumni.cmu.edu>
+
+        documentation, bugfixes, test suite
+
+    Stephan Linz <linz@li-pro.net>
+
+        ipcalc, Red Hat equivalence
+
+    John Lombardo <john@deltanet.com>
+
+        tr
+
+    Glenn McGrath <bug1@iinet.net.au>
+
+        Common unarchiving code and unarchiving applets, ifupdown, ftpgetput,
+        nameif, sed, patch, fold, install, uudecode.
+        Various bugfixes, review and apply numerous patches.
+
+    Manuel Novoa III <mjn3@codepoet.org>
+
+        cat, head, mkfifo, mknod, rmdir, sleep, tee, tty, uniq, usleep, wc, yes,
+        mesg, vconfig, make_directory, parse_mode, dirname, mode_string,
+        get_last_path_component, simplify_path, and a number trivial libbb routines
+
+        also bug fixes, partial rewrites, and size optimizations in
+        ash, basename, cal, cmp, cp, df, du, echo, env, ln, logname, md5sum, mkdir,
+        mv, realpath, rm, sort, tail, touch, uname, watch, arith, human_readable,
+        interface, dutmp, ifconfig, route
+
+    Vladimir Oleynik <dzo@simtreas.ru>
+
+        cmdedit; xargs(current), httpd(current);
+        ports: ash, crond, fdisk, inetd, stty, traceroute, top;
+        locale, various fixes
+        and irreconcilable critic of everything not perfect.
+
+    Bruce Perens <bruce@pixar.com>
+
+        Original author of BusyBox in 1995, 1996. Some of his code can
+        still be found hiding here and there...
+
+    Tim Riker <Tim@Rikers.org>
+
+        bug fixes, member of fan club
+
+    Kent Robotti <robotti@metconnect.com>
+
+        reset, tons and tons of bug reports and patches.
+
+    Chip Rosenthal <chip@unicom.com>, <crosenth@covad.com>
+
+        wget - Contributed by permission of Covad Communications
+
+    Pavel Roskin <proski@gnu.org>
+
+        Lots of bugs fixes and patches.
+
+    Gyepi Sam <gyepi@praxis-sw.com>
+
+        Remote logging feature for syslogd
+
+    Linus Torvalds <torvalds@transmeta.com>
+
+        mkswap, fsck.minix, mkfs.minix
+
+    Mark Whitley <markw@codepoet.org>
+
+        grep, sed, cut, xargs(previous),
+        style-guide, new-applet-HOWTO, bug fixes, etc.
+
+    Charles P. Wright <cpwright@villagenet.com>
+
+        gzip, mini-netcat(nc)
+
+    Enrique Zanardi <ezanardi@ull.es>
+
+        tarcat (since removed), loadkmap, various fixes, Debian maintenance
+
+    Tito Ragusa <farmatito@tiscali.it>
+
+        devfsd and size optimizations in strings, openvt and deallocvt.
+
+    Paul Fox <pgf@foxharp.boston.ma.us>
+
+        vi editing mode for ash, various other patches/fixes
+
+    Roberto A. Foglietta <me@roberto.foglietta.name>
+
+        port: dnsd
+
+    Bernhard Reutner-Fischer <rep.dot.nop@gmail.com>
+
+        misc
+
+    Mike Frysinger <vapier@gentoo.org>
+
+        initial e2fsprogs, printenv, setarch, sum, misc
+
+    Jie Zhang <jie.zhang@analog.com>
+
+        fixed two bugs in msh and hush (exitcode of killed processes)
+

@@ -1,0 +1,260 @@
+diff -urN util-linux-2.36-ref/configure.ac util-linux-2.36/configure.ac
+--- util-linux-2.36-ref/configure.ac	2020-07-23 12:23:58.000000000 +0300
++++ util-linux-2.36/configure.ac	2020-07-25 20:31:37.186935818 +0300
+@@ -1234,7 +1234,11 @@
+ UL_REQUIRES_BUILD([uuidparse], [libsmartcols])
+ AM_CONDITIONAL([BUILD_UUIDPARSE], [test "x$build_uuidparse" = xyes])
+ 
+-UL_BUILD_INIT([blkid], [check])
++AC_ARG_ENABLE([blkid],
++  AS_HELP_STRING([--disable-blkid], [do not build blkid]),
++  [], [UL_DEFAULT_ENABLE([blkid], [check])]
++)
++UL_BUILD_INIT([blkid])
+ UL_REQUIRES_BUILD([blkid], [libblkid])
+ AM_CONDITIONAL([BUILD_BLKID], [test "x$build_blkid" = xyes])
+ 
+diff -urN util-linux-2.36-ref/libblkid/src/Makemodule.am util-linux-2.36/libblkid/src/Makemodule.am
+--- util-linux-2.36-ref/libblkid/src/Makemodule.am	2020-07-22 11:06:46.000000000 +0300
++++ util-linux-2.36/libblkid/src/Makemodule.am	2020-07-25 20:31:37.210935516 +0300
+@@ -26,93 +26,35 @@
+ 	libblkid/src/verify.c \
+ 	libblkid/src/version.c \
+ 	\
+-	libblkid/src/partitions/aix.c \
+-	libblkid/src/partitions/aix.h \
+-	libblkid/src/partitions/atari.c \
+ 	libblkid/src/partitions/bsd.c \
+ 	libblkid/src/partitions/dos.c \
+ 	libblkid/src/partitions/gpt.c \
+ 	libblkid/src/partitions/mac.c \
+-	libblkid/src/partitions/minix.c \
+ 	libblkid/src/partitions/partitions.c \
+ 	libblkid/src/partitions/partitions.h \
+-	libblkid/src/partitions/sgi.c \
+-	libblkid/src/partitions/solaris_x86.c \
+-	libblkid/src/partitions/sun.c \
+-	libblkid/src/partitions/ultrix.c \
+-	libblkid/src/partitions/unixware.c \
+ 	\
+-	libblkid/src/superblocks/adaptec_raid.c \
+-	libblkid/src/superblocks/apfs.c \
+-	libblkid/src/superblocks/bcache.c \
+-	libblkid/src/superblocks/befs.c \
+-	libblkid/src/superblocks/bfs.c \
+ 	libblkid/src/superblocks/bitlocker.c \
+-	libblkid/src/superblocks/bluestore.c \
+-	libblkid/src/superblocks/btrfs.c \
+-	libblkid/src/superblocks/cramfs.c \
+-	libblkid/src/superblocks/ddf_raid.c \
+-	libblkid/src/superblocks/drbd.c \
+-	libblkid/src/superblocks/drbdproxy_datalog.c \
+-	libblkid/src/superblocks/drbdmanage.c \
+ 	libblkid/src/superblocks/exfat.c \
+-	libblkid/src/superblocks/exfs.c \
+ 	libblkid/src/superblocks/ext.c \
+-	libblkid/src/superblocks/f2fs.c \
+-	libblkid/src/superblocks/gfs.c \
+ 	libblkid/src/superblocks/hfs.c \
+-	libblkid/src/superblocks/highpoint_raid.c \
+-	libblkid/src/superblocks/hpfs.c \
+-	libblkid/src/superblocks/iso9660.c \
+-	libblkid/src/superblocks/isw_raid.c \
+-	libblkid/src/superblocks/jfs.c \
+-	libblkid/src/superblocks/jmicron_raid.c \
+-	libblkid/src/superblocks/linux_raid.c \
+-	libblkid/src/superblocks/lsi_raid.c \
+-	libblkid/src/superblocks/luks.c \
+-	libblkid/src/superblocks/lvm.c \
+-	libblkid/src/superblocks/minix.c \
+-	libblkid/src/superblocks/mpool.c \
+-	libblkid/src/superblocks/netware.c \
+-	libblkid/src/superblocks/nilfs.c \
+ 	libblkid/src/superblocks/ntfs.c \
+-	libblkid/src/superblocks/refs.c \
+-	libblkid/src/superblocks/nvidia_raid.c \
+-	libblkid/src/superblocks/ocfs.c \
+-	libblkid/src/superblocks/promise_raid.c \
+-	libblkid/src/superblocks/reiserfs.c \
+-	libblkid/src/superblocks/romfs.c \
+-	libblkid/src/superblocks/silicon_raid.c \
+-	libblkid/src/superblocks/squashfs.c \
+-	libblkid/src/superblocks/stratis.c \
+ 	libblkid/src/superblocks/superblocks.c \
+ 	libblkid/src/superblocks/superblocks.h \
+ 	libblkid/src/superblocks/swap.c \
+-	libblkid/src/superblocks/sysv.c \
+ 	libblkid/src/superblocks/ubi.c \
+ 	libblkid/src/superblocks/ubifs.c \
+-	libblkid/src/superblocks/udf.c \
+-	libblkid/src/superblocks/ufs.c \
+-	libblkid/src/superblocks/vdo.c \
+ 	libblkid/src/superblocks/vfat.c \
+-	libblkid/src/superblocks/via_raid.c \
+-	libblkid/src/superblocks/vmfs.c \
+-	libblkid/src/superblocks/vxfs.c \
+ 	libblkid/src/superblocks/xfs.c \
+ 	libblkid/src/superblocks/zfs.c \
+-	libblkid/src/superblocks/zonefs.c \
+ 	\
+ 	libblkid/src/topology/topology.c \
+ 	libblkid/src/topology/topology.h
+ 
+ if LINUX
+ libblkid_la_SOURCES += \
+-	libblkid/src/topology/dm.c \
+-	libblkid/src/topology/evms.c \
+ 	libblkid/src/topology/ioctl.c \
+-	libblkid/src/topology/lvm.c \
+-	libblkid/src/topology/md.c \
+ 	libblkid/src/topology/sysfs.c
++
+ endif
+ 
+ libblkid_la_LIBADD = libcommon.la
+diff -urN util-linux-2.36-ref/libblkid/src/partitions/dos.c util-linux-2.36/libblkid/src/partitions/dos.c
+--- util-linux-2.36-ref/libblkid/src/partitions/dos.c	2020-07-01 13:35:59.000000000 +0300
++++ util-linux-2.36/libblkid/src/partitions/dos.c	2020-07-25 20:31:37.222935366 +0300
+@@ -26,10 +26,7 @@
+ } dos_nested[] = {
+ 	{ MBR_FREEBSD_PARTITION, &bsd_pt_idinfo },
+ 	{ MBR_NETBSD_PARTITION, &bsd_pt_idinfo },
+-	{ MBR_OPENBSD_PARTITION, &bsd_pt_idinfo },
+-	{ MBR_UNIXWARE_PARTITION, &unixware_pt_idinfo },
+-	{ MBR_SOLARIS_X86_PARTITION, &solaris_x86_pt_idinfo },
+-	{ MBR_MINIX_PARTITION, &minix_pt_idinfo }
++	{ MBR_OPENBSD_PARTITION, &bsd_pt_idinfo }
+ };
+ 
+ static inline int is_extended(struct dos_partition *p)
+diff -urN util-linux-2.36-ref/libblkid/src/partitions/partitions.c util-linux-2.36/libblkid/src/partitions/partitions.c
+--- util-linux-2.36-ref/libblkid/src/partitions/partitions.c	2020-07-22 11:06:46.000000000 +0300
++++ util-linux-2.36/libblkid/src/partitions/partitions.c	2020-07-25 20:31:37.246935064 +0300
+@@ -123,19 +123,11 @@
+  */
+ static const struct blkid_idinfo *idinfos[] =
+ {
+-	&aix_pt_idinfo,
+-	&sgi_pt_idinfo,
+-	&sun_pt_idinfo,
+ 	&dos_pt_idinfo,
+ 	&gpt_pt_idinfo,
+ 	&pmbr_pt_idinfo,	/* always after GPT */
+ 	&mac_pt_idinfo,
+-	&ultrix_pt_idinfo,
+-	&bsd_pt_idinfo,
+-	&unixware_pt_idinfo,
+-	&solaris_x86_pt_idinfo,
+-	&minix_pt_idinfo,
+-	&atari_pt_idinfo
++	&bsd_pt_idinfo
+ };
+ 
+ /*
+diff -urN util-linux-2.36-ref/libblkid/src/superblocks/superblocks.c util-linux-2.36/libblkid/src/superblocks/superblocks.c
+--- util-linux-2.36-ref/libblkid/src/superblocks/superblocks.c	2020-07-22 11:09:40.000000000 +0300
++++ util-linux-2.36/libblkid/src/superblocks/superblocks.c	2020-07-25 20:31:37.250935014 +0300
+@@ -89,86 +89,20 @@
+  */
+ static const struct blkid_idinfo *idinfos[] =
+ {
+-	/* RAIDs */
+-	&linuxraid_idinfo,
+-	&ddfraid_idinfo,
+-	&iswraid_idinfo,
+-	&lsiraid_idinfo,
+-	&viaraid_idinfo,
+-	&silraid_idinfo,
+-	&nvraid_idinfo,
+-	&pdcraid_idinfo,
+-	&highpoint45x_idinfo,
+-	&highpoint37x_idinfo,
+-	&adraid_idinfo,
+-	&jmraid_idinfo,
+-
+-	&bcache_idinfo,
+-	&bluestore_idinfo,
+-	&drbd_idinfo,
+-	&drbdmanage_idinfo,
+-	&drbdproxy_datalog_idinfo,
+-	&lvm2_idinfo,
+-	&lvm1_idinfo,
+-	&snapcow_idinfo,
+-	&verity_hash_idinfo,
+-	&integrity_idinfo,
+-	&luks_idinfo,
+-	&vmfs_volume_idinfo,
+-	&ubi_idinfo,
+-	&vdo_idinfo,
+-	&stratis_idinfo,
+-	&bitlocker_idinfo,
+-
+ 	/* Filesystems */
+ 	&vfat_idinfo,
+ 	&swsuspend_idinfo,
+ 	&swap_idinfo,
+ 	&xfs_idinfo,
+-	&xfs_log_idinfo,
+-	&exfs_idinfo,
+ 	&ext4dev_idinfo,
+ 	&ext4_idinfo,
+ 	&ext3_idinfo,
+ 	&ext2_idinfo,
+ 	&jbd_idinfo,
+-	&reiser_idinfo,
+-	&reiser4_idinfo,
+-	&jfs_idinfo,
+-	&udf_idinfo,
+-	&iso9660_idinfo,
+-	&zfs_idinfo,
+ 	&hfsplus_idinfo,
+ 	&hfs_idinfo,
+-	&ufs_idinfo,
+-	&hpfs_idinfo,
+-	&sysv_idinfo,
+-        &xenix_idinfo,
+ 	&ntfs_idinfo,
+-	&refs_idinfo,
+-	&cramfs_idinfo,
+-	&romfs_idinfo,
+-	&minix_idinfo,
+-	&gfs_idinfo,
+-	&gfs2_idinfo,
+-	&ocfs_idinfo,
+-	&ocfs2_idinfo,
+-	&oracleasm_idinfo,
+-	&vxfs_idinfo,
+-	&squashfs_idinfo,
+-	&squashfs3_idinfo,
+-	&netware_idinfo,
+-	&btrfs_idinfo,
+-	&ubifs_idinfo,
+-	&bfs_idinfo,
+-	&vmfs_fs_idinfo,
+-	&befs_idinfo,
+-	&nilfs2_idinfo,
+-	&exfat_idinfo,
+-	&f2fs_idinfo,
+-	&mpool_idinfo,
+-	&apfs_idinfo,
+-	&zonefs_idinfo
++	&exfat_idinfo
+ };
+ 
+ /*
+diff -urN util-linux-2.36-ref/libblkid/src/topology/topology.c util-linux-2.36/libblkid/src/topology/topology.c
+--- util-linux-2.36-ref/libblkid/src/topology/topology.c	2020-07-22 11:17:44.000000000 +0300
++++ util-linux-2.36/libblkid/src/topology/topology.c	2020-07-25 20:31:37.250935014 +0300
+@@ -77,11 +77,7 @@
+ {
+ #ifdef __linux__
+ 	&sysfs_tp_idinfo,
+-	&ioctl_tp_idinfo,
+-	&md_tp_idinfo,
+-	&dm_tp_idinfo,
+-	&lvm_tp_idinfo,
+-	&evms_tp_idinfo
++	&ioctl_tp_idinfo
+ #endif
+ };
+ 
