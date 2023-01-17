@@ -25,6 +25,6 @@
 #规则的更新由koolproxy主程序发起，用户只需要添加规则文件名，规则地址等信息即可获得相应规则。
 #（可选项：前面添加#停用规则,删除前面的#可生效）
 1|koolproxy.txt|https://raw.iqiq.io/lmq8267/koolproxy/master/rules/koolproxy.txt|
-1|daily.txt|https://https://raw.iqiq.io/lmq8267/koolproxy/master/rules/daily.txt|
+1|daily.txt|https://raw.iqiq.io/ilxp/koolproxy/master/rules/daily.txt|
 1|kp.dat|https://raw.iqiq.io/lmq8267/koolproxy/master/rules/kp.dat|
 1|user.txt||
