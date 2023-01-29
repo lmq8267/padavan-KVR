@@ -508,7 +508,7 @@ if (found_app_wyy()){
 	wyy_array = new Array("","Advanced_wyy.asp");
 	tablink[19] = (wyy_array);
 }
-if (found_app_aliyundrive()){
+if (found_app_aldriver()){
 	wyy_array = new Array("","Advanced_aliyundrive.asp");
 	tablink[20] = (aliyundrive_array);
 }
@@ -565,7 +565,7 @@ if (found_app_caddy()){
 if (found_app_wyy()){
 	menuL2_title.push("<#menu5_31#>");
 } else menuL2_title.push("");
-if (found_app_aliyundrive()){
+if (found_app_aldriver()){
 	menuL2_title.push("<#menu5_36#>");
 } else menuL2_title.push("");
 
@@ -613,7 +613,7 @@ if (found_app_caddy()){
 if (found_app_wyy()){
 	menuL2_link.push(wyy_array[1]);
 } else menuL2_link.push("");
-if (found_app_aliyundrive()){
+if (found_app_aldriver()){
 	menuL2_link.push(aliyundrive_array[1]);
 } else menuL2_link.push("");
 
