@@ -10,6 +10,7 @@ fork于fightroad的仓库 https://github.com/fightroad/Padavan-KVR.git
 
 ### UI预览 ###
 ![](https://github.com/lmq8267/padavan-KVR/raw/main/.github/workflows/%E6%8D%95%E8%8E%B7(1).PNG)
+![](https://github.com/lmq8267/padavan-KVR/raw/main/.github/workflows/%E6%B7%BB%E5%8A%A0%E7%8A%B6%E6%80%81%E6%98%BE%E7%A4%BA%E8%AE%BE%E5%A4%87ipv6%E5%8F%96%E6%B6%88%E9%A1%B6%E9%83%A8%E5%85%B3%E6%9C%BA%E6%8C%89%E9%92%AE%E7%94%A8ttyd%E4%BB%A3%E6%9B%BF.PNG)
 
 
 基于hanwckf,chongshengB以及padavanonly的源码整合而来，支持7603/7615/7915的kvr  
