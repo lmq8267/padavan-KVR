@@ -1,4 +1,4 @@
-# Padavan
+# Padavan-KVR #
 
 fork于fightroad的仓库 https://github.com/fightroad/Padavan-KVR.git 
 
@@ -7,6 +7,14 @@ fork于fightroad的仓库 https://github.com/fightroad/Padavan-KVR.git
 透明主题使用的是yuos-bit  https://github.com/yuos-bit/Padavan.git
 
 想要没有改主题的可以去上面大佬主页fork
+
+默认纯净没有添加插件，[自定义增减插件](trunk/configs/templates/NEWIFI3.config)
+
+[修改自己想要的背景](/trunk/user/www/n56u_ribbon_fixed/bootstrap/img/bg/wood.jpg) 替换wood.jpg文件就行
+
+[修改自己想要的LOGO](/trunk/user/www/n56u_ribbon_fixed/bootstrap/img/asus_logo.png) 替换asus_logo.png文件就行(像素尺寸要求150×70）
+
+[修改默认管理地址wifi名称账号密码](trunk/user/shared/defaults.h) 
 
 ### UI预览 ###
 ![](https://github.com/lmq8267/padavan-KVR/raw/main/.github/workflows/%E6%8D%95%E8%8E%B7(1).PNG)
