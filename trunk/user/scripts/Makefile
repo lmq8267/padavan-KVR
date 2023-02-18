@@ -8,6 +8,7 @@ romfs:
 	$(ROMFSINST) /sbin/radio2_kicksta
 	$(ROMFSINST) /sbin/dev_init.sh
 	$(ROMFSINST) /sbin/reset_ss.sh
+	$(ROMFSINST) /sbin/wgetcurl.sh
 	$(ROMFSINST) /sbin/mtd_storage.sh
 	$(ROMFSINST) -p +x $(THISDIR)/copyscripts.sh /usr/bin/copyscripts.sh
 	$(ROMFSINST) -p +x $(THISDIR)/autostart.sh /usr/bin/autostart.sh

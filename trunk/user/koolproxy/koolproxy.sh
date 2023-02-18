@@ -1115,9 +1115,9 @@ if [ ! -f "$koolproxy_rules_list" ] || [ ! -s "$koolproxy_rules_list" ] ; then
 #（可选项：前面添加#停用规则,删除前面的#可生效）
 # 开关 0表示关闭 1表示开启
 # 开关|规则名字|规则网址|规则备注名字
-1|koolproxy.txt|https://kprule.com/koolproxy.txt|
-1|daily.txt|https://kprule.com/daily.txt|
-1|kp.dat|https://kprule.com/kp.dat|
+1|koolproxy.txt|https://raw.iqiq.io/lmq8267/koolproxy/master/rules/koolproxy.txt|
+1|daily.txt|https://raw.iqiq.io/lmq8267/koolproxy/master/rules/daily.txt|
+1|kp.dat|https://raw.iqiq.io/lmq8267/koolproxy/master/rules/kp.dat|
 1|user.txt||
 
 EEE

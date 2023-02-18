@@ -154,10 +154,10 @@ stop_networkmap(void)
 void
 restart_networkmap(void)
 {
-	if (pids("networkmap"))
-		doSystem("killall %s %s", "-SIGUSR1", "networkmap");
-	else
-		start_networkmap(0);
+	//if (pids("networkmap"))
+		//doSystem("killall %s %s", "-KILL", "networkmap");
+	stop_networkmap();
+	start_networkmap(0);
 }
 
 void

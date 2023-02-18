@@ -4,7 +4,7 @@ mount -t proc proc /proc
 mount -t sysfs sysfs /sys
 [ -d /proc/bus/usb ] && mount -t usbfs usbfs /proc/bus/usb
 
-size_tmp="24M"
+size_tmp="100M"
 size_var="4M"
 size_etc="6M"
 

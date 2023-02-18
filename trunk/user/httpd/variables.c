@@ -1281,7 +1281,12 @@
 			{"w_ss", "", NULL, FALSE},
 			{"w_men", "", NULL, FALSE},
 			{"w_adbyby", "", NULL, FALSE},
-			{"w_pdnsd", "", NULL, FALSE}
+			{"w_pdnsd", "", NULL, FALSE},
+			{"w_aliddns", "", NULL, FALSE},
+			{"w_frp", "", NULL, FALSE},
+			{"w_caddy", "", NULL, FALSE},
+			{"w_wyy", "", NULL, FALSE},
+			{"w_aldriver", "", NULL, FALSE}
 	};
 
 	struct variable variables_WLANConfig11b[] = {

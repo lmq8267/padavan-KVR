@@ -6,6 +6,8 @@ mkdir -p /tmp/frp
 #frp项目地址教程: https://github.com/fatedier/frp/blob/master/README_zh.md
 #请自行修改 token 用于对客户端连接进行身份验证
 # IP查询： http://119.29.29.29/d?dn=github.com
+#是否使用最新版本y或者n ？(最新版是从GitHub下载，会很慢,默认不变动版本）
+#frp_ver=n
 
 cat > "/tmp/frp/myfrpc.ini" <<-\EOF
 # ==========客户端配置：==========
@@ -51,9 +53,9 @@ EOF
 frpc_enable=`nvram get frpc_enable`
 frps_enable=`nvram get frps_enable`
 if [ "$frpc_enable" = "1" ] ; then
-    frpc -c /tmp/frp/myfrpc.ini 2>&1 &
+    /tmp/frpapp/frpc -c /tmp/frp/myfrpc.ini 2>&1 &
 fi
 if [ "$frps_enable" = "1" ] ; then
-    frps -c /tmp/frp/myfrps.ini 2>&1 &
+    /tmp/frpapp/frps -c /tmp/frp/myfrps.ini 2>&1 &
 fi
  
