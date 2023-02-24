@@ -12,9 +12,10 @@ start_instance() {
 	port=""
 	args=""
 	moonid="$(nvram get zerotier_moonid)"
-	secret="$(nvram get zerotier_secret)"
+	secret="$(cat /etc/storage/zerotier-one/identity.secret)"
 	enablemoonserv="$(nvram get zerotiermoon_enable)"
 	planet="$(nvram get zerotier_planet)"
+	[ ! -e "/etc/storage/zerotier-one/identity.secret" ] && secret="$(nvram get zerotier_secret)"
 	if [ ! -d "$config_path" ]; then
 		mkdir -p $config_path
 	fi
@@ -34,7 +35,7 @@ start_instance() {
 		nvram commit
 	fi
 	if [ -n "$secret" ]; then
-		logger -t "zerotier" "找到密匙,正在写入文件,请稍后..."
+		logger -t "zerotier" "找到密匙,正在启动,请稍后..."
 		echo "$secret" >$config_path/identity.secret
 		$PROGIDT getpublic $config_path/identity.secret >$config_path/identity.public
 		#rm -f $config_path/identity.public
@@ -160,7 +161,6 @@ stop_zero() {
 	del_rules
 	zero_route "del"
 	kill_z
-	rm -rf $config_path
 }
 
 #创建moon节点
