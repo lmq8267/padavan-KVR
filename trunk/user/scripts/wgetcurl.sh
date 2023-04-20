@@ -1,7 +1,5 @@
 #!/bin/sh
-export PATH='/etc/storage/bin:/tmp:/etc/storage/script:/opt/usr/sbin:/opt/usr/bin:/opt/sbin:/opt/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin'
-export LD_LIBRARY_PATH=/lib:/opt/lib
-# /etc/storage/script/init.sh echo ln /tmp/script/wgetcurl.sh
+
 output="$1"
 url1="$2"
 url2="$3"
@@ -15,6 +13,7 @@ curl_err=""
 [ -z "$url2" ] && url2="$url1"
 [ -z "$output" ] && return
 rm -f "$output"
+[ ! -d "/tmp/wait/check" ] && mkdir -p /tmp/wait/check
 
 download_wait () {
 { sleep $check_time ; [ -f /tmp/wait/check/$check_time ] && eval $(ps -w | grep "max-redirs" | grep "$check_time" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}') ;  [ -f /tmp/wait/check/$check_time ] && eval $(ps -w | grep "wget\|-T" | grep "$check_time" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}') ; } &
@@ -63,14 +62,16 @@ if [ "$check_n" != "N" ] ; then
 if hash check_disk_size 2>/dev/null ; then
 avail=`check_disk_size $line_path`
 if [ "$?" == "0" ] ; then
-echo "$avail M 可用容量:【$line_path】" 
+echo "【$line_path】可用容量: $avail M" 
+logger -t "【下载】" "$line_path可用容量: $avail M" 
 else
 avail=0
 logger -t "【下载】" "错误！提取可用容量失败:【$line_path】" 
 fi
 [ -z "$avail" ] && avail=0
 if [ "$avail" != "0" ] ; then
-echo "$avail M 可用容量:【$line_path】" 
+echo "【$line_path】可用容量: $avail M" 
+logger -t "【下载】" "$line_path可用容量: $avail M" 
 fi
 length=0
 touch /tmp/check_avail_error.txt
@@ -95,9 +96,10 @@ fi
 if [ "$length" != "0" ] && [ "$avail" != "0" ] ; then
 length=`expr $length + 512000`
 length=`expr $length / 1048576`
-echo "$length M 文件大小:【$url1】"
+echo "【$url1】文件大小: $length M "
+logger -t "【下载】" "$url1文件大小: $length M" 
 if [ "$length" -gt "$avail" ] ; then
-logger -t "【下载】" "错误！剩余空间不足:【文件大小 $length M】>【$avail M 可用容量】"
+logger -t "【下载】" "错误！剩余空间不足:【文件大小: $length M】>【可用容量: $avail M】"
 logger -t "【下载】" "跳过 下载【 $output 】"
 return 1
 fi
@@ -107,8 +109,14 @@ fi
 mkdir -p /tmp/wait/check
 check_time="1"$(tr -cd 0-9 </dev/urandom | head -c 3)
 if [ -z "$(echo "$url1" | grep "^/")" ] ; then
+if [ -s "/usr/bin/curl" ] && [ ! -s "$output" ] ; then
+download_curl /usr/bin/curl $url1
+fi
 if [ -s "/usr/sbin/curl" ] && [ ! -s "$output" ] ; then
 download_curl /usr/sbin/curl --capath /etc/ssl/certs $url1
+fi
+if [ -s "/usr/bin/wget" ] && [ ! -s "$output" ] ; then
+download_wget /usr/bin/wget $url1
 fi
 if [ -s "/usr/bin/wget" ] && [ ! -s "$output" ] ; then
 download_wget /usr/bin/wget $url1
@@ -120,8 +128,14 @@ if [ ! -s "$output" ] ; then
 logger -t "【下载】" "下载失败:【$output】 URL:【$url1】"
 logger -t "【下载】" "重新下载:【$output】 URL:【$url2】"
 if [ -z "$(echo "$url2" | grep "^/")" ] ; then
+if [ -s "/usr/bin/curl" ] && [ ! -s "$output" ] ; then
+download_curl /usr/bin/curl $url2
+fi
 if [ -s "/usr/sbin/curl" ] && [ ! -s "$output" ] ; then
 download_curl /usr/sbin/curl --capath /etc/ssl/certs $url2
+fi
+if [ -s "/usr/bin/wget" ] && [ ! -s "$output" ] ; then
+download_wget /usr/bin/wget $url2
 fi
 if [ -s "/usr/bin/wget" ] && [ ! -s "$output" ] ; then
 download_wget /usr/bin/wget $url2
