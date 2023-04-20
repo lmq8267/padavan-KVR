@@ -5,6 +5,10 @@ if [ ! -f "/etc/storage/koolproxy_rules_script.sh" ] ; then
 cp -rf /etc_ro/koolproxy_rules_script.sh /etc/storage/
 chmod 755 "/etc/storage/koolproxy_rules_script.sh"
 fi
+if [ ! -f "/etc/storage/wxsend.sh" ] ; then
+cp -rf /etc_ro/wxsend.sh /etc/storage/
+chmod 755 "/etc/storage/wxsend.sh"
+fi
 if [ ! -f "/etc/storage/koolproxy_rules_list.sh" ] ; then
 cp -rf /etc_ro/koolproxy_rules_list.sh /etc/storage/
 chmod 755 "/etc/storage/koolproxy_rules_list.sh"
