@@ -8,7 +8,8 @@ fork于fightroad的仓库 https://github.com/fightroad/Padavan-KVR.git
 
 想要没有改主题的可以去上面大佬主页fork
 
-默认纯净没有添加插件，[在线云编译修改插件](.github/workflows/NEWIFI3.yml) [自定义增减插件](trunk/configs/templates/NEWIFI3.config)
+默认纯净没有添加插件，[在线云编译修改插件](.github/workflows/NEWIFI3.yml) [自定义增减插件](trunk/configs/templates/NEWIFI3.config)，
+我删掉了其他机型的[插件配置文件](trunk/configs/templates)，从[vb1980/Padavan-KVR](https://github.com/fightroad/Padavan-KVR/trunk/configs/templates)复制过来吧
 
 [修改自己想要的背景](/trunk/user/www/n56u_ribbon_fixed/bootstrap/img/bg/wood.jpg) 替换wood.jpg文件就行
 
