@@ -43,6 +43,11 @@ function initial(){
 
 }
 
+function textarea_scripts_enabled(v){
+	inputCtrl(document.form['scripts.adg.sh'], v);
+}
+
+
 function applyRule(){
 //	if(validForm()){
 		showLoading();
@@ -135,7 +140,7 @@ function done_validating(action){
 									</p>
 									<a href="https://adguard.com/zh_cn/adguard-home/overview.html" target="blank">AdGuard 主页</a>
 									,项目地址：<a href="https://github.com/AdguardTeam/AdGuardHome" target="blank">https://github.com/AdguardTeam/AdGuardHome</a>
-									,备注：①安装需要 30M+ 的空间 ②默认帐号密码：adguardhome <a href="https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration#reset-web-password" target="blank">重置网页密码</a> ③ 修改密码/etc/storage/adg.sh 第四五行name:账号 password:填写转换后的密码
+									,备注：①安装需要 30M+ 的空间 ②默认帐号密码：adguardhome  ③ 修改密码下方adg.sh的第四五行name:账号 password:填写转换后的密码 ④ <a href="https://www.jisuan.mobi/nX7.html" target="blank">在线密码生成计算器</a>
 									</div>
 
 									<table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
@@ -171,7 +176,14 @@ function done_validating(action){
 											</td>
 										</tr>
 										
-
+<tr id="row_post_wan_script">
+											<td colspan="2">
+												<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('script2')"><span>adg配置参数-不懂请不要乱改！！！</span></a>
+												<div id="script2">
+													<textarea rows="18" wrap="off" spellcheck="false" maxlength="314571" class="span12" name="scripts.adg.sh" style="font-family:'Courier New'; font-size:12px;"><% nvram_dump("scripts.adg.sh",""); %></textarea>
+												</div>
+											</td>
+										</tr>
 										<tr>
 											<td colspan="2" style="border-top: 0 none;">
 												<br />
@@ -194,4 +206,3 @@ function done_validating(action){
 </div>
 </body>
 </html>
-
