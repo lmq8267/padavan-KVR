@@ -390,6 +390,7 @@ if [ ! -f "$script_postw" ] ; then
 #4.下方填= 1启用自定义内容推送（= 中间必须要留有空格）例如= 1
 #wxsend_notify_4= 1
 #4.自定义教程：自建微信推送脚本ipv6进程守护循环检测https://www.right.com.cn/forum/thread-8282061-1-1.html
+#4.修改微信推送脚本的路径/etc/storage/wxsendfile.sh
 #5.下方填= 循环检测的时间，每隔多少秒检测一次 秒为单位（= 中间必须要留有空格）例如三分钟= 180
 #wxsend_time= 60
 #6.下方代码去掉前面的#,表示启用微信推送开机自启
