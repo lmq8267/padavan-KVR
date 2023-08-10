@@ -100,11 +100,11 @@ rules() {
 	zt0=$(ifconfig | grep zt | awk '{print $1}')
 	logger -t "zerotier" "zt interface $zt0 is started!"
 	del_rules
-	iptables -A INPUT -i $zt0 -j ACCEPT
-	iptables -A FORWARD -i $zt0 -o $zt0 -j ACCEPT
-	iptables -A FORWARD -i $zt0 -j ACCEPT
+	iptables -I INPUT -i $zt0 -j ACCEPT
+	iptables -I FORWARD -i $zt0 -o $zt0 -j ACCEPT
+	iptables -I FORWARD -i $zt0 -j ACCEPT
 	if [ $nat_enable -eq 1 ]; then
-		iptables -t nat -A POSTROUTING -o $zt0 -j MASQUERADE
+		iptables -t nat -I POSTROUTING -o $zt0 -j MASQUERADE
 		ip_segment=$(ip route | grep "dev $zt0  proto kernel" | awk '{print $1}')
 		iptables -t nat -A POSTROUTING -s $ip_segment -j MASQUERADE
 		zero_route "add"
