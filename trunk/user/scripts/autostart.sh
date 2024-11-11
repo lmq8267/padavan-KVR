@@ -31,7 +31,7 @@ do
 	if [ "$?" == "0" ]; then
 		break
 	fi
-	ping -c 1 -W 1 -q www.qq.com 1>/dev/null 2>&1
+	ping -c 1 -W 1 -q 8.8.8.8 1>/dev/null 2>&1
 	if [ "$?" == "0" ]; then
 		break
 	fi

@@ -334,11 +334,13 @@ EOF
 if [ ! -f "$script_gipv6" ] ; then
 		cat > "$script_gipv6" <<EOF
 #!/bin/sh
+
 ### Custom user script
 ### getipv6
 #wing resume
 hostipv6=\`ip -6 neighbor show | grep -i  \$1 | sed -n 's/.dev* \([0-9a-f:]\+\).*/\2/p' |  grep -v fe80:: |tail -n 1\`
 echo \${hostipv6}
+
 EOF
 		chmod 755 "$script_gipv6"
 fi
@@ -349,6 +351,7 @@ fi
 if [ ! -f "$script_ipv6" ] ; then
 		cat > "$script_ipv6" <<EOF
 #!/bin/sh
+
 ### Custom user script
 ### showipv6
 #wing resume
