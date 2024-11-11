@@ -101,7 +101,6 @@ nvram_commit_safe(void)
 void
 sys_reboot(void)
 {
-	notify_rc("manual_wan_disconnect");
 #ifdef MTD_FLASH_32M_REBOOT_BUG
 	doSystem("/sbin/mtd_storage.sh %s", "save");
 	system("/bin/mtd_write -r unlock mtd1");
@@ -2335,6 +2334,51 @@ static int frps_status_hook(int eid, webs_t wp, int argc, char **argv)
 }
 #endif
 
+/*#if defined (APP_NPC)
+static int npc_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int npc_status_code = pids("npc");
+	websWrite(wp, "function npc_status() { return %d;}\n", npc_status_code);
+	return 0;
+}
+#endif*/
+
+#if defined (APP_DDNSTO)
+static int ddnsto_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int ddnsto_status_code = pids("ddnsto");
+	websWrite(wp, "function ddnsto_status() { return %d;}\n", ddnsto_status_code);
+	return 0;
+}
+#endif
+
+#if defined (APP_NVPPROXY)
+static int nvpproxy_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int nvpproxy_status_code = pids("nvpproxy");
+	websWrite(wp, "function nvpproxy_status() { return %d;}\n", nvpproxy_status_code);
+	return 0;
+}
+#endif
+
+#if defined (APP_SHADOWSOCKS)
+static int dns2tcp_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int dns2tcp_status_code = pids("dns2tcp");
+	websWrite(wp, "function dns2tcp_status() { return %d;}\n", dns2tcp_status_code);
+	return 0;
+}
+#endif
+
+#if defined (APP_ALDRIVER)
+static int aliyundrive_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int aliyundrive_status_code = pids("aliyundrive-webdav");
+	websWrite(wp, "function aliyundrive_status() { return %d;}\n", aliyundrive_status_code);
+	return 0;
+}
+#endif
+
 static int update_action_hook(int eid, webs_t wp, int argc, char **argv)
 {
 	char *up_action = websGetVar(wp, "connect_action", "");
@@ -2554,6 +2598,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_zerotier = 0;
 #endif
+#if defined(APP_DDNSTO)
+	int found_app_ddnsto = 1;
+#else
+	int found_app_ddnsto = 0;
+#endif
 #if defined(APP_ADBYBY)
 	int found_app_adbyby = 1;
 #else
@@ -2569,6 +2618,16 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_frp = 0;
 #endif
+#if defined(APP_NVPPROXY)
+	int found_app_nvpproxy = 1;
+#else
+	int found_app_nvpproxy = 0;
+#endif
+/*#if defined(APP_NPC)
+	int found_app_npc = 1;
+#else
+	int found_app_npc = 0;
+#endif*/
 #if defined(APP_ALIDDNS)
 	int found_app_aliddns = 1;
 #else
@@ -2588,6 +2647,16 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 	int has_ipv6 = 1;
 #else
 	int has_ipv6 = 0;
+#endif
+#if defined(APP_WIREGUARD)
+	int found_app_wireguard = 1;
+#else
+	int found_app_wireguard = 0;
+#endif
+#if defined(APP_ALDRIVER)
+	int found_app_aldriver = 1;
+#else
+	int found_app_aldriver = 0;
 #endif
 
 #if defined(USE_HW_NAT)
@@ -2680,16 +2749,16 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int has_btn_mode = 0;
 #endif
-#if defined (USE_WID_5G) && (USE_WID_5G==7610 || USE_WID_5G==7612 || USE_WID_5G==7615) && BOARD_HAS_5G_11AC
+#if defined (USE_WID_5G) && (USE_WID_5G==7610 || USE_WID_5G==7612 || USE_WID_5G==7615 || USE_WID_5G==7915)
 	int has_5g_vht = 1;
 #else
 	int has_5g_vht = 0;
 #endif
-#if defined (USE_WID_5G) && USE_WID_5G==7615 && BOARD_HAS_5G_11AC
+#if defined (USE_WID_5G) && (USE_WID_5G==7615 || USE_WID_5G==7915)
 	int has_5g_mumimo = 1;
 	int has_5g_txbf = 1;
 	int has_5g_band_steering = 1;
-#if defined (BOARD_MT7615_DBDC)
+#if defined (BOARD_MT7615_DBDC) || (BOARD_MT7915_DBDC)
 	int has_5g_160mhz = 0;
 #else
 	int has_5g_160mhz = 1;
@@ -2700,7 +2769,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 	int has_5g_band_steering = 0;
 	int has_5g_160mhz = 0;
 #endif
-#if defined (USE_WID_2G) && USE_WID_2G==7615
+#if defined (USE_WID_2G) && (USE_WID_2G==7615 || USE_WID_2G==7915)
 	int has_2g_turbo_qam = 1;
 	int has_2g_airtimefairness = 1;
 #else
@@ -2722,10 +2791,20 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int has_sfe = 0;
 #endif
-#if defined (BOARD_MT7615_DBDC)
+#if defined (BOARD_MT7615_DBDC) || defined (BOARD_MT7915_DBDC)
 	int has_lan_ap_isolate = 0;
 #else
 	int has_lan_ap_isolate = 1;
+#endif
+#if defined (USE_WID_5G) && (USE_WID_5G==7915)
+	int has_5g_11ax = 1;
+#else
+	int has_5g_11ax = 0;
+#endif
+#if defined (USE_WID_2G) && (USE_WID_2G==7915)
+	int has_2g_11ax = 1;
+#else
+	int has_2g_11ax = 0;
 #endif
 
 	websWrite(wp,
@@ -2755,9 +2834,14 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_adbyby() { return %d;}\n"
 		"function found_app_smartdns() { return %d;}\n"
 		"function found_app_frp() { return %d;}\n"
+		"function found_app_nvpproxy() { return %d;}\n"
+		"function found_app_npc() { return %d;}\n"
 		"function found_app_wyy() { return %d;}\n"
 		"function found_app_zerotier() { return %d;}\n"
+		"function found_app_ddnsto() { return %d;}\n"
+		"function found_app_aldriver() { return %d;}\n"
 		"function found_app_aliddns() { return %d;}\n"
+		"function found_app_wireguard() { return %d;}\n"
 		"function found_app_xupnpd() { return %d;}\n"
 		"function found_app_mentohust() { return %d;}\n",
 		found_utl_hdparm,
@@ -2786,9 +2870,14 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_adbyby,
 		found_app_smartdns,
 		found_app_frp,
+		found_app_nvpproxy,
+		0,
 		found_app_wyy,
 		found_app_zerotier,
+		found_app_ddnsto,
+		found_app_aldriver,
 		found_app_aliddns,
+		found_app_wireguard,
 		found_app_xupnpd,
 		found_app_mentohust
 	);
@@ -2830,14 +2919,16 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function support_5g_mumimo() { return %d;}\n"
 		"function support_sfe() { return %d;}\n"
 		"function support_lan_ap_isolate() { return %d;}\n"
-		"function support_5g_160mhz() { return %d;}\n",
+		"function support_5g_160mhz() { return %d;}\n"
+		"function support_5g_11ax() { return %d;}\n"
+		"function support_2g_11ax() { return %d;}\n",
 		has_ipv6,
 		has_ipv6_ppe,
 		has_ipv4_ppe,
 		has_peap_ssl,
 		has_http_ssl,
-		has_ddns_ssl,
 		has_openssl_ec,
+		has_ddns_ssl,
 		MIN_EXT_VLAN_VID,
 		max_conn,
 		has_mtd_rwfs,
@@ -2867,7 +2958,9 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		has_5g_mumimo,
 		has_sfe,
 		has_lan_ap_isolate,
-		has_5g_160mhz
+		has_5g_160mhz,
+		has_5g_11ax,
+		has_2g_11ax
 	);
 
 	return 0;
@@ -2965,22 +3058,26 @@ openvpn_srv_cert_hook(int eid, webs_t wp, int argc, char **argv)
 {
 	int has_found_cert = 0;
 #if defined(APP_OPENVPN)
-	int i, i_atls;
+	int i, i_atls, i_tcv2;
 	char key_file[64];
-	static const char *openvpn_server_keys[5] = {
+	static const char *openvpn_server_keys[6] = {
 		"ca.crt",
 		"dh1024.pem",
 		"server.crt",
 		"server.key",
-		"ta.key"
+		"ta.key",
+		"stc2.key"
 	};
 
 	has_found_cert = 1;
 
 	i_atls = nvram_get_int("vpns_ov_atls");
+	i_tcv2 = nvram_get_int("vpns_ov_tcv2");
 
-	for (i=0; i<5; i++) {
+	for (i=0; i<6; i++) {
 		if (!i_atls && (i == 4))
+			continue;
+		if (!i_tcv2 && (i == 5))
 			continue;
 		sprintf(key_file, "%s/%s", STORAGE_OVPNSVR_DIR, openvpn_server_keys[i]);
 		if (!f_exists(key_file)) {
@@ -2998,26 +3095,28 @@ static int openvpn_cli_cert_hook(int eid, webs_t wp, int argc, char **argv)
 {
 	int has_found_cert = 0;
 #if defined(APP_OPENVPN)
-	int i, i_auth, i_atls;
+	int i, i_atls, i_tcv2;
 	char key_file[64];
-	static const char *openvpn_client_keys[4] = {
+	static const char *openvpn_server_keys[6] = {
 		"ca.crt",
-		"client.crt",
-		"client.key",
-		"ta.key"
+		"dh1024.pem",
+		"server.crt",
+		"server.key",
+		"ta.key",
+		"stc2.key"
 	};
 
 	has_found_cert = 1;
 
-	i_auth = nvram_get_int("vpnc_ov_auth");
-	i_atls = nvram_get_int("vpnc_ov_atls");
+	i_atls = nvram_get_int("vpns_ov_atls");
+	i_tcv2 = nvram_get_int("vpns_ov_tcv2");
 
-	for (i=0; i<4; i++) {
-		if (i_auth == 1 && (i == 1 || i == 2))
+	for (i=0; i<6; i++) {
+		if (!i_atls && (i == 4))
 			continue;
-		if (!i_atls && (i == 3))
+		if (!i_tcv2 && (i == 5))
 			continue;
-		sprintf(key_file, "%s/%s", STORAGE_OVPNCLI_DIR, openvpn_client_keys[i]);
+		sprintf(key_file, "%s/%s", STORAGE_OVPNSVR_DIR, openvpn_server_keys[i]);
 		if (!f_exists(key_file)) {
 			has_found_cert = 0;
 			break;
@@ -3114,6 +3213,7 @@ static int ej_get_nvram_list(int eid, webs_t wp, int argc, char **argv) {
 	return 0;
 }
 
+// for detect static IP's client.
 static int ej_get_static_client(int eid, webs_t wp, int argc, char **argv)
 {
 	FILE *fp;
@@ -3123,7 +3223,6 @@ static int ej_get_static_client(int eid, webs_t wp, int argc, char **argv)
 	lock = file_lock("networkmap");
 
 	first_client = 1;
-	
 	fp = fopen("/tmp/static_ip.inf", "r");
 	if (fp) {
 		while (fgets(buf, sizeof(buf), fp)) {
@@ -3168,15 +3267,14 @@ static int ej_get_static_client(int eid, webs_t wp, int argc, char **argv)
 
 	return 0;
 }
+
 // for detect static IP's client.
 static int ej_get_static_client_ipv6(int eid, webs_t wp, int argc, char **argv)
 {
 	FILE *fp;
 	char buf[512], *head, *tail, field[512];
 	int i, lock, len, first_client, first_field;
-
 	lock = file_lock("networkmap");
-
 	first_client = 1;
 	//---modify static_ip.inf to ipv6 20210322
 	//move to  user/networkmap/networkmap.c  doSystem("%s >/tmp/syscmd.log 2>&1\n", "sh /etc/storage/ipv6.sh");
@@ -3219,9 +3317,7 @@ static int ej_get_static_client_ipv6(int eid, webs_t wp, int argc, char **argv)
 		
 		fclose(fp);
 	}
-
 	file_unlock(lock);
-
 	return 0;
 }
 
@@ -3598,13 +3694,6 @@ apply_cgi(const char *url, webs_t wp)
 		websRedirect(wp, current_url);
 		return 0;
 	}
-	else if (!strcmp(value, " ClearssLog "))
-	{
-		// current only syslog implement this button
-		unlink("/tmp/ssrplus.log");
-		websRedirect(wp, current_url);
-		return 0;
-	}
 	else if (!strcmp(value, " Reboot "))
 	{
 		sys_reboot();
@@ -3613,6 +3702,13 @@ apply_cgi(const char *url, webs_t wp)
 	else if (!strcmp(value, " Shutdown "))
 	{
 		system("shutdown");
+		websRedirect(wp, current_url);
+		return 0;
+	}
+	else if (!strcmp(value, " FreeMemory "))
+	{
+		doSystem("sync");
+		doSystem("echo 3 > /proc/sys/vm/drop_caches");
 		websRedirect(wp, current_url);
 		return 0;
 	}
@@ -4612,6 +4708,7 @@ struct ej_handler ej_handlers[] =
 	{ "shadowsocks_status", shadowsocks_status_hook},
 	{ "rules_count", rules_count_hook},
 	{ "pdnsd_status", pdnsd_status_hook},
+	{ "dns2tcp_status", dns2tcp_status_hook},
 #endif
 #if defined (APP_KOOLPROXY)
 	{ "koolproxy_action", koolproxy_action_hook},
@@ -4634,7 +4731,22 @@ struct ej_handler ej_handlers[] =
 	{ "frpc_status", frpc_status_hook},
 	{ "frps_status", frps_status_hook},
 #endif
-    { "update_action", update_action_hook},
+#if defined (APP_NVPPROXY)
+	{ "nvpproxy_status", nvpproxy_status_hook},
+#endif
+/*#if defined (APP_NPC)
+	{ "npc_status", npc_status_hook},
+#endif*/
+#if defined (APP_ZEROTIER)
+	{ "zerotier_status", zerotier_status_hook},
+#endif
+#if defined (APP_DDNSTO)
+	{ "ddnsto_status", ddnsto_status_hook},
+#endif
+#if defined (APP_ALDRIVER)
+	{ "aliyundrive_status", aliyundrive_status_hook},
+#endif
+	{ "update_action", update_action_hook},
 	{ "openssl_util_hook", openssl_util_hook},
 	{ "openvpn_srv_cert_hook", openvpn_srv_cert_hook},
 	{ "openvpn_cli_cert_hook", openvpn_cli_cert_hook},
