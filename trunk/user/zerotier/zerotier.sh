@@ -1,30 +1,26 @@
 #!/bin/sh
 #20200426 chongshengB
 #20210410 xumng123
-PROG=/usr/bin/zerotier-one
-PROGCLI=/usr/bin/zerotier-cli
-PROGIDT=/usr/bin/zerotier-idtool
+#20240831 fightround
+PROG=/etc/storage/bin/zerotier-one
+PROGCLI=/etc/storage/bin/zerotier-cli
+PROGIDT=/etc/storage/bin/zerotier-idtool
 config_path="/etc/storage/zerotier-one"
-PLANET="/etc/storage/zerotier-one/planet"
+user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+github_proxys="$(nvram get github_proxy)"
 start_instance() {
-	cfg="$1"
-	echo $cfg
 	port=""
 	args=""
+	nwid="$(nvram get zerotier_id)"
 	moonid="$(nvram get zerotier_moonid)"
-	secret="$(cat /etc/storage/zerotier-one/identity.secret)"
-	enablemoonserv="$(nvram get zerotiermoon_enable)"
-	planet="$(nvram get zerotier_planet)"
-	[ ! -e "/etc/storage/zerotier-one/identity.secret" ] && secret="$(nvram get zerotier_secret)"
-	if [ ! -d "$config_path" ]; then
-		mkdir -p $config_path
-	fi
+	secret="$(nvram get zerotier_secret)"
 	mkdir -p $config_path/networks.d
+	mkdir -p $config_path/moons.d
 	if [ -n "$port" ]; then
 		args="$args -p$port"
 	fi
 	if [ -z "$secret" ]; then
-		logger -t "zerotier" "设备密匙为空,正在生成密匙,请稍后..."
+		logger -t "zerotier" "密匙为空,正在生成密匙,请稍后..."
 		sf="$config_path/identity.secret"
 		pf="$config_path/identity.public"
 		$PROGIDT generate "$sf" "$pf"  >/dev/null
@@ -33,64 +29,29 @@ start_instance() {
 		#rm "$sf"
 		nvram set zerotier_secret="$secret"
 		nvram commit
-	fi
-	if [ -n "$secret" ]; then
-		logger -t "zerotier" "找到密匙,正在启动,请稍后..."
+	else
+		logger -t "zerotier" "找到密匙,正在写入文件,请稍后..."
 		echo "$secret" >$config_path/identity.secret
 		$PROGIDT getpublic $config_path/identity.secret >$config_path/identity.public
 		#rm -f $config_path/identity.public
 	fi
-
-	if [ -n "$planet"]; then
-		logger -t "zerotier" "找到planet,正在写入文件,请稍后..."
-		echo "$planet" >$config_path/planet.tmp
-		base64 -d $config_path/planet.tmp >$config_path/planet
-	fi
-
-	if [ -f "$PLANET" ]; then
-		if [ ! -s "$PLANET" ]; then
-			logger -t "zerotier" "自定义planet文件为空,删除..."
-			rm -f $config_path/planet
-			rm -f $PLANET
-			nvram set zerotier_planet=""
-			nvram commit
-		else
-			logger -t "zerotier" "自定义planet文件不为空,创建..."
-			planet="$(base64 $PLANET)"
-			cp -f $PLANET $config_path/planet
-			rm -f $PLANET
-			nvram set zerotier_planet="$planet"
-			nvram commit
-		fi
-	fi
-
-	add_join $(nvram get zerotier_id)
-
+	logger -t "zerotier" "启动 $PROG $args $config_path"
 	$PROG $args $config_path >/dev/null 2>&1 &
 
-	rules
-
+	while [ ! -f $config_path/zerotier-one.port ]; do
+		sleep 1
+	done
 	if [ -n "$moonid" ]; then
-		$PROGCLI -D$config_path orbit $moonid $moonid
-		logger -t "zerotier" "orbit moonid $moonid ok!"
+		$PROGCLI orbit $moonid $moonid
+		logger -t "zerotier" "加入moon: $moonid 成功!"
 	fi
+	if [ -n "$nwid" ]; then
+		$PROGCLI join $nwid
+		logger -t "zerotier" "加入网络: $nwid 成功!"
+		rules
 
-
-	if [ -n "$enablemoonserv" ]; then
-		if [ "$enablemoonserv" -eq "1" ]; then
-			logger -t "zerotier" "creat moon start"
-			creat_moon
-		else
-			logger -t "zerotier" "remove moon start"
-			remove_moon
-		fi
 	fi
 }
-
-add_join() {
-		touch $config_path/networks.d/$1.conf
-}
-
 
 rules() {
 	while [ "$(ifconfig | grep zt | awk '{print $1}')" = "" ]; do
@@ -98,28 +59,48 @@ rules() {
 	done
 	nat_enable=$(nvram get zerotier_nat)
 	zt0=$(ifconfig | grep zt | awk '{print $1}')
-	logger -t "zerotier" "zt interface $zt0 is started!"
 	del_rules
+ 	logger -t "zerotier" "添加防火墙规则中..."
 	iptables -I INPUT -i $zt0 -j ACCEPT
 	iptables -I FORWARD -i $zt0 -o $zt0 -j ACCEPT
 	iptables -I FORWARD -i $zt0 -j ACCEPT
 	if [ $nat_enable -eq 1 ]; then
 		iptables -t nat -I POSTROUTING -o $zt0 -j MASQUERADE
-		ip_segment=$(ip route | grep "dev $zt0  proto kernel" | awk '{print $1}')
-		iptables -t nat -A POSTROUTING -s $ip_segment -j MASQUERADE
+		while [ "$(ip route | grep -E "dev\s+$zt0\s+proto\s+kernel"| awk '{print $1}')" = "" ]; do
+		    sleep 1
+		done
+		ip_segment=$(ip route | grep -E "dev\s+$zt0\s+proto\s+kernel"| awk '{print $1}')
+                logger -t "zerotier" "$zt0 网段为$ip_segment 添加进NAT规则中..."
+		iptables -t nat -I POSTROUTING -s $ip_segment -j MASQUERADE
 		zero_route "add"
 	fi
-
+	logger -t "zerotier" "启动成功! zerotier接口: $zt0 "
+ 	count=0
+        while [ $count -lt 5 ]
+        do
+       ztstatus=$($PROGCLI info | awk '{print $5}')
+       if [ "$ztstatus" = "OFFLINE" ]; then
+	        sleep 2
+        elif [ "$ztstatus" = "ONLINE" ]; then
+        	ztid=$($PROGCLI info | awk '{print $3}')
+        	logger -t "zerotier" "若官网没有此设备，请手动绑定此设备ID $ztid "
+        	break
+        fi
+        count=$(expr $count + 1)
+        done
+	if [ "$($PROGCLI info | awk '{print $5}')" = "OFFLINE" ] ; then
+	  logger -t "zerotier" "当前zerotier未上线，可能你的网络无法链接到zerotier官方服务器！"
+          exit 1
+        fi
 }
-
 
 del_rules() {
 	zt0=$(ifconfig | grep zt | awk '{print $1}')
-	ip_segment=`ip route | grep "dev $zt0  proto" | awk '{print $1}'`
-	iptables -D FORWARD -i $zt0 -j ACCEPT 2>/dev/null
-	iptables -D FORWARD -o $zt0 -j ACCEPT 2>/dev/null
-	iptables -D FORWARD -i $zt0 -o $zt0 -j ACCEPT
+	ip_segment=$(ip route | grep -E "dev\s+$zt0\s+proto\s+kernel"| awk '{print $1}')
+	logger -t "zerotier" "删除防火墙规则中..."
 	iptables -D INPUT -i $zt0 -j ACCEPT 2>/dev/null
+	iptables -D FORWARD -i $zt0 -o $zt0 -j ACCEPT 2>/dev/null
+	iptables -D FORWARD -i $zt0 -j ACCEPT 2>/dev/null
 	iptables -t nat -D POSTROUTING -o $zt0 -j MASQUERADE 2>/dev/null
 	iptables -t nat -D POSTROUTING -s $ip_segment -j MASQUERADE 2>/dev/null
 }
@@ -145,6 +126,37 @@ zero_route(){
 
 start_zero() {
 	logger -t "zerotier" "正在启动zerotier"
+ 	if [ ! -f "$PROG" ] ; then
+		logger -t "zerotier" "主程序${PROG}不存在，开始在线下载..."
+  		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
+  		curltest=`which curl`
+    		if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
+      			tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/lmq8267/ZeroTierOne/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+	 		[ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/ZeroTierOne/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+    		else
+      			tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/ZeroTierOne/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       			[ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/ZeroTierOne/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       		fi
+	 	[ -z "$tag" ] && tag="1.14.2"
+   		logger -t "zerotier" "开始下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 到 $PROG"
+     		for proxy in $github_proxys ; do
+       			curl -Lkso "$PROG" "${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one" || wget --no-check-certificate -q -O "$PROG" "${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one" || curl -Lkso "$PROG" "https://fastly.jsdelivr.net/gh/lmq8267/ZeroTierOne@master/install/${tag}/zerotier-one" || wget --no-check-certificate -q -O "$PROG" "https://fastly.jsdelivr.net/gh/lmq8267/ZeroTierOne@master/install/${tag}/zerotier-one"
+       			if [ "$?" = 0 ] ; then
+	  			chmod +x $PROG
+      				if [ $(($($PROG -h | wc -l))) -gt 3 ] ; then
+	  				logger -t "zerotier" "$PROG 下载成功"
+       				else
+	   				logger -t "zerotier" "下载失败，请手动下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 上传到  $PROG"
+					exit 1
+	  			fi
+	  		else
+				logger -t "zerotier" "下载失败，请手动下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 上传到  $PROG"
+				exit 1
+   			fi
+	 	done
+  	fi
+   	[ ! -L "$PROGCLI" ] && ln -sf $PROG $PROGCLI
+    	[ ! -L "$PROGIDT" ] && ln -sf $PROG $PROGIDT
 	kill_z
 	start_instance 'zerotier'
 
@@ -152,79 +164,18 @@ start_zero() {
 kill_z() {
 	zerotier_process=$(pidof zerotier-one)
 	if [ -n "$zerotier_process" ]; then
-		logger -t "ZEROTIER" "关闭进程..."
+		logger -t "zerotier" "有进程 $zerotier_proces 在运行，结束中..."
 		killall zerotier-one >/dev/null 2>&1
 		kill -9 "$zerotier_process" >/dev/null 2>&1
 	fi
 }
 stop_zero() {
+    logger -t "zerotier" "正在关闭zerotier..."
 	del_rules
 	zero_route "del"
 	kill_z
-}
-
-#创建moon节点
-creat_moon(){
-	moonip="$(nvram get zerotiermoon_ip)"
-	logger -t "zerotier" "moonip $moonip"
-	#检查是否合法ip
-	regex="\b(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[1-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[1-9])\b"
-	ckStep2=`echo $moonip | egrep $regex | wc -l`
-
-	logger -t "zerotier" "搭建ZeroTier的Moon中转服务器，生成moon配置文件"
-	if [ -z "$moonip" ]; then
-		#自动获取wanip
-		ip_addr=`ifconfig -a ppp0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
-	#elif [ $ckStep2 -eq 0 ]; then
-		#不是ip
-	#	ip_addr = `curl $moonip`
-	else
-		ip_addr=$moonip
-	fi
-	logger -t "zerotier" "moonip $ip_addr"
-	if [ -e $config_path/identity.public ]; then
-
-		$PROGIDT initmoon $config_path/identity.public > $config_path/moon.json
-		if `sed -i "s/\[\]/\[ \"$ip_addr\/9993\" \]/" $config_path/moon.json >/dev/null 2>/dev/null`; then
-			logger -t "zerotier" "生成moon配置文件成功"
-		else
-			logger -t "zerotier" "生成moon配置文件失败"
-		fi
-
-		logger -t "zerotier" "生成签名文件"
-		cd $config_path
-		pwd
-		$PROGIDT genmoon $config_path/moon.json
-		[ $? -ne 0 ] && return 1
-		logger -t "zerotier" "创建moons.d文件夹，并把签名文件移动到文件夹内"
-		if [ ! -d "$config_path/moons.d" ]; then
-			mkdir -p $config_path/moons.d
-		fi
-
-		#服务器加入moon server
-		mv $config_path/*.moon $config_path/moons.d/ >/dev/null 2>&1
-		logger -t "zerotier" "moon节点创建完成"
-
-		zmoonid=`cat moon.json | awk -F "[id]" '/"id"/{print$0}'` >/dev/null 2>&1
-		zmoonid=`echo $zmoonid | awk -F "[:]" '/"id"/{print$2}'` >/dev/null 2>&1
-		zmoonid=`echo $zmoonid | tr -d '"|,'`
-
-		nvram set zerotiermoon_id="$zmoonid"
-		nvram commit
-	else
-		logger -t "zerotier" "identity.public不存在"
-	fi
-}
-
-remove_moon(){
-	zmoonid="$(nvram get zerotiermoon_id)"
-
-	if [ ! -n "$zmoonid"]; then
-		rm -f $config_path/moons.d/000000$zmoonid.moon
-		rm -f $config_path/moon.json
-		nvram set zerotiermoon_id=""
-		nvram commit
-	fi
+	rm -rf $config_path
+	logger -t "zerotier" "zerotier关闭成功!"
 }
 
 case $1 in

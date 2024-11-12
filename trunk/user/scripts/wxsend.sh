@@ -1,14 +1,14 @@
 #!/bin/bash
 #copyright by hiboy
-wxsend_appid=$(cat /etc/storage/post_wan_script.sh | grep "wx_appid=" | awk '{print $2}')
-wxsend_appsecret=$(cat /etc/storage/post_wan_script.sh | grep "wx_appsecret=" | awk '{print $2}')
-wxsend_touser=$(cat /etc/storage/post_wan_script.sh | grep "wxsend_touser=" | awk '{print $2}')
-wxsend_template_id=$(cat /etc/storage/post_wan_script.sh | grep "wxsend_template_id=" | awk '{print $2}')
-wxsend_notify_1=$(cat /etc/storage/post_wan_script.sh | grep "wxsend_notify_1=" | awk '{print $2}')
-wxsend_notify_2=$(cat /etc/storage/post_wan_script.sh | grep "wxsend_notify_2=" | awk '{print $2}')
-wxsend_notify_3=$(cat /etc/storage/post_wan_script.sh | grep "wxsend_notify_3=" | awk '{print $2}')
-wxsend_notify_4=$(cat /etc/storage/post_wan_script.sh | grep "wxsend_notify_4=" | awk '{print $2}')
-wxtime=$(cat /etc/storage/post_wan_script.sh | grep "wxsend_time=" | awk '{print $2}')
+wxsend_appid=`nvram get wx_appid`
+wxsend_appsecret=`nvram get wx_appsecret`
+wxsend_touser=`nvram get wxsend_touser`
+wxsend_template_id=`nvram get wxsend_template_id`
+wxsend_notify_1=`nvram get wxsend_notify_1`
+wxsend_notify_2=`nvram get wxsend_notify_2`
+wxsend_notify_3=`nvram get wxsend_notify_3`
+wxsend_notify_4=`nvram get wxsend_notify_4`
+wxtime=`nvram get wxsend_time`
 [ -z "$wxtime" ] && wxtime=60
 data="$(date "+%G-%m-%d_%H:%M:%S")"
 
@@ -114,12 +114,12 @@ if [ ! -f "$app_30" ] || [ ! -s "$app_30" ] ; then
 # 系统管理 - 服务 - 调度任务(Crontab)，可自定义开启\关闭时间
 export PATH='/etc/storage/bin:/tmp/script:/etc/storage/script:/opt/usr/sbin:/opt/usr/bin:/opt/sbin:/opt/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin'
 export LD_LIBRARY_PATH=/lib:/opt/lib
-wxsend_notify_1=$(cat /etc/storage/post_wan_script.sh | grep "wxsend_notify_1=" | awk '{print $2}')
-wxsend_notify_2=$(cat /etc/storage/post_wan_script.sh | grep "wxsend_notify_2=" | awk '{print $2}')
-wxsend_notify_3=$(cat /etc/storage/post_wan_script.sh | grep "wxsend_notify_3=" | awk '{print $2}')
-wxsend_notify_4=$(cat /etc/storage/post_wan_script.sh | grep "wxsend_notify_4=" | awk '{print $2}')
-wxsend_notify_4=$(cat /etc/storage/post_wan_script.sh | grep "wxsend_notify_4=" | awk '{print $2}')
-wxtime=$(cat /etc/storage/post_wan_script.sh | grep "wxsend_time=" | awk '{print $2}')
+wxsend_notify_1=`nvram get wxsend_notify_1`
+wxsend_notify_2=`nvram get wxsend_notify_2`
+wxsend_notify_3=`nvram get wxsend_notify_3`
+wxsend_notify_4=`nvram get wxsend_notify_4`
+wxsend_notify_4=`nvram get wxsend_notify_4`
+wxtime=`nvram get wxsend_time`
 mkdir -p /tmp/var
 resub=1
 resub=1

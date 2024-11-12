@@ -21,7 +21,7 @@ func_get_mtd()
 		mtd_part_dev="/dev/mtdblock${mtd_idx}"
 		mtd_part_size=`echo $((0x$mtd_hex))`
 	else
-		logger -t "Storage" "Cannot find MTD partition: $mtd_part_name"
+		logger -t "Storage" "无法找到 MTD 分区: $mtd_part_name"
 		exit 1
 	fi
 }
@@ -54,7 +54,7 @@ func_load()
 	else
 		result=1
 		rm -f $hsh
-		logger -t "Storage load" "Invalid storage data in MTD partition: $mtd_part_dev"
+		logger -t "Storage load" "MTD 分区中的存储数据无效: $mtd_part_dev"
 	fi
 	rm -f $tmp
 	rm -f $slk
@@ -68,7 +68,7 @@ func_tarb()
 	find * ! -type d -print0 | sort -z | xargs -0 tar -cf $tmp 2>/dev/null
 	cd - >>/dev/null
 	if [ ! -f "$tmp" ] ; then
-		logger -t "Storage" "Cannot create tarball file: $tmp"
+		logger -t "Storage" "无法创建 tarball 文件: $tmp"
 		exit 1
 	fi
 }
@@ -77,12 +77,12 @@ func_save()
 {
 	local fsz
 
-	logger -t "Storage save" "Save storage files to MTD partition \"$mtd_part_dev\""
-	echo "Save storage files to MTD partition \"$mtd_part_dev\""
+	logger -t "Storage save" "将存储文件保存到 MTD 分区 \"$mtd_part_dev\""
+	echo "将存储文件保存到 MTD 分区 \"$mtd_part_dev\""
 	rm -f $tbz
 	md5sum -c -s $hsh 2>/dev/null
 	if [ $? -eq 0 ] ; then
-		echo "Storage hash is not changed, skip write to MTD partition. Exit."
+		echo "存储哈希未更改，跳过写入 MTD 分区。退出。"
 		rm -f $tmp
 		return 0
 	fi
@@ -92,17 +92,17 @@ func_save()
 	if [ -n "$fsz" ] && [ $fsz -ge 16 ] && [ $fsz -le $mtd_part_size ] ; then
 		mtd_write write $tbz $mtd_part_name
 		if [ $? -eq 0 ] ; then
-			echo "Done."
-			logger -t "Storage save" "Done."
+			echo "完成."
+			logger -t "Storage save" "完成."
 		else
 			result=1
-			echo "Error! MTD write FAILED"
-			logger -t "Storage save" "Error write to MTD partition: $mtd_part_dev"
+			echo "错误！MTD 写入失败。"
+			logger -t "Storage save" "错误！MTD 写入失败。: $mtd_part_dev"
 		fi
 	else
 		result=1
-		echo "Error! Invalid storage final data size: $fsz"
-		logger -t "Storage save" "Invalid storage final data size: $fsz"
+		echo "错误！无效的存储最终数据大小: $fsz"
+		logger -t "Storage save" "无效的存储最终数据大小: $fsz"
 	fi
 	rm -f $tmp
 	rm -f $tbz
@@ -114,7 +114,7 @@ func_backup()
 	bzip2 -9 $tmp 2>/dev/null
 	if [ $? -ne 0 ] ; then
 		result=1
-		logger -t "Storage backup" "Cannot create BZ2 file!"
+		logger -t "Storage backup" "无法创建 BZ2 文件!"
 	fi
 	rm -f $tmp
 }
@@ -129,7 +129,7 @@ func_restore()
 	if [ -z "$fsz" ] || [ $fsz -lt 16 ] || [ $fsz -gt $mtd_part_size ] ; then
 		result=1
 		rm -f $tbz
-		logger -t "Storage restore" "Invalid BZ2 file size: $fsz"
+		logger -t "Storage restore" "无效的 BZ2 文件大小: $fsz"
 		return 1
 	fi
 
@@ -141,14 +141,14 @@ func_restore()
 		result=1
 		rm -f $tbz
 		rm -rf $tmp_storage
-		logger -t "Storage restore" "Unable to extract BZ2 file: $tbz"
+		logger -t "Storage restore" "无法解压 BZ2 文件: $tbz"
 		return 1
 	fi
 	if [ ! -f "$tmp_storage/start_script.sh" ] ; then
 		result=1
 		rm -f $tbz
 		rm -rf $tmp_storage
-		logger -t "Storage restore" "Invalid content of BZ2 file: $tbz"
+		logger -t "Storage restore" "BZ2 文件内容无效: $tbz"
 		return 1
 	fi
 
@@ -375,27 +375,27 @@ if [ ! -f "$script_postw" ] ; then
 #************微信推送*******************
 #自建微信推送申请地址：https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login
 #教程：https://opt.cn2qq.com/opt-file/测试号配置.pdf
-#1.下方填写申请的appid=（= 中间必须要留有空格）例如= wx9137fdf261df9f7d
-#wx_appid= 
-#2.下方填写申请的appsecret=（= 中间必须要留有空格）例如= b2a0256470a6cf7e3f3a9e63c8197560
-#wx_appsecret= 
-#3.下方填写申请的微信号=（= 中间必须要留有空格）例如= ok5hz6FNykEAX9X7VnKuFd7YCPqg
-#wxsend_touser= 
-#4.下方填写申请的模板ID=（= 中间必须要留有空格）例如= pHc01IZWHyM3NOC-8vQ26XAB-mApPLrWVZI1A29iSj0
-#wxsend_template_id= 
+#1.下方填写申请的appid=
+nvram set wx_appid= 
+#2.下方填写申请的appsecret=
+nvram set wx_appsecret= 
+#3.下方填写申请的微信号=
+nvram set wxsend_touser= 
+#4.下方填写申请的模板ID=
+nvram set wxsend_template_id= 
 #*****以下功能推送脚本路径：/etc/storage/wxsendfile.sh **********
-#1.下方填= 1启用WAN口IP变动推送 （= 中间必须要留有空格）例如= 1
-#wxsend_notify_1= 1 
-#2.下方填= 1启用设备接入推送（= 中间必须要留有空格）例如= 1
-#wxsend_notify_2= 1
-#3.下方填= 1启用设备上、下线推送（= 中间必须要留有空格）例如= 1
-#wxsend_notify_3= 1
-#4.下方填= 1启用自定义内容推送（= 中间必须要留有空格）例如= 1
-#wxsend_notify_4= 1
+#1.下方填= 1启用WAN口IP变动推送 
+nvram set wxsend_notify_1= 1 
+#2.下方填= 1启用设备接入推送
+nvram set wxsend_notify_2= 1
+#3.下方填= 1启用设备上、下线推送
+nvram set wxsend_notify_3= 1
+#4.下方填= 1启用自定义内容推送
+nvram set wxsend_notify_4= 1
 #4.自定义教程：自建微信推送脚本ipv6进程守护循环检测https://www.right.com.cn/forum/thread-8282061-1-1.html
 #4.修改微信推送脚本的路径/etc/storage/wxsendfile.sh
-#5.下方填= 循环检测的时间，每隔多少秒检测一次 秒为单位（= 中间必须要留有空格）例如三分钟= 180
-#wxsend_time= 60
+#5.下方填= 循环检测的时间，每隔多少秒检测一次 秒为单位，例如三分钟= 180
+nvram set wxsend_time= 60
 #6.下方代码去掉前面的#,表示启用微信推送开机自启
 #/etc/srotage/wxsend.sh start &
 #************微信推送*******************
