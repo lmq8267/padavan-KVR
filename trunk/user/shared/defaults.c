@@ -894,6 +894,12 @@ struct nvram_pair router_defaults[] = {
 	{ "ald_read_only", "0" },
 #endif
 
+#if defined(APP_UUPLUGIN)
+	/*网易UU游戏加速器*/
+	{ "uu_enable", "0" },
+	{ "uu_admin", "" },
+#endif
+
 	/* DHCP server parameters */
 	{ "dhcp_start", DEF_LAN_DHCP_BEG },	/* First assignable DHCP address */
 	{ "dhcp_end", DEF_LAN_DHCP_END },	/* Last assignable DHCP address */

@@ -442,6 +442,11 @@ if (found_app_wyy()){
 if (found_app_aldriver()){
 	tabtitle[20] = new Array("", "<#menu5_36_1#>");
 }
+if (found_app_uuplugin()){
+	tabtitle[20] = new Array("", "网易UU游戏加速器");
+}
+
+
 //Level 3 Tab title
 
 tablink[0] = new Array("", "Advanced_Wireless2g_Content.asp", "Advanced_WGuest2g_Content.asp", "Advanced_WMode2g_Content.asp", "Advanced_ACL2g_Content.asp", "Advanced_WSecurity2g_Content.asp", "Advanced_WAdvanced2g_Content.asp");
@@ -513,6 +518,10 @@ if (found_app_aldriver()){
 	aliyundrive_array = new Array("","Advanced_aliyundrive.asp");
 	tablink[20] = (aliyundrive_array);
 }
+if (found_app_uuplugin()){
+	uuplugin_array = new Array("","Advanced_uuplugin.asp");
+	tablink[21] = (uuplugin_array);
+}
 
 //Level 2 Menu
 menuL2_title = new Array(21)
@@ -571,6 +580,10 @@ if (found_app_aldriver()){
 	menuL2_title.push("<#menu5_36#>");
 } else menuL2_title.push("");
 
+if (found_app_uuplugin()){
+	menuL2_title.push("网易UU游戏加速器");
+} else menuL2_title.push("");
+
 menuL2_link  = new Array("", tablink[0][1], tablink[1][1], tablink[2][1], tablink[3][1], tablink[4][1], tablink[5][1], tablink[6][1], tablink[7][1], support_2g_radio() ? tablink[8][1] : "Main_EStatus_Content.asp", tablink[9][1]);
 if (found_app_scutclient()){
 	menuL2_link.push(scutclient_array[1]);
@@ -617,6 +630,9 @@ if (found_app_wyy()){
 } else menuL2_link.push("");
 if (found_app_aldriver()){
 	menuL2_link.push(aliyundrive_array[1]);
+} else menuL2_link.push("");
+if (found_app_uuplugin()){
+	menuL2_link.push(uuplugin_array[1]);
 } else menuL2_link.push("");
 
 //Level 1 Menu in Gateway, Router mode
@@ -1509,6 +1525,7 @@ var w_frp = '<% nvram_get_x("", "w_frp"); %>';
 var w_caddy = '<% nvram_get_x("", "w_caddy"); %>';
 var w_wyy = '<% nvram_get_x("", "w_wyy"); %>';
 var w_aldriver = '<% nvram_get_x("", "w_aldriver"); %>';
+var w_uuplugin = '<% nvram_get_x("", "w_uuplugin"); %>';
 
 if (w_ai==0){
 	menuL1_link[2] = "";
@@ -1585,6 +1602,10 @@ if (w_wyy==0){
 if (w_aldriver==0){
 	menuL2_link[21] = "";
 	menuL2_title[21] = "";
+}
+if (w_uuplugin==0){
+	menuL2_link[22] = "";
+	menuL2_title[22] = "";
 }
 
 (function($){

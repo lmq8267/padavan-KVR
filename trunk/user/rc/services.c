@@ -646,6 +646,23 @@ void restart_aldriver(void){
 }
 #endif
 
+#if defined(APP_UUPLUGIN)
+void stop_uuplugin(void){
+	eval("/usr/bin/uuplugin.sh","stop");
+}
+
+void start_uuplugin(void){
+	int uu_enable = nvram_get_int("uu_enable");
+	if ( uu_enable == 1)
+		eval("/usr/bin/uuplugin.sh","start");
+}
+
+void restart_uuplugin(void){
+	stop_uuplugin();
+	start_uuplugin();
+}
+#endif
+
 void
 start_httpd(int restart_fw)
 {
@@ -944,6 +961,9 @@ stop_services(int stopall)
 #endif
 #if defined(APP_ALDRIVER)
 	stop_aldriver();
+#endif
+#if defined(APP_UUPLUGIN)
+	stop_uuplugin();
 #endif
 	stop_networkmap();
 	stop_lltd();

@@ -372,33 +372,7 @@ if [ ! -f "$script_postw" ] ; then
 ### \$2 - WAN interface name (e.g. eth3 or ppp0)
 ### \$3 - WAN IPv4 address
 
-#************微信推送*******************
-#自建微信推送申请地址：https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login
-#教程：https://opt.cn2qq.com/opt-file/测试号配置.pdf
-#1.下方填写申请的appid=
-nvram set wx_appid= 
-#2.下方填写申请的appsecret=
-nvram set wx_appsecret= 
-#3.下方填写申请的微信号=
-nvram set wxsend_touser= 
-#4.下方填写申请的模板ID=
-nvram set wxsend_template_id= 
-#*****以下功能推送脚本路径：/etc/storage/wxsendfile.sh **********
-#1.下方填= 1启用WAN口IP变动推送 
-nvram set wxsend_notify_1= 1 
-#2.下方填= 1启用设备接入推送
-nvram set wxsend_notify_2= 1
-#3.下方填= 1启用设备上、下线推送
-nvram set wxsend_notify_3= 1
-#4.下方填= 1启用自定义内容推送
-nvram set wxsend_notify_4= 1
-#4.自定义教程：自建微信推送脚本ipv6进程守护循环检测https://www.right.com.cn/forum/thread-8282061-1-1.html
-#4.修改微信推送脚本的路径/etc/storage/wxsendfile.sh
-#5.下方填= 循环检测的时间，每隔多少秒检测一次 秒为单位，例如三分钟= 180
-nvram set wxsend_time= 60
-#6.下方代码去掉前面的#,表示启用微信推送开机自启
-#/etc/srotage/wxsend.sh start &
-#************微信推送*******************
+
 
 
 EOF

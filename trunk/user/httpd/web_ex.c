@@ -2379,6 +2379,15 @@ static int aliyundrive_status_hook(int eid, webs_t wp, int argc, char **argv)
 }
 #endif
 
+#if defined (APP_UUPLUGIN)
+static int uuplugin_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int uuplugin_status_code = pids("uuplugin");
+	websWrite(wp, "function uuplugin_status() { return %d;}\n", uuplugin_status_code);
+	return 0;
+}
+#endif
+
 static int update_action_hook(int eid, webs_t wp, int argc, char **argv)
 {
 	char *up_action = websGetVar(wp, "connect_action", "");
@@ -2658,6 +2667,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_aldriver = 0;
 #endif
+#if defined(APP_UUPLUGIN)
+	int found_app_uuplugin = 1;
+#else
+	int found_app_uuplugin = 0;
+#endif
 
 #if defined(USE_HW_NAT)
 	int has_ipv4_ppe = 1;
@@ -2840,6 +2854,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_zerotier() { return %d;}\n"
 		"function found_app_ddnsto() { return %d;}\n"
 		"function found_app_aldriver() { return %d;}\n"
+		"function found_app_uuplugin() { return %d;}\n"
 		"function found_app_aliddns() { return %d;}\n"
 		"function found_app_wireguard() { return %d;}\n"
 		"function found_app_xupnpd() { return %d;}\n"
@@ -2876,6 +2891,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_zerotier,
 		found_app_ddnsto,
 		found_app_aldriver,
+		found_app_uuplugin,
 		found_app_aliddns,
 		found_app_wireguard,
 		found_app_xupnpd,
@@ -4745,6 +4761,9 @@ struct ej_handler ej_handlers[] =
 #endif
 #if defined (APP_ALDRIVER)
 	{ "aliyundrive_status", aliyundrive_status_hook},
+#endif
+#if defined (APP_UUPLUGIN)
+	{ "uuplugin_status", uuplugin_status_hook},
 #endif
 	{ "update_action", update_action_hook},
 	{ "openssl_util_hook", openssl_util_hook},

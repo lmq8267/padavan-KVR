@@ -247,6 +247,9 @@ endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_ALDRIVER),y)
 	rm -f $(INSTALLDIR)/www/Advanced_aliyundrive.asp
 endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_UUPLUGIN),y)
+	rm -f $(INSTALLDIR)/www/Advanced_uuplugin.asp
+endif
 
 clean:
 	@echo "Clean www romfs"

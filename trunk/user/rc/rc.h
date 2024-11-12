@@ -622,6 +622,11 @@ void stop_aldriver(void);
 void start_aldriver(void);
 void restart_aldriver(void);
 #endif
+#if defined(APP_UUPLUGIN)
+void stop_uuplugin(void);
+void start_uuplugin(void);
+void restart_uuplugin(void);
+#endif
 
 /* services_ex.c */
 int fill_dnsmasq_servers(void);

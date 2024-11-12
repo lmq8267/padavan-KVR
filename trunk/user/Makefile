@@ -169,6 +169,7 @@ dir_$(CONFIG_FIRMWARE_INCLUDE_XUPNPD)			+= xupnpd
 dir_$(CONFIG_FIRMWARE_INCLUDE_TCPDUMP)			+= tcpdump
 dir_$(CONFIG_FIRMWARE_INCLUDE_MTR)				+= mtr
 dir_$(CONFIG_FIRMWARE_INCLUDE_SOCAT)			+= socat
+dir_$(CONFIG_FIRMWARE_INCLUDE_NETCAT)			+= netcat
 dir_$(CONFIG_FIRMWARE_INCLUDE_SRELAY)			+= srelay
 dir_$(CONFIG_FIRMWARE_INCLUDE_TUNSAFE)			+= tunsafe
 ifeq ($(CONFIG_FIRMWARE_INCLUDE_WIREGUARD),y)
@@ -243,6 +244,7 @@ dir_$(CONFIG_FIRMWARE_INCLUDE_NVPPROXY)			+= nvpproxy
 #dir_$(CONFIG_FIRMWARE_INCLUDE_NPC)				+= npc
 dir_$(CONFIG_FIRMWARE_INCLUDE_DDNSTO)	        += ddnsto
 dir_$(CONFIG_FIRMWARE_INCLUDE_ALDRIVER)	                       += aliyundrive-webdav
+dir_$(CONFIG_FIRMWARE_INCLUDE_UUPLUGIN)	                       += uuplugin
 ifdef CONFIG_MTD_UBI
 ifneq ($(STORAGE_ENABLED),y)
 dir_y											+= optware
