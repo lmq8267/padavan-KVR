@@ -3730,7 +3730,7 @@ BOOLEAN WpaMessageSanity (
 
             if (MsgType < EAPOL_GROUP_MSG_1)
             {
-                MTWF_LOG(DBG_CAT_SEC, DBG_SUBCAT_ALL, DBG_LVL_TRACE, ("MIC Different in pairwise msg %d of 4-way handshake!\n", MsgType));
+                //MTWF_LOG(DBG_CAT_SEC, DBG_SUBCAT_ALL, DBG_LVL_TRACE, ("MIC Different in pairwise msg %d of 4-way handshake!\n", MsgType));
             }
             else
             {

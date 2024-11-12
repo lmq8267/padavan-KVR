@@ -488,7 +488,7 @@ static VOID CmdPsRetrieveStartRspFromCR(RTMP_ADAPTER *pAd, char *Data, UINT16 Le
 
 	if (tr_entry->ps_state != APPS_RETRIEVE_START_PS)
 	{
-		DBGPRINT(RT_DEBUG_ERROR | DBG_FUNC_PS, ("---->%s Entry(wcid=%d) ps state(%d) is not APPS_RETRIEVE_START_PS\n", __FUNCTION__, WlanIdx, tr_entry->ps_state));
+		//DBGPRINT(RT_DEBUG_ERROR | DBG_FUNC_PS, ("---->%s Entry(wcid=%d) ps state(%d) is not APPS_RETRIEVE_START_PS\n", __FUNCTION__, WlanIdx, tr_entry->ps_state));
 		goto NEXT;
 	}
 
