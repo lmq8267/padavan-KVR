@@ -1274,6 +1274,15 @@
 	};
 #endif
 
+#if defined(APP_LUCKY)
+	struct variable variables_LUCKY=[] = {
+			{"lucky_enable", "", NULL, EVM_RESTART_LUCKY},
+			{"lucky_cmd", "", NULL, EVM_RESTART_LUCKY},
+			{"lucky.conf", "File", NULL, EVM_RESTART_LUCKY},
+			{0,0,0,0}
+	};
+#endif
+
     struct variable variables_DwebConf[] = {
 			{"w_ai", "", NULL, FALSE},
 			{"w_vpn_s", "", NULL, FALSE},
@@ -1294,6 +1303,8 @@
 			{"w_caddy", "", NULL, FALSE},
 			{"w_wyy", "", NULL, FALSE},
 			{"w_aldriver", "", NULL, FALSE}
+			{"w_uuplugin", "", NULL, FALSE}
+			{"w_lucky", "", NULL, FALSE}
 	};
 
 	struct variable variables_WLANConfig11b[] = {
@@ -1461,6 +1472,9 @@
 #if defined(APP_UUPLUGIN)
 		{"UUPLUGIN",		variables_UUPLUGIN},
 #endif
+#if defined(APP_LUCKY)
+		{"LUCKY",		variables_LUCKY},
+#endif
 		{"DwebConf",		variables_DwebConf},
 		{"LANGUAGE",			variables_Language},
 		{0,0}
@@ -1591,7 +1605,10 @@
 		{EVM_RESTART_ALDRIVER,		EVT_RESTART_ALDRIVER,		RCN_RESTART_ALDRIVER,	0},
 #endif
 #if defined(APP_UUPLUGIN)
-		{EVM_RESTART_UUPLUGIN,		EVT_RESTART_UUPLUGIN		RCN_RESTART_UUPLUGIN,	0},
+		{EVM_RESTART_UUPLUGIN,		EVT_RESTART_UUPLUGIN,		RCN_RESTART_UUPLUGIN,	0},
+#endif
+#if defined(APP_LUCKY)
+		{EVM_RESTART_LUCKY,		EVT_RESTART_LUCKY,		RCN_RESTART_LUCKY,	0},
 #endif
 		{EVM_RESTART_FIREWALL,		EVT_RESTART_FIREWALL,		RCN_RESTART_FIREWALL,	0},
 		{0,0,0,0}

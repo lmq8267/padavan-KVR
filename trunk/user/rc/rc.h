@@ -582,6 +582,11 @@ void stop_npc(void);
 void start_npc(void);
 void restart_npc(void);
 #endif*/
+#if defined(APP_LUCKY)
+void stop_lucky(void);
+void start_lucky(void);
+void restart_lucky(void);
+#endif
 #if defined(APP_DDNSTO)
 void stop_ddnsto(void);
 void start_ddnsto(void);

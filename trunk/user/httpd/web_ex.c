@@ -2342,6 +2342,14 @@ static int npc_status_hook(int eid, webs_t wp, int argc, char **argv)
 	return 0;
 }
 #endif*/
+#if defined (APP_LUCKY)
+static int lucky_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int lucky_status_code = pids("lucky");
+	websWrite(wp, "function lucky_status() { return %d;}\n", lucky_status_code);
+	return 0;
+}
+#endif
 
 #if defined (APP_DDNSTO)
 static int ddnsto_status_hook(int eid, webs_t wp, int argc, char **argv)
@@ -2632,6 +2640,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_nvpproxy = 0;
 #endif
+#if defined(APP_LUCKY)
+	int found_app_lucky = 1;
+#else
+	int found_app_lucky = 0;
+#endif
 /*#if defined(APP_NPC)
 	int found_app_npc = 1;
 #else
@@ -2855,6 +2868,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_ddnsto() { return %d;}\n"
 		"function found_app_aldriver() { return %d;}\n"
 		"function found_app_uuplugin() { return %d;}\n"
+		"function found_app_lucky() { return %d;}\n"
 		"function found_app_aliddns() { return %d;}\n"
 		"function found_app_wireguard() { return %d;}\n"
 		"function found_app_xupnpd() { return %d;}\n"
@@ -2893,6 +2907,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_aldriver,
 		found_app_uuplugin,
 		found_app_aliddns,
+		found_app_lucky,
 		found_app_wireguard,
 		found_app_xupnpd,
 		found_app_mentohust
@@ -3708,6 +3723,17 @@ apply_cgi(const char *url, webs_t wp)
 		// current only syslog implement this button
 		unlink("/tmp/syslog.log");
 		websRedirect(wp, current_url);
+		return 0;
+	}
+	else if (!strcmp(value, " ClearluckyLog "))
+	{
+		unlink("/tmp/lucky.log");
+		websRedirect(wp, current_url);
+		return 0;
+	}
+	else if (!strcmp(value, " Restartlucky "))
+	{
+		doSystem("/usr/bin/lucky.sh %s", "restart");
 		return 0;
 	}
 	else if (!strcmp(value, " Reboot "))
@@ -4753,6 +4779,9 @@ struct ej_handler ej_handlers[] =
 /*#if defined (APP_NPC)
 	{ "npc_status", npc_status_hook},
 #endif*/
+#if defined (APP_LUCKY)
+	{ "lucky_status", lucky_status_hook},
+#endif
 #if defined (APP_ZEROTIER)
 	{ "zerotier_status", zerotier_status_hook},
 #endif

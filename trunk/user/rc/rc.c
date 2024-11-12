@@ -1384,6 +1384,12 @@ handle_notifications(void)
 			restart_npc();
 		}
 #endif*/
+#if defined(APP_LUCKY)
+		else if (strcmp(entry->d_name, RCN_RESTART_LUCKY) == 0)
+		{
+			restart_lucky();
+		}
+#endif
 #if defined(APP_CADDY)
 		else if (strcmp(entry->d_name, RCN_RESTART_CADDY) == 0)
 		{

@@ -546,6 +546,20 @@ void restart_npc(void){
 	start_npc();
 }
 #endif*/
+#if defined(APP_LUCKY)
+void stop_lucky(void){
+	eval("/usr/bin/lucky.sh","stop");
+}
+
+void start_lucky(void){
+	eval("/usr/bin/lucky.sh","start");
+}
+
+void restart_lucky(void){
+	stop_lucky();
+	start_lucky();
+}
+#endif
 #if defined(APP_DDNSTO)
 void stop_ddnsto(void){
 	eval("/usr/bin/ddnsto.sh","stop");
@@ -925,6 +939,9 @@ stop_services(int stopall)
 /*#if defined(APP_NPC)
 	stop_npc();
 #endif*/
+#if defined(APP_LUCKY)
+	stop_lucky();
+#endif
 #if defined(APP_DDNSTO)
 	stop_ddnsto();
 #endif

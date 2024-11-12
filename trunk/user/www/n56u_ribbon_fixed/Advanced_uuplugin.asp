@@ -25,7 +25,7 @@ var $j = jQuery.noConflict();
 
 $j(document).ready(function() {
 
-	init_itoggle('uu_enable',change_uu_enable_bridge);
+	init_itoggle('uu_enable');
 
 });
 
@@ -37,7 +37,6 @@ $j(document).ready(function() {
 function initial(){
 	show_banner(2);
 	show_menu(5,23,0);
-	showUUPlatform(uu_admin);
 	fill_status(uuplugin_status());
 	show_footer();
 
@@ -138,7 +137,7 @@ function done_validating(action){
 								<table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
 									<tr> <th><#running_status#></th>
                                             <td id="uuplugin_status" colspan="3"></td>
-                                        </tr>
+                                        </tr><td></td><td></td>
 										<tr>
 											<th width="30%" style="border-top: 0 none;">启用UU加速器</th>
 											<td style="border-top: 0 none;">
@@ -153,9 +152,16 @@ function done_validating(action){
 												</div>
 											</td>
 										</tr>
+
 										<tr>
-											<th>绑定设备:</th>
+											<th>绑定地址:</th>
 											<td><a href="<% nvram_get_x("", "uu_admin"); %>">UU云平台</a>
+											</td>
+										</tr><td></td><td></td>
+<tr>
+											<td colspan="4" style="border-top: 0 none;">
+												<br />
+												<center><input class="btn btn-primary" style="width: 219px" type="button" value="<#CTL_apply#>" onclick="applyRule()" /></center>
 											</td>
 										</tr>
 </div>

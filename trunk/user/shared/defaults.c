@@ -516,6 +516,8 @@ struct nvram_pair router_defaults[] = {
 	{ "w_caddy", "1" },
 	{ "w_wyy", "1" },
 	{ "w_aldriver", "1" },
+	{ "w_uuplugin", "1" },
+	{ "w_lucky", "1" },
 
 	{ "ip6_service", "" },
 	{ "ip6_ppe_on", "0" },
@@ -793,6 +795,12 @@ struct nvram_pair router_defaults[] = {
 	/*frp*/
 	{ "frpc_enable", "0" },
 	{ "frps_enable", "0" },
+#endif
+
+#if defined(APP_LUCKY)
+	/*lucky*/
+	{ "lucky_enable", "0" },
+	{ "lucky_cmd", "" },
 #endif
 
 #if defined(APP_WYY)

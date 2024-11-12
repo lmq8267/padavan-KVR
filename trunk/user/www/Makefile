@@ -250,6 +250,9 @@ endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_UUPLUGIN),y)
 	rm -f $(INSTALLDIR)/www/Advanced_uuplugin.asp
 endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_LUCKY),y)
+	rm -f $(INSTALLDIR)/www/Advanced_lucky.asp
+endif
 
 clean:
 	@echo "Clean www romfs"

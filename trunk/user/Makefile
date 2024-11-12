@@ -245,6 +245,7 @@ dir_$(CONFIG_FIRMWARE_INCLUDE_NVPPROXY)			+= nvpproxy
 dir_$(CONFIG_FIRMWARE_INCLUDE_DDNSTO)	        += ddnsto
 dir_$(CONFIG_FIRMWARE_INCLUDE_ALDRIVER)	                       += aliyundrive-webdav
 dir_$(CONFIG_FIRMWARE_INCLUDE_UUPLUGIN)	                       += uuplugin
+dir_$(CONFIG_FIRMWARE_INCLUDE_LUCKY)	                       += lucky
 ifdef CONFIG_MTD_UBI
 ifneq ($(STORAGE_ENABLED),y)
 dir_y											+= optware

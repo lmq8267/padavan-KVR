@@ -97,6 +97,11 @@ logger -t "自动启动" "正在启动网易UU游戏加速器"
 /usr/bin/uuplugin.sh start
 fi
 
+if [ $(nvram get lucky_enable) = 1 ] ; then
+logger -t "自动启动" "正在启动lucky"
+/usr/bin/lucky.sh start
+fi
+
 if [ $(nvram get wireguard_enable) = 1 ] ; then
 logger -t "自动启动" "正在启动wireguard"
 /usr/bin/wireguard.sh start
