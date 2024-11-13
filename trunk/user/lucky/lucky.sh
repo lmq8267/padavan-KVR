@@ -17,12 +17,12 @@ lucky_start () {
   logg "开始启动"
   killall lucky >/dev/null 2>&1
   killall -9 lucky >/dev/null 2>&1
-  UU_CONF="/tmp/uu/uu.conf"
+  LUCKY_CONF="/etc/storage/lucky.conf"
   PROG="/etc/storage/lucky/lucky" 
   [ ! -d /etc/storage/lucky ] && mkdir -p /etc/storage/lucky
   if [ -s "$PROG" ] ; then
      chmod a+x $PROG
-     [ $(($($PROG -v | wc -l))) -lt 3 ]  && rm -rf $PROG 
+     [ $(($($PROG -v | wc -l))) -lt 3 ]  && logg "程序${PROG}不完整或不匹配mipsel架构，请检查重新上传，脚本退出" && exit 1
   fi
 if [ ! -s "$PROG" ] ; then
    logg "$PROG 程序未找到，请下载上传"

@@ -587,6 +587,11 @@ void stop_lucky(void);
 void start_lucky(void);
 void restart_lucky(void);
 #endif
+#if defined(APP_WXSEND)
+void stop_wxsend(void);
+void start_wxsend(void);
+void restart_wxsend(void);
+#endif
 #if defined(APP_DDNSTO)
 void stop_ddnsto(void);
 void start_ddnsto(void);

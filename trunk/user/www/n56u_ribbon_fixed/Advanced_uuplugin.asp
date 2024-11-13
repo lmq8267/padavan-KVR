@@ -90,7 +90,7 @@ function done_validating(action){
 	<input type="hidden" name="current_page" value="Advanced_uuplugin.asp">
 	<input type="hidden" name="next_page" value="">
 	<input type="hidden" name="next_host" value="">
-	<input type="hidden" name="sid_list" value="LANHostConfig;General;">
+	<input type="hidden" name="sid_list" value="UUPLUGIN;LANHostConfig;General;">
 	<input type="hidden" name="group_id" value="">
 	<input type="hidden" name="action_mode" value="">
 	<input type="hidden" name="action_script" value="">

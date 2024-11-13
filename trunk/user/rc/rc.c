@@ -1390,6 +1390,12 @@ handle_notifications(void)
 			restart_lucky();
 		}
 #endif
+#if defined(APP_WXSEND)
+		else if (strcmp(entry->d_name, RCN_RESTART_WXSEND) == 0)
+		{
+			restart_wxsend();
+		}
+#endif
 #if defined(APP_CADDY)
 		else if (strcmp(entry->d_name, RCN_RESTART_CADDY) == 0)
 		{

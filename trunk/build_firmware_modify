@@ -50,7 +50,9 @@ echo "CONFIG_FIRMWARE_INCLUDE_ALDRIVER=n" >> .config阿里云盘
 echo "CONFIG_FIRMWARE_INCLUDE_WYY=n" >> .config #网易云解锁
 echo "CONFIG_FIRMWARE_INCLUDE_WYYBIN=n" >> .config #网易云解锁GO版本执行文件（2M多）注意固件超大小
 ##音乐解锁##
-
+##微信推送##
+echo "CONFIG_FIRMWARE_INCLUDE_WXSEND=n" >> .config
+##微信推送##
 ##内网穿透服务##
 echo "CONFIG_FIRMWARE_INCLUDE_ZEROTIER=n" >> .config #zerotier ~1.3M
 echo "CONFIG_FIRMWARE_INCLUDE_ALIDDNS=n" >> .config #aliddns
@@ -60,8 +62,9 @@ echo "CONFIG_FIRMWARE_INCLUDE_DDNSTO=n" >> .config #ddnsto
 #echo "CONFIG_FIRMWARE_INCLUDE_NPC=n" >> .config #npc
 ##内网穿透服务##
 
-echo "CONFIG_FIRMWARE_INCLUDE_UUPLUGIN=y" >> .config
-echo "CONFIG_FIRMWARE_INCLUDE_LUCKY=y" >> .config
+echo "CONFIG_FIRMWARE_INCLUDE_UUPLUGIN=n" >> .config
+echo "CONFIG_FIRMWARE_INCLUDE_LUCKY=n" >> .config
+
 sed -i 's/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=y/g' .config
 
 fi

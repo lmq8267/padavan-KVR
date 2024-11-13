@@ -448,6 +448,9 @@ if (found_app_uuplugin()){
 if (found_app_lucky()){
 	tabtitle[22] = new Array("", "Lucky");
 }
+if (found_app_wxsend()){
+	tabtitle[23] = new Array("", "微信推送");
+}
 
 //Level 3 Tab title
 
@@ -528,6 +531,10 @@ if (found_app_lucky()){
 	lucky_array = new Array("","Advanced_lucky.asp");
 	tablink[22] = (lucky_array);
 }
+if (found_app_wxsend()){
+	wxsend_array = new Array("","Advanced_wxsend.asp");
+	tablink[23] = (wxsend_array);
+}
 
 //Level 2 Menu
 menuL2_title = new Array(21)
@@ -594,6 +601,10 @@ if (found_app_lucky()){
 	menuL2_title.push("Lucky");
 } else menuL2_title.push("");
 
+if (found_app_wxsend()){
+	menuL2_title.push("微信推送");
+} else menuL2_title.push("");
+
 menuL2_link  = new Array("", tablink[0][1], tablink[1][1], tablink[2][1], tablink[3][1], tablink[4][1], tablink[5][1], tablink[6][1], tablink[7][1], support_2g_radio() ? tablink[8][1] : "Main_EStatus_Content.asp", tablink[9][1]);
 if (found_app_scutclient()){
 	menuL2_link.push(scutclient_array[1]);
@@ -646,6 +657,9 @@ if (found_app_uuplugin()){
 } else menuL2_link.push("");
 if (found_app_lucky()){
 	menuL2_link.push(lucky_array[1]);
+} else menuL2_link.push("");
+if (found_app_wxsend()){
+	menuL2_link.push(wxsend_array[1]);
 } else menuL2_link.push("");
 
 //Level 1 Menu in Gateway, Router mode
@@ -1540,6 +1554,7 @@ var w_wyy = '<% nvram_get_x("", "w_wyy"); %>';
 var w_aldriver = '<% nvram_get_x("", "w_aldriver"); %>';
 var w_uuplugin = '<% nvram_get_x("", "w_uuplugin"); %>';
 var w_lucky = '<% nvram_get_x("", "w_lucky"); %>';
+var w_wxsend = '<% nvram_get_x("", "w_wxsend"); %>';
 
 if (w_ai==0){
 	menuL1_link[2] = "";
@@ -1624,6 +1639,10 @@ if (w_uuplugin==0){
 if (w_lucky==0){
 	menuL2_link[23] = "";
 	menuL2_title[23] = "";
+}
+if (w_wxsend==0){
+	menuL2_link[24] = "";
+	menuL2_title[24] = "";
 }
 
 (function($){

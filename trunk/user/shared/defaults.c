@@ -518,6 +518,7 @@ struct nvram_pair router_defaults[] = {
 	{ "w_aldriver", "1" },
 	{ "w_uuplugin", "1" },
 	{ "w_lucky", "1" },
+	{ "w_wxsend", "1" },
 
 	{ "ip6_service", "" },
 	{ "ip6_ppe_on", "0" },
@@ -801,6 +802,20 @@ struct nvram_pair router_defaults[] = {
 	/*lucky*/
 	{ "lucky_enable", "0" },
 	{ "lucky_cmd", "" },
+#endif
+
+#if defined(APP_wxsend)
+	/*微信推送*/
+	{ "wxsend_enable", "0" },
+	{ "wxsend_appid", "" },
+	{ "wxsend_appsecret", "" },
+	{ "wxsend_touser", "" },
+	{ "wxsend_template_id", "" },
+	{ "wxsend_title", "" },
+	{ "wxsend_notify_1", "0" },
+	{ "wxsend_notify_2", "0" },
+	{ "wxsend_notify_3", "0" },
+	{ "wxsend_notify_4", "0" },
 #endif
 
 #if defined(APP_WYY)

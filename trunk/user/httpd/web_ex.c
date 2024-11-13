@@ -2351,6 +2351,15 @@ static int lucky_status_hook(int eid, webs_t wp, int argc, char **argv)
 }
 #endif
 
+#if defined (APP_WXSEND)
+static int wxsend_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int wxsend_status_code = pids("wxsend_script.sh");
+	websWrite(wp, "function wxsend_status() { return %d;}\n", wxsend_status_code);
+	return 0;
+}
+#endif
+
 #if defined (APP_DDNSTO)
 static int ddnsto_status_hook(int eid, webs_t wp, int argc, char **argv)
 {
@@ -2645,6 +2654,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_lucky = 0;
 #endif
+#if defined(APP_WXSEND)
+	int found_app_wxsend = 1;
+#else
+	int found_app_wxsend = 0;
+#endif
 /*#if defined(APP_NPC)
 	int found_app_npc = 1;
 #else
@@ -2870,6 +2884,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_uuplugin() { return %d;}\n"
 		"function found_app_lucky() { return %d;}\n"
 		"function found_app_aliddns() { return %d;}\n"
+		"function found_app_wxsend() { return %d;}\n"
 		"function found_app_wireguard() { return %d;}\n"
 		"function found_app_xupnpd() { return %d;}\n"
 		"function found_app_mentohust() { return %d;}\n",
@@ -2909,6 +2924,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_aliddns,
 		found_app_lucky,
 		found_app_wireguard,
+		found_app_wxsend,
 		found_app_xupnpd,
 		found_app_mentohust
 	);
@@ -3734,6 +3750,16 @@ apply_cgi(const char *url, webs_t wp)
 	else if (!strcmp(value, " Restartlucky "))
 	{
 		doSystem("/usr/bin/lucky.sh %s", "restart");
+		return 0;
+	}
+	else if (!strcmp(value, " Restartwxsend "))
+	{
+		doSystem("/usr/bin/wxsend.sh %s", "restart");
+		return 0;
+	}
+	else if (!strcmp(value, " Delwxsend "))
+	{
+		doSystem("/usr/bin/wxsend.sh %s", "del_hostname");
 		return 0;
 	}
 	else if (!strcmp(value, " Reboot "))
@@ -4784,6 +4810,9 @@ struct ej_handler ej_handlers[] =
 #endif
 #if defined (APP_ZEROTIER)
 	{ "zerotier_status", zerotier_status_hook},
+#endif
+#if defined (APP_WXSEND)
+	{ "wxsend_status", wxsend_status_hook},
 #endif
 #if defined (APP_DDNSTO)
 	{ "ddnsto_status", ddnsto_status_hook},

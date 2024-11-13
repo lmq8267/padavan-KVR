@@ -9,7 +9,7 @@ include $(ROOTDIR)/user/shared/boards.mk
 PROJECT_HOME_URL="https:\/\/bitbucket.org\/padavan\/rt-n56u\/"
 PROJECT_HOME_URL_MOD="https:\/\/github.com\/hanwckf\/rt-n56u\/"
 
-LABEL_COPYRIGHT_TEXT='© 2011-2023 <a href="https:\/\/github.com\/vb1980\/Padavan-KVR" target="blank">vb1980-Padavan-KVR源码<\/a> \& Padavan \& by <a href="https:\/\/github.com\/lmq8267\/padavan-KVR" target="blank">半透明主题<\/a>'
+LABEL_COPYRIGHT_TEXT='© 2011-2024 Padavan-KVR'
 
 BOARD_PATTERN=s/ZVMODELVZ/$(CONFIG_FIRMWARE_PRODUCT_ID)/g
 COPYR_PATTERN=s/ZVCOPYRVZ/$(LABEL_COPYRIGHT_TEXT)/g
@@ -252,6 +252,9 @@ ifneq ($(CONFIG_FIRMWARE_INCLUDE_UUPLUGIN),y)
 endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_LUCKY),y)
 	rm -f $(INSTALLDIR)/www/Advanced_lucky.asp
+endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_WXSEND),y)
+	rm -f $(INSTALLDIR)/www/Advanced_wxsend.asp
 endif
 
 clean:

@@ -1283,6 +1283,23 @@
 	};
 #endif
 
+#if defined(APP_WXSEND)
+	struct variable variables_WXSEND=[] = {
+			{"wxend_enable", "", NULL, EVM_RESTART_WXSEND},
+			{"wxsend_appid", "", NULL, EVM_RESTART_WXSEND},
+			{"wxsend_appsecret", "", NULL, EVM_RESTART_WXSEND},
+			{"wxsend_touser", "", NULL, EVM_RESTART_WXSEND},
+			{"wxsend_template_id", "", NULL, EVM_RESTART_WXSEND},
+			{"wxsend_title", "", NULL, EVM_RESTART_WXSEND},
+			{"wxsend_notify_1", "", NULL, EVM_RESTART_WXSEND},
+			{"wxsend_notify_2", "", NULL, EVM_RESTART_WXSEND},
+			{"wxsend_notify_3", "", NULL, EVM_RESTART_WXSEND},
+			{"wxsend_notify_4", "", NULL, EVM_RESTART_WXSEND},
+			{"wxsend_script.sh", "File", NULL, EVM_RESTART_WXSEND},
+			{0,0,0,0}
+	};
+#endif
+
     struct variable variables_DwebConf[] = {
 			{"w_ai", "", NULL, FALSE},
 			{"w_vpn_s", "", NULL, FALSE},
@@ -1302,9 +1319,10 @@
 			{"w_frp", "", NULL, FALSE},
 			{"w_caddy", "", NULL, FALSE},
 			{"w_wyy", "", NULL, FALSE},
-			{"w_aldriver", "", NULL, FALSE}
-			{"w_uuplugin", "", NULL, FALSE}
-			{"w_lucky", "", NULL, FALSE}
+			{"w_aldriver", "", NULL, FALSE},
+			{"w_uuplugin", "", NULL, FALSE},
+			{"w_lucky", "", NULL, FALSE},
+			{"w_wxsend", "", NULL, FALSE},
 	};
 
 	struct variable variables_WLANConfig11b[] = {
@@ -1475,6 +1493,9 @@
 #if defined(APP_LUCKY)
 		{"LUCKY",		variables_LUCKY},
 #endif
+#if defined(APP_WXSEND)
+		{"WXSEND",		variables_WXSEND},
+#endif
 		{"DwebConf",		variables_DwebConf},
 		{"LANGUAGE",			variables_Language},
 		{0,0}
@@ -1609,6 +1630,9 @@
 #endif
 #if defined(APP_LUCKY)
 		{EVM_RESTART_LUCKY,		EVT_RESTART_LUCKY,		RCN_RESTART_LUCKY,	0},
+#endif
+#if defined(APP_WXSEND)
+		{EVM_RESTART_WXSEND,		EVT_RESTART_WXSEND,		RCN_RESTART_WXSEND,	0},
 #endif
 		{EVM_RESTART_FIREWALL,		EVT_RESTART_FIREWALL,		RCN_RESTART_FIREWALL,	0},
 		{0,0,0,0}

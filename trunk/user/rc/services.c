@@ -677,6 +677,23 @@ void restart_uuplugin(void){
 }
 #endif
 
+#if defined(APP_WXSEND)
+void stop_wxsend(void){
+	eval("/usr/bin/wxsend.sh","stop");
+}
+
+void start_wxsend(void){
+	int wxsend_enable = nvram_get_int("wxsend_enable");
+	if ( wxsend_enable == 1)
+		eval("/usr/bin/wxsend.sh","start");
+}
+
+void restart_wxsend(void){
+	stop_wxsend();
+	start_wxsend();
+}
+#endif
+
 void
 start_httpd(int restart_fw)
 {
@@ -981,6 +998,9 @@ stop_services(int stopall)
 #endif
 #if defined(APP_UUPLUGIN)
 	stop_uuplugin();
+#endif
+#if defined(APP_WXSEND)
+	stop_wxsend();
 #endif
 	stop_networkmap();
 	stop_lltd();

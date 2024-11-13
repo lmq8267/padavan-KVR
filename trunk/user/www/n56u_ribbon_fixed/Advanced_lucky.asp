@@ -28,8 +28,6 @@
 	<script>
 
 		<% lucky_status(); %>
-
-		
 		var $j = jQuery.noConflict();
 		$j(document).ready(function () {
 			init_itoggle('lucky_enable');
@@ -58,8 +56,8 @@
 			
 			showLoading();
 
-			document.form.action_mode.value = " Restart ";
-			document.form.current_page.value = "Advanced_lucky.asp";
+			document.form.action_mode.value = " Apply ";
+			document.form.current_page.value = "/Advanced_lucky.asp";
 			document.form.next_page.value = "";
 			document.form.submit();
 		}
@@ -71,10 +69,11 @@
 				stext = "<#Stopped#>";
 			else if (status_code == 1)
 				stext = "<#Running#>";
-			$("lucky_status").innerHTML = '<span class="label label-' + (status_code != 0 ? 'success' : 'warning') + '">' +
-				stext + '</span>';
+			$("lucky_status").innerHTML = '<span class="label label-' + (status_code != 0 ? 'success' : 'warning') + '">' + stext + '</span>';
 		}
-		
+		function done_validating(action){
+			refreshpage();
+		}
 		var arrHashes = ["cfg","log"];
 		function showTab(curHash) {
 			var obj = $('tab_lucky_' + curHash.slice(1));
@@ -132,7 +131,7 @@
 			<input type="hidden" name="current_page" value="Advanced_lucky.asp">
 			<input type="hidden" name="next_page" value="">
 			<input type="hidden" name="next_host" value="">
-			<input type="hidden" name="sid_list" value="LUCKY;">
+			<input type="hidden" name="sid_list" value="LUCKY;LANHostConfig;General;">
 			<input type="hidden" name="group_id" value="">
 			<input type="hidden" name="action_mode" value="">
 			<input type="hidden" name="action_script" value="">
