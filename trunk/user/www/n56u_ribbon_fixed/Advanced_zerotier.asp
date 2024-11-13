@@ -27,7 +27,7 @@ var $j = jQuery.noConflict();
 
 $j(document).ready(function() {
 
-	init_itoggle('zerotier_enable');
+	init_itoggle('zerotier_enable',change_zerotier_enable);
 	init_itoggle('zerotier_nat');
 	init_itoggle('zerotiermoon_enable');
 
@@ -54,6 +54,25 @@ function initial(){
 	fill_status(zerotier_status());
 	showMRULESList();
 	show_footer();
+	change_zerotier_enable(1);
+}
+
+function change_zerotier_enable(mflag){
+	var m = document.form.zerotier_enable.value;
+	var is_zerotier_enable = (m == "1") ? "重启" : "更新";
+	document.form.updatezerotier.value = is_zerotier_enable;
+}
+function button_updatezerotier() {
+    var m = document.form.zerotier_enable.value;
+
+    var actionMode = (m == "1") ? 'Restartzerotier' : 'Updatezerotier';
+
+    change_zerotier_enable(m); 
+
+    var $j = jQuery.noConflict(); 
+    $j.post('/apply.cgi', {
+        'action_mode': actionMode 
+    });
 }
 
 function showmenu(){
@@ -64,7 +83,7 @@ showhide_div('wirlink', found_app_wireguard());
 function applyRule(){
 	showLoading();
 	
-	document.form.action_mode.value = " Restart ";
+	document.form.action_mode.value = " Apply ";
 	document.form.current_page.value = "/Advanced_zerotier.asp";
 	document.form.next_page.value = "";
 	
@@ -219,13 +238,15 @@ function showMRULESList(){
 									<div id="tabMenu" class="submenuBlock"></div>
 									<div class="alert alert-info" style="margin: 10px;">
 									<p>Zerotier是一个开源，跨平台，而且适合内网穿透异地组网的傻瓜配置虚拟 VPN LAN<br>
+									<div>下方状态显示并不是实时的，只在启动的时候获取一次，点击重启按钮获取当前状态</div>
+									<div>当前版本:【<span style="color: #FFFF00;"><% nvram_get_x("", "zerotier_ver"); %></span>】&nbsp;&nbsp;最新版本:【<span style="color: #FD0187;"><% nvram_get_x("", "zerotier_ver_n"); %></span>】&nbsp;&nbsp;在线状态:【<span style="color: #00BBFF;"><% nvram_get_x("", "zerotier_status"); %></span>】</div>
 									</p>
 									</div>
 
 									<table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
 									<tr> <th><#running_status#></th>
                                             <td id="zerotier_status" colspan="3"></td>
-                                        </tr>
+                                        </tr><td></td><td></td><td></td>
 										<tr>
 											<th width="30%" style="border-top: 0 none;">启用ZeroTier客户端</th>
 											<td style="border-top: 0 none;">
@@ -235,23 +256,25 @@ function showMRULESList(){
 													</div>
 												</div>
 												<div style="position: absolute; margin-left: -10000px;">
-													<input type="radio" value="1" name="zerotier_enable" id="zerotier_enable_1" class="input" value="1" <% nvram_match_x("", "zerotier_enable", "1", "checked"); %> /><#checkbox_Yes#>
-													<input type="radio" value="0" name="zerotier_enable" id="zerotier_enable_0" class="input" value="0" <% nvram_match_x("", "zerotier_enable", "0", "checked"); %> /><#checkbox_No#>
+													<input type="radio" value="1" name="zerotier_enable" id="zerotier_enable_1" onClick="change_zerotier_enable(1);" class="input" value="1" <% nvram_match_x("", "zerotier_enable", "1", "checked"); %> /><#checkbox_Yes#>
+													<input type="radio" value="0" name="zerotier_enable" id="zerotier_enable_0" onClick="change_zerotier_enable(1);" class="input" value="0" <% nvram_match_x("", "zerotier_enable", "0", "checked"); %> /><#checkbox_No#>
 												</div>
 											</td>
-
+											<td  style="border-top: 0 none;">
+	<input class="btn btn-success" style="width:150px" type="button" name="updatezerotier" value="更新" onclick="button_updatezerotier()" />
+	</td>
 										</tr>
 										
 <tr><th>ZeroTier World Network ID</th>
-				<td>
+				<td colspan="4">
 					<input type="text" class="input" name="zerotier_id" id="zerotier_id" style="width: 200px" value="<% nvram_get_x("","zerotier_id"); %>" />
 				</td>
 			</tr>
 <tr><th>ZeroTier Moon Network ID</th>
-				<td>
+				<td colspan="4">
 					<input type="text" class="input" name="zerotier_moonid" id="zerotier_moonid" style="width: 200px" value="<% nvram_get_x("","zerotier_moonid"); %>" />
 				</td>
-			</tr>			
+			</tr>	<td></td>	<td></td>	<td></td>		
 			<tr>
 											<th width="30%" style="border-top: 0 none;">自动允许客户端NAT</th>
 											<td style="border-top: 0 none;">
@@ -268,37 +291,16 @@ function showMRULESList(){
 											</td>
 
 										</tr>
-										
-<tr>
-											<th width="30%" style="border-top: 0 none;">启用ZeroTier Moon服务器</th>
-											<td style="border-top: 0 none;">
-													<div class="main_itoggle">
-													<div id="zerotiermoon_enable_on_of">
-														<input type="checkbox" id="zerotiermoon_enable_fake" <% nvram_match_x("", "zerotiermoon_enable", "1", "value=1 checked"); %><% nvram_match_x("", "zerotiermoon_enable", "0", "value=0"); %>  />
-													</div>
-												</div>
-												<div style="position: absolute; margin-left: -10000px;">
-													<input type="radio" value="1" name="zerotiermoon_enable" id="zerotiermoon_enable_1" class="input" value="1" <% nvram_match_x("", "zerotiermoon_enable", "1", "checked"); %> /><#checkbox_Yes#>
-													<input type="radio" value="0" name="zerotiermoon_enable" id="zerotiermoon_enable_0" class="input" value="0" <% nvram_match_x("", "zerotiermoon_enable", "0", "checked"); %> /><#checkbox_No#>
-												</div>
-											</td>
 
-										</tr>
-<tr><th>ZeroTier Moon服务器 IP or DomainName</th>
-				<td>
-					<input type="text" class="input" name="zerotiermoon_ip" id="zerotiermoon_ip" style="width: 200px" value="<% nvram_get_x("","zerotiermoon_ip"); %>" />
-					<br>如果没有填写，将使用Wan获得的IP（请注意为公网IP）；如果填写IP地址，将使用该IP（请注意为公网IP）；如果填写域名，将使用域名获得IP（请注意为公网IP）。
-				</td>
-			</tr>
-<tr><th>ZeroTier Moon服务器 ID</th>
-				<td>
-					<input type="text" class="input" name="zerotiermoon_id" id="zerotiermoon_id" style="width: 200px" value="<% nvram_get_x("","zerotiermoon_id"); %>" readonly />
-					<br>服务器启用后自动生成Moon服务器的ID，在加入Moon时请使用客户端zerotier-cli orbit <该ID> <该ID>。
+<tr><th>ZeroTier 本机设备 ID</th>
+				<td colspan="4">
+					<input type="text" class="input" name="zerotierdev_id" id="zerotierdev_id" style="width: 200px" value="<% nvram_get_x("","zerotierdev_id"); %>" readonly />
+					<br>如果第一次加入zerotier网络，列表内没有显示当前设备，请手动在官网添加此设备ID绑定即可。
 				</td>
 			</tr>
 										<tr>
 											<th>zerotier官网</th>
-											<td>
+											<td colspan="4">
 				<input type="button" class="btn btn-success" value="zerotier官网" onclick="window.open('https://my.zerotier.com/network')" size="0">
 				<br>点击跳转到Zerotier官网管理平台，新建或者管理网络，并允许客户端接入访问你私人网路（新接入的节点默认不允许访问）
 											</td>

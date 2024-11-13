@@ -3762,6 +3762,16 @@ apply_cgi(const char *url, webs_t wp)
 		doSystem("/usr/bin/wxsend.sh %s", "del_hostname");
 		return 0;
 	}
+	else if (!strcmp(value, " Restartzerotier "))
+	{
+		doSystem("/usr/bin/zerotier.sh %s", "restart");
+		return 0;
+	}
+	else if (!strcmp(value, " Updatezerotier "))
+	{
+		doSystem("/usr/bin/zerotier.sh %s", "update");
+		return 0;
+	}
 	else if (!strcmp(value, " Reboot "))
 	{
 		sys_reboot();

@@ -8,6 +8,8 @@ PROGIDT=/etc/storage/bin/zerotier-idtool
 config_path="/etc/storage/zerotier-one"
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 github_proxys="$(nvram get github_proxy)"
+[ -z "$github_proxys" ] && github_proxys=" "
+
 start_instance() {
 	port=""
 	args=""
@@ -74,7 +76,7 @@ rules() {
 		iptables -t nat -I POSTROUTING -s $ip_segment -j MASQUERADE
 		zero_route "add"
 	fi
-	logger -t "zerotier" "启动成功! zerotier接口: $zt0 "
+	logger -t "zerotier" "zerotier-one ${zt_ver}启动成功! zerotier接口: $zt0 "
  	count=0
         while [ $count -lt 5 ]
         do
@@ -83,13 +85,15 @@ rules() {
 	        sleep 2
         elif [ "$ztstatus" = "ONLINE" ]; then
         	ztid=$($PROGCLI info | awk '{print $3}')
-        	logger -t "zerotier" "若官网没有此设备，请手动绑定此设备ID $ztid "
+        	nvram set zerotierdev_id=$ztid
+        	nvram set zerotier_status="${ztstatus} 在线"
         	break
         fi
         count=$(expr $count + 1)
         done
 	if [ "$($PROGCLI info | awk '{print $5}')" = "OFFLINE" ] ; then
 	  logger -t "zerotier" "当前zerotier未上线，可能你的网络无法链接到zerotier官方服务器！"
+	  nvram set zerotier_status="OFFLINE 离线"
           exit 1
         fi
 }
@@ -124,37 +128,81 @@ zero_route(){
 	done
 }
 
+get_zttag() {
+	curltest=`which curl`
+	logger -t "zerotier" "开始获取最新版本..."
+    	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
+      		tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/lmq8267/ZeroTierOne/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+	 	[ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/ZeroTierOne/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+    	else
+      		tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/ZeroTierOne/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       	[ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/ZeroTierOne/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+        fi
+	[ -z "$tag" ] && logger -t "zerotier" "无法获取最新版本" && nvram set zerotier_ver_n="" 
+	nvram set zerotier_ver_n=$tag
+	if [ -f "$PROG" ] ; then
+		chmod +x $PROG
+		zt_ver=$($PROG -version | sed -n '1p')
+		[ -z "$zt_ver" ] && nvram set zerotier_ver=""
+		nvram set zerotier_ver=$zt_ver
+		[ ! -L "$PROGCLI" ] && ln -sf $PROG $PROGCLI
+		ztstatus=$($PROGCLI info | awk '{print $5}')
+		ztid=$($PROGCLI info | awk '{print $3}')
+		nvram set zerotierdev_id=$ztid
+		if [ "$ztstatus" = "ONLINE" ]; then
+			nvram set zerotier_status="${ztstatus} 在线"
+		else
+			nvram set zerotier_status="OFFLINE 离线"
+		fi
+	fi
+}
+
+dowload_zero() {
+	tag="$1"
+	logger -t "zerotier" "开始下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 到 $PROG"
+	for proxy in $github_proxys ; do
+       curl -Lkso "$PROG" "${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one" || wget --no-check-certificate -q -O "$PROG" "${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one" || curl -Lkso "$PROG" "https://fastly.jsdelivr.net/gh/lmq8267/ZeroTierOne@master/install/${tag}/zerotier-one" || wget --no-check-certificate -q -O "$PROG" "https://fastly.jsdelivr.net/gh/lmq8267/ZeroTierOne@master/install/${tag}/zerotier-one"
+	if [ "$?" = 0 ] ; then
+		chmod +x $PROG
+		if [ $(($($PROG -h | wc -l))) -gt 3 ] ; then
+			logger -t "zerotier" "$PROG 下载成功"
+       	else
+	   		logger -t "zerotier" "下载失败，请手动下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 上传到  $PROG"
+			exit 1
+	  	fi
+	else
+		logger -t "zerotier" "下载失败，请手动下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 上传到  $PROG"
+		exit 1
+   	fi
+	done
+}
+
+update_zero() {
+	get_zttag
+	[ -z "$tag" ] && logger -t "zerotier" "无法获取最新版本" && nvram set zerotier_ver_n="" && exit 1
+	if [ ! -z "$tag" ] && [ ! -z "$zt_ver" ] ; then
+		if [ "$tag"x != "$zt_ver"x ] ; then
+			logger -t "zerotier" "当前版本${zt_ver} 最新版本${tag}"
+			dowload_zero $tag
+		else
+			logger -t "zerotier" "当前已是最新版本 ${tag} 无需更新！"
+		fi
+	fi
+	exit 0
+}
+
 start_zero() {
+	zt_enable=$(nvram get zerotier_enable)
+	[ "$zt_enable" = "1" ] || exit 1
 	logger -t "zerotier" "正在启动zerotier"
+	get_zttag
  	if [ ! -f "$PROG" ] ; then
 		logger -t "zerotier" "主程序${PROG}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
-  		curltest=`which curl`
-    		if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
-      			tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/lmq8267/ZeroTierOne/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-	 		[ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/ZeroTierOne/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-    		else
-      			tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/ZeroTierOne/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-       			[ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/ZeroTierOne/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-       		fi
-	 	[ -z "$tag" ] && tag="1.14.2"
-   		logger -t "zerotier" "开始下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 到 $PROG"
-     		for proxy in $github_proxys ; do
-       			curl -Lkso "$PROG" "${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one" || wget --no-check-certificate -q -O "$PROG" "${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one" || curl -Lkso "$PROG" "https://fastly.jsdelivr.net/gh/lmq8267/ZeroTierOne@master/install/${tag}/zerotier-one" || wget --no-check-certificate -q -O "$PROG" "https://fastly.jsdelivr.net/gh/lmq8267/ZeroTierOne@master/install/${tag}/zerotier-one"
-       			if [ "$?" = 0 ] ; then
-	  			chmod +x $PROG
-      				if [ $(($($PROG -h | wc -l))) -gt 3 ] ; then
-	  				logger -t "zerotier" "$PROG 下载成功"
-       				else
-	   				logger -t "zerotier" "下载失败，请手动下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 上传到  $PROG"
-					exit 1
-	  			fi
-	  		else
-				logger -t "zerotier" "下载失败，请手动下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 上传到  $PROG"
-				exit 1
-   			fi
-	 	done
+  		[ -z "$tag" ] && tag="1.14.2"
+  		dowload_zero $tag
   	fi
+  	[ ! -f "$PROG" ] && nvram set zerotier_enable=0 && exit 1
    	[ ! -L "$PROGCLI" ] && ln -sf $PROG $PROGCLI
     	[ ! -L "$PROGIDT" ] && ln -sf $PROG $PROGIDT
 	kill_z
@@ -184,6 +232,9 @@ start)
 	;;
 stop)
 	stop_zero
+	;;
+update)
+	update_zero
 	;;
 *)
 	echo "check"
