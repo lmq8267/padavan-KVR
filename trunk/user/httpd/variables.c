@@ -1283,6 +1283,15 @@
 	};
 #endif
 
+#if defined(APP_CLOUDFLARED)
+	struct variable variables_CLOUDFLARED=[] = {
+			{"cloudflared_enable", "", NULL, EVM_RESTART_CLOUDFLARED},
+			{"cloudflared_cmd", "", NULL, EVM_RESTART_CLOUDFLARED},
+			{"cloudflared_bin", "", NULL, EVM_RESTART_CLOUDFLARED},
+			{0,0,0,0}
+	};
+#endif
+
 #if defined(APP_WXSEND)
 	struct variable variables_WXSEND=[] = {
 			{"wxend_enable", "", NULL, EVM_RESTART_WXSEND},
@@ -1323,6 +1332,7 @@
 			{"w_uuplugin", "", NULL, FALSE},
 			{"w_lucky", "", NULL, FALSE},
 			{"w_wxsend", "", NULL, FALSE},
+			{"w_cloudflared", "", NULL, FALSE},
 	};
 
 	struct variable variables_WLANConfig11b[] = {
@@ -1496,6 +1506,9 @@
 #if defined(APP_WXSEND)
 		{"WXSEND",		variables_WXSEND},
 #endif
+#if defined(APP_CLOUDFLARED)
+		{"CLOUDFLARED",		variables_CLOUDFLARED},
+#endif
 		{"DwebConf",		variables_DwebConf},
 		{"LANGUAGE",			variables_Language},
 		{0,0}
@@ -1633,6 +1646,9 @@
 #endif
 #if defined(APP_WXSEND)
 		{EVM_RESTART_WXSEND,		EVT_RESTART_WXSEND,		RCN_RESTART_WXSEND,	0},
+#endif
+#if defined(APP_CLOUDFLARED)
+		{EVM_RESTART_CLOUDFLARED,		EVT_RESTART_CLOUDFLARED,		RCN_RESTART_CLOUDFLARED,	0},
 #endif
 		{EVM_RESTART_FIREWALL,		EVT_RESTART_FIREWALL,		RCN_RESTART_FIREWALL,	0},
 		{0,0,0,0}

@@ -519,6 +519,7 @@ struct nvram_pair router_defaults[] = {
 	{ "w_uuplugin", "1" },
 	{ "w_lucky", "1" },
 	{ "w_wxsend", "1" },
+	{ "w_cloudflared", "1" },
 
 	{ "ip6_service", "" },
 	{ "ip6_ppe_on", "0" },
@@ -802,6 +803,13 @@ struct nvram_pair router_defaults[] = {
 	/*lucky*/
 	{ "lucky_enable", "0" },
 	{ "lucky_cmd", "" },
+#endif
+
+#if defined(APP_CLOUDFLARED)
+	/*cloudflared*/
+	{ "cloudflared_enable", "0" },
+	{ "cloudflared_cmd", "" },
+	{ "cloudflared_bin", "" },
 #endif
 
 #if defined(APP_wxsend)

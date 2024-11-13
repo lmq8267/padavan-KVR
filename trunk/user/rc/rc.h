@@ -592,6 +592,11 @@ void stop_wxsend(void);
 void start_wxsend(void);
 void restart_wxsend(void);
 #endif
+#if defined(APP_CLOUDFLARED)
+void stop_cloudflared(void);
+void start_cloudflared(void);
+void restart_cloudflared(void);
+#endif
 #if defined(APP_DDNSTO)
 void stop_ddnsto(void);
 void start_ddnsto(void);

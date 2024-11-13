@@ -560,6 +560,20 @@ void restart_lucky(void){
 	start_lucky();
 }
 #endif
+#if defined(APP_CLOUDFLARED)
+void stop_cloudflared(void){
+	eval("/usr/bin/cloudflared.sh","stop");
+}
+
+void start_cloudflared(void){
+	eval("/usr/bin/cloudflared.sh","start");
+}
+
+void restart_cloudflared(void){
+	stop_cloudflared();
+	start_cloudflared();
+}
+#endif
 #if defined(APP_DDNSTO)
 void stop_ddnsto(void){
 	eval("/usr/bin/ddnsto.sh","stop");
@@ -958,6 +972,9 @@ stop_services(int stopall)
 #endif*/
 #if defined(APP_LUCKY)
 	stop_lucky();
+#endif
+#if defined(APP_CLOUDFLARED)
+	stop_cloudflared();
 #endif
 #if defined(APP_DDNSTO)
 	stop_ddnsto();

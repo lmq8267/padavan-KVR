@@ -256,6 +256,9 @@ endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_WXSEND),y)
 	rm -f $(INSTALLDIR)/www/Advanced_wxsend.asp
 endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_CLOUDFLARED),y)
+	rm -f $(INSTALLDIR)/www/Advanced_cloudflared.asp
+endif
 
 clean:
 	@echo "Clean www romfs"

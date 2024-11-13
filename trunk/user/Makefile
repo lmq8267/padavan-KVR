@@ -247,6 +247,7 @@ dir_$(CONFIG_FIRMWARE_INCLUDE_ALDRIVER)	                       += aliyundrive-we
 dir_$(CONFIG_FIRMWARE_INCLUDE_UUPLUGIN)	                       += uuplugin
 dir_$(CONFIG_FIRMWARE_INCLUDE_LUCKY)	                       += lucky
 dir_$(CONFIG_FIRMWARE_INCLUDE_WXSEND)	                       += wxsend
+dir_$(CONFIG_FIRMWARE_INCLUDE_CLOUDFLARED)	                       += cloudflared
 ifdef CONFIG_MTD_UBI
 ifneq ($(STORAGE_ENABLED),y)
 dir_y											+= optware

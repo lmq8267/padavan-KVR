@@ -2351,6 +2351,15 @@ static int lucky_status_hook(int eid, webs_t wp, int argc, char **argv)
 }
 #endif
 
+#if defined (APP_CLOUDFLARED)
+static int cloudflared_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int cloudflared_status_code = pids("cloudflared");
+	websWrite(wp, "function cloudflared_status() { return %d;}\n", cloudflared_status_code);
+	return 0;
+}
+#endif
+
 #if defined (APP_WXSEND)
 static int wxsend_status_hook(int eid, webs_t wp, int argc, char **argv)
 {
@@ -2654,6 +2663,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_lucky = 0;
 #endif
+#if defined(APP_CLOUDFLARED)
+	int found_app_cloudflared = 1;
+#else
+	int found_app_cloudflared = 0;
+#endif
 #if defined(APP_WXSEND)
 	int found_app_wxsend = 1;
 #else
@@ -2886,6 +2900,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_aliddns() { return %d;}\n"
 		"function found_app_wxsend() { return %d;}\n"
 		"function found_app_wireguard() { return %d;}\n"
+		"function found_app_cloudflared() { return %d;}\n"
 		"function found_app_xupnpd() { return %d;}\n"
 		"function found_app_mentohust() { return %d;}\n",
 		found_utl_hdparm,
@@ -2924,6 +2939,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_aliddns,
 		found_app_lucky,
 		found_app_wireguard,
+		found_app_cloudflared,
 		found_app_wxsend,
 		found_app_xupnpd,
 		found_app_mentohust
@@ -3770,6 +3786,16 @@ apply_cgi(const char *url, webs_t wp)
 	else if (!strcmp(value, " Updatezerotier "))
 	{
 		doSystem("/usr/bin/zerotier.sh %s", "update");
+		return 0;
+	}
+	else if (!strcmp(value, " Restartcloudflared "))
+	{
+		doSystem("/usr/bin/cloudflared.sh %s", "restart");
+		return 0;
+	}
+	else if (!strcmp(value, " Updatecloudflared "))
+	{
+		doSystem("/usr/bin/cloudflared.sh %s", "update");
 		return 0;
 	}
 	else if (!strcmp(value, " Reboot "))
@@ -4817,6 +4843,9 @@ struct ej_handler ej_handlers[] =
 #endif*/
 #if defined (APP_LUCKY)
 	{ "lucky_status", lucky_status_hook},
+#endif
+#if defined (APP_CLOUDFLARED)
+	{ "cloudflared_status", cloudflared_status_hook},
 #endif
 #if defined (APP_ZEROTIER)
 	{ "zerotier_status", zerotier_status_hook},

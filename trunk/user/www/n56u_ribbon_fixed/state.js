@@ -451,6 +451,9 @@ if (found_app_lucky()){
 if (found_app_wxsend()){
 	tabtitle[23] = new Array("", "微信推送");
 }
+if (found_app_cloudflared()){
+	tabtitle[24] = new Array("", "CloudFlared");
+}
 
 //Level 3 Tab title
 
@@ -535,6 +538,10 @@ if (found_app_wxsend()){
 	wxsend_array = new Array("","Advanced_wxsend.asp");
 	tablink[23] = (wxsend_array);
 }
+if (found_app_cloudflared()){
+	cloudflared_array = new Array("","Advanced_cloudflared.asp");
+	tablink[24] = (cloudflared_array);
+}
 
 //Level 2 Menu
 menuL2_title = new Array(21)
@@ -605,6 +612,11 @@ if (found_app_wxsend()){
 	menuL2_title.push("微信推送");
 } else menuL2_title.push("");
 
+if (found_app_cloudflared()){
+	menuL2_title.push("CloudFlared");
+} else menuL2_title.push("");
+
+
 menuL2_link  = new Array("", tablink[0][1], tablink[1][1], tablink[2][1], tablink[3][1], tablink[4][1], tablink[5][1], tablink[6][1], tablink[7][1], support_2g_radio() ? tablink[8][1] : "Main_EStatus_Content.asp", tablink[9][1]);
 if (found_app_scutclient()){
 	menuL2_link.push(scutclient_array[1]);
@@ -660,6 +672,9 @@ if (found_app_lucky()){
 } else menuL2_link.push("");
 if (found_app_wxsend()){
 	menuL2_link.push(wxsend_array[1]);
+} else menuL2_link.push("");
+if (found_app_cloudflared()){
+	menuL2_link.push(cloudflared_array[1]);
 } else menuL2_link.push("");
 
 //Level 1 Menu in Gateway, Router mode
@@ -1555,6 +1570,7 @@ var w_aldriver = '<% nvram_get_x("", "w_aldriver"); %>';
 var w_uuplugin = '<% nvram_get_x("", "w_uuplugin"); %>';
 var w_lucky = '<% nvram_get_x("", "w_lucky"); %>';
 var w_wxsend = '<% nvram_get_x("", "w_wxsend"); %>';
+var w_cloudflared = '<% nvram_get_x("", "w_cloudflared"); %>';
 
 if (w_ai==0){
 	menuL1_link[2] = "";
@@ -1643,6 +1659,10 @@ if (w_lucky==0){
 if (w_wxsend==0){
 	menuL2_link[24] = "";
 	menuL2_title[24] = "";
+}
+if (w_cloudflared==0){
+	menuL2_link[25] = "";
+	menuL2_title[25] = "";
 }
 
 (function($){

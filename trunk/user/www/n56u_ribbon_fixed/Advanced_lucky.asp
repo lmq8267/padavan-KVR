@@ -28,6 +28,7 @@
 	<script>
 
 		<% lucky_status(); %>
+		<% login_state_hook(); %>
 		var $j = jQuery.noConflict();
 		$j(document).ready(function () {
 			init_itoggle('lucky_enable');
@@ -197,10 +198,10 @@
 													<input type="radio" value="0" name="lucky_enable" id="lucky_enable_0" class="input" value="0" <% nvram_match_x("", "lucky_enable", "0", "checked"); %> /><#checkbox_No#>
 												</div>
 											</td>
-													<td colspan="2">
+													<td colspan="4">
                                                 <input class="btn btn-success" style="width:150px" type="button" name="restartlucky" value="重启" onclick="button_restartlucky()" />
                                             </td>
-													</tr><td></td><td></td><td></td>
+													</tr><td colspan="3"></td>
 													<tr>
 											<th style="border-top: 0 none;">自定义启动参数:</th>
 											<td style="border-top: 0 none;" colspan="3">

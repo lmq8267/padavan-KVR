@@ -60,6 +60,7 @@ echo "CONFIG_FIRMWARE_INCLUDE_FRPC=n" >> .config #frpc
 echo "CONFIG_FIRMWARE_INCLUDE_FRPS=n" >> .config #frps
 echo "CONFIG_FIRMWARE_INCLUDE_DDNSTO=n" >> .config #ddnsto
 #echo "CONFIG_FIRMWARE_INCLUDE_NPC=n" >> .config #npc
+echo "CONFIG_FIRMWARE_INCLUDE_CLOUDFLARED=n" >> .config #npc
 ##内网穿透服务##
 
 echo "CONFIG_FIRMWARE_INCLUDE_UUPLUGIN=n" >> .config

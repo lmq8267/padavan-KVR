@@ -33,15 +33,14 @@ killall wxsend_script.sh >/dev/null 2>&1
 curltest=`which curl`
 if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
 	logger -t "【微信推送】" "找不到 curl ，请安装 curl 程序"
-	nvram set wxsend_enable=0
 	exit 1
 fi
-[ -z "$wxsend_appid" ] || [ -z "$wxsend_appsecret" ] || [ -z "$wxsend_touser" ] || [ -z "$wxsend_template_id" ] && { logger -t "【微信推送】" "启动失败, 注意检查[测试号信息]里的参数是否完填写整！" && nvram set wxsend_enable=0 && exit 1 }
+[ -z "$wxsend_appid" ] || [ -z "$wxsend_appsecret" ] || [ -z "$wxsend_touser" ] || [ -z "$wxsend_template_id" ] && { logger -t "【微信推送】" "启动失败, 注意检查[测试号信息]里的参数是否完填写整！" && exit 1 }
 logger -t "【微信推送】" "运行 /etc/storage/wxsend_script.sh"
 /etc/storage/wxsend_script.sh &
 sleep 3
 [ ! -z "$(ps -w | grep "wxsend_script.sh" | grep -v grep )" ] && logger -t "【微信推送】" "启动成功" 
-[ -z "$(ps -w | grep "wxsend_script.sh" | grep -v grep )" ] && logger -t "【微信推送】" "启动失败, 注意检查/etc/storage/wxsend_script.sh脚本是否有语法错误和curl是否下载完整" && nvram set wxsend_enable=0 && exit 1
+[ -z "$(ps -w | grep "wxsend_script.sh" | grep -v grep )" ] && logger -t "【微信推送】" "启动失败, 注意检查/etc/storage/wxsend_script.sh脚本是否有语法错误和curl是否下载完整"
 exit 0
 }
 
@@ -339,7 +338,6 @@ if [ ! -z "$wxsend_appid" ] && [ ! -z "$wxsend_appsecret" ] && [ ! -z "$wxsend_t
 	if [ -z "$curltest" ] ; then
 		logger -t "【微信推送】" "找不到 curl ，请安装 curl 程序"
 		nvram set wxsend_content=""
-		nvram set wxsend_enable=0 
 		exit 1 
 	else
 		send_message "$wxsend_title" "【""$wxsend_title""】" "$wxsend_content"
