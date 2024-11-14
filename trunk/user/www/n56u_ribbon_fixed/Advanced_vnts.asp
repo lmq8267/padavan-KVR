@@ -47,9 +47,6 @@ function initial(){
 	change_vnts_web_enable_bridge(1);
 	change_vnts_log_bridge(1);
 
-	if (!login_safe())
-		textarea_log_enabled(0);
-
 }
 
 function change_vnts_web_enable_bridge(mflag){
@@ -63,10 +60,6 @@ function change_vnts_web_enable_bridge(mflag){
 function change_vnts_log_bridge(mflag){
 	var m = document.form.vnts_log[0].checked;
 	showhide_div("vnts_logfile_tr", m);
-}
-
-function textarea_log_enabled(v){
-	inputCtrl(document.form['vnts.log'], v);
 }
 
 function fill_status(status_code){

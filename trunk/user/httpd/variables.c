@@ -1308,6 +1308,7 @@
 			{"cloudflared_enable", "", NULL, EVM_RESTART_CLOUDFLARED},
 			{"cloudflared_cmd", "", NULL, EVM_RESTART_CLOUDFLARED},
 			{"cloudflared_bin", "", NULL, EVM_RESTART_CLOUDFLARED},
+			{"cloudflared.log", "File", NULL, EVM_RESTART_CLOUDFLARED},
 			{0,0,0,0}
 	};
 #endif

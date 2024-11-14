@@ -24,6 +24,7 @@
 <script>
 var $j = jQuery.noConflict();
 <% wxsend_status(); %>
+<% login_state_hook(); %>
 $j(document).ready(function() {
 
 	init_itoggle('wxsend_enable',change_wxsend_enable);
@@ -39,6 +40,8 @@ function initial(){
 	show_footer();
 	fill_status(wxsend_status());
 	change_wxsend_enable(1);
+	if (!login_safe())
+        		textarea_scripts_enabled(0);
 
 }
 
@@ -65,6 +68,10 @@ function applyRule(){
 
 function done_validating(action){
 	refreshpage();
+}
+
+function textarea_scripts_enabled(v){
+    	inputCtrl(document.form['scripts.wxsend_script.sh'], v);
 }
 
 function change_wxsend_enable(mflag){
@@ -145,7 +152,8 @@ function button_restartwxsend() {
 	<div class="alert alert-info" style="margin: 10px;">欢迎使用 自建微信推送 - 这是一个使用自建微信测试号的接口权限推送微信消息的工具，可以发送路由日志消息到手机，也可部署 api 提供外部程序使用消息推送。使用前先进行<a href="https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="blank">(点这里)配置测试号</a>吧！
 	<div>项目地址：<a href="https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Template_Message_Interface.html" target="blank">发送模板消息接口文档</a></div>
 	<div>使用方法：①打开图文教程设置测试号信息【<a href="https://opt.cn2qq.com/opt-file/测试号配置.pdf" target="blank">https://opt.cn2qq.com/opt-file/测试号配置.pdf</a>】</div>
-	<div>②准备完成，下面【消息内容】填入字符测试一下吧！（每日调用上限：100000次）</div>
+	<div>②依次填写对应的测试号信息保存</div>
+	<div>③准备完成后，在下面【消息内容】填入字符测试一下吧！（每日调用上限：100000次）</div>
 	<span style="color:#FF0000;" class=""></span></div>
 
 	<table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
@@ -166,7 +174,7 @@ function button_restartwxsend() {
 	</div>
 	</td>
 	<td>
-	<input class="btn btn-success" style="width:150px" type="button" name="restartwxsend" value="更新" onclick="button_restartwxsend()" />
+	<input class="btn btn-success" style="width:150px" type="button" name="restartwxsend" value="清空以往接入设备名称" onclick="button_restartwxsend()" />
 	</td>
 	</tr>
 	<tr>
@@ -267,7 +275,7 @@ function button_restartwxsend() {
 	<select name="wxsend_notify_4" class="input">
 	<option value="0" <% nvram_match_x("","wxsend_notify_4", "0","selected"); %>>关闭</option>
 	<option value="1" <% nvram_match_x("","wxsend_notify_4", "1","selected"); %>>开启</option>
-	  </select><br>自行修改下方脚本里的自定义提醒区域
+	  </select><br><span style="color:#888;">自行修改下方脚本里的自定义提醒区域</span>
 	</td>
 	</tr>
 	<tr id="serverchan_config">
