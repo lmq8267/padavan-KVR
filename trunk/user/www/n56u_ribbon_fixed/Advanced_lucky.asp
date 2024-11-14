@@ -44,7 +44,7 @@
 		
 		function initial() {
 			show_banner(2);
-			show_menu(5, 24, 0);
+			show_menu(5, 23, 0);
 			show_footer();
 			fill_status(lucky_status());
 			if (!login_safe())

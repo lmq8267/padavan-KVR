@@ -954,6 +954,26 @@
 	};
 #endif
 
+#if defined(APP_VNTS)
+	struct variable variables_VNTS[] = {
+			{"vnts_enable", "", NULL, EVM_RESTART_VNTS},
+			{"vnts_port", "", NULL, EVM_RESTART_VNTS},
+			{"vnts_token", "", NULL, EVM_RESTART_VNTS},
+			{"vnts_subnet", "", NULL, EVM_RESTART_VNTS},
+			{"vnts_netmask", "", NULL, EVM_RESTART_VNTS},
+			{"vnts_sfinger", "", NULL, EVM_RESTART_VNTS},
+			{"vnts_web_enable", "", NULL, EVM_RESTART_VNTS},
+			{"vnts_web_port", "", NULL, EVM_RESTART_VNTS},
+			{"vnts_web_user", "", NULL, EVM_RESTART_VNTS},
+			{"vnts_web_pass", "", NULL, EVM_RESTART_VNTS},
+			{"vnts_web_wan", "", NULL, EVM_RESTART_VNTS},
+			{"vnts_vnts_bin", "", NULL, EVM_RESTART_VNTS},
+			{"vnts_log", "", NULL, EVM_RESTART_VNTS},
+			{"vnts.log", "File", NULL, EVM_RESTART_VNTS},
+			{0,0,0,0}
+	};
+#endif
+
 /*#if defined(APP_NPC)
 	struct variable variables_NpcConf[] = {
 			{"npc_enable", "", NULL, EVM_RESTART_NPC},
@@ -1333,6 +1353,7 @@
 			{"w_lucky", "", NULL, FALSE},
 			{"w_wxsend", "", NULL, FALSE},
 			{"w_cloudflared", "", NULL, FALSE},
+			{"w_vnts", "", NULL, FALSE},
 	};
 
 	struct variable variables_WLANConfig11b[] = {
@@ -1509,6 +1530,9 @@
 #if defined(APP_CLOUDFLARED)
 		{"CLOUDFLARED",		variables_CLOUDFLARED},
 #endif
+#if defined(APP_VNTS)
+		{"VNTS",		variables_VNTS},
+#endif
 		{"DwebConf",		variables_DwebConf},
 		{"LANGUAGE",			variables_Language},
 		{0,0}
@@ -1649,6 +1673,9 @@
 #endif
 #if defined(APP_CLOUDFLARED)
 		{EVM_RESTART_CLOUDFLARED,		EVT_RESTART_CLOUDFLARED,		RCN_RESTART_CLOUDFLARED,	0},
+#endif
+#if defined(APP_VNTS)
+		{EVM_RESTART_VNTS,		EVT_RESTART_VNTS,		RCN_RESTART_VNTS,	0},
 #endif
 		{EVM_RESTART_FIREWALL,		EVT_RESTART_FIREWALL,		RCN_RESTART_FIREWALL,	0},
 		{0,0,0,0}

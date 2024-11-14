@@ -53,9 +53,7 @@ function initial(){
 	show_banner(2);
 	show_menu(5,8,4);
 	show_footer();
-	if (!login_safe())
-		textarea_scripts_enabled(0);
-		//load_body();
+	
 	if (found_app_shadowsocks()){
 	showhide_div('row_wss', true);
 }

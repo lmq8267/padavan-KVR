@@ -577,6 +577,11 @@ void stop_frp(void);
 void start_frp(void);
 void restart_frp(void);
 #endif
+#if defined(APP_VNTS)
+void stop_vnts(void);
+void start_vnts(void);
+void restart_vnts(void);
+#endif
 /*#if defined(APP_NPC)
 void stop_npc(void);
 void start_npc(void);

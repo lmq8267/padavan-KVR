@@ -36,7 +36,7 @@ $j(document).ready(function() {
 
 function initial(){
 	show_banner(2);
-	show_menu(5,26,0);
+	show_menu(5,25,0);
 	fill_status(cloudflared_status());
 	show_footer();
 	change_cloudflared_enable(1);

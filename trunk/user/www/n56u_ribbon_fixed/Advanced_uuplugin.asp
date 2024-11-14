@@ -36,7 +36,7 @@ $j(document).ready(function() {
 
 function initial(){
 	show_banner(2);
-	show_menu(5,23,0);
+	show_menu(5,22,0);
 	fill_status(uuplugin_status());
 	show_footer();
 

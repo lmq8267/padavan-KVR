@@ -109,9 +109,10 @@ typedef u_int8_t u8;
 #define EVM_RESTART_LUCKY		(1ULL << 65)
 #define EVM_RESTART_WXSEND		(1ULL << 66)
 #define EVM_RESTART_CLOUDFLARED		(1ULL << 67)
-#define EVM_RESTART_REBOOT			(1ULL << 68)
+#define EVM_RESTART_VNTS		(1ULL << 68)
+#define EVM_RESTART_REBOOT			(1ULL << 69)
 
-#define EVM_BLOCK_UNSAFE			(1ULL << 69) /* special case */
+#define EVM_BLOCK_UNSAFE			(1ULL << 70) /* special case */
 
 
 #define EVT_RESTART_FIREWALL		1
@@ -185,6 +186,7 @@ typedef u_int8_t u8;
 #define EVT_RESTART_LUCKY	    	2
 #define EVT_RESTART_WXSEND	    	2
 #define EVT_RESTART_CLOUDFLARED	    	2
+#define EVT_RESTART_VNTS	    	2
 #define EVT_RESTART_REBOOT			40
 
 struct variable

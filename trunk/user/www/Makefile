@@ -259,6 +259,9 @@ endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_CLOUDFLARED),y)
 	rm -f $(INSTALLDIR)/www/Advanced_cloudflared.asp
 endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_VNTS),y)
+	rm -f $(INSTALLDIR)/www/Advanced_vnts.asp
+endif
 
 clean:
 	@echo "Clean www romfs"

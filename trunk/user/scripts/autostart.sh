@@ -57,6 +57,11 @@ logger -t "自动启动" "正在启动阿里ddns"
 /usr/bin/aliddns.sh start &
 fi
 
+if [ $(nvram get vnts_enable) = 1 ] ; then
+logger -t "自动启动" "正在启动VNT服务端"
+/usr/bin/vnts.sh start &
+fi
+
 if [ $(nvram get wxsend_enable) = 1 ] ; then
 logger -t "自动启动" "正在启动微信推送"
 /usr/bin/wxsend.sh start &

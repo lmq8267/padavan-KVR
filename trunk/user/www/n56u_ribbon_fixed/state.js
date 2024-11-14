@@ -380,8 +380,8 @@ function show_banner(L3){
 	show_top_status();
 }
 
-var tabtitle = new Array(21);
-var tablink = new Array(21);
+var tabtitle = new Array(27);
+var tablink = new Array(27);
 tabtitle[0] = new Array("", "<#menu5_1_1#>", "<#menu5_1_2#>", "<#menu5_1_3#>", "<#menu5_1_4#>", "<#menu5_1_5#>", "<#menu5_1_6#>");
 tabtitle[1] = new Array("", "<#menu5_1_1#>", "<#menu5_1_2#>", "<#menu5_1_3#>", "<#menu5_1_4#>", "<#menu5_1_5#>", "<#menu5_1_6#>");
 tabtitle[2] = new Array("", "<#menu5_2_1#>", "<#menu5_2_2#>", "<#menu5_2_3#>", "<#menu5_2_4#>", "<#menu5_2_5#>", "<#menu5_2_6#>");
@@ -453,6 +453,9 @@ if (found_app_wxsend()){
 }
 if (found_app_cloudflared()){
 	tabtitle[24] = new Array("", "CloudFlared");
+}
+if (found_app_vnts()){
+	tabtitle[25] = new Array("", "VNTS服务器");
 }
 
 //Level 3 Tab title
@@ -542,6 +545,10 @@ if (found_app_cloudflared()){
 	cloudflared_array = new Array("","Advanced_cloudflared.asp");
 	tablink[24] = (cloudflared_array);
 }
+if (found_app_vnts()){
+	vnts_array = new Array("","Advanced_vnts.asp");
+	tablink[25] = (vnts_array);
+}
 
 //Level 2 Menu
 menuL2_title = new Array(21)
@@ -616,6 +623,9 @@ if (found_app_cloudflared()){
 	menuL2_title.push("CloudFlared");
 } else menuL2_title.push("");
 
+if (found_app_vnts()){
+	menuL2_title.push("VNTS服务器");
+} else menuL2_title.push("");
 
 menuL2_link  = new Array("", tablink[0][1], tablink[1][1], tablink[2][1], tablink[3][1], tablink[4][1], tablink[5][1], tablink[6][1], tablink[7][1], support_2g_radio() ? tablink[8][1] : "Main_EStatus_Content.asp", tablink[9][1]);
 if (found_app_scutclient()){
@@ -675,6 +685,9 @@ if (found_app_wxsend()){
 } else menuL2_link.push("");
 if (found_app_cloudflared()){
 	menuL2_link.push(cloudflared_array[1]);
+} else menuL2_link.push("");
+if (found_app_vnts()){
+	menuL2_link.push(vnts_array[1]);
 } else menuL2_link.push("");
 
 //Level 1 Menu in Gateway, Router mode
@@ -1571,6 +1584,7 @@ var w_uuplugin = '<% nvram_get_x("", "w_uuplugin"); %>';
 var w_lucky = '<% nvram_get_x("", "w_lucky"); %>';
 var w_wxsend = '<% nvram_get_x("", "w_wxsend"); %>';
 var w_cloudflared = '<% nvram_get_x("", "w_cloudflared"); %>';
+var w_vnts = '<% nvram_get_x("", "w_vnts"); %>';
 
 if (w_ai==0){
 	menuL1_link[2] = "";
@@ -1663,6 +1677,10 @@ if (w_wxsend==0){
 if (w_cloudflared==0){
 	menuL2_link[25] = "";
 	menuL2_title[25] = "";
+}
+if (w_vnts==0){
+	menuL2_link[26] = "";
+	menuL2_title[26] = "";
 }
 
 (function($){

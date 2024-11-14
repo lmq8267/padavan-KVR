@@ -2334,6 +2334,15 @@ static int frps_status_hook(int eid, webs_t wp, int argc, char **argv)
 }
 #endif
 
+#if defined (APP_VNTS)
+static int vnts_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int vnts_status_code = pids("vnts");
+	websWrite(wp, "function vnts_status() { return %d;}\n", vnts_status_code);
+	return 0;
+}
+#endif
+
 /*#if defined (APP_NPC)
 static int npc_status_hook(int eid, webs_t wp, int argc, char **argv)
 {
@@ -2653,6 +2662,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_frp = 0;
 #endif
+#if defined(APP_VNTS)
+	int found_app_vnts = 1;
+#else
+	int found_app_vnts = 0;
+#endif
 #if defined(APP_NVPPROXY)
 	int found_app_nvpproxy = 1;
 #else
@@ -2889,6 +2903,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_adbyby() { return %d;}\n"
 		"function found_app_smartdns() { return %d;}\n"
 		"function found_app_frp() { return %d;}\n"
+		"function found_app_vnts() { return %d;}\n"
 		"function found_app_nvpproxy() { return %d;}\n"
 		"function found_app_npc() { return %d;}\n"
 		"function found_app_wyy() { return %d;}\n"
@@ -2929,6 +2944,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_adbyby,
 		found_app_smartdns,
 		found_app_frp,
+		found_app_vnts,
 		found_app_nvpproxy,
 		0,
 		found_app_wyy,
@@ -3786,6 +3802,22 @@ apply_cgi(const char *url, webs_t wp)
 	else if (!strcmp(value, " Updatezerotier "))
 	{
 		doSystem("/usr/bin/zerotier.sh %s", "update");
+		return 0;
+	}
+	else if (!strcmp(value, " Restartvnts "))
+	{
+		doSystem("/usr/bin/vnts.sh %s", "restart");
+		return 0;
+	}
+	else if (!strcmp(value, " Updatevnts "))
+	{
+		doSystem("/usr/bin/vnts.sh %s", "update");
+		return 0;
+	}
+	else if (!strcmp(value, " ClearvntsLog "))
+	{
+		unlink("/tmp/vnts.log");
+		websRedirect(wp, current_url);
 		return 0;
 	}
 	else if (!strcmp(value, " Restartcloudflared "))
@@ -4834,6 +4866,9 @@ struct ej_handler ej_handlers[] =
 #if defined (APP_FRP)
 	{ "frpc_status", frpc_status_hook},
 	{ "frps_status", frps_status_hook},
+#endif
+#if defined (APP_VNTS)
+	{ "vnts_status", vnts_status_hook},
 #endif
 #if defined (APP_NVPPROXY)
 	{ "nvpproxy_status", nvpproxy_status_hook},

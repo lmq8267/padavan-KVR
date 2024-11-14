@@ -520,6 +520,7 @@ struct nvram_pair router_defaults[] = {
 	{ "w_lucky", "1" },
 	{ "w_wxsend", "1" },
 	{ "w_cloudflared", "1" },
+	{ "w_vnts", "1" },
 
 	{ "ip6_service", "" },
 	{ "ip6_ppe_on", "0" },
@@ -803,6 +804,23 @@ struct nvram_pair router_defaults[] = {
 	/*lucky*/
 	{ "lucky_enable", "0" },
 	{ "lucky_cmd", "" },
+#endif
+
+#if defined(APP_VNTS)
+	/*vnts*/
+	{ "vnts_enable", "0" },
+	{ "vnts_port", "" },
+	{ "vnts_token", "" },
+	{ "vnts_subnet", "" },
+	{ "vnts_netmask", "" },
+	{ "vnts_sfinger", "0" },
+	{ "vnts_web_enable", "0" },
+	{ "vnts_web_port", "" },
+	{ "vnts_web_user", "" },
+	{ "vnts_web_pass", "" },
+	{ "vnts_web_wan", "0" },
+	{ "vnts_vnts_bin", "" },
+	{ "vnts_log", "0" },
 #endif
 
 #if defined(APP_CLOUDFLARED)

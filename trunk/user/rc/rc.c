@@ -1378,6 +1378,12 @@ handle_notifications(void)
 			restart_frp();
 		}
 #endif
+#if defined(APP_VNTS)
+		else if (strcmp(entry->d_name, RCN_RESTART_VNTS) == 0)
+		{
+			restart_vnts();
+		}
+#endif
 /*#if defined(APP_NPC)
 		else if (strcmp(entry->d_name, RCN_RESTART_NPC) == 0)
 		{

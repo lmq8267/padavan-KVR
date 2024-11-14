@@ -532,6 +532,21 @@ void restart_frp(void){
 }
 #endif
 
+#if defined(APP_VNTS)
+void stop_vnts(void){
+	eval("/usr/bin/vnts.sh","stop");
+}
+
+void start_vnts(void){
+	eval("/usr/bin/vnts.sh","start");
+}
+
+void restart_vnts(void){
+	stop_vnts();
+	start_vnts();
+}
+#endif
+
 /*#if defined(APP_NPC)
 void stop_npc(void){
 	eval("/usr/bin/npc.sh","stop");
@@ -966,6 +981,9 @@ stop_services(int stopall)
 #endif
 #if defined(APP_FRP)
 	stop_frp();
+#endif
+#if defined(APP_VNTS)
+	stop_vnts();
 #endif
 /*#if defined(APP_NPC)
 	stop_npc();

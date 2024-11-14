@@ -35,7 +35,7 @@ $j(document).ready(function() {
 
 function initial(){
 	show_banner(2);
-	show_menu(5, 24, 0);
+	show_menu(5, 25, 0);
 	show_footer();
 	fill_status(wxsend_status());
 	change_wxsend_enable(1);
@@ -144,8 +144,9 @@ function button_restartwxsend() {
 	<div id="tabMenu" class="submenuBlock"></div>
 	<div class="alert alert-info" style="margin: 10px;">欢迎使用 自建微信推送 - 这是一个使用自建微信测试号的接口权限推送微信消息的工具，可以发送路由日志消息到手机，也可部署 api 提供外部程序使用消息推送。使用前先进行<a href="https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="blank">(点这里)配置测试号</a>吧！
 	<div>项目地址：<a href="https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Template_Message_Interface.html" target="blank">发送模板消息接口文档</a></div>
+	<div>当前 app 文件:【<% nvram_get_x("", "app22_ver"); %>】，最新 app 文件:【<% nvram_get_x("", "app22_ver_n"); %>】 </div>
 	<div>使用方法：①打开图文教程设置测试号信息【<a href="https://opt.cn2qq.com/opt-file/测试号配置.pdf" target="blank">https://opt.cn2qq.com/opt-file/测试号配置.pdf</a>】</div>
-	<div>②准备完成，下面【消息内容】填入字符测试一下吧！（每日调用上限：100000次）</div>
+	<div>③准备完成，下面【消息内容】填入字符测试一下吧！（每日调用上限：100000次）</div>
 	<span style="color:#FF0000;" class=""></span></div>
 
 	<table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
