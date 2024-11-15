@@ -667,7 +667,7 @@ function valid_IP_subnet(obj){
                                                 <input style="display:none" type="text" class="span12" maxlength="3" size="3" name="vts_protono_x_0" value="<% nvram_get_x("", "vts_protono_x_0"); %>" onkeypress="return is_number(this,event);" />
                                             </td>
                                             <td>
-                                                <div id="ClientList_Block" class="alert alert-info ddown-list"></div>
+                                                <div id="ClientList_Block" class="alert alert-info ddown-list" style="width: 400px; background-color: #c9c4cb;"></div>
                                                 <div class="input-append">
                                                     <input type="text" size="12" maxlength="15" name="vts_ipaddr_x_0" value="<% nvram_get_x("", "vts_ipaddr_x_0"); %>" onkeypress="return is_ipaddr(this,event);" style="float:left; width: 94px"/>
                                                     <button class="btn btn-chevron" id="chevron" type="button" onclick="pullLANIPList(this);" title="Select the IP of LAN clients."><i class="icon icon-chevron-down"></i></button>

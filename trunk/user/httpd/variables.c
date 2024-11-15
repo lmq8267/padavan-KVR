@@ -974,6 +974,43 @@
 	};
 #endif
 
+#if defined(APP_VNTCLI)
+	struct variable variables_VNTCLI[] = {
+			{"vntcli_enable", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_token", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_ip", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_localadd", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_serip", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_model", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_key", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_log", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_proxy", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_first", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_wg", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_finger", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_serverw", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_desname", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_id", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_tunname", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_mtu", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_dns", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_stun", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_port", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_punch", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_comp", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_relay", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_wan", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_bin", "", NULL, EVM_RESTART_VNTCLI},
+			{"vnt.conf", "File", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_routenum_x", "", NULL, EVM_RESTART_VNTCLI},
+			{"vntcli_mappnum_x", "", NULL, EVM_RESTART_VNTCLI},
+			{"VNTCLIroute", "Group", ARGV((char*)variables_VNTCLI_VNTCLIroute, "8", "55", "vntcli_routenum_x"), EVM_RESTART_VNTCLI},
+			{"vntcli_mappnum_x", "", NULL, EVM_RESTART_VNTCLI},
+			{"VNTCLImapp", "Group", ARGV((char*)variables_VNTCLI_VNTCLImapp, "8", "55", "vntcli_mappnum_x"), EVM_RESTART_VNTCLI},
+			{0,0,0,0}
+	};
+#endif
+
 /*#if defined(APP_NPC)
 	struct variable variables_NpcConf[] = {
 			{"npc_enable", "", NULL, EVM_RESTART_NPC},
@@ -1355,6 +1392,7 @@
 			{"w_wxsend", "", NULL, FALSE},
 			{"w_cloudflared", "", NULL, FALSE},
 			{"w_vnts", "", NULL, FALSE},
+			{"w_vntcli", "", NULL, FALSE},
 	};
 
 	struct variable variables_WLANConfig11b[] = {
@@ -1534,6 +1572,9 @@
 #if defined(APP_VNTS)
 		{"VNTS",		variables_VNTS},
 #endif
+#if defined(APP_VNTCLI)
+		{"VNTCLI",		variables_VNTCLI},
+#endif
 		{"DwebConf",		variables_DwebConf},
 		{"LANGUAGE",			variables_Language},
 		{0,0}
@@ -1677,6 +1718,9 @@
 #endif
 #if defined(APP_VNTS)
 		{EVM_RESTART_VNTS,		EVT_RESTART_VNTS,		RCN_RESTART_VNTS,	0},
+#endif
+#if defined(APP_VNTCLI)
+		{EVM_RESTART_VNTCLI,		EVT_RESTART_VNTCLI,		RCN_RESTART_VNTCLI,	0},
 #endif
 		{EVM_RESTART_FIREWALL,		EVT_RESTART_FIREWALL,		RCN_RESTART_FIREWALL,	0},
 		{0,0,0,0}

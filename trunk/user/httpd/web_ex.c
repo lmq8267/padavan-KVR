@@ -2343,6 +2343,15 @@ static int vnts_status_hook(int eid, webs_t wp, int argc, char **argv)
 }
 #endif
 
+#if defined (APP_VNTCLI)
+static int vntcli_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int vntcli_status_code = pids("vnt-cli");
+	websWrite(wp, "function vntcli_status() { return %d;}\n", vntcli_status_code);
+	return 0;
+}
+#endif
+
 /*#if defined (APP_NPC)
 static int npc_status_hook(int eid, webs_t wp, int argc, char **argv)
 {
@@ -2667,6 +2676,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_vnts = 0;
 #endif
+#if defined(APP_VNTCLI)
+	int found_app_vntcli = 1;
+#else
+	int found_app_vntcli = 0;
+#endif
 #if defined(APP_NVPPROXY)
 	int found_app_nvpproxy = 1;
 #else
@@ -2904,6 +2918,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_smartdns() { return %d;}\n"
 		"function found_app_frp() { return %d;}\n"
 		"function found_app_vnts() { return %d;}\n"
+		"function found_app_vntcli() { return %d;}\n"
 		"function found_app_nvpproxy() { return %d;}\n"
 		"function found_app_npc() { return %d;}\n"
 		"function found_app_wyy() { return %d;}\n"
@@ -2954,6 +2969,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_uuplugin,
 		found_app_aliddns,
 		found_app_lucky,
+		found_app_vntcli,
 		found_app_wireguard,
 		found_app_cloudflared,
 		found_app_wxsend,
@@ -3817,6 +3833,47 @@ apply_cgi(const char *url, webs_t wp)
 	else if (!strcmp(value, " ClearvntsLog "))
 	{
 		unlink("/tmp/vnts.log");
+		websRedirect(wp, current_url);
+		return 0;
+	}
+	else if (!strcmp(value, " Restartvntcli "))
+	{
+		doSystem("/usr/bin/vnt.sh %s", "restart");
+		return 0;
+	}
+	else if (!strcmp(value, " Updatevntcli "))
+	{
+		doSystem("/usr/bin/vnt.sh %s", "update");
+		return 0;
+	}
+	else if (!strcmp(value, " CMDvntinfo "))
+	{
+		doSystem("/usr/bin/vnt.sh %s", "vntinfo");
+		return 0;
+	}
+	else if (!strcmp(value, " CMDvntall "))
+	{
+		doSystem("/usr/bin/vnt.sh %s", "vntall");
+		return 0;
+	}
+	else if (!strcmp(value, " CMDvntlist "))
+	{
+		doSystem("/usr/bin/vnt.sh %s", "vntlist");
+		return 0;
+	}
+	else if (!strcmp(value, " CMDvntroute "))
+	{
+		doSystem("/usr/bin/vnt.sh %s", "vntroute");
+		return 0;
+	}
+	else if (!strcmp(value, " CMDvntstatus "))
+	{
+		doSystem("/usr/bin/vnt.sh %s", "vntstatus");
+		return 0;
+	}
+	else if (!strcmp(value, " ClearvntcliLog "))
+	{
+		unlink("/tmp/vnt-cli.log");
 		websRedirect(wp, current_url);
 		return 0;
 	}

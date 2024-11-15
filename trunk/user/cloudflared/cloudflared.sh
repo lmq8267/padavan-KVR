@@ -5,7 +5,7 @@ PROG="$(nvram get cloudflared_bin)"
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 github_proxys="$(nvram get github_proxy)"
 [ -z "$github_proxys" ] && github_proxys=" "
-CMD=$(nvram get cloudflared_cmd)
+CMD="$(nvram get cloudflared_cmd)"
 
 get_cftag() {
 	curltest=`which curl`
@@ -22,8 +22,11 @@ get_cftag() {
 	if [ -f "$PROG" ] ; then
 		chmod +x $PROG
 		cf_ver=$($PROG --version |  awk '{print $3}' | sed -n '1p')
-		[ -z "$cf_ver" ] && nvram set cloudflared_ver=""
-		nvram set cloudflared_ver=$cf_ver
+		if [ -z "$cf_ver" ] ; then
+			nvram set cloudflared_ver=""
+		else
+			nvram set cloudflared_ver=$cf_ver
+		fi
 	fi
 }
 
@@ -36,6 +39,12 @@ dowload_cf() {
 		chmod +x $PROG
 		if [ $(($($PROG -h | wc -l))) -gt 3 ] ; then
 			logger -t "cloudflared" "$PROG 下载成功"
+			cf_ver=$($PROG --version |  awk '{print $3}' | sed -n '1p')
+			if [ -z "$cf_ver" ] ; then
+				nvram set cloudflared_ver=""
+			else
+				nvram set cloudflared_ver=$cf_ver
+			fi
        	else
 	   		logger -t "cloudflared" "下载失败，请手动下载 https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared 上传到  $PROG"
 			exit 1
@@ -53,7 +62,7 @@ update_cf() {
 	if [ ! -z "$tag" ] && [ ! -z "$cf_ver" ] ; then
 		if [ "$tag"x != "$cf_ver"x ] ; then
 			logger -t "cloudflared" "当前版本${cf_ver} 最新版本${tag}"
-			dowload_zero $tag
+			dowload_cf $tag
 		else
 			logger -t "cloudflared" "当前已是最新版本 ${tag} 无需更新！"
 		fi
@@ -98,7 +107,7 @@ kill_cf() {
 stop_cf() {
 	logger -t "cloudflared" "正在关闭cloudflared..."
 	kill_cf
-	[ ! -z "`pidof cloudflared`" ] &&logger -t "cloudflared" "cloudflared关闭成功!"
+	[ ! -z "`pidof cloudflared`" ] && logger -t "cloudflared" "cloudflared关闭成功!"
 }
 
 case $1 in
@@ -107,6 +116,10 @@ start)
 	;;
 stop)
 	stop_cf
+	;;
+restart)
+	stop_cf
+	start_cf
 	;;
 update)
 	update_cf

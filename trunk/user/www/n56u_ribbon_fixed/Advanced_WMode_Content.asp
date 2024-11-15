@@ -225,10 +225,10 @@ function showLANIPList(){
 				code += ' </div></a>';
 			}
 		}
-		code += '<div style="font-weight:bold;cursor:pointer;" onclick="rescan();"><#AP_survey#>&nbsp;</div>';
+		code += '<div style="font-weight:bold;cursor:pointer; background-color: #333333;" onclick="rescan();"><#AP_survey#>&nbsp;</div>';
 	}
 	else{
-		code += '<div style="width: 207px"><center><img style="padding-top: 4px; display: block;" src="/bootstrap/img/ajax-loader.gif"></center></div>';
+		code += '<div style="width: 207px background-color: #333333;"><center><img style="padding-top: 4px; display: block;" src="/bootstrap/img/ajax-loader.gif"></center></div>';
 	}
 
 	code +='<!--[if lte IE 6.5]><iframe class="hackiframe_wdssurvey"></iframe><![endif]-->';

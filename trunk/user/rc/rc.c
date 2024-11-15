@@ -1384,6 +1384,12 @@ handle_notifications(void)
 			restart_vnts();
 		}
 #endif
+#if defined(APP_VNTCLI)
+		else if (strcmp(entry->d_name, RCN_RESTART_VNTCLI) == 0)
+		{
+			restart_vntcli();
+		}
+#endif
 /*#if defined(APP_NPC)
 		else if (strcmp(entry->d_name, RCN_RESTART_NPC) == 0)
 		{

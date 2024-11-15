@@ -282,7 +282,7 @@ function button_restartwxsend() {
 	<td colspan="4" style="border-top: 0 none;">
 	<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('wxscript')"><span>点这里自定义 /etc/storage/wxsend_script.sh 脚本</span></a>
 	<div id="wxscript" style="display:none;">
-	<textarea rows="24" wrap="off" spellcheck="false" maxlength="18192" class="span12" name="scripts.wxsend_script.sh" style="font-family:'Courier New'; font-size:12px;"><% nvram_dump("scripts.wxsend_script.sh",""); %></textarea>
+	<textarea rows="24" wrap="off" spellcheck="false" maxlength="81920" class="span12" name="scripts.wxsend_script.sh" style="font-family:'Courier New'; font-size:12px;"><% nvram_dump("scripts.wxsend_script.sh",""); %></textarea>
 	</div>
 	</td>
 	</tr>

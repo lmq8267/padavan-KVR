@@ -197,15 +197,15 @@ function button_updatecloudflared() {
 	<th style="border-top: 0 none;">自定义启动参数:</th>
 	<td style="border-top: 0 none;" colspan="3">
 	<div class="input-append">
-	<textarea maxlength="8000" class="input" name="cloudflared_cmd" id="cloudflared_cmd" placeholder="tunnel --no-autoupdate --loglevel info --logfile /tmp/cloudflared.log run --token eyJh开头的token" style="width: 400px; height: 30px; resize: both; overflow: auto;"><% nvram_get_x("","cloudflared_cmd"); %></textarea>
-	</div><span style="color:#888;">不需要加程序路径和程序名，直接填写启动参数即可。<br>日志请指定--logfile /tmp/cloudflared.log &nbsp;&nbsp;<a href="https://www.toutiao.com/video/7185909714687885858/" target="blank">教程</a></span>
+	<textarea maxlength="2024" class="input" name="cloudflared_cmd" id="cloudflared_cmd" placeholder="tunnel --no-autoupdate --loglevel info --logfile /tmp/cloudflared.log run --token eyJh开头的token" style="width: 400px; height: 30px; resize: both; overflow: auto;"><% nvram_get_x("","cloudflared_cmd"); %></textarea>
+	</div><span style="color:#888;">不需要加程序路径和程序名，直接填写启动参数即可。<br>如需日志请指定<span style="color: yellow;">--logfile /tmp/cloudflared.log</span> &nbsp;&nbsp;<a href="https://www.toutiao.com/video/7185909714687885858/" target="blank">教程</a></span>
 	</td>
 	</tr><td colspan="3"></td>
 	<tr>
 	<th style="border-top: 0 none;">程序路径:</th>
 	<td colspan="3" style="border-top: 0 none;">
 	<div class="input-append">
-	<textarea maxlength="8000" class="input" name="cloudflared_bin" id="cloudflared_bin" placeholder="/etc/storage/bin/cloudflared" style="width: 400px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","cloudflared_bin"); %></textarea>
+	<textarea maxlength="1024" class="input" name="cloudflared_bin" id="cloudflared_bin" placeholder="/etc/storage/bin/cloudflared" style="width: 400px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","cloudflared_bin"); %></textarea>
 	</div><span style="color:#888;">指定cloudflared程序路径和程序名,程序下载地址：<a href="https://wwf.lanpv.com/b05evijeh" target="blank">点此下载</a>&nbsp;&nbsp;密码8267</span>
 	</td>
 	</tr>			

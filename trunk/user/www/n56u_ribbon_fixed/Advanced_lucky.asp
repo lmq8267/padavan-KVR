@@ -198,7 +198,7 @@ function button_restartlucky(){
 	<th style="border-top: 0 none;">自定义启动参数:</th>
 	<td style="border-top: 0 none;" colspan="3">
 	<div class="input-append">
-	<textarea maxlength="1024" class="input" name="lucky_cmd" id="lucky_cmd" placeholder="" style="width: 400px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","lucky_cmd"); %></textarea>
+	<textarea maxlength="1048" class="input" name="lucky_cmd" id="lucky_cmd" placeholder="" style="width: 400px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","lucky_cmd"); %></textarea>
 	</div><span style="color:#888;">不需要加程序路径和程序名，直接填写启动参数即可，不填默认直接启动。</span>
 	</td>
 	</tr>
@@ -211,7 +211,7 @@ function button_restartlucky(){
 	<td colspan="4" style="border-top: 0 none;">
 	<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('lucky.daji')"><span>点这里自定义 /etc/storage/lucky.conf 配置文件</span></a>
 	<div id="lucky.daji">
-	<textarea rows="9" wrap="off" spellcheck="false" maxlength="18192" class="span12" name="scripts.lucky.conf" style="font-family:'Courier New'; font-size:12px;"><% nvram_dump("scripts.lucky.conf",""); %></textarea>
+	<textarea rows="9" wrap="off" spellcheck="false" maxlength="20240" class="span12" name="scripts.lucky.conf" style="font-family:'Courier New'; font-size:12px;"><% nvram_dump("scripts.lucky.conf",""); %></textarea>
 	</div>
 	</td>
 	</tr>-->			

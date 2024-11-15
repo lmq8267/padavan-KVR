@@ -538,12 +538,31 @@ void stop_vnts(void){
 }
 
 void start_vnts(void){
-	eval("/usr/bin/vnts.sh","start");
+	int vnts_enable = nvram_get_int("vnts_enable");
+	if ( vnts_enable == 1)
+		eval("/usr/bin/vnts.sh","start");
 }
 
 void restart_vnts(void){
 	stop_vnts();
 	start_vnts();
+}
+#endif
+
+#if defined(APP_VNTCLI)
+void stop_vntcli(void){
+	eval("/usr/bin/vnt.sh","stop");
+}
+
+void start_vntcli(void){
+	int vntcli_enable = nvram_get_int("vntcli_enable");
+	if ( vntcli_enable == 1)
+		eval("/usr/bin/vnt.sh","start");
+}
+
+void restart_vntcli(void){
+	stop_vntcli();
+	start_vntcli();
 }
 #endif
 
@@ -567,7 +586,9 @@ void stop_lucky(void){
 }
 
 void start_lucky(void){
-	eval("/usr/bin/lucky.sh","start");
+	int lucky_enable = nvram_get_int("lucky_enable");
+	if ( lucky_enable == 1)
+		eval("/usr/bin/lucky.sh","start");
 }
 
 void restart_lucky(void){
@@ -581,7 +602,9 @@ void stop_cloudflared(void){
 }
 
 void start_cloudflared(void){
-	eval("/usr/bin/cloudflared.sh","start");
+	int cloudflared_enable = nvram_get_int("cloudflared_enable");
+	if ( cloudflared_enable == 1)
+		eval("/usr/bin/cloudflared.sh","start");
 }
 
 void restart_cloudflared(void){
@@ -1015,6 +1038,9 @@ stop_services(int stopall)
 #endif
 #if defined(APP_ZEROTIER)
 	stop_zerotier();
+#endif
+#if defined(APP_VNTCLI)
+	stop_vntcli();
 #endif
 #if defined(APP_ALIDDNS)
 	stop_aliddns();

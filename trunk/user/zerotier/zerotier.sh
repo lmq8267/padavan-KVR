@@ -143,8 +143,11 @@ get_zttag() {
 	if [ -f "$PROG" ] ; then
 		chmod +x $PROG
 		zt_ver=$($PROG -version | sed -n '1p')
-		[ -z "$zt_ver" ] && nvram set zerotier_ver=""
-		nvram set zerotier_ver=$zt_ver
+		if [ -z "$zt_ver" ] ; then 
+			nvram set zerotier_ver=""
+		else
+			nvram set zerotier_ver=$zt_ver
+		fi
 		[ ! -L "$PROGCLI" ] && ln -sf $PROG $PROGCLI
 		ztstatus=$($PROGCLI info | awk '{print $5}')
 		ztid=$($PROGCLI info | awk '{print $3}')
@@ -166,6 +169,12 @@ dowload_zero() {
 		chmod +x $PROG
 		if [ $(($($PROG -h | wc -l))) -gt 3 ] ; then
 			logger -t "zerotier" "$PROG 下载成功"
+			zt_ver=$($PROG -version | sed -n '1p')
+			if [ -z "$zt_ver" ] ; then 
+				nvram set zerotier_ver=""
+			else
+				nvram set zerotier_ver=$zt_ver
+			fi
        	else
 	   		logger -t "zerotier" "下载失败，请手动下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 上传到  $PROG"
 			exit 1

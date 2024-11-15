@@ -455,7 +455,10 @@ if (found_app_cloudflared()){
 	tabtitle[24] = new Array("", "CloudFlared");
 }
 if (found_app_vnts()){
-	tabtitle[25] = new Array("", "VNTS服务器");
+	tabtitle[25] = new Array("", "VNT服务器");
+}
+if (found_app_vntcli()){
+	tabtitle[26] = new Array("", "VNT客户端");
 }
 
 //Level 3 Tab title
@@ -549,6 +552,10 @@ if (found_app_vnts()){
 	vnts_array = new Array("","Advanced_vnts.asp");
 	tablink[25] = (vnts_array);
 }
+if (found_app_vntcli()){
+	vntcli_array = new Array("","Advanced_vnt.asp");
+	tablink[26] = (vntcli_array);
+}
 
 //Level 2 Menu
 menuL2_title = new Array(21)
@@ -624,7 +631,11 @@ if (found_app_cloudflared()){
 } else menuL2_title.push("");
 
 if (found_app_vnts()){
-	menuL2_title.push("VNTS服务器");
+	menuL2_title.push("VNT服务器");
+} else menuL2_title.push("");
+
+if (found_app_vntcli()){
+	menuL2_title.push("VNT客户端");
 } else menuL2_title.push("");
 
 menuL2_link  = new Array("", tablink[0][1], tablink[1][1], tablink[2][1], tablink[3][1], tablink[4][1], tablink[5][1], tablink[6][1], tablink[7][1], support_2g_radio() ? tablink[8][1] : "Main_EStatus_Content.asp", tablink[9][1]);
@@ -688,6 +699,9 @@ if (found_app_cloudflared()){
 } else menuL2_link.push("");
 if (found_app_vnts()){
 	menuL2_link.push(vnts_array[1]);
+} else menuL2_link.push("");
+if (found_app_vntcli()){
+	menuL2_link.push(vntcli_array[1]);
 } else menuL2_link.push("");
 
 //Level 1 Menu in Gateway, Router mode
@@ -1585,6 +1599,7 @@ var w_lucky = '<% nvram_get_x("", "w_lucky"); %>';
 var w_wxsend = '<% nvram_get_x("", "w_wxsend"); %>';
 var w_cloudflared = '<% nvram_get_x("", "w_cloudflared"); %>';
 var w_vnts = '<% nvram_get_x("", "w_vnts"); %>';
+var w_vntcli = '<% nvram_get_x("", "w_vntcli"); %>';
 
 if (w_ai==0){
 	menuL1_link[2] = "";
@@ -1681,6 +1696,10 @@ if (w_cloudflared==0){
 if (w_vnts==0){
 	menuL2_link[26] = "";
 	menuL2_title[26] = "";
+}
+if (w_vntcli==0){
+	menuL2_link[27] = "";
+	menuL2_title[27] = "";
 }
 
 (function($){

@@ -2,16 +2,16 @@
 
 VNTS="$(nvram get vnts_bin)"
 vnts_enable=$(nvram get vnts_enable)
-vnts_log=$(nvram get vnts_log)
-vnts_port=$(nvram get vnts_port)
-vnts_token=$(nvram get vnts_token)
-vnts_subnet=$(nvram get vnts_subnet)
-vnts_netmask=$(nvram get vnts_netmask)
-vnts_sfinger=$(nvram get vnts_sfinger)
+vnts_log="$(nvram get vnts_log)"
+vnts_port="$(nvram get vnts_port)"
+vnts_token="$(nvram get vnts_token)"
+vnts_subnet="$(nvram get vnts_subnet)"
+vnts_netmask="$(nvram get vnts_netmask)"
+vnts_sfinger="$(nvram get vnts_sfinger)"
 vnts_web_enable=$(nvram get vnts_web_enable)
-vnts_web_port=$(nvram get vnts_web_port)
-vnts_web_user=$(nvram get vnts_web_user)
-vnts_web_pass=$(nvram get vnts_web_pass)
+vnts_web_port="$(nvram get vnts_web_port)"
+vnts_web_user="$(nvram get vnts_web_user)"
+vnts_web_pass="$(nvram get vnts_web_pass)"
 vnts_web_wan=$(nvram get vnts_web_wan)
 [ -z "$VNTS" ] && VNTS=/etc/storage/bin/vnts && nvram set vnts_bin=$VNTS
 [ -z "$vnts_port" ] && vnts_port="29872" && nvram set vnts_port=$vnts_port
@@ -35,8 +35,11 @@ get_tag() {
 	if [ -f "$VNTS" ] ; then
 		chmod +x $VNTS
 		vnts_ver=$($VNTS --version | awk -F 'version:' '{print $2}' | tr -d ' \n')
-		[ -z "$vnts_ver" ] && nvram set vnts_ver=""
-		nvram set vnts_ver="v${vnts_ver}"
+		if [ -z "$vnts_ver" ] ; then
+			nvram set vnts_ver=""
+		else
+			nvram set vnts_ver="v${vnts_ver}"
+		fi
 	fi
 }
 
@@ -49,6 +52,12 @@ dowload_vnts() {
 		chmod +x $VNTS
 		if [ $(($($VNTS -h | wc -l))) -gt 3 ] ; then
 			logger -t "VNT服务端" "$VNTS 下载成功"
+			vnts_ver=$($VNTS --version | awk -F 'version:' '{print $2}' | tr -d ' \n')
+			if [ -z "$vnts_ver" ] ; then
+				nvram set vnts_ver=""
+			else
+				nvram set vnts_ver="v${vnts_ver}"
+			fi
        	else
 	   		logger -t "VNT服务端" "下载失败，请手动下载 https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl 上传到  $VNTS"
 			exit 1
@@ -102,7 +111,7 @@ appenders:
     path: /tmp/vnts.log
     append: true
     encoder:
-      pattern: "{d(%Y-%m-%d %H:%M:%S vnt:)} [{f}:{L}] {h({l})} {M}:{m}{n}"
+      pattern: "{d(%Y-%m-%d %H:%M:%S vnts:)} [{f}:{L}] {h({l})} {M}:{m}{n}"
     policy:
       kind: compound
       trigger:
@@ -136,9 +145,9 @@ EOF
 	CMD=""
 	[ -z "$vnts_port" ] || CMD="-p $vnts_port"
 	if [ ! -z "$vnts_token" ] ; then
-		for token in $vnts_token; do
+		for token in $vnts_token ; do
 			[ -z "$token" ] && continue
-			CMD="$CMD -w $token"
+			CMD="${CMD} -w ${token}"
 		done	
 	fi
 	[ -z "$vnts_subnet" ] || CMD="${CMD} -g ${vnts_subnet}"
@@ -153,7 +162,7 @@ EOF
 	fi
 	[ "$vnts_log" = "1" ] || CMD="${CMD} -l /dev/null"
 	
-	vntscmd="${VNTS} ${CMD}"
+	vntscmd="cd ${path} ; ./vnts ${CMD}"
 	logger -t "VNT服务端" "运行${vntscmd}"
 	eval "$vntscmd" &
 	sleep 4
@@ -194,7 +203,7 @@ stop_vnts() {
 		ip6tables -D INPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
 		ip6tables -D INPUT -p udp --dport $vnts_web_port -j ACCEPT 2>/dev/null
 	fi
-	[ ! -z "`pidof vnts`" ] &&logger -t "VNT服务端" "进程已关闭!"
+	[ ! -z "`pidof vnts`" ] && logger -t "VNT服务端" "进程已关闭!"
 }
 
 case $1 in
@@ -203,6 +212,10 @@ start)
 	;;
 stop)
 	stop_vnts
+	;;
+restart)
+	stop_vnts
+	start_vnts
 	;;
 update)
 	update_vnts

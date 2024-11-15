@@ -582,6 +582,11 @@ void stop_vnts(void);
 void start_vnts(void);
 void restart_vnts(void);
 #endif
+#if defined(APP_VNTCLI)
+void stop_vntcli(void);
+void start_vntcli(void);
+void restart_vntcli(void);
+#endif
 /*#if defined(APP_NPC)
 void stop_npc(void);
 void start_npc(void);

@@ -652,7 +652,7 @@ send_authenticate( FILE *conn_fp )
 }
 
 static int
-auth_check( const char *authorization )
+auth_check( const char *authorization, const char *conn_ip )
 {
 	char authinfo[256];
 	int auth_len;
@@ -664,12 +664,29 @@ auth_check( const char *authorization )
 	/* Decode it. */
 	auth_len = b64_decode(authorization+6, authinfo, sizeof(authinfo)-1);
 	authinfo[auth_len] = '\0';
+	
+	/* 将解码后的用户名和密码进行分割 */
+	char *username = strtok(authinfo, ":");
+	char *password = strtok(NULL, ":");
 
 	/* Is this the right user and password? */
-	if (strcmp(authinfo, auth_basic_data) == 0)
+	if (strcmp(authinfo, auth_basic_data) == 0) {
+		if (username == NULL && password == NULL) {
+		char log_message[512];
+		snprintf(log_message, sizeof(log_message), "用户IP:【%s】 成功登录管理界面！", conn_ip);
+		doSystem("/usr/bin/logger -t \"httpd\" \"%s\"", log_message);
+		}
 		return 1;
-
-	return 0;
+	} else {
+		if (username == NULL && password == NULL) {
+        	char log_message[512];
+        	snprintf(log_message, sizeof(log_message), 
+                 "用户IP:【%s】 用户名:【%s】 密码:【%s】 登录管理界面验证失败！", 
+                 conn_ip, username ? username : "未知", password ? password : "未知");
+        	doSystem("/usr/bin/logger -t \"httpd\" \"%s\"", log_message);
+        	}
+        	return 0;
+    	}
 }
 
 static int
@@ -981,7 +998,7 @@ handle_request(FILE *conn_fp, const conn_item_t *item)
 	do_logout = (strcmp(file, "Logout.asp") == 0) ? 1 : 0;
 
 	if (handler->need_auth && login_state > 1 && !do_logout) {
-		if (!auth_check(authorization)) {
+		if (!auth_check(authorization, conn_ip)) {
 			http_logout(&conn_ip);
 			if (method_id == HTTP_METHOD_POST)
 				eat_post_data(conn_fp, clen);

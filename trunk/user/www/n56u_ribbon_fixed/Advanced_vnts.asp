@@ -28,10 +28,16 @@ var $j = jQuery.noConflict();
 $j(document).ready(function() {
 
 	init_itoggle('vnts_enable',change_vnts_enable);
-	init_itoggle('vnts_log',change_vnts_log_bridge);
+	init_itoggle('vnts_log');
 	init_itoggle('vnts_web_enable',change_vnts_web_enable_bridge);
 	init_itoggle('vnts_web_wan');
 	init_itoggle('vnts_sfinger');
+	$j("#tab_vnts_cfg, #tab_vnts_log").click(
+	function () {
+		var newHash = $j(this).attr('href').toLowerCase();
+		showTab(newHash);
+		return false;
+	});
 
 });
 
@@ -45,7 +51,6 @@ function initial(){
 	fill_status(vnts_status());
 	change_vnts_enable(1);
 	change_vnts_web_enable_bridge(1);
-	change_vnts_log_bridge(1);
 
 }
 
@@ -57,9 +62,21 @@ function change_vnts_web_enable_bridge(mflag){
 	showhide_div("vnts_web_wan_tr", m);
 }
 
-function change_vnts_log_bridge(mflag){
-	var m = document.form.vnts_log[0].checked;
-	showhide_div("vnts_logfile_tr", m);
+var arrHashes = ["cfg","log"];
+function showTab(curHash) {
+	var obj = $('tab_vnts_' + curHash.slice(1));
+	if (obj == null || obj.style.display == 'none')
+	curHash = '#cfg';
+	for (var i = 0; i < arrHashes.length; i++) {
+		if (curHash == ('#' + arrHashes[i])) {
+			$j('#tab_vnts_' + arrHashes[i]).parents('li').addClass('active');
+			$j('#wnd_vnts_' + arrHashes[i]).show();
+		} else {
+			$j('#wnd_vnts_' + arrHashes[i]).hide();
+			$j('#tab_vnts_' + arrHashes[i]).parents('li').removeClass('active');
+			}
+		}
+	window.location.hash = curHash;
 }
 
 function fill_status(status_code){
@@ -72,7 +89,6 @@ function fill_status(status_code){
 }
 
 function applyRule(){
-//	if(validForm()){
 	showLoading();
 	
 	document.form.action_mode.value = " Apply ";
@@ -80,7 +96,6 @@ function applyRule(){
 	document.form.next_page.value = "";
 	
 	document.form.submit();
-//	}
 }
 
 function done_validating(action){
@@ -173,8 +188,15 @@ function button_vnts_web(){
 	<div class="box well grad_colour_dark_blue">
 	<h2 class="box_head round_top">VNTS服务器</h2>
 	<div class="round_bottom">
+	<div>
+	<ul class="nav nav-tabs" style="margin-bottom: 10px;">
+	<li class="active"><a id="tab_vnts_cfg" href="#cfg">基本设置</a></li>
+	<li><a id="tab_vnts_log" href="#log">运行日志</a></li>
+	</ul>
+	</div>
 	<div class="row-fluid">
 	<div id="tabMenu" class="submenuBlock"></div>
+	<div id="wnd_vnts_cfg">
 	<div class="alert alert-info" style="margin: 10px;">这是<a href="https://github.com/vnt-dev/vnt" target="blank">vnt-cli</a>的服务端。&nbsp;&nbsp;&nbsp;&nbsp;安卓、Windows客户端：<a href="https://github.com/vnt-dev/VntApp" target="blank">VntApp</a><br>
 	<div>项目地址：<a href="https://github.com/vnt-dev/vnts" target="blank">github.com/vnt-dev/vnts</a>&nbsp;&nbsp;&nbsp;&nbsp;官网：<a href="https://rustvnt.com" target="blank">rustvnt.com</a>&nbsp;&nbsp;&nbsp;&nbsp;QQ群1：<a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=9aa1l03sqBPU-rMIzJ52gcmjq9HsO0tA&authKey=FFA0UdK6Dg1wAvL4e9FvyEu3DxekIlYp9W4NaQ54DO2dzQM%2BKS3rShUSwt9BN0bL&noverify=0&group_code=1034868233" target="blank">1034868233</a>&nbsp;&nbsp;&nbsp;&nbsp;QQ群2：<a href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=H4czBrp-IUxgTJ9wem0eXFHPdADkKTVW&authKey=JXU4v4ZQSXupcHOYUCOVgU0rDUdEe1ZfGVWzRVqRecxXY4cg%2BgfHl7n%2F%2F6nGSDH2&noverify=0&group_code=950473757" target="blank">950473757</a></div>
 	<br><div>当前版本:【<span style="color: #FFFF00;"><% nvram_get_x("", "vnts_ver"); %></span>】&nbsp;&nbsp;最新版本:【<span style="color: #FD0187;"><% nvram_get_x("", "vnts_ver_n"); %></span>】 </div>
@@ -215,7 +237,7 @@ function button_vnts_web(){
 	<th style="border-top: 0 none;">token白名单</th>
 	<td colspan="3" style="border-top: 0 none;">
 	<div class="input-append">
-	<textarea class="input" name="vnts_token" id="vnts_token" placeholder="" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","vnts_token"); %></textarea>
+	<textarea maxlength="2048" class="input" name="vnts_token" id="vnts_token" placeholder="" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","vnts_token"); %></textarea>
 	</div><span style="color:#888;">限制指定token的客户端才可以连接此服务器，留空则没有限制。<br>如有多个token作为白名单请使用换行来进行分隔。</span>
 	</td>
 	</tr><td colspan="3"></td>
@@ -232,7 +254,7 @@ function button_vnts_web(){
 	</td>
 	</tr><td colspan="3"></td>
 	<tr id="vnts_sfinger_tr" >
-	<th style="border-top: 0 none;">启用指纹校验</th>
+	<th style="border-top: 0 none;">启用数据指纹校验</th>
 	<td style="border-top: 0 none;">
 	<div class="main_itoggle">
 	<div id="vnts_sfinger_on_of">
@@ -242,7 +264,7 @@ function button_vnts_web(){
 	<div style="position: absolute; margin-left: -10000px;">
 	<input type="radio" value="1" name="vnts_sfinger" id="vnts_sfinger_1" class="input" value="1" <% nvram_match_x("", "vnts_sfinger", "1", "checked"); %> /><#checkbox_Yes#>
 	<input type="radio" value="0" name="vnts_sfinger" id="vnts_sfinger_0" class="input" value="0" <% nvram_match_x("", "vnts_sfinger", "0", "checked"); %> /><#checkbox_No#>
-	</div><span style="color:#888;">启用指纹校验后只会转发指纹正确的客户端数据包，增强安全性，但这会损失一部分性能</span></td>
+	</div><span style="color:#888;">启用数据指纹校验后只会转发指纹正确的客户端数据包，增强安全性，但这会损失一部分性能。(启用后客户端也须开启)</span></td>
 	</td>
 	</tr><td colspan="3"></td>
 	<tr id="vnts_web_enable_tr" >
@@ -278,7 +300,7 @@ function button_vnts_web(){
 	<tr id="vnts_web_pass_tr" style="display:none;">
 	<th style="border: 0 none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;密码:</th>
 	<td style="border: 0 none;">
-	<input type="password" class="input" size="32" name="vnts_web_pass" id="vnts_web_pass" value="<% nvram_get_x("","vnts_web_pass"); %>" />
+	<input maxlength="512" type="password" class="input" size="32" name="vnts_web_pass" id="vnts_web_pass" value="<% nvram_get_x("","vnts_web_pass"); %>" />
 	<button style="margin-left: -5px;" class="btn" type="button" onclick="passwordShowHide('vnts_web_pass')"><i class="icon-eye-close"></i></button>
 	</div>
 	</td>
@@ -301,7 +323,7 @@ function button_vnts_web(){
 	<tr>
 	<th style="border: 0 none;">程序路径</th>
 	<td style="border: 0 none;">
-	<textarea class="input" name="vnts_bin" id="vnts_bin" placeholder="/etc/storage/bin/vnts" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","vnts_bin"); %></textarea>
+	<textarea maxlength="1024"class="input" name="vnts_bin" id="vnts_bin" placeholder="/etc/storage/bin/vnts" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","vnts_bin"); %></textarea>
 	</div><br><span style="color:#888;">自定义程序的存放路径，填写完整的路径和程序名称</span>
 	</tr><td colspan="3"></td>
 	<tr id="vnts_log_tr" >
@@ -313,8 +335,8 @@ function button_vnts_web(){
 	</div>
 	</div>
 	<div style="position: absolute; margin-left: -10000px;">
-	<input type="radio" value="1" name="vnts_log" id="vnts_log_1" class="input" value="1" onClick="change_vnts_log_bridge(1);" <% nvram_match_x("", "vnts_log", "1", "checked"); %> /><#checkbox_Yes#>
-	<input type="radio" value="0" name="vnts_log" id="vnts_log_0" class="input" value="0" onClick="change_vnts_log_bridge(1);" <% nvram_match_x("", "vnts_log", "0", "checked"); %> /><#checkbox_No#>
+	<input type="radio" value="1" name="vnts_log" id="vnts_log_1" class="input" value="1" <% nvram_match_x("", "vnts_log", "1", "checked"); %> /><#checkbox_Yes#>
+	<input type="radio" value="0" name="vnts_log" id="vnts_log_0" class="input" value="0" <% nvram_match_x("", "vnts_log", "0", "checked"); %> /><#checkbox_No#>
 	</div>
 	</td>
 	</tr><td colspan="3"></td>
@@ -324,19 +346,27 @@ function button_vnts_web(){
 	<center><input class="btn btn-primary" style="width: 219px" type="button" value="<#CTL_apply#>" onclick="applyRule()" /></center>
 	</td>
 	</tr>
-	<tr id="vnts_logfile_tr" style="display:none;">
-	<td colspan="4" style="border-top: 0 none;">
-	<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('vntslog')"><span>点此查看 /tmp/vnts.log 程序日志</span></a>
-	<div id="vntslog" style="display:none;">
-	<textarea rows="21" class="span12" name="vnts.log" style="height:377px; font-family:'Courier New', Courier, mono; font-size:13px;" readonly="readonly" wrap="off" id="textarea"><% nvram_dump("vnts.log",""); %></textarea>
-	<input type="button" onClick="location.href=location.href" value="<#CTL_refresh#>" class="btn btn-primary" style="width: 200px">
-	<input type="button" onClick="clearLog();" value="<#CTL_clear#>" class="btn btn-primary" style="width: 200px; float: right">
-	</div>
-	</td>																										
-	</tr>
+	
 	</table>
 	</div>
 	</div>
+	</div>
+	<div id="wnd_vnts_log" style="display:none">
+	<table width="100%" cellpadding="4" cellspacing="0" class="table">
+	<tr>
+	<td colspan="3" style="border-top: 0 none; padding-bottom: 0px;">
+	<textarea rows="21" class="span12" style="height:377px; font-family:'Courier New', Courier, mono; font-size:13px;" readonly="readonly" wrap="off" id="textarea"><% nvram_dump("vnts.log",""); %></textarea>
+	</td>
+	</tr>
+	<tr>
+	<td width="15%" style="text-align: left; padding-bottom: 0px;">
+	<input type="button" onClick="location.href=location.href" value="<#CTL_refresh#>" class="btn btn-primary" style="width: 200px">
+	</td>
+	<td width="75%" style="text-align: right; padding-bottom: 0px;">
+	<input type="button" onClick="clearLog();" value="<#CTL_clear#>" class="btn btn-primary" style="width: 200px">
+	</td>
+	</tr>
+	</table>
 	</div>
 	</div>
 	</div>

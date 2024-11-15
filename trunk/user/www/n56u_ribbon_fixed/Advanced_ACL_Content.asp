@@ -303,7 +303,7 @@ function done_validating(action){
                                         </tr>
                                         <tr>
                                             <td width="35%">
-                                                <div id="ClientList_Block" class="alert alert-info ddown-list" style="width: 400px;"></div>
+                                                <div id="ClientList_Block" class="alert alert-info ddown-list" style="width: 400px; background-color: #c9c4cb;"></div>
                                                 <div class="input-append">
                                                     <input type="text" maxlength="12" class="span12" size="12" name="wl_maclist_x_0" value="<% nvram_get_x("", "wl_maclist_x_0"); %>" onKeyPress="return is_hwaddr(event);" style="float:left; width: 175px"/>
                                                     <button class="btn btn-chevron" id="chevron" type="button" onclick="pullLANIPList(this);" title="Select the MAC of WiFi clients"><i class="icon icon-chevron-down"></i></button>

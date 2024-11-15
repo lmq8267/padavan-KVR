@@ -262,6 +262,9 @@ endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_VNTS),y)
 	rm -f $(INSTALLDIR)/www/Advanced_vnts.asp
 endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_VNTCLI),y)
+	rm -f $(INSTALLDIR)/www/Advanced_vnt.asp
+endif
 
 clean:
 	@echo "Clean www romfs"

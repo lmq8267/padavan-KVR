@@ -347,7 +347,7 @@ function showMRULESList(){
                                         </tr>
 										</table>
 										<tr>
-											<td colspan="4" style="border-top: 0 none;">
+											<td colspan="4" style="border-top: 0 none; padding-bottom: 20px;">
 												<br />
 												<center><input class="btn btn-primary" style="width: 219px" type="button" value="<#CTL_apply#>" onclick="applyRule()" /></center>
 											</td>

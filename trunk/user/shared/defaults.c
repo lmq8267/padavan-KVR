@@ -521,6 +521,7 @@ struct nvram_pair router_defaults[] = {
 	{ "w_wxsend", "1" },
 	{ "w_cloudflared", "1" },
 	{ "w_vnts", "1" },
+	{ "w_vntcli", "1" },
 
 	{ "ip6_service", "" },
 	{ "ip6_ppe_on", "0" },
@@ -777,7 +778,7 @@ struct nvram_pair router_defaults[] = {
 	/* AdguargHome */
 	{ "adg_enable", "0" },
 	{ "adg_redirect", "0" },
-	{ "adg_link", "https://cdn.jsdelivr.net/gh/chongshengB/rt-n56u/trunk/user/adguardhome/AdGuardHome" },
+	{ "adg_link", "" },
 #endif
 
 #if defined(APP_CADDY)
@@ -819,8 +820,39 @@ struct nvram_pair router_defaults[] = {
 	{ "vnts_web_user", "" },
 	{ "vnts_web_pass", "" },
 	{ "vnts_web_wan", "0" },
-	{ "vnts_vnts_bin", "" },
+	{ "vnts_bin", "" },
 	{ "vnts_log", "0" },
+#endif
+
+#if defined(APP_VNTCLI)
+	/*vntcli*/
+	{ "vntcli_enable", "0" },
+	{ "vntcli_token", "" },
+	{ "vntcli_ip", "" },
+	{ "vntcli_localadd", "" },
+	{ "vntcli_serip", "" },
+	{ "vntcli_model", "0" },
+	{ "vntcli_key", "" },
+	{ "vntcli_log", "0" },
+	{ "vntcli_proxy", "0" },
+	{ "vntcli_first", "0" },
+	{ "vntcli_wg", "0" },
+	{ "vntcli_finger", "0" },
+	{ "vntcli_serverw", "0" },
+	{ "vntcli_desname", "" },
+	{ "vntcli_id", "" },
+	{ "vntcli_tunname", "" },
+	{ "vntcli_mtu", "" },
+	{ "vntcli_dns", "" },
+	{ "vntcli_stun", "" },
+	{ "vntcli_port", "" },
+	{ "vntcli_punch", "0" },
+	{ "vntcli_comp", "0" },
+	{ "vntcli_relay", "0" },
+	{ "vntcli_bin", "" },
+	{ "vntcli_wan", "" },
+	{ "vntcli_routenum_x", "0" },
+	{ "vntcli_mappnum_x", "0" },
 #endif
 
 #if defined(APP_CLOUDFLARED)
