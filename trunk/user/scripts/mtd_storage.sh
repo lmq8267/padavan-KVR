@@ -283,6 +283,15 @@ sync && echo 3 > /proc/sys/vm/drop_caches
 #wing 192.168.1.9:1080
 #ipset add gfwlist 8.8.4.4
 
+#**************github下载加速******************
+#设置github加速下载镜像代理地址，失效请自行更换(按下方格式填写，每行一个，末尾加/)
+nvram get github_proxy="https://github.moeyy.xyz/
+https://gh.llkk.cc/
+https://mirror.ghproxy.com/
+https://ghproxy.net/
+"
+#*******************************************
+
 #**************替换背景图片******************
 #上传图片命名为wood.jpg到/etc/storage/bg/目录里
 #路径必须为:/etc/storage/bg/wood.jpg 去掉下方代码前面的# 表示启用更换背景

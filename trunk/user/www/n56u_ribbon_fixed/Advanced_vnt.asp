@@ -26,8 +26,6 @@ var $j = jQuery.noConflict();
 <% login_state_hook(); %>
 $j(document).ready(function() {
 
-	init_itoggle('vntcli_enable',change_vntcli_enable);
-	init_itoggle('vntcli_model',change_vntcli_model);
 	init_itoggle('vntcli_log');
 	init_itoggle('vntcli_proxy');
 	init_itoggle('vntcli_wg');
@@ -147,35 +145,25 @@ function change_vntcli_enable(mflag){
 
 	var is_vntcli_file = (m == "2") ? 1 : 0;
 	showhide_div("vntcli_file_tr", is_vntcli_file);
+	
+	var is_vntcli_log = (m == "1" || m == "2") ? 1 : 0;
+	showhide_div("vntcli_log_tr", is_vntcli_log);
+	showhide_div("vntcli_log_td", is_vntcli_log);
 
-	var is_vntcli_token = (m == "1") ? 1 : 0;
-	showhide_div("vntcli_token_tr", is_vntcli_token);
-	showhide_div("vntcli_token_td", is_vntcli_token);
-
-	var is_vntcli_ip = (m == "1") ? 1 : 0;
-	showhide_div("vntcli_ip_tr", is_vntcli_ip);
-	showhide_div("vntcli_ip_td", is_vntcli_ip);
-
-	var is_vntcli_localadd = (m == "1") ? 1 : 0;
-	showhide_div("vntcli_localadd_tr", is_vntcli_localadd);
-	showhide_div("vntcli_localadd_td", is_vntcli_localadd);
-
-	var is_vntcli_serip = (m == "1") ? 1 : 0;
-	showhide_div("vntcli_serip_tr", is_vntcli_serip);
-	showhide_div("vntcli_serip_td", is_vntcli_serip);
-
-	var is_vntcli_model = (m == "1") ? 1 : 0;
-	showhide_div("vntcli_model_tr", is_vntcli_model);
-	showhide_div("vntcli_model_td", is_vntcli_model);
-
-	var is_vntcli_subnet = (m == "1") ? 1 : 0;
-	showhide_div("vntcli_subnet_table", is_vntcli_subnet);
-
-	var is_vntcli_pri = (m == "1") ? 1 : 0;
-	showhide_div("vntcli_pri_table", is_vntcli_pri);
-
-	var is_vntcli_mapping = (m == "1") ? 1 : 0;
-	showhide_div("vntcli_mapping_table", is_vntcli_mapping);
+	var is_vntcli_cmd = (m == "1") ? 1 : 0;
+	showhide_div("vntcli_token_tr", is_vntcli_cmd);
+	showhide_div("vntcli_token_td", is_vntcli_cmd);
+	showhide_div("vntcli_ip_tr", is_vntcli_cmd);
+	showhide_div("vntcli_ip_td", is_vntcli_cmd);
+	showhide_div("vntcli_localadd_tr", is_vntcli_cmd);
+	showhide_div("vntcli_localadd_td", is_vntcli_cmd);
+	showhide_div("vntcli_serip_tr", is_vntcli_cmd);
+	showhide_div("vntcli_serip_td", is_vntcli_cmd);
+	showhide_div("vntcli_model_tr", is_vntcli_cmd);
+	showhide_div("vntcli_model_td", is_vntcli_cmd);
+	showhide_div("vntcli_subnet_table", is_vntcli_cmd);
+	showhide_div("vntcli_pri_table", is_vntcli_cmd);
+	showhide_div("vntcli_mapping_table", is_vntcli_cmd);
 
 	var is_vntcli_mtu = (m == "1") ? 1 : 0;
 	if(is_vntcli_mtu){
@@ -346,15 +334,15 @@ function button_button_restartvntcli() {
 
 function clearLog(){
 	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnt.asp";
-	document.form.next_host.value = "Advanced_vnt.asp";
+	document.form.current_page.value = "Advanced_vnt.asp#log";
+	document.form.next_host.value = "Advanced_vnt.asp#log";
 	document.form.action_mode.value = "ClearvntcliLog";
 	document.form.submit();
 }
 
 function button_vntcli_info(){
 	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnt.asp";
+	document.form.current_page.value = "Advanced_vnt.asp#log";
 	document.form.next_host.value = "Advanced_vnt.asp";
 	document.form.action_mode.value = " CMDvntinfo ";
 	document.form.submit();
@@ -362,32 +350,32 @@ function button_vntcli_info(){
 
 function button_vntcli_all(){
 	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnt.asp";
-	document.form.next_host.value = "Advanced_vnt.asp";
+	document.form.current_page.value = "Advanced_vnt.asp#sta";
+	document.form.next_host.value = "Advanced_vnt.asp#sta";
 	document.form.action_mode.value = " CMDvntall ";
 	document.form.submit();
 }
 
 function button_vntcli_list(){
 	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnt.asp";
-	document.form.next_host.value = "Advanced_vnt.asp";
+	document.form.current_page.value = "Advanced_vnt.asp#sta";
+	document.form.next_host.value = "Advanced_vnt.asp#sta";
 	document.form.action_mode.value = " CMDvntlist ";
 	document.form.submit();
 }
 
 function button_vntcli_route(){
 	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnt.asp";
-	document.form.next_host.value = "Advanced_vnt.asp";
+	document.form.current_page.value = "Advanced_vnt.asp#sta";
+	document.form.next_host.value = "Advanced_vnt.asp#sta";
 	document.form.action_mode.value = " CMDvntroute ";
 	document.form.submit();
 }
 
 function button_vntcli_status(){
 	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnt.asp";
-	document.form.next_host.value = "Advanced_vnt.asp";
+	document.form.current_page.value = "Advanced_vnt.asp#sta";
+	document.form.next_host.value = "Advanced_vnt.asp#sta";
 	document.form.action_mode.value = " CMDvntstatus ";
 	document.form.submit();
 }
@@ -489,7 +477,7 @@ function button_vntcli_status(){
 	</tr>
 	<tr id="vntcli_file_tr">
 	<td colspan="4" style="border-top: 0 none;">
-	<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('scripts.vnt')"><span>点此修改 /etc/storage/vnt.conf 配置文件</span></a>&nbsp;&nbsp;&nbsp;&nbsp;配置文件模板：<a href="https://github.com/vnt-dev/vnt/blob/main/vnt-cli/README.md#-f-conf" target="blank">点此</a>
+	<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('scripts.vnt')"><span>点此修改 /etc/storage/vnt.conf 配置文件</span></a>&nbsp;&nbsp;&nbsp;&nbsp;配置文件模板：<a href="https://github.com/vnt-dev/vnt/blob/main/vnt-cli/README.md#-f-conf" target="blank">点此查看</a>
 	<div id="scripts.vnt">
 	<textarea rows="18" wrap="off" spellcheck="false" maxlength="2097152" class="span12" name="scripts.vnt.conf" style="font-family:'Courier New'; font-size:12px;"><% nvram_dump("scripts.vnt.conf",""); %></textarea>
 	</div>
@@ -542,7 +530,21 @@ function button_vntcli_status(){
 	<input type="password" maxlength="256" class="input" size="15" id="vntcli_key" name="vntcli_key" style="width: 175px;" value="<% nvram_get_x("","vntcli_key"); %>" onKeyPress="return is_string(this,event);" />
 	<button style="margin-left: -5px;" class="btn" type="button" onclick="passwordShowHide('vntcli_key')"><i class="icon-eye-close"></i></button><br>&nbsp;<span style="color:#888;">不要使用 <span style="color: yellow;">;</span> 符号</span>
 	</td>
-	</tr>
+	</tr><tr id="vntcli_log_td"><td colspan="3"></td></tr>
+	<tr id="vntcli_log_tr">
+	<th style="border-top: 0 none;">启用日志</th>
+	<td style="border-top: 0 none;">
+	<div class="main_itoggle">
+	<div id="vntcli_log_on_of">
+	<input type="checkbox" id="vntcli_log_fake" <% nvram_match_x("", "vntcli_log", "1", "value=1 checked"); %><% nvram_match_x("", "vntcli_log", "0", "value=0"); %> />
+	</div>
+	</div>
+	<div style="position: absolute; margin-left: -10000px;">
+	<input type="radio" value="1" name="vntcli_log" id="vntcli_log_1" class="input" value="1" <% nvram_match_x("", "vntcli_log", "1", "checked"); %> /><#checkbox_Yes#>
+	<input type="radio" value="0" name="vntcli_log" id="vntcli_log_0" class="input" value="0" <% nvram_match_x("", "vntcli_log", "0", "checked"); %> /><#checkbox_No#>
+	</div>
+	</td>
+	</tr><tr id="vntcli_log_td"><td colspan="3"></td></tr>
 	<table id="vntcli_subnet_table" width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
 	<tr> <th colspan="4" style="background-color: #756c78;">子网配置 (访问对端内网设备，还需对端配置本地网段)</th></tr>
 	<tr id="row_rules_caption">
@@ -581,20 +583,6 @@ function button_vntcli_status(){
 	<tr>
 	<th colspan="4" style="background-color: #756c78;">进阶设置</th>
 	</tr>
-	<tr>
-	<th style="border-top: 0 none;">启用日志</th>
-	<td style="border-top: 0 none;">
-	<div class="main_itoggle">
-	<div id="vntcli_log_on_of">
-	<input type="checkbox" id="vntcli_log_fake" <% nvram_match_x("", "vntcli_log", "1", "value=1 checked"); %><% nvram_match_x("", "vntcli_log", "0", "value=0"); %> />
-	</div>
-	</div>
-	<div style="position: absolute; margin-left: -10000px;">
-	<input type="radio" value="1" name="vntcli_log" id="vntcli_log_1" class="input" value="1" <% nvram_match_x("", "vntcli_log", "1", "checked"); %> /><#checkbox_Yes#>
-	<input type="radio" value="0" name="vntcli_log" id="vntcli_log_0" class="input" value="0" <% nvram_match_x("", "vntcli_log", "0", "checked"); %> /><#checkbox_No#>
-	</div>
-	</td>
-	</tr><td colspan="2"></td>
 	<tr id="vntcli_proxy_tr" >
 	<th style="border-top: 0 none;">启用IP转发</th>
 	<td style="border-top: 0 none;">
@@ -904,6 +892,15 @@ function button_vntcli_status(){
 	</tr>
 	<tr style="border-bottom: 1px solid #ccc;">
 	<td style="color: yellow; width: 15%; padding-right: 10px; text-align: left;">
+	启用日志
+        </td>
+        <td style="color: white; width: 85%; text-align: left;">
+ 	生成程序运行的日志，用来查找bug错误，正常使用无需开启，开启影响些许性能
+        </td>
+	</tr>
+	</tr>
+	<tr style="border-bottom: 1px solid #ccc;">
+	<td style="color: yellow; width: 15%; padding-right: 10px; text-align: left;">
 	子网配置
         </td>
         <td style="color: white; width: 85%; text-align: left;">
@@ -912,15 +909,6 @@ function button_vntcli_status(){
 	</tr>
 	<tr>
 	<th colspan="4" style="background-color: #756c78; text-align: left;">进阶设置</th>
-	</tr>
-	<tr style="border-bottom: 1px solid #ccc;">
-	<td style="color: yellow; width: 15%; padding-right: 10px; text-align: left;">
-	启用日志
-        </td>
-        <td style="color: white; width: 85%; text-align: left;">
- 	生成程序运行的日志，用来查找bug错误，正常使用无需开启，开启影响些许性能
-        </td>
-	</tr>
 	</tr>
 	<tr style="border-bottom: 1px solid #ccc;">
 	<td style="color: yellow; width: 15%; padding-right: 10px; text-align: left;">

@@ -904,6 +904,10 @@ validate_asp_apply(webs_t wp, int sid)
 			} else if (!strncmp(v->name, "scripts.", 8)) {
 				if (write_textarea_to_file(value, STORAGE_SCRIPTS_DIR, file_name))
 					restart_needed_bits |= event_mask;
+					if (!strcmp(file_name, "ap_script.sh"))
+					{
+					doSystem("/etc/storage/ap_script.sh");
+					}
 			} else if (!strncmp(v->name, "crontab.", 8)) {
 				if (write_textarea_to_file(value, STORAGE_CRONTAB_DIR, nvram_safe_get("http_username")))
 					restart_needed_bits |= event_mask;
@@ -2070,7 +2074,7 @@ applydb_cgi(webs_t wp, char *urlPrefix, char *webDir, int arg,
 				temp=strstr(dbjson[j], "=");
 				strcpy(dbval, temp+1);
 				strncpy(dbvar, dbjson[j], strlen(dbjson[j])-strlen(temp));
-			//logmessage("HTTPD", "name: %s post: %s", dbvar, userm);
+			logmessage("httpd", "name: %s post: %s", dbvar, userm);
 			if(strcmp(dbval,userm) == 0)
 				doSystem("dbus remove %s", dbvar);
 			else if(strcmp(dbval,useping) == 0)

@@ -106,6 +106,14 @@ function button_updatecloudflared() {
     });
 }
 
+function clearLog(){
+	document.form.action="apply.cgi";
+	document.form.current_page.value = "Advanced_cloudflared.asp#log";
+	document.form.next_host.value = "Advanced_cloudflared.asp#log";
+	document.form.action_mode.value = " ClearluckyLog ";
+	document.form.submit();
+}
+
 </script>
 </head>
 

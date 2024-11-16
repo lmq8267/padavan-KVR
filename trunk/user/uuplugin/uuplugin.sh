@@ -63,7 +63,12 @@ fi
 }
 
 uu_close () {
-logg "关闭UU加速器..."
+  logg "关闭UU加速器..."
+  scriptname=$(basename $0)
+  if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+  fi
   killall uuplugin >/dev/null 2>&1
   killall -9 uuplugin >/dev/null 2>&1
   rm -rf /tmp/uu
@@ -73,16 +78,16 @@ logg "关闭UU加速器..."
 
 case $1 in
 start)
-	uu_start
+	uu_start &
 	;;
 restart)
-	uu_start
+	uu_start &
 	;;
 stop)
 	uu_close
 	;;
 *)
-	uu_start
+	uu_start &
 	;;
 esac
 

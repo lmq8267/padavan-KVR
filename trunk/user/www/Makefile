@@ -9,7 +9,7 @@ include $(ROOTDIR)/user/shared/boards.mk
 PROJECT_HOME_URL="https:\/\/bitbucket.org\/padavan\/rt-n56u\/"
 PROJECT_HOME_URL_MOD="https:\/\/github.com\/hanwckf\/rt-n56u\/"
 
-LABEL_COPYRIGHT_TEXT='© 2011-2024 Padavan-KVR'
+LABEL_COPYRIGHT_TEXT="© 2011-`date +'%Y'` Padavan-KVR"
 
 BOARD_PATTERN=s/ZVMODELVZ/$(CONFIG_FIRMWARE_PRODUCT_ID)/g
 COPYR_PATTERN=s/ZVCOPYRVZ/$(LABEL_COPYRIGHT_TEXT)/g
@@ -200,11 +200,12 @@ ifneq ($(CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS),y)
 	rm -f $(INSTALLDIR)/www/Shadowsocks_log.asp
 endif
 
-ifeq ($(CONFIG_FIRMWARE_WEBUI_HIDE_VPN),y)
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_OPENVPN),y)
+	rm -f $(INSTALLDIR)/www/vpnsrv.asp
 	rm -f $(INSTALLDIR)/www/vpn_clients.asp
 	rm -f $(INSTALLDIR)/www/vpncli.asp
-	rm -f $(INSTALLDIR)/www/vpnsrv.asp
 endif
+
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_ADBYBY),y)
 	rm -f $(INSTALLDIR)/www/Advanced_adbyby.asp
 	rm -f $(INSTALLDIR)/www/Ad_action.asp

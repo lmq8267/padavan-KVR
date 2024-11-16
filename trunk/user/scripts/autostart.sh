@@ -4,9 +4,14 @@
 mkdir -p /tmp/dnsmasq.dom
 logger -t "为防止dnsmasq启动失败，创建/tmp/dnsmasq.dom/"
 
-if [ $(nvram get sdns_enable) = 1 ] ; then
-logger -t "自动启动" "正在启动SmartDns"
-/usr/bin/smartdns.sh start &
+#wifi中继脚本
+if [ ! -x /etc/storage/sh_ezscript.sh ]; then
+	cp /etc_ro/sh_ezscript.sh /etc/storage/sh_ezscript.sh
+fi
+if [ -x /etc/storage/ap_script.sh ]; then
+	/etc/storage/ap_script.sh >/dev/null 2>&1 &
+else
+	cp /etc_ro/ap_script.sh /etc/storage/ap_script.sh
 fi
 
 if [ $(nvram get caddy_enable) = 1 ] ; then
@@ -46,6 +51,24 @@ if [ $(nvram get adbyby_enable) = 1 ] ; then
 logger -t "自动启动" "正在启动adbyby plus+"
 /usr/bin/adbyby.sh start &
 fi
+
+if [ $(nvram get sdns_enable) = 1 ] ; then
+smartdns_conf="/etc/storage/smartdns_custom.conf"
+dnsmasq_Conf="/etc/storage/dnsmasq/dnsmasq.conf"
+smartdns_Ini="/etc/storage/smartdns_conf.ini"
+sdns_port=$(nvram get sdns_port)
+   if [ -f "$smartdns_conf" ] ; then
+       sed -i '/去广告/d' $smartdns_conf
+       sed -i '/adbyby/d' $smartdns_conf
+       sed -i '/no-resolv/d' "$dnsmasq_Conf"
+       sed -i '/server=127.0.0.1#'"$sdns_portd"'/d' "$dnsmasq_Conf"
+       sed -i '/port=0/d' "$dnsmasq_Conf"
+       rm  -f "$smartdns_Ini"
+   fi
+logger -t "自动启动" "正在启动 SmartDNS..."
+/usr/bin/smartdns.sh start &
+fi
+
 
 if [ $(nvram get koolproxy_enable) = 1 ] ; then
 logger -t "自动启动" "正在启动koolproxy"

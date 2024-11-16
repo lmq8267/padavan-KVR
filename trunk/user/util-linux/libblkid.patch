@@ -257,4 +257,3 @@ diff -urN util-linux-2.36-ref/libblkid/src/topology/topology.c util-linux-2.36/l
 +	&ioctl_tp_idinfo
  #endif
  };
- 

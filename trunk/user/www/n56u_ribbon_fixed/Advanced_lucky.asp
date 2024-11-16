@@ -96,7 +96,7 @@ function textarea_scripts_enabled(v){
 function clearLog(){
 	document.form.action="apply.cgi";
 	document.form.current_page.value = "Advanced_lucky.asp#log";
-	document.form.next_host.value = location.host;
+	document.form.next_host.value = "Advanced_lucky.asp#log";
 	document.form.action_mode.value = " ClearluckyLog ";
 	document.form.submit();
 }

@@ -45,13 +45,13 @@ dowload_cf() {
 			else
 				nvram set cloudflared_ver=$cf_ver
 			fi
+			break
        	else
-	   		logger -t "cloudflared" "下载失败，请手动下载 https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared 上传到  $PROG"
-			exit 1
+	   		logger -t "cloudflared" "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared 上传到  $PROG"
+			rm -f $PROG
 	  	fi
 	else
-		logger -t "cloudflared" "下载失败，请手动下载 https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared 上传到  $PROG"
-		exit 1
+		logger -t "cloudflared" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared 上传到  $PROG"
    	fi
 	done
 }
@@ -106,23 +106,28 @@ kill_cf() {
 }
 stop_cf() {
 	logger -t "cloudflared" "正在关闭cloudflared..."
+	scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 	kill_cf
 	[ ! -z "`pidof cloudflared`" ] && logger -t "cloudflared" "cloudflared关闭成功!"
 }
 
 case $1 in
 start)
-	start_cf
+	start_cf &
 	;;
 stop)
 	stop_cf
 	;;
 restart)
 	stop_cf
-	start_cf
+	start_cf &
 	;;
 update)
-	update_cf
+	update_cf &
 	;;
 *)
 	echo "check"

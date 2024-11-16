@@ -120,6 +120,34 @@ add_rule
 /sbin/restart_dhcpd
 }
 
+github_proxys="$(nvram get github_proxy)"
+[ -z "$github_proxys" ] && github_proxys=" "
+
+dl_wyy() {
+	if [ ! -f "/usr/bin/UnblockNeteaseMusic" ]; then
+		logger -t "音乐解锁" "没有主程序，开始下载程序"
+		
+		for proxy in $github_proxys ; do
+		curl -L -k -s -o "/tmp/UnblockNeteaseMusic" --connect-timeout 10 --retry 3 "${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/unblockmusic/UnblockNeteaseMusic" || wget --no-check-certificate -q -O "/tmp/UnblockNeteaseMusic" "${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/unblockmusic/UnblockNeteaseMusic"
+		if [ "$?" = 0 ] ; then
+			chmod +x /tmp/UnblockNeteaseMusic
+			if [ $(($(/tmp/UnblockNeteaseMusic -h | wc -l))) -gt 3 ] ; then
+				logger -t "音乐解锁" "/tmp/UnblockNeteaseMusic 下载成功"
+				break
+       		else
+	   			logger -t "音乐解锁" "下载不完整，删除...请手动下载 ${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/unblockmusic/UnblockNeteaseMusic 上传到  /tmp/UnblockNeteaseMusic"
+				rm -f /tmp/UnblockNeteaseMusic
+	  		fi
+		else
+			logger -t "音乐解锁" "下载失败${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/unblockmusic/UnblockNeteaseMusic"
+   		fi
+		
+		done
+	fi
+
+
+}
+
 wyy_start()
 {
 	[ $ENABLE -eq "0" ] && exit 0
@@ -132,7 +160,19 @@ wyy_start()
 	if [ $FLAC -eq 1 ]; then
       ENABLE_FLAC="-b "
     fi
-    UnblockNeteaseMusic $ENABLE_FLAC -p 5200 -sp 5201 -m 0 -c /etc_ro/UnblockNeteaseMusicGo/server.crt -k /etc_ro/UnblockNeteaseMusicGo/server.key -m 0 -e >/dev/null 2>&1 &
+    UnblockNeteaseMusic=/usr/bin/UnblockNeteaseMusic
+    if [ -f /tmp/UnblockNeteaseMusic ] ; then
+       chmod +x /tmp/UnblockNeteaseMusic
+       if [ $(($(/tmp/UnblockNeteaseMusic -h | wc -l))) -lt 3 ] ; then
+         rm -f /tmp/UnblockNeteaseMusic
+       else
+         UnblockNeteaseMusic=/tmp/UnblockNeteaseMusic
+       fi
+    fi
+    if [ ! -f "$UnblockNeteaseMusic" ] ; then
+    	dl_wyy
+    fi 
+    $UnblockNeteaseMusic $ENABLE_FLAC -p 5200 -sp 5201 -m 0 -c /etc_ro/UnblockNeteaseMusicGo/server.crt -k /etc_ro/UnblockNeteaseMusicGo/server.key -m 0 -e >/dev/null 2>&1 &
     logger -t "音乐解锁" "启动 Golang Version (http:5200, https:5201)"    
   else
     kill -9 $(busybox ps -w | grep 'sleep 60m' | grep -v grep | awk '{print $1}') >/dev/null 2>&1
@@ -149,6 +189,11 @@ wyy_start()
 
 wyy_close()
 {	
+	scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 	kill -9 $(busybox ps -w | grep UnblockNeteaseMusic | grep -v grep | awk '{print $1}') >/dev/null 2>&1
 	kill -9 $(busybox ps -w | grep logcheck.sh | grep -v grep | awk '{print $1}') >/dev/null 2>&1
 	

@@ -1,58 +1,57 @@
 #!/bin/sh
 
+github_proxys="$(nvram get github_proxy)"
+[ -z "$github_proxys" ] && github_proxys=" "
+
 dl_ald() {
-   SVC_PATH="/tmp/aliyundrive/aliyundrive-webdav"
-   if [ ! -s "$SVC_PATH" ] ; then
-    logger -t "【阿里云盘】" "找不到 $SVC_PATH ，下载 阿里云盘 程序"
-    tag=$(curl -k --silent "https://api.github.com/repos/messense/aliyundrive-webdav/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-    [ -z "$tag" ] && tag="$( curl -k --connect-timeout 20 -s https://api.github.com/repos/messense/aliyundrive-webdav/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
-    [ -z "$tag" ] && tag="$( curl -k -L --connect-timeout 20 --silent https://api.github.com/repos/messense/aliyundrive-webdav/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
-    [ -z "$tag" ] && tag="$( curl -k --connect-timeout 20 --silent https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest | grep 'tag_name' | cut -d\" -f4 )"
-    if [ ! -z "$tag" ] ; then
-    logger -t "【阿里云盘】" "自动下载最新版本 $tag"
-    logger -t "【阿里云盘】" "下载最新版本 $tag程序较慢，耐心等待"
-    wgetcurl.sh "/tmp/aliyundrive/aliyundrive.tar.gz" "https://github.com/messense/aliyundrive-webdav/releases/download/$tag/aliyundrive-webdav-$tag.mipsel-unknown-linux-musl.tar.gz"
-    tar -xzvf /tmp/aliyundrive/aliyundrive.tar.gz -C /tmp/aliyundrive
-    rm -rf /tmp/aliyundrive/aliyundrive.tar.gz
-    fi
-    if [ ! -s "$SVC_PATH" ] && [ -d "/tmp/aliyundrive" ] ; then
-    logger -t "【阿里云盘】" "最新版本 $tag下载失败"
-    static_ald="https://github.com/messense/aliyundrive-webdav/releases/download/v1.10.6/aliyundrive-webdav-v1.10.6.mipsel-unknown-linux-musl.tar.gz"
-    logger -t "【阿里云盘】" "开始下载 $static_ald"
-    wgetcurl.sh "/tmp/aliyundrive/aliyundrive.tar.gz" "$static_ald"
-    tar -xzvf /tmp/aliyundrive/aliyundrive.tar.gz -C /tmp/aliyundrive
-    rm -rf /tmp/aliyundrive/aliyundrive.tar.gz
-    fi
-    if [ ! -s "$SVC_PATH" ] && [ -d "/tmp/aliyundrive" ] ; then
-    logger -t "【阿里云盘】" "最新版本获取失败！！！"
-    logger -t "【阿里云盘】" "开始下载备用程序https://github.com/vb1980/Padavan-KVR/main/trunk/user/aliyundrive-webdav/aliyundrive-webdav"
-    wgetcurl.sh "/tmp/aliyundrive/aliyundrive-webdav" "https://github.com/vb1980/Padavan-KVR/main/trunk/user/aliyundrive-webdav/aliyundrive-webdav"
-    fi
-      enable=$(nvram get aliyundrive_enable)
-      if [ "$enable" = "0" ] ;then
-       kill_ald
+	[ ! -f /usr/bin/aliyundrive-webdav ] && aliyun=/etc/storage/bin/aliyundrive-webdav
+	[ ! -f /usr/bin/aliyundrive-webdav ] && aliyun=/tmp/var/aliyundrive-webdav
+	
+	logger -t "【阿里云盘】" "找不到 /etc/storage/bin/aliyundrive-webdav ，下载 阿里云盘 程序"
+	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
+      		tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/messense/aliyundrive-webdav/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+	 	[ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/messense/aliyundrive-webdav/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+    	else
+      		tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/messense/aliyundrive-webdav/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       	[ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/messense/aliyundrive-webdav/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
         fi
-    if [ ! -f "/tmp/aliyundrive/aliyundrive-webdav" ]; then
-    logger -t "【阿里云盘】" "阿里云盘下载失败,再次尝试下载"
-    kill_ald
-    start_ald
-    else
-    logger -t "【阿里云盘】" "阿里云盘下载成功。"
-    logger -t "【阿里云盘】" "程序将安装在内存，将会占用部分内存，请注意内存使用容量！"
-    
-    fi
-  fi
-    
-  chmod 777 /tmp/aliyundrive/aliyundrive-webdav
+        [ -z "$tag" ] && tag="v2.3.3"
+	if [ ! -z "$tag" ] ; then
+		logger -t "【阿里云盘】" "下载 $tag 下载较慢，耐心等待"
+ 		for proxy in $github_proxys ; do
+       		curl -Lkso "/tmp/aliyundrive/aliyundrive.tar.gz" "${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz" || wget --no-check-certificate -q -O "/tmp/aliyundrive/aliyundrive.tar.gz" "${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz"
+			if [ "$?" = 0 ] ; then
+				tar -xzvf /tmp/aliyundrive/aliyundrive.tar.gz -C /tmp/var
+				rm -rf /tmp/aliyundrive/aliyundrive.tar.gz
+				chmod +x /tmp/var/aliyundrive-webdav
+				if [ $(($(/tmp/var/aliyundrive-webdav -h | wc -l))) -gt 3 ] ; then
+					logger -t "【阿里云盘】" "/tmp/var/aliyundrive-webdav 下载成功"
+					break
+       			else
+	   				logger -t "【阿里云盘】" "下载不完整，请手动下载 ${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz 上传到  /tmp/var/aliyundrive-webdav 或 /etc/storage/bin/aliyundrive-webdav"
+					rm -f /tmp/var/aliyundrive-webdav
+	  			fi
+			else
+				logger -t "【阿里云盘】" "下载失败，请手动下载 ${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz 解压上传到  /tmp/var/aliyundrive-webdav 或 /etc/storage/bin/aliyundrive-webdav"
+   			fi
+		done
+	fi
+	aliyun=/tmp/var/aliyundrive-webdav
+    	logger -t "【阿里云盘】" "程序安装在内存，将会占用部分内存，请注意内存使用容量！"
+	 chmod +x $aliyun
 }
 
 start_ald() {
    logger -t "【阿里云盘】" "正在启动..."
    mkdir -p /tmp/aliyundrive
-   if [ ! -f "/tmp/aliyundrive/aliyundrive-webdav" ]; then
-  dl_ald
-  fi
+   [ ! -f /usr/bin/aliyundrive-webdav ] && [ -f /etc/storage/bin/aliyundrive-webdav ] && aliyun="/etc/storage/bin/aliyundrive-webdav"
+   [ ! -f "$aliyun" ] && [ -f /tmp/var/aliyundrive-webdav ] && aliyun=/tmp/var/aliyundrive-webdav
+   [ ! -x "$aliyun" ] && chmod +x $aliyun
+   if [ ! -f "$aliyun" ] || [ $(($($aliyun -h | wc -l))) -lt 3 ] ; then
+  	dl_ald
+   fi
    NAME=aliyundrive-webdav
+   aliyun=$aliyun
    enable=$(nvram get aliyundrive_enable)
    case "$enable" in
     1|on|true|yes|enabled)
@@ -87,7 +86,7 @@ start_ald() {
         esac
       fi
 	  
-      /tmp/aliyundrive/$NAME $extra_options --host $host --port $port --root $root  --refresh-token $refresh_token -S $read_buf_size --cache-size $cache_size --cache-ttl $cache_ttl --workdir /tmp/$NAME >/dev/null 2>&1 &
+      $aliyun $extra_options --host $host --port $port --root $root  --refresh-token $refresh_token -S $read_buf_size --cache-size $cache_size --cache-ttl $cache_ttl --workdir /tmp/$NAME >/dev/null 2>&1 &
 	  ;;
     *)
       kill_ald ;;
@@ -96,14 +95,16 @@ start_ald() {
 }
 kill_ald() {
         rm -rf /tmp/aliyundrive
+        scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 	aliyundrive_process=$(pidof aliyundrive-webdav)
 	if [ -n "$aliyundrive_process" ]; then
 		logger -t "【阿里云盘】" "关闭进程..."
-		killall aliyundrive-webdav
 		killall aliyundrive-webdav >/dev/null 2>&1
 		kill -9 "$aliyundrive_process" >/dev/null 2>&1
-		killall /tmp/aliyundrive/aliyundrive-webdav
-		killall -9 aliyundrive-webdav
                
 	fi
 }
@@ -115,19 +116,19 @@ stop_ald() {
 check_ald() {
 	ald_enable=$(nvram get aliyundrive_enable)
 	if [ "$ald_enable" = "1" ] ;then
-	start_ald
+	start_ald 
 	fi
 	}
 
 
 case $1 in
 start)
-	start_ald
+	start_ald &
 	;;
 stop)
 	stop_ald
 	;;
 *)
-	check_ald
+	check_ald &
 	;;
 esac

@@ -13,6 +13,8 @@ romfs:
 	$(ROMFSINST) -p +x $(THISDIR)/check_disk_size /sbin/check_disk_size
 	$(ROMFSINST) -p +x $(THISDIR)/copyscripts.sh /usr/bin/copyscripts.sh
 	$(ROMFSINST) -p +x $(THISDIR)/autostart.sh /usr/bin/autostart.sh
+	$(ROMFSINST) -p +x $(THISDIR)/ap_script.sh /etc_ro/ap_script.sh
+	$(ROMFSINST) -p +x $(THISDIR)/sh_ezscript.sh /etc_ro/sh_ezscript.sh
 ifeq ($(STORAGE_ENABLED),y)
 	$(ROMFSINST) /sbin/automount.sh
 endif
@@ -29,7 +31,6 @@ endif
 	$(ROMFSINST) /etc_ro/shells
 	$(ROMFSINST) /etc_ro/mdev.conf
 	$(ROMFSINST) /etc_ro/banner
-	$(ROMFSINST) /etc_ro/wxsend.sh
 	mkdir -p $(INSTALLDIR)/usr/share/terminfo
 	tar -xzf ./terminfo.tar.gz -C $(INSTALLDIR)/usr/share
 	$(ROMFSINST) /sbin/check_crontab.sh

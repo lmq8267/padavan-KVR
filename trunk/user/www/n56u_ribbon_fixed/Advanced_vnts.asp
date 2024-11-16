@@ -122,8 +122,8 @@ function button_restartvnts() {
 
 function clearLog(){
 	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnts.asp";
-	document.form.next_host.value = location.host;
+	document.form.current_page.value = "Advanced_vnts.asp#log";
+	document.form.next_host.value = "Advanced_vnts.asp#log";
 	document.form.action_mode.value = " ClearvntsLog ";
 	document.form.submit();
 }

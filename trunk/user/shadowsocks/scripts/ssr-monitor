@@ -22,6 +22,11 @@ if echo $server|grep -E "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$">/dev/
 else
 	server=`cat /etc/storage/ssr_ip`
 fi
+scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
 while [ "1" = "1" ]  #死循环
 do 
 	sleep 30
@@ -62,8 +67,13 @@ do
 		if [ $icount -lt $v2ray_process ]  #如果进程挂掉就重启它
 		then
 			logger -t "$NAME" "检测到V2ray进程挂掉，重新启动!"
+			v2ray=/usr/bin/v2ray
+			[ ! -f "$v2ray" ] && v2ray=/etc/storage/bin/v2ray
+			[ ! -f "$v2ray" ] && v2ray=/tmp/v2ray
+			[ ! -f "$v2ray" ] && logger -t "$NAME" "啊？ V2ray 主程序不见了！"
 			killall -q -9 v2ray
-			/tmp/v2ray -config /tmp/v2-redir.json >/dev/null 2>&1 &
+			chmod +x $v2ray
+			$v2ray -config /tmp/v2-redir.json >/dev/null 2>&1 &
 		fi   
 	fi
 	#local

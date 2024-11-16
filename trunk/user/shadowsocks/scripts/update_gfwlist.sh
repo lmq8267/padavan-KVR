@@ -1,10 +1,25 @@
 #!/bin/sh
 
+github_proxys="$(nvram get github_proxy)"
+[ -z "$github_proxys" ] && github_proxys=" "
+scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
 set -e -o pipefail
 [ "$1" != "force" ] && [ "$(nvram get ss_update_gfwlist)" != "1" ] && exit 0
 #GFWLIST_URL="$(nvram get gfwlist_url)"
-logger -st "gfwlist" "Starting update:https://github.com/YW5vbnltb3Vz/domain-list-community/blob/release/gfwlist.txt"
-curl -L -k -S -o /tmp/gfwlist_list_origin.conf --connect-timeout 15 --retry 5 https://fastly.jsdelivr.net/gh/YW5vbnltb3Vz/domain-list-community@release/gfwlist.txt
+logger -st "gfwlist" "开始更新gfwlist  https://github.com/YW5vbnltb3Vz/domain-list-community/blob/release/gfwlist.txt"
+for proxy in $github_proxys ; do
+curl -L -k -S -o /tmp/gfwlist_list_origin.conf --connect-timeout 15 --retry 5 "${proxy}https://github.com/YW5vbnltb3Vz/domain-list-community/raw/refs/heads/release/gfwlist.txt" || wget --no-check-certificate -q -O /tmp/gfwlist_list_origin.conf "${proxy}https://github.com/YW5vbnltb3Vz/domain-list-community/raw/refs/heads/release/gfwlist.txt"
+if [ "$?" = 0 ] ; then
+logger -st "gfwlist" "下载成功gfwlist.txt"
+break
+else
+logger -st "gfwlist" "下载${proxy}https://github.com/YW5vbnltb3Vz/domain-list-community/raw/refs/heads/release/gfwlist.txt 失败"
+fi
+done
 lua /etc_ro/ss/gfwupdate.lua
 count=`awk '{print NR}' /tmp/gfwlist_list.conf|tail -n1`
 if [ $count -gt 1000 ]; then

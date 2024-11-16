@@ -175,13 +175,13 @@ dowload_zero() {
 			else
 				nvram set zerotier_ver=$zt_ver
 			fi
+			break
        	else
-	   		logger -t "zerotier" "下载失败，请手动下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 上传到  $PROG"
-			exit 1
+	   		logger -t "zerotier" "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 上传到  $PROG"
+			rm -f $PROG
 	  	fi
 	else
-		logger -t "zerotier" "下载失败，请手动下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 上传到  $PROG"
-		exit 1
+		logger -t "zerotier" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 上传到  $PROG"
    	fi
 	done
 }
@@ -227,23 +227,28 @@ kill_z() {
 	fi
 }
 stop_zero() {
-    logger -t "zerotier" "正在关闭zerotier..."
+    	logger -t "zerotier" "正在关闭zerotier..."
+	scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 	del_rules
 	zero_route "del"
 	kill_z
-	rm -rf $config_path
+	#rm -rf $config_path
 	logger -t "zerotier" "zerotier关闭成功!"
 }
 
 case $1 in
 start)
-	start_zero
+	start_zero &
 	;;
 stop)
 	stop_zero
 	;;
 update)
-	update_zero
+	update_zero &
 	;;
 *)
 	echo "check"

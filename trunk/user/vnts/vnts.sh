@@ -58,13 +58,13 @@ dowload_vnts() {
 			else
 				nvram set vnts_ver="v${vnts_ver}"
 			fi
+			break
        	else
-	   		logger -t "VNT服务端" "下载失败，请手动下载 https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl 上传到  $VNTS"
-			exit 1
+	   		logger -t "VNT服务端" "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl 上传到  $VNTS"
+			rm -f $VNTS
 	  	fi
 	else
-		logger -t "VNT服务端" "下载失败，请手动下载 https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl 上传到  $VNTS"
-		exit 1
+		logger -t "VNT服务端" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl 上传到  $VNTS"
    	fi
 	done
 }
@@ -162,7 +162,7 @@ EOF
 	fi
 	[ "$vnts_log" = "1" ] || CMD="${CMD} -l /dev/null"
 	
-	vntscmd="cd ${path} ; ./vnts ${CMD}"
+	vntscmd="cd ${path} ; ./vnts ${CMD} >/tmp/vnts.log 2>&1"
 	logger -t "VNT服务端" "运行${vntscmd}"
 	eval "$vntscmd" &
 	sleep 4
@@ -190,6 +190,11 @@ EOF
 
 stop_vnts() {
 	logger -t "VNT服务端" "正在关闭vnts ..."
+	scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 	killall -9 vnts >/dev/null 2>&1
 	if [ ! -z "$vnts_port" ] ; then
 		iptables -D INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
@@ -208,17 +213,17 @@ stop_vnts() {
 
 case $1 in
 start)
-	start_vnts
+	start_vnts &
 	;;
 stop)
 	stop_vnts
 	;;
 restart)
 	stop_vnts
-	start_vnts
+	start_vnts &
 	;;
 update)
-	update_vnts
+	update_vnts &
 	;;
 *)
 	echo "check"

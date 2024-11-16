@@ -76,14 +76,13 @@ dowload_vntcli() {
 			else
 				nvram set vntcli_ver="v${vntcli_ver}"
 			fi
-			
+			break
        	else
-	   		logger -t "VNT客户端" "下载失败，请手动下载 https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 上传到  $VNTCLI"
-			exit 1
+	   		logger -t "VNT客户端" "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 上传到  $VNTCLI"
+	   		rm -f $VNTCLI
 	  	fi
 	else
-		logger -t "VNT客户端" "下载失败，请手动下载 https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 上传到  $VNTCLI"
-		exit 1
+		logger -t "VNT客户端" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 上传到  $VNTCLI"
    	fi
 	done
 }
@@ -121,7 +120,7 @@ vnt_rules() {
 }
 
 start_vntcli() {
-	[ "$vntcli_enable" = "1" ] || exit 1
+	[ "$vntcli_enable" = "0" ] && exit 1
 	logger -t "VNT客户端" "正在启动vnt-cli"
 	get_tag
  	if [ ! -f "$VNTCLI" ] ; then
@@ -133,7 +132,7 @@ start_vntcli() {
   	[ ! -f "$VNTCLI" ] && exit 1
 	chmod +x $VNTCLI
 	[ $(($($VNTCLI -h | wc -l))) -gt 3 ] && logger -t "VNT客户端" "程序${VNTCLI}不完整，无法运行！" && exit 1
-	killall cloudflared >/dev/null 2>&1
+	killall vnt-cli >/dev/null 2>&1
 	
 	if [ "$vntcli_log" = "1" ] ; then
 		path=$(dirname "$VNTCLI")
@@ -178,9 +177,14 @@ EOF
 			sed -i "s|${logyaml2}|/tmp/vnt-cli.{}.log|g" ${log_path}/log4rs.yaml
 		fi
 	else
-		rm -f ${log_path}/log4rs.yaml
+		[ -f "${log_path}/log4rs.yaml" ] && rm -f ${log_path}/log4rs.yaml
 	fi
 	CMD=""
+	if [ "$vntcli_enable" = "1" ] ; then
+	if [ -z "$vntcli_token" ] ; then
+		logger -t "VNT客户端" "Token为必填项，不能为空！程序退出！"
+		exit 1
+	fi
 	[ -z "$vntcli_token" ] || CMD="-k $vntcli_token"
 	[ -z "$vntcli_ip" ] || CMD="${CMD} --ip ${vntcli_ip}"
 	if [ ! -z "$vntcli_localadd" ] ; then
@@ -258,7 +262,16 @@ EOF
 		vnt_mapping="$(echo $vnt_mapping | tr -d ' ')"
 		CMD="${CMD} --mapping ${vnt_mapping}"
 	done
-	vntclicmd="${VNTCLI} ${CMD} --disable-stats"
+	vntclicmd="cd $vntpath ; ./vnt-cli ${CMD} --disable-stats >/tmp/vnt-cli.log 2>&1"
+	fi
+	if [ "$vntcli_enable" = "2" ] ; then
+		if [ -z "$(grep '^token: ' /etc/storage/vnt.conf | awk -F 'token:' '{print $2}')" ] ; then
+			logger -t "VNT客户端" "Token为必填项，不能为空！程序退出！"
+			exit 1
+		fi
+		vntclicmd="cd $vntpath ; ./vnt-cli -f /etc/storage/vnt.conf >/tmp/vnt-cli.log 2>&1"
+	
+	fi
 	echo "$vntclicmd" >/tmp/vnt-cli.CMD 
 	logger -t "VNT客户端" "运行${vntclicmd}"
 	eval "$vntclicmd" &
@@ -277,6 +290,11 @@ EOF
 
 stop_vnt() {
 	logger -t "VNT客户端" "正在关闭vnt-cli..."
+	scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 	$VNTCLI --stop >>/tmp/vnt-cli.log
 	killall vnt-cli >/dev/null 2>&1
 	if [ ! -z "$vnt_tcp_port" ] ; then
@@ -361,17 +379,17 @@ vnt_status() {
 
 case $1 in
 start)
-	start_vntcli
+	start_vntcli &
 	;;
 stop)
 	stop_vnt
 	;;
 restart)
 	stop_vnt
-	start_vntcli
+	start_vntcli &
 	;;
 update)
-	update_vntcli
+	update_vntcli &
 	;;
 vntinfo)
 	vnt_info

@@ -671,19 +671,17 @@ auth_check( const char *authorization, const char *conn_ip )
 
 	/* Is this the right user and password? */
 	if (strcmp(authinfo, auth_basic_data) == 0) {
-		if (username == NULL && password == NULL) {
 		char log_message[512];
 		snprintf(log_message, sizeof(log_message), "用户IP:【%s】 成功登录管理界面！", conn_ip);
-		doSystem("/usr/bin/logger -t \"httpd\" \"%s\"", log_message);
-		}
+		logmessage("httpd", "%s", log_message);
 		return 1;
 	} else {
-		if (username == NULL && password == NULL) {
+		if (username != NULL && password != NULL) {
         	char log_message[512];
         	snprintf(log_message, sizeof(log_message), 
                  "用户IP:【%s】 用户名:【%s】 密码:【%s】 登录管理界面验证失败！", 
                  conn_ip, username ? username : "未知", password ? password : "未知");
-        	doSystem("/usr/bin/logger -t \"httpd\" \"%s\"", log_message);
+                 logmessage("httpd", "%s", log_message);
         	}
         	return 0;
     	}

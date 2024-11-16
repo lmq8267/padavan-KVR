@@ -938,20 +938,13 @@ set_tcp_tweaks(void)
 void
 set_passthrough_pppoe(int is_on)
 {
-	char pthrough[32], *lan_if, *wan_if;
-
-	lan_if = "null";
-	wan_if = lan_if;
-
+	char* svcs[] = { "pppoe-relay", NULL };
 	if (is_on && nvram_match("fw_pt_pppoe", "1")) {
-		lan_if = IFNAME_BR;
-		wan_if = get_man_ifname(0);
+		if (!pids(svcs[0]))
+			eval("/usr/sbin/pppoe-relay", "-C", IFNAME_BR, "-S", get_man_ifname(0));
 	}
-
-	snprintf(pthrough, sizeof(pthrough), "%s,%s\n", lan_if, wan_if);
-
-	/* enable/disable kernel-mode PPPoE passthrough */
-	fput_string("/proc/net/pthrough/pppoe", pthrough);
+	else
+		kill_services(svcs, 3, 1);
 }
 
 void

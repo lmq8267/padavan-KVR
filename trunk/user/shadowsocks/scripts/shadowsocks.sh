@@ -33,6 +33,8 @@ ss_turn=`nvram get ss_turn`
 lan_con=`nvram get lan_con`
 GLOBAL_SERVER=`nvram get global_server`
 socks=""
+github_proxys="$(nvram get github_proxy)"
+[ -z "$github_proxys" ] && github_proxys=" "
 
 find_bin() {
 	case "$1" in
@@ -47,6 +49,35 @@ find_bin() {
 		else
 			ret="/usr/bin/xray" 
 		fi
+		etcvbin="/etc/storage/bin/v2ray"
+		etcxbin="/etc/storage/bin/xray"
+		tmpvbin="/tmp/v2ray"
+		tmpxbin="/tmp/xray"
+		
+		[ ! -f "$ret" ] && [ -f "$tmpvbin" ] && ret="$tmpvbin" && echo "$(date "+%Y-%m-%d %H:%M:%S") : 找到$ret " >>/tmp/ssrplus.log
+		[ ! -f "$ret" ] && [ -f "$tmpxbin" ] && ret="$tmpxbin" && echo "$(date "+%Y-%m-%d %H:%M:%S") : 找到$ret " >>/tmp/ssrplus.log
+		[ ! -f "$ret" ] && [ -f "$etcvbin" ] && ret="$etcvbin" && echo "$(date "+%Y-%m-%d %H:%M:%S") : 找到$ret " >>/tmp/ssrplus.log
+		[ ! -f "$ret" ] && [ -f "$etcxbin" ] && ret="$etcxbin" && echo "$(date "+%Y-%m-%d %H:%M:%S") : 找到$ret " >>/tmp/ssrplus.log
+		if [ ! -f "$ret" ]; then
+			echo "$(date "+%Y-%m-%d %H:%M:%S") : 未找到v2ray 开始在线下载... " >>/tmp/ssrplus.log
+			for proxy in $github_proxys ; do
+				curl -L -k -s -o "/tmp/v2ray" --connect-timeout 10 --retry 3 "${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/v2ray/v2ray" || wget --no-check-certificate -q -O "/tmp/v2ray" "${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/v2ray/v2ray"
+				if [ "$?" = 0 ] ; then
+					chmod +x /tmp/v2ray
+					if [ $(($(/tmp/v2ray -h | wc -l))) -gt 3 ] ; then
+						echo "$(date "+%Y-%m-%d %H:%M:%S") : /tmp/v2ray 下载成功" >>/tmp/ssrplus.log
+						break
+       				else
+	   					echo "$(date "+%Y-%m-%d %H:%M:%S") : 下载不完整，删除...请手动下载 ${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/v2ray/v2ray 上传到  ${etcvbin} 或 ${tmpvbin}" >>/tmp/ssrplus.log
+						rm -f /tmp/v2ray
+	  				fi
+				else
+					echo "$(date "+%Y-%m-%d %H:%M:%S") : 下载失败${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/v2ray/v2ray" >>/tmp/ssrplus.log
+   				fi
+		
+			done
+		
+		fi
 		;;
 	xray) 
 		if [ -f "/usr/bin/xray" ]; then
@@ -54,10 +85,67 @@ find_bin() {
 		else
 			ret="/usr/bin/v2ray"
 		fi
+		etcvbin="/etc/storage/bin/v2ray"
+		etcxbin="/etc/storage/bin/xray"
+		tmpvbin="/tmp/v2ray"
+		tmpxbin="/tmp/xray"
+		
+		[ ! -f "$ret" ] && [ -f "$tmpvbin" ] && ret="$tmpvbin" && echo "$(date "+%Y-%m-%d %H:%M:%S") : 找到$ret " >>/tmp/ssrplus.log
+		[ ! -f "$ret" ] && [ -f "$tmpxbin" ] && ret="$tmpxbin" && echo "$(date "+%Y-%m-%d %H:%M:%S") : 找到$ret " >>/tmp/ssrplus.log
+		[ ! -f "$ret" ] && [ -f "$etcvbin" ] && ret="$etcvbin" && echo "$(date "+%Y-%m-%d %H:%M:%S") : 找到$ret " >>/tmp/ssrplus.log
+		[ ! -f "$ret" ] && [ -f "$etcxbin" ] && ret="$etcxbin" && echo "$(date "+%Y-%m-%d %H:%M:%S") : 找到$ret " >>/tmp/ssrplus.log
+		if [ ! -f "$ret" ]; then
+			echo "$(date "+%Y-%m-%d %H:%M:%S") : 未找到xray 开始在线下载... " >>/tmp/ssrplus.log
+			for proxy in $github_proxys ; do
+				curl -L -k -s -o "/tmp/xray" --connect-timeout 10 --retry 3 "${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/xray/xray" || wget --no-check-certificate -q -O "/tmp/xray" "${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/xray/xray"
+				if [ "$?" = 0 ] ; then
+					chmod +x /tmp/xray
+					if [ $(($(/tmp/xray -h | wc -l))) -gt 3 ] ; then
+						echo "$(date "+%Y-%m-%d %H:%M:%S") : /tmp/xray 下载成功" >>/tmp/ssrplus.log
+						break
+       				else
+	   					echo "$(date "+%Y-%m-%d %H:%M:%S") : 下载不完整，删除...请手动下载 ${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/xray/xray 上传到  ${etcxbin} 或 ${tmpxbin}" >>/tmp/ssrplus.log
+						rm -f /tmp/xray
+	  				fi
+				else
+					echo "$(date "+%Y-%m-%d %H:%M:%S") : 下载失败${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/xray/xray" >>/tmp/ssrplus.log
+   				fi
+		
+			done
+		
+		fi
 		;;
-	trojan) ret="/usr/bin/trojan" ;;
+	trojan) ret="/usr/bin/trojan" 
+		etcbin="/etc/storage/bin/trojan"
+		tmpbin="/tmp/trojan"
+		
+		[ ! -f "$ret" ] && [ -f "$tmpbin" ] && ret="$tmpbin" && echo "$(date "+%Y-%m-%d %H:%M:%S") : 找到$ret " >>/tmp/ssrplus.log
+		[ ! -f "$ret" ] && [ -f "$etcbin" ] && ret="$etcbin" && echo "$(date "+%Y-%m-%d %H:%M:%S") : 找到$ret " >>/tmp/ssrplus.log
+		if [ ! -f "$ret" ]; then
+			echo "$(date "+%Y-%m-%d %H:%M:%S") : 未找到trojan 开始在线下载... " >>/tmp/ssrplus.log
+			for proxy in $github_proxys ; do
+				curl -L -k -s -o "/tmp/trojan" --connect-timeout 10 --retry 3 "${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/trojan/trojan" || wget --no-check-certificate -q -O "/tmp/trojan" "${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/trojan/trojan"
+				if [ "$?" = 0 ] ; then
+					chmod +x /tmp/trojan
+					if [ $(($(/tmp/trojan -h | wc -l))) -gt 3 ] ; then
+						echo "$(date "+%Y-%m-%d %H:%M:%S") : /tmp/trojan 下载成功" >>/tmp/ssrplus.log
+						break
+       				else
+	   					echo "$(date "+%Y-%m-%d %H:%M:%S") : 下载不完整，删除...请手动下载 ${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/trojan/trojan 上传到  ${etcbin} 或 ${tmpbin}" >>/tmp/ssrplus.log
+						rm -f /tmp/trojan
+	  				fi
+				else
+					echo "$(date "+%Y-%m-%d %H:%M:%S") : 下载失败${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/trojan/trojan" >>/tmp/ssrplus.log
+   				fi
+		
+			done
+		
+		fi
+		
+		;;
 	socks5) ret="/usr/bin/ipt2socks" ;;
 	esac
+	[ ! -x "$ret" ] && chmod +x $ret
 	echo $ret
 }
 
@@ -80,7 +168,7 @@ local type=$stype
 		sed -i 's/\\//g' $config_file
 		;;
 	trojan)
-		tj_bin="/usr/bin/trojan"
+		tj_bin="$(find_bin trojan)"
 		if [ "$2" = "0" ]; then
 		lua /etc_ro/ss/gentrojanconfig.lua $1 nat 1080 >$trojan_json_file
 		sed -i 's/\\//g' $trojan_json_file
@@ -90,7 +178,7 @@ local type=$stype
 		fi
 		;;
 	v2ray)
-		v2_bin="/usr/bin/v2ray"
+		v2_bin="$(find_bin v2ray)"
 		v2ray_enable=1
 		if [ "$2" = "1" ]; then
 		lua /etc_ro/ss/genv2config.lua $1 udp 1080 >/tmp/v2-ssr-reudp.json
@@ -101,7 +189,7 @@ local type=$stype
 		fi
 		;;
 	xray)
-		v2_bin="/usr/bin/v2ray"
+		v2_bin="$(find_bin xray)"
 		v2ray_enable=1
 		if [ "$2" = "1" ]; then
 		lua /etc_ro/ss/genxrayconfig.lua $1 udp 1080 >/tmp/v2-ssr-reudp.json
@@ -474,6 +562,11 @@ if rules; then
 ssp_close() {
 	rm -rf /tmp/cdn
 	/usr/bin/ss-rules -f
+	scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 	kill -9 $(ps | grep ssr-switch | grep -v grep | awk '{print $1}') >/dev/null 2>&1
 	kill -9 $(ps | grep ssr-monitor | grep -v grep | awk '{print $1}') >/dev/null 2>&1
 	kill_process
@@ -493,10 +586,10 @@ ssp_close() {
 clear_iptable()
 {
 	s5_port=$(nvram get socks5_port)
-	iptables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT
-	iptables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT
-	ip6tables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT
-	ip6tables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT
+	iptables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT 2>/dev/null
+	iptables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT 2>/dev/null
+	ip6tables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT 2>/dev/null
+	ip6tables -t filter -D INPUT -p tcp --dport $s5_port -j ACCEPT 2>/dev/null
 	
 }
 

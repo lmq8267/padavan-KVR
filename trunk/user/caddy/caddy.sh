@@ -9,32 +9,30 @@ http_username=`nvram get http_username`
 caddyf_wan_port=`nvram get caddyf_wan_port`
 caddyw_wan_port=`nvram get caddyw_wan_port`
 caddy_wip6=`nvram get caddy_wip6`
+github_proxys="$(nvram get github_proxy)"
+[ -z "$github_proxys" ] && github_proxys=" "
 
 caddy_dl() {
        caddybin="/usr/bin/caddy_filebrowser"
        if [ ! -f "$caddy_dir/caddy/caddy_filebrowser" ]; then
-			logger -t "【caddy】" "找不到caddy_filebrowser文件，下载caddy_filebrowser程序"
-			curl -L -k -s -o $caddy_dir/caddy/caddy_filebrowser --connect-timeout 10 --retry 3 https://cdn.jsdelivr.net/gh/chongshengB/rt-n56u/trunk/user/caddy/caddy_filebrowser
-			fi
-			if [ ! -f "$caddy_dir/caddy/caddy_filebrowser" ]; then
-			logger -t "【caddy】" "caddy_filebrowser二进制文件下载失败，可能是地址失效或者网络异常,开始下载备用程序"
-			logger -t "【caddy】" "下载备用程序较慢，耐心等待"
-			wgetcurl.sh "$caddy_dir/caddy/caddy_file.tar.gz" "https://github.com/lmq8267/567/releases/download/caddy_file/caddy_file.tar.gz"
-			tar -xzvf $caddy_dir/caddy/caddy_file.tar.gz -C /tmp/caddy
-			rm -rf $caddy_dir/caddy/caddy_file.tar.gz
-			fi
-			  if [ "$caddy_enable" = "0" ] ;then
-			  caddy_close
-			   fi
-		        if [ ! -f "$caddy_dir/caddy/caddy_filebrowser" ]; then
-			logger -t "【caddy】" "caddy_filebrowser二文件下载失败，再次尝试下载"
-			caddy_close
-			caddy_start
-			else
-			logger -t "【caddy】" "caddy_filebrowser程序下载成功"
-			chmod -R 777 $caddy_dir/caddy/caddy_filebrowser
-			fi
-			
+		logger -t "【caddy】" "找不到caddy_filebrowser文件，下载caddy_filebrowser程序"
+		for proxy in $github_proxys ; do
+		curl -L -k -s -o "$caddy_dir/caddy/caddy_filebrowser" --connect-timeout 10 --retry 3 "${proxy}https://github.com/chongshengB/rt-n56u/raw/refs/heads/master/trunk/user/caddy/caddy_filebrowser" || wget --no-check-certificate -q -O "$caddy_dir/caddy/caddy_filebrowser" "${proxy}https://github.com/chongshengB/rt-n56u/raw/refs/heads/master/trunk/user/caddy/caddy_filebrowser"
+		if [ "$?" = 0 ] ; then
+			chmod +x $caddy_dir/caddy/caddy_filebrowser
+			if [ $(($($caddy_dir/caddy/caddy_filebrowser -h | wc -l))) -gt 3 ] ; then
+				logger -t "【caddy】" "$caddy_dir/caddy/caddy_filebrowser 下载成功"
+				break
+       		else
+	   			logger -t "【caddy】" "下载不完整，删除...请手动下载 ${proxy}https://github.com/chongshengB/rt-n56u/raw/refs/heads/master/trunk/user/caddy/caddy_filebrowser 上传到  $caddy_dir/caddy/caddy_filebrowser"
+				rm -f $caddy_dir/caddy/caddy_filebrowser
+	  		fi
+		else
+			logger -t "【caddy】" "下载失败${proxy}https://github.com/chongshengB/rt-n56u/raw/refs/heads/master/trunk/user/caddy/caddy_filebrowser"
+   		fi
+		
+		done
+	fi		
 }
 
 caddy_start() {
@@ -43,8 +41,8 @@ caddy_start() {
 		mkdir -p $caddy_dir/caddy
 		fi
 		caddybin="/usr/bin/caddy_filebrowser"
-		if [ ! -f "$caddybin" ]; then
-			           caddy_dl
+		if [ ! -f "$caddybin" ] ; then
+			caddy_dl
 		fi
 		/etc/storage/caddy_script.sh
 		if [ "$caddy_wan" = "1" ] ; then
@@ -74,11 +72,16 @@ caddy_start() {
 }
 
 caddy_close() {
-	iptables -t filter -D INPUT -p tcp --dport $caddyf_wan_port -j ACCEPT
-	iptables -t filter -D INPUT -p tcp --dport $caddyw_wan_port -j ACCEPT
+	scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
+	iptables -t filter -D INPUT -p tcp --dport $caddyf_wan_port -j ACCEPT >/dev/null 2>&1
+	iptables -t filter -D INPUT -p tcp --dport $caddyw_wan_port -j ACCEPT >/dev/null 2>&1
 	if [ "$wipv6" = 1 ]; then
-		ip6tables -t filter -D INPUT -p tcp --dport $caddyw_wan_port -j ACCEPT
-		ip6tables -t filter -D INPUT -p tcp --dport $caddyf_wan_port -j ACCEPT
+		ip6tables -t filter -D INPUT -p tcp --dport $caddyw_wan_port -j ACCEPT >/dev/null 2>&1
+		ip6tables -t filter -D INPUT -p tcp --dport $caddyf_wan_port -j ACCEPT >/dev/null 2>&1
 	fi
 	if [ ! -z "`pidof caddy_filebrowser`" ]; then
 	        killall caddy_filebrowser
@@ -86,19 +89,12 @@ caddy_close() {
                 rm -rf "$caddy_dir/caddy/caddy_filebrowser"
 		[ -z "`pidof caddy_filebrowser`" ] && logger -t "【caddy】" "已关闭文件管理服务."
 	fi
-	if [ "$caddy_enable" = "0" ] ;then
-	killall caddy_filebrowser
-	killall -9 caddy_filebrowser
-	rm -rf "$caddy_dir/caddy/caddy_filebrowser"
-	[ -z "`pidof caddy_filebrowser`" ] && logger -t "【caddy】" "已关闭文件管理服务."
-	killall caddy.sh
-	fi
 
 }
 
 case $1 in
 start)
-caddy_start
+caddy_start &
 ;;
 stop)
 caddy_close

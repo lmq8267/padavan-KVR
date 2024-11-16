@@ -1085,6 +1085,7 @@ stop_wan(void)
 		"udpxy",
 		"udhcpc",
 		"zcip",
+		"pppoe-relay",
 		"detect_wan",
 		NULL
 	};

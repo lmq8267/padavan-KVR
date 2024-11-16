@@ -117,11 +117,15 @@ function check_full_scan_done(){
 		$("LoadingBar").style.display = "none";
 		$("refresh_list").disabled = false;
 		if (sw_mode == "3") {
-			$j('.popover_top').popover({placement: 'top'});
-			$j('.popover_bottom').popover({placement: 'bottom'});
+			$j(document).ready(function() {
+				$j('.popover_top').popover({placement: 'top'});
+				$j('.popover_bottom').popover({placement: 'bottom'});
+			});
 		}else {
-			$j('.popover_top').popover({placement: 'right'});
-			$j('.popover_bottom').popover({placement: 'right'});
+			$j(document).ready(function() {
+				$j('.popover_top').popover({placement: 'right'});
+				$j('.popover_bottom').popover({placement: 'right'});
+			});
 		}
 	}else{
 		$("LoadingBar").style.display = "block";
@@ -202,6 +206,22 @@ function show_clients(){
 	
 	var hasBlocked = false;
 	for(j=0, i=0, k=0; j < clients.length; j++){
+		for(j2=0; j2 < m_dhcp.length && clients[j][0] == "*"; j2++){
+			if (clients[j][2].toUpperCase() == m_dhcp[j2][0].toUpperCase()){
+				if (m_dhcp[j2][2] != "" && m_dhcp[j2][2] != null && m_dhcp[j2][2].length > 0){
+					clients[j][0] = m_dhcp[j2][2];
+					break;
+				}
+			}
+		}
+		for(j3=0; j3 < clients.length && clients[j][0] == "*"; j3++){
+			if (clients[j][2].toUpperCase() == clients[j3][2].toUpperCase()){
+				if (clients[j3][0] != "*" && clients[j3][0] != null && clients[j3][0].length > 0){
+					clients[j][0] = clients[j3][0];
+					break;
+				}
+			}
+		}
 		if(clients[j][7] == "u" || sw_mode == "3"){
 			add_client_row(table1, k+2, clients[j], false, j);
 			k++;
@@ -390,9 +410,9 @@ function networkmap_update(s){
         <tr>
             <th width="8%"><a href="javascript:sort(0)"><#Type#></a></th>
             <th width="25%"><a href="javascript:sort(1)"><#Computer_Name#></a></th>
-            <th><a href="javascript:sort(2)">IPV4/IPV6</a></th>
+            <th><a href="javascript:sort(2)">IPv4/IPV6</a></th>
             <th width="22%"><a href="javascript:sort(3)">MAC</a></th>
-            <th width="8%" id="col_rssi"><a href="javascript:sort(4)">RSSI</a></th>
+            <th width="8%" id="col_rssi"><a href="javascript:sort(4)">信号值</a></th>
             <th width="8%" id="col_block"></th>
         </tr>
     </thead>
@@ -409,9 +429,9 @@ function networkmap_update(s){
         <tr>
             <th width="8%"><#Type#></th>
             <th width="25%"><#Computer_Name#></th>
-            <th>IPV4/IPV6</th>
+            <th>IPv4/IPV6</th>
             <th width="22%">MAC</th>
-            <th width="8%" id="col_unrssi">RSSI</th>
+            <th width="8%" id="col_unrssi">信号值</th>
             <th width="8%" id="col_unblock"></th>
         </tr>
     </thead>
@@ -471,3 +491,4 @@ function networkmap_update(s){
 </script>
 </body>
 </html>
+
