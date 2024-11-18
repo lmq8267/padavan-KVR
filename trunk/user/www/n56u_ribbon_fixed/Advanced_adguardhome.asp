@@ -140,7 +140,7 @@ function done_validating(action){
 									</p>
 									<a href="https://adguard.com/zh_cn/adguard-home/overview.html" target="blank">AdGuard 主页</a>
 									,项目地址：<a href="https://github.com/AdguardTeam/AdGuardHome" target="blank">https://github.com/AdguardTeam/AdGuardHome</a>
-									,备注：①安装需要 30M+ 的空间 ②默认帐号密码：adguardhome  ③ 修改密码下方adg.sh的第四五行name:账号 password:填写转换后的密码 ④ <a href="https://www.jisuan.mobi/nX7.html" target="blank">在线密码生成计算器</a>
+									,备注：①安装需要 30M+ 的空间 ②默认帐号密码：admin  ③ 修改密码下方adg.sh的第四五行auth_name:账号 auth_pass:填写转换后的密码 ④ <a href="https://www.jisuan.mobi/nX7.html" target="blank">在线密码生成计算器</a>
 									</div>
 
 									<table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">

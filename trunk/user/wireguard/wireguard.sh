@@ -1,27 +1,44 @@
 #!/bin/sh
 
+tun_name="$(nvram get wireguard_tun)"
+wg_mtu="$(nvram get wireguard_mtu)"
+wg_enable="$(nvram get wireguard_enable)"
+[ -z "$tun_name" ] && tun_name="wg0"
+[ -z "$wg_mtu" ] && wg_mtu="1420"
+tun_name="$(echo $tun_name | tr -d ' ')"
+localip="$(nvram get wireguard_localip)"
+localip6="$(nvram get wireguard_localip6)"
+	
 start_wg() {
-	localip="$(nvram get wireguard_localip)"
-	privatekey="$(nvram get wireguard_localkey)"
-	peerkey="$(nvram get wireguard_peerkey)"
-	peerip="$(nvram get wireguard_peerip)"
+	
+	[ "$wg_enable" = "1" ] || exit 1
+	if [ ! -s /etc/storage/wg0.conf ]; then
+    		logger -t "WIREGUARD" "/etc/storage/wg0.conf 配置文件为空，退出运行."
+    		exit 1
+	fi
 	logger -t "WIREGUARD" "正在启动wireguard"
-	ifconfig wg0 down
-	ip link del dev wg0
-	ip link add dev wg0 type wireguard
-	ip link set dev wg0 mtu 1420
-	ip addr add $localip dev wg0
-	echo "$privatekey" > /tmp/privatekey
-	wg set wg0 private-key /tmp/privatekey
-	wg set wg0 peer $peerkey persistent-keepalive 25 allowed-ips 0.0.0.0/0 endpoint $peerip
-	iptables -t nat -A POSTROUTING -o wg0 -j MASQUERADE
-	ifconfig wg0 up
+	ifconfig ${tun_name} down
+	ip link del dev ${tun_name}
+	ip link add dev ${tun_name} type wireguard
+	wg setconf ${tun_name} /etc/storage/wg0.conf
+	[ -z "$localip" ] || ip -4 addr add dev ${tun_name} ${localip}
+	[ -z "$localip6" ] || ip -6 addr add dev ${tun_name} ${localip6}
+	ip link set dev ${tun_name} mtu ${wg_mtu}
+	#ip addr add $localip dev ${tun_name}
+	iptables -I INPUT -i ${tun_name} -j ACCEPT
+	#iptables -I FORWARD -i ${tun_name} -o ${tun_name} -j ACCEPT
+	iptables -I FORWARD -i ${tun_name} -j ACCEPT
+	iptables -t nat -I POSTROUTING -o ${tun_name} -j MASQUERADE
+	ifconfig ${tun_name} up
 }
 
 
 stop_wg() {
-	ifconfig wg0 down
-	ip link del dev wg0
+	ifconfig ${tun_name} down
+	ip link del dev ${tun_name}
+	iptables -D INPUT -i ${tun_name} -j ACCEPT 2>/dev/null
+	iptables -D FORWARD -i ${tun_name} -j ACCEPT 2>/dev/null
+	iptables -t nat -D POSTROUTING -o ${tun_name} -j MASQUERADE 2>/dev/null
 	logger -t "WIREGUARD" "正在关闭wireguard"
 	}
 

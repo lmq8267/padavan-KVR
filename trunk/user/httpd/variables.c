@@ -1003,7 +1003,7 @@
 			{"vntcli_relay", "", NULL, EVM_RESTART_VNTCLI},
 			{"vntcli_wan", "", NULL, EVM_RESTART_VNTCLI},
 			{"vntcli_bin", "", NULL, EVM_RESTART_VNTCLI},
-			{"vnt.conf", "File", NULL, EVM_RESTART_VNTCLI},
+			{"scripts.vnt.conf", "File", NULL, EVM_RESTART_VNTCLI},
 			{"vntcli_routenum_x", "", NULL, EVM_RESTART_VNTCLI},
 			{"vntcli_mappnum_x", "", NULL, EVM_RESTART_VNTCLI},
 			{"VNTCLIroute", "Group", ARGV((char*)variables_VNTCLI_VNTCLIroute, "8", "55", "vntcli_routenum_x"), EVM_RESTART_VNTCLI},
@@ -1209,6 +1209,7 @@
 			{"adg_enable", "", NULL, EVM_RESTART_ADGUARDHOME},
 			{"adg_redirect", "", NULL, EVM_RESTART_ADGUARDHOME},
 			{"adg_link", "", NULL, EVM_RESTART_ADGUARDHOME},
+			{"scripts.adg.sh", "File", NULL, EVM_RESTART_ADGUARDHOME},
 			{0,0,0,0}
 	};
 #endif
@@ -1299,10 +1300,10 @@
 	struct variable variables_WIREGUARD[] = {
 			{"wireguard_enable", "", NULL, EVM_RESTART_WIREGUARD},
 			{"wireguard_localip", "", NULL, EVM_RESTART_WIREGUARD},
-			{"wireguard_localkey", "", NULL, EVM_RESTART_WIREGUARD},
-			{"wireguard_peerkey", "", NULL, EVM_RESTART_WIREGUARD},
-			{"wireguard_peerip", "", NULL, EVM_RESTART_WIREGUARD},
-			{"wireguard_localip", "", NULL, EVM_RESTART_WIREGUARD},
+			{"wireguard_localip6", "", NULL, EVM_RESTART_WIREGUARD},
+			{"wireguard_tun", "", NULL, EVM_RESTART_WIREGUARD},
+			{"wireguard_mtu", "", NULL, EVM_RESTART_WIREGUARD},
+			{"scripts.wg0.conf", "File", NULL, EVM_RESTART_WIREGUARD},
 			{0,0,0,0}
 	};
 #endif
@@ -1337,7 +1338,7 @@
 	struct variable variables_LUCKY=[] = {
 			{"lucky_enable", "", NULL, EVM_RESTART_LUCKY},
 			{"lucky_cmd", "", NULL, EVM_RESTART_LUCKY},
-			{"lucky.conf", "File", NULL, EVM_RESTART_LUCKY},
+			{"scripts.lucky.conf", "File", NULL, EVM_RESTART_LUCKY},
 			{0,0,0,0}
 	};
 #endif
@@ -1374,7 +1375,7 @@
 			{"wxsend_notify_2", "", NULL, EVM_RESTART_WXSEND},
 			{"wxsend_notify_3", "", NULL, EVM_RESTART_WXSEND},
 			{"wxsend_notify_4", "", NULL, EVM_RESTART_WXSEND},
-			{"wxsend_script.sh", "File", NULL, EVM_RESTART_WXSEND},
+			{"scripts.wxsend_script.sh", "File", NULL, EVM_RESTART_WXSEND},
 			{0,0,0,0}
 	};
 #endif

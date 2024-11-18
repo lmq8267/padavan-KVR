@@ -24,7 +24,7 @@
 <script type="text/javascript" src="/help_b.js"></script>
 <script>
 var $j = jQuery.noConflict();
-
+<% login_state_hook(); %>
 $j(document).ready(function() {
 	
 	init_itoggle('wireguard_enable');
@@ -42,12 +42,18 @@ function initial(){
 	show_menu(5,17,0);
 	showmenu();
 	show_footer();
+	if (!login_safe())
+        		textarea_scripts_enabled(0);
 }
 
 function showmenu(){
 	showhide_div('allink', found_app_aliddns());
 	showhide_div('dtolink', found_app_ddnsto());
 	showhide_div('zelink', found_app_zerotier());
+}
+
+function textarea_scripts_enabled(v){
+	inputCtrl(document.form['scripts.wg0.conf'], v);
 }
 
 function applyRule(){
@@ -143,7 +149,7 @@ function done_validating(action){
 									<table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
 
 
-										<tr>
+										<td colspan="5"></td><tr>
 										<th width="30%" style="border-top: 0 none;">启用wireguard客户端</th>
 											<td style="border-top: 0 none;">
 													<div class="main_itoggle">
@@ -156,39 +162,47 @@ function done_validating(action){
 													<input type="radio" value="0" name="wireguard_enable" id="wireguard_enable_0" class="input" value="0" <% nvram_match_x("", "wireguard_enable", "0", "checked"); %> /><#checkbox_No#>
 												</div>
 											</td>
+											<td style="border-top: 0 none;">
+												<input class="btn btn-success" style="width:150px" type="button" name="restartwg" value="重启" onclick="button_restartwg()" />
+												</td>
 
-										</tr>
-
+										</tr><td colspan="5"></td>
 										<tr>
-										<th>本机密钥key </th>
-				<td>
-					<input type="text" class="input" name="wireguard_localkey" id="wireguard_localkey" style="width: 200px" value="<% nvram_get_x("","wireguard_localkey"); %>" />
-				</td>
-
-										</tr>
-
+										<th style="border-top: 0 none;">接口IPV4</th>
+										<td style="border-top: 0 none;">
+											<input type="text" class="input" name="wireguard_localip" id="wireguard_localip" style="width: 200px" value="<% nvram_get_x("","wireguard_localip"); %>" />
+										&nbsp;<span style="color:#888;">（格式 10.0.0.2/24）</span>
+										</td>
+										</tr><td colspan="5"></td>
 										<tr>
-										<th>本机IP（格式 10.0.0.2/24）</th>
-				<td>
-					<input type="text" class="input" name="wireguard_localip" id="wireguard_localip" style="width: 200px" value="<% nvram_get_x("","wireguard_localip"); %>" />
-				</td>
-
-										</tr>
-									
+										<th style="border-top: 0 none;">接口IPV6</th>
+										<td style="border-top: 0 none;">
+											<input type="text" class="input" name="wireguard_localip" id="wireguard_localip6" style="width: 200px" value="<% nvram_get_x("","wireguard_localip6"); %>" />
+										&nbsp;<span style="color:#888;">（格式 fd69::1/64）</span>
+										</td>
+										</tr><td colspan="5"></td>
 										<tr>
-										<th>对端密钥key </th>
-				<td>
-					<input type="text" class="input" name="wireguard_peerkey" id="wireguard_peerkey" style="width: 200px" value="<% nvram_get_x("","wireguard_peerkey"); %>" />
-				</td>
-
-										</tr>
+										<th style="border-top: 0 none;">自定义接口</th>
+										<td style="border-top: 0 none;">
+												<input type="text" maxlength="20" class="input" name="wireguard_tun" placeholder="wg0" id="wireguard_tun" style="width: 200px" value="<% nvram_get_x("","wireguard_tun"); %>" />
+										</td>
+										</tr><td colspan="5"></td>
 										<tr>
-										<th>对端ip:端口（格式 223.5.6.6:4900)</th>
-				<td>
-					<input type="text" class="input" name="wireguard_peerip" id="wireguard_peerip" style="width: 200px" value="<% nvram_get_x("","wireguard_peerip"); %>" />
-				</td>
-
-										</tr>
+										<th style="border-top: 0 none;">自定义MTU </th>
+										<td style="border-top: 0 none;">
+											<input type="text" maxlength="4" class="input" name="wireguard_mtu" placeholder="1420" id="wireguard_mtu" style="width: 200px" value="<% nvram_get_x("","wireguard_mtu"); %>" />
+										</td>
+										</tr><td colspan="5"></td>
+										<tr>
+										<td colspan="5" style="border-top: 0 none;">
+											<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('scripts.wireguard')"><span>点此编辑 /etc/storage/wg0.conf 配置文件</span></a>
+										<div id="scripts.wireguard" style="display:none;">
+											<textarea rows="18" wrap="off" spellcheck="false" maxlength="209715" class="span12" name="scripts.wg0.conf" style="font-family:'Courier New'; font-size:12px; height: 200px;""><% nvram_dump("scripts.wg0.conf",""); %></textarea>
+											<div>⚠️&nbsp;&nbsp;<span style="color: #ff8100;">注意：</span><span style="color:#888;">配置文件不支持Post脚本规则&nbsp;&nbsp;&nbsp;&nbsp;在线生成配置文件：<a href="https://www.wireguardconfig.com/" target="blank">点此</a></span></div>
+										</div>
+										</td>
+										</tr><td colspan="4"></td>
+										<td colspan="3"></td>
 										<tr>
 											<td colspan="4" style="border-top: 0 none;">
 												<br />
