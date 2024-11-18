@@ -1,6 +1,12 @@
 #!/bin/sh
 #nvram set ntp_ready=0
 
+if [ ! -f /tmp/script/_opt_script_check ] ; then
+	mkdir -p /tmp/script
+	echo "#!/bin/bash" > /tmp/script/_opt_script_check
+	echo "#进程守护脚本" >> /tmp/script/_opt_script_check
+	chmod +x /tmp/script/_opt_script_check
+fi
 mkdir -p /tmp/dnsmasq.dom
 logger -t "为防止dnsmasq启动失败，创建/tmp/dnsmasq.dom/"
 

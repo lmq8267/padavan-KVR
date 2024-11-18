@@ -120,6 +120,21 @@ add_rule
 /sbin/restart_dhcpd
 }
 
+find_bin() {
+dirs="/etc/storage/bin
+/tmp/var
+/usr/bin"
+
+UnblockNeteaseMusic=""
+for dir in $dirs ; do
+    if [ -f "$dir/UnblockNeteaseMusic" ] ; then
+        UnblockNeteaseMusic="$dir/UnblockNeteaseMusic"
+        break
+    fi
+done
+[ -z "$UnblockNeteaseMusic" ] && UnblockNeteaseMusic="/tmp/var/UnblockNeteaseMusic"
+}
+
 github_proxys="$(nvram get github_proxy)"
 [ -z "$github_proxys" ] && github_proxys=" "
 
@@ -160,13 +175,11 @@ wyy_start()
 	if [ $FLAC -eq 1 ]; then
       ENABLE_FLAC="-b "
     fi
-    UnblockNeteaseMusic=/usr/bin/UnblockNeteaseMusic
-    if [ -f /tmp/UnblockNeteaseMusic ] ; then
-       chmod +x /tmp/UnblockNeteaseMusic
-       if [ $(($(/tmp/UnblockNeteaseMusic -h | wc -l))) -lt 3 ] ; then
-         rm -f /tmp/UnblockNeteaseMusic
-       else
-         UnblockNeteaseMusic=/tmp/UnblockNeteaseMusic
+    find_bin
+    if [ -f "$UnblockNeteaseMusic" ] ; then
+       [ ! -x "$UnblockNeteaseMusic" ] && chmod +x $UnblockNeteaseMusic
+       if [ $(($($UnblockNeteaseMusic -h | wc -l))) -lt 3 ] ; then
+         rm -f $UnblockNeteaseMusic
        fi
     fi
     if [ ! -f "$UnblockNeteaseMusic" ] ; then

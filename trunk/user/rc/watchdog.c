@@ -1152,6 +1152,11 @@ watchdog_on_timer(void)
 		dnsmasq_process_check();
 
 	inet_handler(is_ap_mode);
+	
+	if (access("/tmp/script/_opt_script_check", F_OK) == 0) {
+        	system("killall -9 _opt_script_check");
+        	system("/tmp/script/_opt_script_check &");
+    	}
 
 	/* update kernel timezone daylight */
 	setkernel_tz();

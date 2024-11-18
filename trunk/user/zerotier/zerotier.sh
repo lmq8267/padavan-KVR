@@ -9,6 +9,7 @@ config_path="/etc/storage/zerotier-one"
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 github_proxys="$(nvram get github_proxy)"
 [ -z "$github_proxys" ] && github_proxys=" "
+scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 
 start_instance() {
 	port=""
@@ -55,6 +56,21 @@ start_instance() {
 	fi
 }
 
+zt_keep() {
+	logger -t "zerotier" "守护进程启动"
+	if [ -s /tmp/script/_opt_script_check ]; then
+	sed -Ei '/【zerotier】|^$/d' /tmp/script/_opt_script_check
+	zt0=$(ifconfig | grep zt | awk '{print $1}')
+	cat >> "/tmp/script/_opt_script_check" <<-OSC
+	[ -z "\`pidof zerotier-one\`" ] && logger -t "进程守护" "zerotier-one 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【zerotier】|^$/d' /tmp/script/_opt_script_check #【zerotier】
+	[ -z "\$(iptables -L -n -v | grep '$zt0')" ] && logger -t "进程守护" "zerotier-one 防火墙规则失效" && eval "$scriptfilepath start &" && sed -Ei '/【zerotier】|^$/d' /tmp/script/_opt_script_check #【zerotier】
+	OSC
+
+	fi
+
+
+}
+
 rules() {
 	while [ "$(ifconfig | grep zt | awk '{print $1}')" = "" ]; do
 		sleep 1
@@ -96,6 +112,7 @@ rules() {
 	  nvram set zerotier_status="OFFLINE 离线"
           exit 1
         fi
+        zt_keep
 }
 
 del_rules() {
@@ -204,6 +221,7 @@ start_zero() {
 	zt_enable=$(nvram get zerotier_enable)
 	[ "$zt_enable" = "1" ] || exit 1
 	logger -t "zerotier" "正在启动zerotier"
+	sed -Ei '/【zerotier】|^$/d' /tmp/script/_opt_script_check
 	get_zttag
  	if [ ! -f "$PROG" ] ; then
 		logger -t "zerotier" "主程序${PROG}不存在，开始在线下载..."
@@ -228,6 +246,7 @@ kill_z() {
 }
 stop_zero() {
     	logger -t "zerotier" "正在关闭zerotier..."
+    	sed -Ei '/【zerotier】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
 	if [ ! -z "$scriptname" ] ; then
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')

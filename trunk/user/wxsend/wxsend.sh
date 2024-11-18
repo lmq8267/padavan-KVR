@@ -19,27 +19,40 @@ wxsend_notify_3=`nvram get wxsend_notify_3`
 wxsend_notify_4=`nvram get wxsend_notify_4`
 fi
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-
+scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 wxsend_close () {
-
+sed -Ei '/【微信推送】|^$/d' /tmp/script/_opt_script_check
 killall wxsend_script.sh >/dev/null 2>&1
 sleep 2
 [ -z "$(ps -w | grep "wxsend_script.sh" | grep -v grep )" ] && logger -t "【微信推送】" "进程已关闭"
 }
 
+wx_keep() {
+	logger -t "【微信推送】" "守护进程启动"
+	if [ -s /tmp/script/_opt_script_check ]; then
+	sed -Ei '/【微信推送】|^$/d' /tmp/script/_opt_script_check
+	cat >> "/tmp/script/_opt_script_check" <<-OSC
+	[ -z "\`pidof wxsend_script.sh\`" ] && logger -t "进程守护" "微信推送 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【微信推送】|^$/d' /tmp/script/_opt_script_check #【微信推送】
+	OSC
+
+	fi
+
+}
+
 wxsend_start () {
 [ "$wxsend_enable" = "1" ] || exit 1
+sed -Ei '/【微信推送】|^$/d' /tmp/script/_opt_script_check
 killall wxsend_script.sh >/dev/null 2>&1
 curltest=`which curl`
 if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
 	logger -t "【微信推送】" "找不到 curl ，请安装 curl 程序"
 	exit 1
 fi
-[ -z "$wxsend_appid" ] || [ -z "$wxsend_appsecret" ] || [ -z "$wxsend_touser" ] || [ -z "$wxsend_template_id" ] && { logger -t "【微信推送】" "启动失败, 注意检查[测试号信息]里的参数是否完填写整！" && exit 1 }
+[ -z "$wxsend_appid" ] || [ -z "$wxsend_appsecret" ] || [ -z "$wxsend_touser" ] || [ -z "$wxsend_template_id" ] && { logger -t "【微信推送】" "启动失败, 注意检查[测试号信息]里的参数是否完填写整！" && exit 1 ; }
 logger -t "【微信推送】" "运行 /etc/storage/wxsend_script.sh"
 /etc/storage/wxsend_script.sh &
 sleep 3
-[ ! -z "$(ps -w | grep "wxsend_script.sh" | grep -v grep )" ] && logger -t "【微信推送】" "启动成功" 
+[ ! -z "$(ps -w | grep "wxsend_script.sh" | grep -v grep )" ] && logger -t "【微信推送】" "启动成功" && wx_keep
 [ -z "$(ps -w | grep "wxsend_script.sh" | grep -v grep )" ] && logger -t "【微信推送】" "启动失败, 注意检查/etc/storage/wxsend_script.sh脚本是否有语法错误和curl是否下载完整"
 exit 0
 }

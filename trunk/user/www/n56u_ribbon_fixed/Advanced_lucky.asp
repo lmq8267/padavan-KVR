@@ -44,8 +44,13 @@ function initial(){
 	show_menu(5, 23, 0);
 	show_footer();
 	fill_status(lucky_status());
-	if (!login_safe())
-        		textarea_scripts_enabled(0);
+	
+	if (!login_safe()){
+		textarea_scripts_enabled(0);
+		$j('#btn_exec').attr('disabled', 'disabled');
+		$j('#LuckyCmd').attr('disabled', 'disabled');
+	}else
+		document.form.LuckyCmd.focus();
 
 }
 
@@ -89,9 +94,9 @@ function done_validating(action){
 	refreshpage();
 }
 
-function textarea_scripts_enabled(v){
-    	inputCtrl(document.form['scripts.lucky.conf'], v);
-}
+//function textarea_scripts_enabled(v){
+    	//inputCtrl(document.form['scripts.lucky.conf'], v);
+//}
 
 function clearLog(){
 	document.form.action="apply.cgi";
@@ -107,6 +112,123 @@ function button_restartlucky(){
     	{
         		'action_mode': ' Restartlucky ',
     	});
+}
+function clearOut(){
+	$j('#console_area').html('');
+	$j('#LuckyCmd').val('');
+}
+
+
+function userPost(){
+	if (!login_safe())
+		return false;
+	$j('#btn_exec').attr('disabled', 'disabled');
+	$j.post('/apply.cgi',
+	{
+		'action_mode': ' LuckyResetuser ',
+		'current_page': 'Advanced_lucky.asp',
+		'next_page': 'Advanced_lucky.asp',
+		'LuckyCmd': $j('#LuckyCmd').val()
+	},
+	
+	function(response) {
+		var cmd_output = response.cmd_output;
+		alert(cmd_output);
+		$j('#btn_exec').removeAttr('disabled');
+	});
+}
+
+
+function passPost(){
+	if (!login_safe())
+		return false;
+	$j('#btn_exec').attr('disabled', 'disabled');
+	$j.post('/apply.cgi',
+	{
+		'action_mode': ' LuckyResetpass ',
+		'current_page': 'Advanced_lucky.asp',
+		'next_page': 'Advanced_lucky.asp',
+		'LuckyCmd': $j('#LuckyCmd').val()
+	},
+	
+	function(response) {
+		var cmd_output = response.cmd_output;
+		alert(cmd_output);
+		$j('#btn_exec').removeAttr('disabled');
+	});
+}
+
+function portPost(){
+	if (!login_safe())
+		return false;
+	$j('#btn_exec').attr('disabled', 'disabled');
+	$j.post('/apply.cgi',
+	{
+		'action_mode': ' LuckyResetport ',
+		'current_page': 'Advanced_lucky.asp',
+		'next_page': 'Advanced_lucky.asp',
+		'LuckyCmd': $j('#LuckyCmd').val()
+	},
+	
+	function(response) {
+		var cmd_output = response.cmd_output;
+		alert(cmd_output);
+		$j('#btn_exec').removeAttr('disabled');
+	});
+}
+
+function safePost(){
+	if (!login_safe())
+		return false;
+	$j('#btn_exec').attr('disabled', 'disabled');
+	$j.post('/apply.cgi',
+	{
+		'action_mode': ' LuckyResetsafe ',
+		'current_page': 'Advanced_lucky.asp',
+		'next_page': 'Advanced_lucky.asp',
+	},
+	
+	function(response) {
+		var cmd_output = response.cmd_output;
+		alert(cmd_output);
+		$j('#btn_exec').removeAttr('disabled');
+	});
+}
+
+function Internettrue(){
+	if (!login_safe())
+		return false;
+	$j('#btn_exec').attr('disabled', 'disabled');
+	$j.post('/apply.cgi',
+	{
+		'action_mode': ' Luckynettrue ',
+		'current_page': 'Advanced_lucky.asp',
+		'next_page': 'Advanced_lucky.asp',
+	},
+	
+	function(response) {
+		var cmd_output = response.cmd_output;
+		alert(cmd_output);
+		$j('#btn_exec').removeAttr('disabled');
+	});
+}
+
+function Internetfalse(){
+	if (!login_safe())
+		return false;
+	$j('#btn_exec').attr('disabled', 'disabled');
+	$j.post('/apply.cgi',
+	{
+		'action_mode': ' Luckynetfalse ',
+		'current_page': 'Advanced_lucky.asp',
+		'next_page': 'Advanced_lucky.asp',
+	},
+	
+	function(response) {
+		var cmd_output = response.cmd_output;
+		alert(cmd_output);
+		$j('#btn_exec').removeAttr('disabled');
+	});
 }
 
 </script>
@@ -175,11 +297,11 @@ function button_restartlucky(){
 	<tr>
 	<th><#running_status#>
 	</th>
-	<td id="lucky_status"></td><td></td>
-	</tr>
+	<td colspan="4" id="lucky_status">
+	</tr><td colspan="4"></td>
 	<tr>
-	<th>启用lucky</th>
-	<td>
+	<th width="30%" style="border-top: 0 none;">启用lucky</th>
+	<td style="border-top: 0 none;">
 	<div class="main_itoggle">
 	<div id="lucky_enable_on_of">
 	<input type="checkbox" id="lucky_enable_fake" <% nvram_match_x("", "lucky_enable", "1", "value=1 checked"); %><% nvram_match_x("", "lucky_enable", "0", "value=0"); %>  />
@@ -190,21 +312,21 @@ function button_restartlucky(){
 	<input type="radio" value="0" name="lucky_enable" id="lucky_enable_0" class="input" value="0" <% nvram_match_x("", "lucky_enable", "0", "checked"); %> /><#checkbox_No#>
 	</div>
 	</td>
-	<td colspan="4">
+	<td colspan="4" style="border-top: 0 none;">
 	<input class="btn btn-success" style="width:150px" type="button" name="restartlucky" value="重启" onclick="button_restartlucky()" />
 	</td>
-	</tr><td colspan="3"></td>
+	</tr><td colspan="4"></td>
 	<tr>
-	<th style="border-top: 0 none;">自定义启动参数:</th>
+	<th  width="30%" style="border-top: 0 none;">配置文件目录</th>
 	<td style="border-top: 0 none;" colspan="3">
 	<div class="input-append">
-	<textarea maxlength="1048" class="input" name="lucky_cmd" id="lucky_cmd" placeholder="" style="width: 400px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","lucky_cmd"); %></textarea>
-	</div><span style="color:#888;">不需要加程序路径和程序名，直接填写启动参数即可，不填默认直接启动。</span>
+	<input name="lucky_cmd" type="text" class="input" id="lucky_cmd" placeholder="/etc/storage/lucky" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","lucky_cmd"); %>" size="32" maxlength="128" />
+	</div>
 	</td>
-	</tr>
+	</tr><td colspan="4"></td>
 	<tr>
-	<th>管理界面:</th><td></td>
-	<td><a href="<% nvram_get_x("", "lucky_login"); %>"><% nvram_get_x("", "lucky_login"); %></a>
+	<th width="30%" style="border-top: 0 none;">管理界面:</th>
+	<td style="border-top: 0 none;"><a href="<% nvram_get_x("", "lucky_login"); %>"><% nvram_get_x("", "lucky_login"); %></a>
 	</td>
 	</tr>	<td></td><td></td><td></td>
 	<!-- <tr>
@@ -216,11 +338,35 @@ function button_restartlucky(){
 	</td>
 	</tr>-->			
 	<tr>
-	<td colspan="4" style="border-top: 0 none;">
+	<td colspan="5" style="border-top: 0 none;">
 	<br />
 	<center><input class="btn btn-primary" style="width: 219px" type="button" value="<#CTL_apply#>" onclick="applyRule()" /></center>
-	</td></td>
-	</tr>																	
+	<br /><br /><br /></td>
+	</tr>
+<tr>
+    <td colspan="5" style="border-top: 0 none; white-space: nowrap;">
+    <div style="display: flex; align-items: center;">
+        <span style="margin-right: 10px;">重置为</span> 
+        <input type="text" id="LuckyCmd" class="span10" name="LuckyCmd" maxlength="127" value="" style="flex: 1; margin-right: 10px;">
+        <button class="btn span2" onClick="clearOut();" type="button" value="<#CTL_refresh#>" name="action" style="outline: 0;">清空输入框</button>
+    </div>
+</td>
+
+
+</tr>
+<tr>
+    <td colspan="5" style="border-top: 0 none; text-align: center;">
+        <div style="display: flex; justify-content: center; gap: 10px;">
+            <input class="btn btn-success" id="btn_exec" onClick="userPost()" type="button" value="重置用户名" name="action" style="width: 15%;">
+            <input class="btn btn-success" id="btn_exec" onClick="passPost()" type="button" value="重置密码" name="action" style="width: 15%;">
+            <input class="btn btn-success" id="btn_exec" onClick="portPost()" type="button" value="重置访问端口" name="action" style="width: 15%;">
+            <input class="btn btn-success" id="btn_exec" onClick="safePost()" type="button" value="重置安全入口" name="action" style="width: 15%;">
+            <input class="btn btn-success" id="btn_exec" onClick="Internettrue()" type="button" value="启用外网访问" name="action" style="width: 15%;">
+            <input class="btn btn-success" id="btn_exec" onClick="Internetfalse()" type="button" value="禁用外网访问" name="action" style="width: 15%;">
+        </div>
+    </td>
+</tr>
+																	
 	</table>
 	</div>
 	</div>
@@ -238,7 +384,7 @@ function button_restartlucky(){
 	<input type="button" onClick="location.href=location.href" value="<#CTL_refresh#>" class="btn btn-primary" style="width: 200px">
 	</td>
 	<td width="75%" style="text-align: right; padding-bottom: 0px;">
-	<input type="button" onClick="clearLog();" value="<#CTL_clear#>" class="btn btn-primary" style="width: 200px">
+	<input type="button" onClick="clearLog();" value="<#CTL_clear#>" class="btn btn-info" style="width: 200px">
 	</td>
 	</tr>
 	</table>

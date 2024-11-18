@@ -142,7 +142,8 @@ function done_validating(action){
 								<div class="row-fluid">
 									<div id="tabMenu" class="submenuBlock"></div>
 									<div class="alert alert-info" style="margin: 10px;">frp 是一个可用于内网穿透的高性能的反向代理应用，支持 tcp, udp 协议，为 http 和 https 应用协议提供了额外的能力，且尝试性支持了点对点穿透。
-									</div>
+									<div>教程地址: <a href="https://github.com/fatedier/frp/blob/master/README_zh.md" target="blank">中文文档</a></div>
+								</div>
 
 									<table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
 									<tr> <th>frpc<#running_status#></th>
@@ -178,6 +179,12 @@ function done_validating(action){
 													<input type="radio" value="0" name="frps_enable" id="frps_enable_0" class="input" value="0"  <% nvram_match_x("", "frps_enable", "0", "checked"); %> /><#checkbox_No#>
 												</div>
 											</td>
+										</tr><td colspan="3"></td>
+										<tr>
+											<th width="30%" style="border-top: 0 none;">指定版本</th>
+											<td style="border-top: 0 none;">
+												<input type="text" maxlength="12" class="input" size="15" placeholder="v0.61.0" id="frp_tag" name="frp_tag" value="<% nvram_get_x("","frp_tag"); %>" onKeyPress="return is_string(this,event);" />
+											&nbsp;<span style="color:#888;">留空使用最新版本</span></td>
 										</tr>
 										<tr id="row_post_wan_script">
 											<td colspan="2">
@@ -193,6 +200,27 @@ function done_validating(action){
 											<td colspan="2" style="border-top: 0 none;">
 												<br />
 												<center><input class="btn btn-primary" style="width: 219px" type="button" value="<#CTL_apply#>" onclick="applyRule()" /></center>
+											</td>
+										</tr>
+										<tr>
+											<td colspan="4" style="border-top: 0 none;">
+												<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('frpclog')"><span>查看frpc日志 /tmp/frpc.log</span></a>
+											<div id="frpclog" style="display: none;">
+												<textarea rows="21" class="span12" style="height:219px; font-family:'Courier New', Courier, mono; font-size:13px;" readonly="readonly" wrap="off" id="textarea"><% nvram_dump("frpc.log",""); %></textarea>
+											</div>
+											</td>
+										</tr>
+										<tr>
+										<td colspan="4" style="border-top: 0 none;">
+											<input type="button" onClick="location.href=location.href" value="刷新日志" class="btn btn-primary" style="width: 80px">
+										</td>
+										</tr>
+										<tr>
+											<td colspan="4" style="border-top: 0 none;">
+												<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('frpslog')"><span>查看frps日志 /tmp/frps.log</span></a>
+											<div id="frpslog" style="display: none;">
+												<textarea rows="21" class="span12" style="height:219px; font-family:'Courier New', Courier, mono; font-size:13px;" readonly="readonly" wrap="off" id="textarea"><% nvram_dump("frps.log",""); %></textarea>
+											</div>
 											</td>
 										</tr>
 									</table>

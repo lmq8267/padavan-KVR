@@ -12,10 +12,22 @@ logg  () {
   logger -t "【网易UU游戏加速器】" "$1"
 }
 
+uu_keep() {
+	logg "守护进程启动"
+	if [ -s /tmp/script/_opt_script_check ]; then
+	sed -Ei '/【网易UU游戏加速器】|^$/d' /tmp/script/_opt_script_check
+	cat >> "/tmp/script/_opt_script_check" <<-OSC
+	[ -z "\`pidof uuplugin\`" ] && logger -t "进程守护" "UU加速器 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【网易UU游戏加速器】|^$/d' /tmp/script/_opt_script_check #【网易UU游戏加速器】
+	OSC
+
+	fi
+
+}
 
 uu_start () {
   [ "$uu_enable" != "1" ] && exit 1
   logg "开始启动"
+  sed -Ei '/【网易UU游戏加速器】|^$/d' /tmp/script/_opt_script_check
   killall uuplugin >/dev/null 2>&1
   killall -9 uuplugin >/dev/null 2>&1
   UU_CONF="/tmp/uu/uu.conf"
@@ -56,6 +68,7 @@ sleep 6
 if [ ! -z "`pidof uuplugin`" ] ; then
   logg "设备SN：$SN"
   logg "uuplugin-$uuver 启动成功" 
+  uu_keep
   nvram set uu_admin="https://router.uu.163.com/asus/pc/login?gwSn=${SN}&type=asuswrt-merlin&redirect=acce"
 fi
 [ -z "`pidof uuplugin`" ] && logg "uuplugin启动失败!" 
@@ -64,6 +77,7 @@ fi
 
 uu_close () {
   logg "关闭UU加速器..."
+  sed -Ei '/【网易UU游戏加速器】|^$/d' /tmp/script/_opt_script_check
   scriptname=$(basename $0)
   if [ ! -z "$scriptname" ] ; then
 	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')

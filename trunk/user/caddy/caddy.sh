@@ -11,9 +11,10 @@ caddyw_wan_port=`nvram get caddyw_wan_port`
 caddy_wip6=`nvram get caddy_wip6`
 github_proxys="$(nvram get github_proxy)"
 [ -z "$github_proxys" ] && github_proxys=" "
+scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 
 caddy_dl() {
-       caddybin="/usr/bin/caddy_filebrowser"
+
        if [ ! -f "$caddy_dir/caddy/caddy_filebrowser" ]; then
 		logger -t "【caddy】" "找不到caddy_filebrowser文件，下载caddy_filebrowser程序"
 		for proxy in $github_proxys ; do
@@ -35,17 +36,30 @@ caddy_dl() {
 	fi		
 }
 
+caddy_keep() {
+	logger -t "【caddy】" "守护进程启动"
+	if [ -s /tmp/script/_opt_script_check ]; then
+	sed -Ei '/【caddy】|^$/d' /tmp/script/_opt_script_check
+	cat >> "/tmp/script/_opt_script_check" <<-OSC
+	[ -z "\`pidof caddy_filebrowser\`" ] && logger -t "进程守护" "caddy 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【caddy】|^$/d' /tmp/script/_opt_script_check #【caddy】
+	OSC
+
+	fi
+
+}
+
 caddy_start() {
 	if [ "$caddy_enable" = "1" ] ;then
 	       logger -t "【caddy】" "正在启动..."
+	       sed -Ei '/【caddy】|^$/d' /tmp/script/_opt_script_check
 		mkdir -p $caddy_dir/caddy
-		fi
-		caddybin="/usr/bin/caddy_filebrowser"
-		if [ ! -f "$caddybin" ] ; then
+	fi
+	caddybin="/usr/bin/caddy_filebrowser"
+	if [ ! -f "$caddybin" ] && [ ! -f "$caddy_dir/caddy/caddy_filebrowser" ] ; then
 			caddy_dl
-		fi
-		/etc/storage/caddy_script.sh
-		if [ "$caddy_wan" = "1" ] ; then
+	fi
+	/etc/storage/caddy_script.sh
+	if [ "$caddy_wan" = "1" ] ; then
 			if [ "$caddy_file" = "0" ] || [ "$caddy_file" = "2" ]; then
 				fport=$(iptables -t filter -L INPUT -v -n --line-numbers | grep dpt:$caddyf_wan_port | cut -d " " -f 1 | sort -nr | wc -l)
 				if [ "$fport" = 0 ] ; then
@@ -67,12 +81,13 @@ caddy_start() {
 				fi
 			fi
 		fi
-		logger -t "【caddy】" "文件管理服务已启动"
+		[ ! -z "`pidof caddy_filebrowser`" ] && logger -t "【caddy】" "文件管理服务已启动" && caddy_keep
 	
 }
 
 caddy_close() {
 	scriptname=$(basename $0)
+	sed -Ei '/【caddy】|^$/d' /tmp/script/_opt_script_check
 	if [ ! -z "$scriptname" ] ; then
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')

@@ -1,5 +1,6 @@
 #!/bin/sh
 
+scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 change_dns() {
 if [ "$(nvram get adg_redirect)" = 1 ]; then
 sed -i '/no-resolv/d' /etc/storage/dnsmasq/dnsmasq.conf
@@ -81,16 +82,33 @@ EEE
 fi
 }
 
+find_bin() {
+dirs="/etc/storage/bin
+/tmp/AdGuardHome
+/usr/bin"
+
+SVC_PATH=""
+for dir in $dirs ; do
+    if [ -f "$dir/AdGuardHome" ] ; then
+        SVC_PATH="$dir/AdGuardHome"
+        [ ! -x "$SVC_PATH" ] && chmod +x $SVC_PATH
+        break
+    fi
+done
+[ -z "$SVC_PATH" ] && SVC_PATH="/tmp/AdGuardHome/AdGuardHome"
+}
+
 get_tag() {
+	user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 
 	curltest=`which curl`
 	logger -t "【AdGuardHome】" "开始获取最新版本..."
     	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
-      		tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-	 	[ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+      		tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --output-document=-  https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+	 	[ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
     	else
-      		tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-       	[ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+      		tag="$( curl -k --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       	[ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/AdguardTeam/AdGuardHome/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
         fi
 	[ -z "$tag" ] && logger -t "【AdGuardHome】" "无法获取最新版本" && tag="v0.107.54"
 
@@ -99,8 +117,8 @@ github_proxys="$(nvram get github_proxy)"
 [ -z "$github_proxys" ] && github_proxys=" "
 
 dl_adg() {
-	SVC_PATH="/tmp/AdGuardHome/AdGuardHome"
-	if [ ! -s "$SVC_PATH" ] ; then
+	find_bin
+	if [ ! -f "$SVC_PATH" ] ; then
 		logger -t "【AdGuardHome】" "找不到 $SVC_PATH ，下载 AdGuardHome 程序"
 		get_tag
 		logger -t "【AdGuardHome】" "下载${tag}版本 下载较慢，耐心等待"
@@ -124,14 +142,29 @@ dl_adg() {
 	fi      
 	if [ ! -f "/tmp/AdGuardHome/AdGuardHome" ]; then
 		logger -t "【AdGuardHome】" "程序将安装在内存/tmp/AdGuardHome/AdGuardHome 将会占用部分内存，请注意内存使用容量！"
+		SVC_PATH="/tmp/AdGuardHome/AdGuardHome"
 	fi     
+}
+
+adg_keep() {
+	logger -t "【AdGuardHome】" "守护进程启动"
+	if [ -s /tmp/script/_opt_script_check ]; then
+	sed -Ei '/【AdGuardHome】|^$/d' /tmp/script/_opt_script_check
+	cat >> "/tmp/script/_opt_script_check" <<-OSC
+	[ -z "\`pidof AdGuardHome\`" ] && logger -t "进程守护" "AdGuardHome 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【AdGuardHome】|^$/d' /tmp/script/_opt_script_check #【AdGuardHome】
+	OSC
+
+	fi
+
 }
 
 start_adg() {
   mkdir -p /tmp/AdGuardHome
   mkdir -p /etc/storage/AdGuardHome
   logger -t "【AdGuardHome】" "正在启动..."
-  if [ ! -f "/tmp/AdGuardHome/AdGuardHome" ]; then
+  sed -Ei '/【AdGuardHome】|^$/d' /tmp/script/_opt_script_check
+  find_bin
+  if [ ! -f "$SVC_PATH" ] || [ $(($($SVC_PATH -h | wc -l))) -lt 3 ] ; then
   dl_adg
   fi
   adgenable=$(nvram get adg_enable)
@@ -139,14 +172,16 @@ start_adg() {
   getconfig
   change_dns
   set_iptable
-  logger -t "【AdGuardHome】" "运行AdGuardHome"
-  chmod +x /tmp/AdGuardHome/AdGuardHome
-  eval "/tmp/AdGuardHome/AdGuardHome -c $adg_file -w /tmp/AdGuardHome -v" &
+  logger -t "【AdGuardHome】" "运行 $SVC_PATH"
+  [ ! -x "$SVC_PATH" ] && chmod +x $SVC_PATH
+  eval "$SVC_PATH -c $adg_file -w /tmp/AdGuardHome -v" &
+  adg_keep
   fi
 }
 
 stop_adg() {
 scriptname=$(basename $0)
+sed -Ei '/【AdGuardHome】|^$/d' /tmp/script/_opt_script_check
 if [ ! -z "$scriptname" ] ; then
 	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
 	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')

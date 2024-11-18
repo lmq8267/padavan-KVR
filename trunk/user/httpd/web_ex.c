@@ -3760,6 +3760,20 @@ int ej_shown_language_option(int eid, webs_t wp, int argc, char **argv) {
 	return 0;
 }
 
+#if defined(APP_LUCKY)
+static char* lucky_command(const char *command, char *output, size_t output_size) {
+	FILE *fp = popen(command, "r");
+	if (fp) {
+		fread(output, sizeof(char), output_size - 1, fp);
+		output[output_size - 1] = '\0';
+		pclose(fp);
+	} else {
+		snprintf(output, output_size, "执行错误.");
+	}
+	return output;
+}
+#endif
+
 static int
 apply_cgi(const char *url, webs_t wp)
 {
@@ -3795,100 +3809,246 @@ apply_cgi(const char *url, webs_t wp)
 	}
 	else if (!strcmp(value, " ClearluckyLog "))
 	{
+#if defined(APP_LUCKY)
 		unlink("/tmp/lucky.log");
+#endif
 		websRedirect(wp, current_url);
 		return 0;
 	}
 	else if (!strcmp(value, " Restartlucky "))
 	{
-		doSystem("/usr/bin/lucky.sh %s", "restart");
+#if defined(APP_LUCKY)
+		system("/usr/bin/lucky.sh restart &");
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " LuckyResetuser "))
+	{
+#if defined(APP_LUCKY)
+		char cmd_resetuser[1024] = {0};
+		char *cmd_luckyuser = websGetVar(wp, "LuckyCmd", "");
+		if (cmd_luckyuser != NULL && strlen(cmd_luckyuser) > 50) {
+			snprintf(cmd_resetuser, sizeof(cmd_resetuser), " 重置的用户名也太长了吧，不怕记不住吗？改改吧~");
+		} else {
+			char command[1024];
+			if (cmd_luckyuser == NULL || strlen(cmd_luckyuser) == 0) {
+				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetuser");
+			} else {
+				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetuser %s", cmd_luckyuser);
+			}
+			lucky_command(command, cmd_resetuser, sizeof(cmd_resetuser));
+		}
+		
+		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_resetuser);
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " LuckyResetpass "))
+	{
+#if defined(APP_LUCKY)
+		char cmd_resetpass[1024] = {0};
+		char *cmd_luckypass = websGetVar(wp, "LuckyCmd", "");
+		if (cmd_luckypass != NULL && strlen(cmd_luckypass) > 50) {
+			snprintf(cmd_resetpass, sizeof(cmd_resetpass), " 重置的密码也太长了吧，不怕记不住吗？改改吧~");
+		} else {
+			char command[1024];
+			if (cmd_luckypass == NULL || strlen(cmd_luckypass) == 0) {
+				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetpass");
+			} else {
+				snprintf(command, sizeof(command), "/usr/bin/lucky.sh Resetpass %s", cmd_luckypass);
+			}
+			lucky_command(command, cmd_resetpass, sizeof(cmd_resetpass));
+		}
+		
+		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_resetuser);
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " LuckyResetport "))
+	{
+#if defined(APP_LUCKY)
+		char cmd_resetport[1024] = {0};
+		char *cmd_luckyport = websGetVar(wp, "LuckyCmd", "");
+		if (cmd_luckyport != NULL && strlen(cmd_luckyport) > 6) {
+			snprintf(cmd_resetport, sizeof(cmd_resetport), " 重置的端口也太长了吧，改改吧~");
+		} else {
+			char command[1024];
+			if (cmd_luckyport == NULL || strlen(cmd_luckyport) == 0) {
+				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetport");
+			} else {
+				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetport %s", cmd_luckyport);
+			}
+			lucky_command(command, cmd_resetport, sizeof(cmd_resetport));
+		}
+		
+		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_resetport);
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " LuckyResetsafe "))
+	{
+#if defined(APP_LUCKY)
+		char cmd_resetsafe[1024] = {0};
+		char *cmd_luckysafe = websGetVar(wp, "LuckyCmd", "");
+		if (cmd_luckysafe != NULL && strlen(cmd_luckysafe) > 50) {
+			snprintf(cmd_resetsafe, sizeof(cmd_resetsafe), " 重置的安全入口也太长了吧，不怕记不住吗？改改吧~");
+		} else {
+			char command[1024];
+			if (cmd_luckysafe == NULL || strlen(cmd_luckysafe) == 0) {
+				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetsafe");
+			} else {
+				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetsafe %s", cmd_luckysafe);
+			}
+			lucky_command(command, cmd_resetsafe, sizeof(cmd_resetsafe));
+		}
+		
+		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_resetsafe);
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " Luckynettrue "))
+	{
+#if defined(APP_LUCKY)
+		char cmd_nettrue[1024] = {0};
+		char command[1024];
+		snprintf(command, sizeof(command), "/usr/bin/lucky.sh internettrue");
+		lucky_command(command, cmd_nettrue, sizeof(cmd_nettrue));
+		
+		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_nettrue);
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " Luckynetfalse "))
+	{
+#if defined(APP_LUCKY)
+		char cmd_netfalse[1024] = {0};
+		char command[1024];
+		snprintf(command, sizeof(command), "/usr/bin/lucky.sh internetfalse");
+		lucky_command(command, cmd_netfalse, sizeof(cmd_netfalse));
+		
+		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_netfalse);
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " Restartwxsend "))
 	{
-		doSystem("/usr/bin/wxsend.sh %s", "restart");
+#if defined(APP_WXSEND)
+		system("/usr/bin/wxsend.sh restart &");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " Delwxsend "))
 	{
-		doSystem("/usr/bin/wxsend.sh %s", "del_hostname");
+#if defined(APP_WXSEND)
+		system("/usr/bin/wxsend.sh del_hostname &");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " Restartzerotier "))
 	{
-		doSystem("/usr/bin/zerotier.sh %s", "restart");
+#if defined(APP_ZEROTIER)
+		system("/usr/bin/zerotier.sh restart &");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " Updatezerotier "))
 	{
-		doSystem("/usr/bin/zerotier.sh %s", "update");
+#if defined(APP_ZEROTIER)
+		system("/usr/bin/zerotier.sh update &");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " Restartvnts "))
 	{
-		doSystem("/usr/bin/vnts.sh %s", "restart");
+#if defined(APP_VNTS)
+		system("/usr/bin/vnts.sh restart &");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " Updatevnts "))
 	{
-		doSystem("/usr/bin/vnts.sh %s", "update");
+#if defined(APP_VNTS)
+		system("/usr/bin/vnts.sh update &");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " ClearvntsLog "))
 	{
+#if defined(APP_VNTS)
 		unlink("/tmp/vnts.log");
+#endif
 		websRedirect(wp, current_url);
 		return 0;
 	}
 	else if (!strcmp(value, " Restartvntcli "))
 	{
-		doSystem("/usr/bin/vnt.sh %s", "restart");
+#if defined(APP_VNTCLI)
+		system("/usr/bin/vnt.sh restart &");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " Updatevntcli "))
 	{
-		doSystem("/usr/bin/vnt.sh %s", "update");
+#if defined(APP_VNTCLI)
+		system("/usr/bin/vnt.sh update &");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " CMDvntinfo "))
 	{
+#if defined(APP_VNTCLI)
 		doSystem("/usr/bin/vnt.sh %s", "vntinfo");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " CMDvntall "))
 	{
+#if defined(APP_VNTCLI)
 		doSystem("/usr/bin/vnt.sh %s", "vntall");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " CMDvntlist "))
 	{
+#if defined(APP_VNTCLI)
 		doSystem("/usr/bin/vnt.sh %s", "vntlist");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " CMDvntroute "))
 	{
+#if defined(APP_VNTCLI)
 		doSystem("/usr/bin/vnt.sh %s", "vntroute");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " CMDvntstatus "))
 	{
+#if defined(APP_VNTCLI)
 		doSystem("/usr/bin/vnt.sh %s", "vntstatus");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " ClearvntcliLog "))
 	{
+#if defined(APP_VNTCLI)
 		unlink("/tmp/vnt-cli.log");
+#endif
 		websRedirect(wp, current_url);
 		return 0;
 	}
 	else if (!strcmp(value, " Restartcloudflared "))
 	{
-		doSystem("/usr/bin/cloudflared.sh %s", "restart");
+#if defined(APP_CLOUDFLARED)
+		system("/usr/bin/cloudflared.sh restart &");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " Updatecloudflared "))
 	{
-		doSystem("/usr/bin/cloudflared.sh %s", "update");
+#if defined(APP_CLOUDFLARED)
+		system("/usr/bin/cloudflared.sh update &");
+#endif
 		return 0;
 	}
 	else if (!strcmp(value, " Reboot "))
@@ -4536,6 +4696,36 @@ static char mentohust_log_txt[] =
 
 #endif
 
+#if defined (APP_VNTCLI)
+static void
+do_vntcli_log_file(const char *url, FILE *stream)
+{
+	dump_file(stream, "/tmp/vnt-cli.log");
+	fputs("\r\n", stream);
+}
+
+static char vntcli_log_txt[] =
+"Content-Disposition: attachment;\r\n"
+"filename=vnt-cli.log"
+;
+
+#endif
+
+#if defined (APP_VNTS)
+static void
+do_vntslog_file(const char *url, FILE *stream)
+{
+	dump_file(stream, "/tmp/vnts.log");
+	fputs("\r\n", stream);
+}
+
+static char vnts_log_txt[] =
+"Content-Disposition: attachment;\r\n"
+"filename=vnts.log"
+;
+
+#endif
+
 #if defined (APP_KOOLPROXY)
 static void
 do_kp_crt_file(const char *url, FILE *stream)
@@ -4594,6 +4784,12 @@ struct mime_handler mime_handlers[] = {
 #endif
 #if defined(APP_MENTOHUST)
 	{ "mentohust.log", "application/force-download", mentohust_log_txt, NULL, do_mentohust_log_file, 1 },
+#endif
+#if defined(APP_VNTCLI)
+	{ "vnt-cli.log", "application/force-download", vntcli_log_txt, NULL, do_vntcli_log_file, 1 },
+#endif
+#if defined(APP_VNTS)
+	{ "vnts.log", "application/force-download", vnts_log_txt, NULL, do_vnts_log_file, 1 },
 #endif
 #if defined(APP_OPENVPN)
 	{ "client.ovpn", "application/force-download", NULL, NULL, do_export_ovpn_client, 1 },

@@ -950,6 +950,7 @@
 	struct variable variables_FrpConf[] = {
 			{"frpc_enable", "", NULL, EVM_RESTART_FRP},
 			{"frps_enable", "", NULL, EVM_RESTART_FRP},
+			{"frp_tag", "", NULL, EVM_RESTART_FRP},
 			{"scripts.frp_script.sh", "File", NULL, EVM_RESTART_FRP},
 			{0,0,0,0}
 	};

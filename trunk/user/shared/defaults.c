@@ -799,6 +799,7 @@ struct nvram_pair router_defaults[] = {
 	/*frp*/
 	{ "frpc_enable", "0" },
 	{ "frps_enable", "0" },
+	{ "frp_tag", "" },
 #endif
 
 #if defined(APP_LUCKY)

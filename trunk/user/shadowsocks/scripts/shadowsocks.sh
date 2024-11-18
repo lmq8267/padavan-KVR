@@ -66,6 +66,7 @@ find_bin() {
 					chmod +x /tmp/v2ray
 					if [ $(($(/tmp/v2ray -h | wc -l))) -gt 3 ] ; then
 						echo "$(date "+%Y-%m-%d %H:%M:%S") : /tmp/v2ray 下载成功" >>/tmp/ssrplus.log
+						ret=/tmp/v2ray
 						break
        				else
 	   					echo "$(date "+%Y-%m-%d %H:%M:%S") : 下载不完整，删除...请手动下载 ${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/v2ray/v2ray 上传到  ${etcvbin} 或 ${tmpvbin}" >>/tmp/ssrplus.log
@@ -102,6 +103,7 @@ find_bin() {
 					chmod +x /tmp/xray
 					if [ $(($(/tmp/xray -h | wc -l))) -gt 3 ] ; then
 						echo "$(date "+%Y-%m-%d %H:%M:%S") : /tmp/xray 下载成功" >>/tmp/ssrplus.log
+						ret=/tmp/xray
 						break
        				else
 	   					echo "$(date "+%Y-%m-%d %H:%M:%S") : 下载不完整，删除...请手动下载 ${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/xray/xray 上传到  ${etcxbin} 或 ${tmpxbin}" >>/tmp/ssrplus.log
@@ -129,6 +131,7 @@ find_bin() {
 					chmod +x /tmp/trojan
 					if [ $(($(/tmp/trojan -h | wc -l))) -gt 3 ] ; then
 						echo "$(date "+%Y-%m-%d %H:%M:%S") : /tmp/trojan 下载成功" >>/tmp/ssrplus.log
+						ret=/tmp/trojan
 						break
        				else
 	   					echo "$(date "+%Y-%m-%d %H:%M:%S") : 下载不完整，删除...请手动下载 ${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/trojan/trojan 上传到  ${etcbin} 或 ${tmpbin}" >>/tmp/ssrplus.log

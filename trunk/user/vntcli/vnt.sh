@@ -26,7 +26,7 @@ vntcli_comp="$(nvram get vntcli_comp)"
 vntcli_relay="$(nvram get vntcli_relay)"
 vntcli_wan="$(nvram get vntcli_wan)"
 
-[ -z "$VNTCLI" ] && VNTCLI=/etc/storage/bin/vnt-cli && nvram set vntcli_bin=$VNTCLI
+[ -z "$VNTCLI" ] && VNTCLI=/tmp/var/vnt-cli && nvram set vntcli_bin=$VNTCLI
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 github_proxys="$(nvram get github_proxy)"
 [ -z "$github_proxys" ] && github_proxys=" "
@@ -42,17 +42,17 @@ get_tag() {
 	curltest=`which curl`
 	logger -t "VNT客户端" "开始获取最新版本..."
     	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
-      		tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-	 	[ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+      		tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --output-document=-  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+	 	[ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
     	else
-      		tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-       	[ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+      		tag="$( curl -k --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       	[ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
         fi
-	[ -z "$tag" ] && logger -t "VNT客户端" "无法获取最新版本" && nvram set vntcli_ver_n="" 
+	[ -z "$tag" ] && logger -t "VNT客户端" "无法获取最新版本"  
 	nvram set vntcli_ver_n=$tag
 	if [ -f "$VNTCLI" ] ; then
 		chmod +x $VNTCLI
-		vntcli_ver=$($VNTCLI -h | grep 'version:' | awk -F 'version:' '{print $2}' | tr -d ' \n')
+		vntcli_ver=$($VNTCLI -h | grep 'version:' | awk -F 'version:' '{print $2}' | tr -d ' ' | tr -d '\n')
 		if [ -z "$vntcli_ver" ] ; then
 			nvram set vntcli_ver=""
 		else
@@ -70,7 +70,7 @@ dowload_vntcli() {
 		chmod +x $VNTCLI
 		if [ $(($($VNTCLI -h | wc -l))) -gt 3 ] ; then
 			logger -t "VNT客户端" "$VNTCLI 下载成功"
-			vntcli_ver=$($VNTCLI -h | grep 'version:' | awk -F 'version:' '{print $2}' | tr -d ' \n')
+			vntcli_ver=$($VNTCLI -h | grep 'version:' | awk -F 'version:' '{print $2}' | tr -d ' ' | tr -d '\n')
 			if [ -z "$vntcli_ver" ] ; then
 				nvram set vntcli_ver=""
 			else
@@ -89,8 +89,8 @@ dowload_vntcli() {
 
 update_vntcli() {
 	get_tag
-	[ -z "$tag" ] && logger -t "VNT客户端" "无法获取最新版本" && nvram set vntcli_ver_n="" && exit 1
-	tag=$(echo $tag | tr -d 'v \n')
+	[ -z "$tag" ] && logger -t "VNT客户端" "无法获取最新版本" && exit 1
+	tag=$(echo $tag | tr -d 'v' | tr -d ' ' | tr -d '\n')
 	if [ ! -z "$tag" ] && [ ! -z "$vntcli_ver" ] ; then
 		if [ "$tag"x != "$vntcli_ver"x ] ; then
 			logger -t "VNT客户端" "当前版本${vntcli_ver} 最新版本${tag}"
@@ -165,7 +165,6 @@ root:
     - rolling_file
 EOF
 		fi
-		[ ! -L /tmp/vnt-cli.0.log ] && ln -sf /tmp/vnt-cli.log /tmp/vnt-cli.0.log
 		[ ! -L /tmp/vnt-cli.1.log ] && ln -sf /tmp/vnt-cli.log /tmp/vnt-cli.1.log
 		[ ! -L /tmp/vnt-cli.2.log ] && ln -sf /tmp/vnt-cli.log /tmp/vnt-cli.2.log
 		sed -i 's|limit: 10 mb|limit: 1 mb|g' ${log_path}/log4rs.yaml
@@ -189,7 +188,6 @@ EOF
 	[ -z "$vntcli_ip" ] || CMD="${CMD} --ip ${vntcli_ip}"
 	if [ ! -z "$vntcli_localadd" ] ; then
 		for localadd in $vntcli_localadd ; do
-			localadd="$(echo $localadd | tr -d ' ')"
 			[ -z "$localadd" ] && continue
 			CMD="${CMD} -o ${localadd}"
 		done	
@@ -233,14 +231,12 @@ EOF
 	
 	if [ ! -z "$vntcli_dns" ] ; then
 		for dns in $vntcli_dns ; do
-			dns="$(echo $dns | tr -d ' ')"
 			[ -z "$dns" ] && continue
 			CMD="${CMD} --dns ${dns}"
 		done	
 	fi
 	if [ ! -z "$vntcli_stun" ] ; then
 		for stun in $vntcli_stun ; do
-			stun="$(echo $stun | tr -d ' ')"
 			[ -z "$stun" ] && continue
 			CMD="${CMD} -e ${stun}"
 		done	

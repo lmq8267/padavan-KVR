@@ -325,6 +325,12 @@ EOF
 ### Called after internal iptables reconfig (firewall update)
 
 #wing resume
+#自动配置 POSTROUTING 的 MSS钳制,防止网络堵塞和数据丢失
+iptables -t mangle -A POSTROUTING ! -o br0 -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+ip6tables -t mangle -A POSTROUTING ! -o br0 -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+# 手动指定MSS
+#iptables -t mangle -A POSTROUTING ! -o br0 -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1452
+#ip6tables -t mangle -A POSTROUTING ! -o br0 -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1432
 ### ipv6防火墙全关规则 以下把#去掉则关闭ip6防火墙 
 #ip6tables -F
 #ip6tables -X

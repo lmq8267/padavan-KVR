@@ -1,23 +1,24 @@
 #!/bin/sh
 
 PROG="$(nvram get cloudflared_bin)"
-[ -z "$PROG" ] && PROG=/etc/storage/bin/cloudflared && nvram set cloudflared_bin=$PROG
+[ -z "$PROG" ] && PROG=/tmp/cloudflared && nvram set cloudflared_bin=$PROG
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 github_proxys="$(nvram get github_proxy)"
 [ -z "$github_proxys" ] && github_proxys=" "
 CMD="$(nvram get cloudflared_cmd)"
+scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 
 get_cftag() {
 	curltest=`which curl`
 	logger -t "cloudflared" "开始获取最新版本..."
     	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
-      		tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/lmq8267/cloudflared/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-	 	[ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/cloudflared/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+      		tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --output-document=-  https://api.github.com/repos/lmq8267/cloudflared/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+	 	[ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/cloudflared/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
     	else
-      		tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/cloudflared/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-       	[ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/cloudflared/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+      		tag="$( curl -k --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/cloudflared/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       	[ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/cloudflared/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
         fi
-	[ -z "$tag" ] && logger -t "cloudflared" "无法获取最新版本" && nvram set cloudflared_ver_n="" 
+	[ -z "$tag" ] && logger -t "cloudflared" "无法获取最新版本"
 	nvram set cloudflared_ver_n=$tag
 	if [ -f "$PROG" ] ; then
 		chmod +x $PROG
@@ -58,7 +59,7 @@ dowload_cf() {
 
 update_cf() {
 	get_cftag
-	[ -z "$tag" ] && logger -t "cloudflared" "无法获取最新版本" && nvram set cloudflared_ver_n="" && exit 1
+	[ -z "$tag" ] && logger -t "cloudflared" "无法获取最新版本" && exit 1
 	if [ ! -z "$tag" ] && [ ! -z "$cf_ver" ] ; then
 		if [ "$tag"x != "$cf_ver"x ] ; then
 			logger -t "cloudflared" "当前版本${cf_ver} 最新版本${tag}"
@@ -70,10 +71,23 @@ update_cf() {
 	exit 0
 }
 
+cf_keep() {
+	logger -t "cloudflared" "守护进程启动"
+	if [ -s /tmp/script/_opt_script_check ]; then
+	sed -Ei '/【cloudflared】|^$/d' /tmp/script/_opt_script_check
+	cat >> "/tmp/script/_opt_script_check" <<-OSC
+	[ -z "\`pidof cloudflared\`" ] && logger -t "进程守护" "cloudflared 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【cloudflared】|^$/d' /tmp/script/_opt_script_check #【cloudflared】
+	OSC
+
+	fi
+
+}
+
 start_cf() {
 	cf_enable=$(nvram get cloudflared_enable)
 	[ "$cf_enable" = "1" ] || exit 1
 	logger -t "cloudflared" "正在启动cloudflared"
+	sed -Ei '/【cloudflared】|^$/d' /tmp/script/_opt_script_check
 	get_cftag
  	if [ ! -f "$PROG" ] ; then
 		logger -t "cloudflared" "主程序${PROG}不存在，开始在线下载..."
@@ -91,6 +105,7 @@ start_cf() {
 	sleep 4
 	if [ ! -z "`pidof cloudflared`" ] ; then
 		logger -t "cloudflared" "运行成功！"
+		cf_keep
 	else
 		logger -t "cloudflared" "运行失败！"
 	fi
@@ -106,6 +121,7 @@ kill_cf() {
 }
 stop_cf() {
 	logger -t "cloudflared" "正在关闭cloudflared..."
+	sed -Ei '/【cloudflared】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
 	if [ ! -z "$scriptname" ] ; then
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')

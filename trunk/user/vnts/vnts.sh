@@ -30,11 +30,11 @@ get_tag() {
       		tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/vnts/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
        	[ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
         fi
-	[ -z "$tag" ] && logger -t "VNT服务端" "无法获取最新版本" && nvram set vnts_ver_n="" 
+	[ -z "$tag" ] && logger -t "VNT服务端" "无法获取最新版本" 
 	nvram set vnts_ver_n=$tag
 	if [ -f "$VNTS" ] ; then
 		chmod +x $VNTS
-		vnts_ver=$($VNTS --version | awk -F 'version:' '{print $2}' | tr -d ' \n')
+		vnts_ver=$($VNTS --version | awk -F 'version:' '{print $2}' | tr -d ' ' | tr -d '\n')
 		if [ -z "$vnts_ver" ] ; then
 			nvram set vnts_ver=""
 		else
@@ -52,7 +52,7 @@ dowload_vnts() {
 		chmod +x $VNTS
 		if [ $(($($VNTS -h | wc -l))) -gt 3 ] ; then
 			logger -t "VNT服务端" "$VNTS 下载成功"
-			vnts_ver=$($VNTS --version | awk -F 'version:' '{print $2}' | tr -d ' \n')
+			vnts_ver=$($VNTS --version | awk -F 'version:' '{print $2}' | tr -d ' ' | tr -d '\n')
 			if [ -z "$vnts_ver" ] ; then
 				nvram set vnts_ver=""
 			else
@@ -71,8 +71,8 @@ dowload_vnts() {
 
 update_vnts() {
 	get_tag
-	[ -z "$tag" ] && logger -t "VNT服务端" "无法获取最新版本" && nvram set vnts_ver_n="" && exit 1
-	tag=$(echo $tag | tr -d 'v \n')
+	[ -z "$tag" ] && logger -t "VNT服务端" "无法获取最新版本" && exit 1
+	tag=$(echo $tag | tr -d 'v' | tr -d ' ' | tr -d '\n' )
 	if [ ! -z "$tag" ] && [ ! -z "$vnts_ver" ] ; then
 		if [ "$stag"x != "$vnts_ver"x ] ; then
 			logger -t "VNT服务端" "当前版本${vnts_ver} 最新版本${tag}"
@@ -129,7 +129,6 @@ root:
     - rolling_file
 EOF
 		fi
-		[ ! -L /tmp/vnts.0.log ] && ln -sf /tmp/vnts.log /tmp/vnts.0.log
 		[ ! -L /tmp/vnts.1.log ] && ln -sf /tmp/vnts.log /tmp/vnts.1.log
 		[ ! -L /tmp/vnts.2.log ] && ln -sf /tmp/vnts.log /tmp/vnts.2.log
 		sed -i 's|limit: 10 mb|limit: 1 mb|g' ${log_path}/log4rs.yaml
