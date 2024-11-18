@@ -2373,6 +2373,15 @@ static int lucky_status_hook(int eid, webs_t wp, int argc, char **argv)
 }
 #endif
 
+#if defined (APP_NATPIERCE)
+static int natpierce_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int natpierce_status_code = pids("natpierce");
+	websWrite(wp, "function natpierce_status() { return %d;}\n", natpierce_status_code);
+	return 0;
+}
+#endif
+
 #if defined (APP_CLOUDFLARED)
 static int cloudflared_status_hook(int eid, webs_t wp, int argc, char **argv)
 {
@@ -2695,6 +2704,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_lucky = 0;
 #endif
+#if defined(APP_NATPIERCE)
+	int found_app_natpierce = 1;
+#else
+	int found_app_natpierce = 0;
+#endif
 #if defined(APP_CLOUDFLARED)
 	int found_app_cloudflared = 1;
 #else
@@ -2934,6 +2948,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_aliddns() { return %d;}\n"
 		"function found_app_wxsend() { return %d;}\n"
 		"function found_app_wireguard() { return %d;}\n"
+		"function found_app_natpierce() { return %d;}\n"
 		"function found_app_cloudflared() { return %d;}\n"
 		"function found_app_xupnpd() { return %d;}\n"
 		"function found_app_mentohust() { return %d;}\n",
@@ -2975,6 +2990,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_lucky,
 		found_app_vntcli,
 		found_app_wireguard,
+		found_app_natpierce,
 		found_app_cloudflared,
 		found_app_wxsend,
 		found_app_xupnpd,
@@ -4048,6 +4064,13 @@ apply_cgi(const char *url, webs_t wp)
 	{
 #if defined(APP_CLOUDFLARED)
 		system("/usr/bin/cloudflared.sh update &");
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " RestartJYL "))
+	{
+#if defined(APP_NATPIERCE)
+		system("/usr/bin/natpierce.sh restart &");
 #endif
 		return 0;
 	}
@@ -5138,6 +5161,9 @@ struct ej_handler ej_handlers[] =
 #endif
 #if defined (APP_CLOUDFLARED)
 	{ "cloudflared_status", cloudflared_status_hook},
+#endif
+#if defined (APP_NATPIERCE)
+	{ "natpierce_status", natpierce_status_hook},
 #endif
 #if defined (APP_ZEROTIER)
 	{ "zerotier_status", zerotier_status_hook},

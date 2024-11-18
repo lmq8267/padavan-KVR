@@ -522,6 +522,7 @@ struct nvram_pair router_defaults[] = {
 	{ "w_cloudflared", "1" },
 	{ "w_vnts", "1" },
 	{ "w_vntcli", "1" },
+	{ "w_natpierce", "1" },
 
 	{ "ip6_service", "" },
 	{ "ip6_ppe_on", "0" },
@@ -803,8 +804,16 @@ struct nvram_pair router_defaults[] = {
 #endif
 
 #if defined(APP_LUCKY)
+	/*皎月连*/
+	{ "natpierce_enable", "0" },
+	{ "natpierce_port", "" },
+	{ "natpierce_bin", "" },
+	{ "natpierce_url", "" },
+#endif
+
+#if defined(APP_NATPIERCE)
 	/*lucky*/
-	{ "lucky_enable", "0" },
+	{ "natpierce_enable", "0" },
 	{ "lucky_cmd", "" },
 #endif
 

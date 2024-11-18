@@ -317,7 +317,7 @@ function Internetfalse(){
 	</td>
 	</tr><td colspan="4"></td>
 	<tr>
-	<th  width="30%" style="border-top: 0 none;">配置文件目录</th>
+	<th width="30%" style="border-top: 0 none;">配置文件目录</th>
 	<td style="border-top: 0 none;" colspan="3">
 	<div class="input-append">
 	<input name="lucky_cmd" type="text" class="input" id="lucky_cmd" placeholder="/etc/storage/lucky" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","lucky_cmd"); %>" size="32" maxlength="128" />

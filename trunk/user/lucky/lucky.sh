@@ -143,7 +143,7 @@ fi
   killall -9 lucky >/dev/null 2>&1
   rm -rf /tmp/lucky.log
   sleep 4
-  [ -z "`pidof lucky`" ] && logg "进程已关闭!"
+  [ -z "`pidof lucky`" ] && logg "进程已关闭!" && nvram set lucky_login=""
 }
 
 case $1 in

@@ -549,6 +549,23 @@ void restart_vnts(void){
 }
 #endif
 
+#if defined(APP_NATPIERCE)
+void stop_natpierce(void){
+	eval("/usr/bin/natpierce.sh","stop");
+}
+
+void start_natpierce(void){
+	int natpierce_enable = nvram_get_int("natpierce_enable");
+	if ( natpierce_enable == 1)
+		eval("/usr/bin/natpierce.sh","start");
+}
+
+void restart_natpierce(void){
+	stop_natpierce();
+	start_natpierce();
+}
+#endif
+
 #if defined(APP_VNTCLI)
 void stop_vntcli(void){
 	eval("/usr/bin/vnt.sh","stop");
@@ -1007,6 +1024,9 @@ stop_services(int stopall)
 #endif
 #if defined(APP_VNTS)
 	stop_vnts();
+#endif
+#if defined(APP_NATPIERCE)
+	stop_natpierce();
 #endif
 /*#if defined(APP_NPC)
 	stop_npc();

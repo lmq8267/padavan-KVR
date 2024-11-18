@@ -380,8 +380,8 @@ function show_banner(L3){
 	show_top_status();
 }
 
-var tabtitle = new Array(27);
-var tablink = new Array(27);
+var tabtitle = new Array(29);
+var tablink = new Array(29);
 tabtitle[0] = new Array("", "<#menu5_1_1#>", "<#menu5_1_2#>", "<#menu5_1_3#>", "<#menu5_1_4#>", "<#menu5_1_5#>", "<#menu5_1_6#>");
 tabtitle[1] = new Array("", "<#menu5_1_1#>", "<#menu5_1_2#>", "<#menu5_1_3#>", "<#menu5_1_4#>", "<#menu5_1_5#>", "<#menu5_1_6#>");
 tabtitle[2] = new Array("", "<#menu5_2_1#>", "<#menu5_2_2#>", "<#menu5_2_3#>", "<#menu5_2_4#>", "<#menu5_2_5#>", "<#menu5_2_6#>");
@@ -443,7 +443,7 @@ if (found_app_aldriver()){
 	tabtitle[20] = new Array("", "<#menu5_36_1#>");
 }
 if (found_app_uuplugin()){
-	tabtitle[21] = new Array("", "网易UU游戏加速器");
+	tabtitle[21] = new Array("", "UU加速器");
 }
 if (found_app_lucky()){
 	tabtitle[22] = new Array("", "Lucky");
@@ -459,6 +459,9 @@ if (found_app_vnts()){
 }
 if (found_app_vntcli()){
 	tabtitle[26] = new Array("", "VNT客户端");
+}
+if (found_app_natpierce()){
+	tabtitle[27] = new Array("", "皎月连");
 }
 
 //Level 3 Tab title
@@ -556,6 +559,10 @@ if (found_app_vntcli()){
 	vntcli_array = new Array("","Advanced_vnt.asp");
 	tablink[26] = (vntcli_array);
 }
+if (found_app_natpierce()){
+	natpierce_array = new Array("","Advanced_natpierce.asp");
+	tablink[27] = (natpierce_array);
+}
 
 //Level 2 Menu
 menuL2_title = new Array(21)
@@ -615,7 +622,7 @@ if (found_app_aldriver()){
 } else menuL2_title.push("");
 
 if (found_app_uuplugin()){
-	menuL2_title.push("网易UU游戏加速器");
+	menuL2_title.push("UU加速器");
 } else menuL2_title.push("");
 
 if (found_app_lucky()){
@@ -636,6 +643,10 @@ if (found_app_vnts()){
 
 if (found_app_vntcli()){
 	menuL2_title.push("VNT客户端");
+} else menuL2_title.push("");
+
+if (found_app_natpierce()){
+	menuL2_title.push("皎月连");
 } else menuL2_title.push("");
 
 menuL2_link  = new Array("", tablink[0][1], tablink[1][1], tablink[2][1], tablink[3][1], tablink[4][1], tablink[5][1], tablink[6][1], tablink[7][1], support_2g_radio() ? tablink[8][1] : "Main_EStatus_Content.asp", tablink[9][1]);
@@ -702,6 +713,9 @@ if (found_app_vnts()){
 } else menuL2_link.push("");
 if (found_app_vntcli()){
 	menuL2_link.push(vntcli_array[1]);
+} else menuL2_link.push("");
+if (found_app_natpierce()){
+	menuL2_link.push(natpierce_array[1]);
 } else menuL2_link.push("");
 
 //Level 1 Menu in Gateway, Router mode
@@ -1600,6 +1614,7 @@ var w_wxsend = '<% nvram_get_x("", "w_wxsend"); %>';
 var w_cloudflared = '<% nvram_get_x("", "w_cloudflared"); %>';
 var w_vnts = '<% nvram_get_x("", "w_vnts"); %>';
 var w_vntcli = '<% nvram_get_x("", "w_vntcli"); %>';
+var w_natpierce = '<% nvram_get_x("", "w_natpierce"); %>';
 
 if (w_ai==0){
 	menuL1_link[2] = "";
@@ -1700,6 +1715,10 @@ if (w_vnts==0){
 if (w_vntcli==0){
 	menuL2_link[27] = "";
 	menuL2_title[27] = "";
+}
+if (w_natpierce==0){
+	menuL2_link[28] = "";
+	menuL2_title[28] = "";
 }
 
 (function($){

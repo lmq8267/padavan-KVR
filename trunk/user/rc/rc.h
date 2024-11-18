@@ -627,6 +627,11 @@ void stop_zerotier(void);
 void start_zerotier(void);
 void restart_zerotier(void);
 #endif
+#if defined(APP_NATPIERCE)
+void stop_natpierce(void);
+void start_natpierce(void);
+void restart_natpierce(void);
+#endif
 #if defined(APP_DNSFORWARDER)
 void stop_dnsforwarder(void);
 void start_dnsforwarder(void);

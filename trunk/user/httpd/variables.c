@@ -1342,6 +1342,16 @@
 	};
 #endif
 
+#if defined(APP_NATPIERCE)
+	struct variable variables_NATPIERCE=[] = {
+			{"natpierce_enable", "", NULL, EVM_RESTART_NATPIERCE},
+			{"natpierce_port", "", NULL, EVM_RESTART_NATPIERCE},
+			{"natpierce_bin", "", NULL, EVM_RESTART_NATPIERCE},
+			{"natpierce_url", "", NULL, EVM_RESTART_NATPIERCE},
+			{0,0,0,0}
+	};
+#endif
+
 #if defined(APP_CLOUDFLARED)
 	struct variable variables_CLOUDFLARED=[] = {
 			{"cloudflared_enable", "", NULL, EVM_RESTART_CLOUDFLARED},
@@ -1395,6 +1405,7 @@
 			{"w_cloudflared", "", NULL, FALSE},
 			{"w_vnts", "", NULL, FALSE},
 			{"w_vntcli", "", NULL, FALSE},
+			{"w_natpierce", "", NULL, FALSE},
 	};
 
 	struct variable variables_WLANConfig11b[] = {
@@ -1578,6 +1589,9 @@
 #if defined(APP_VNTCLI)
 		{"VNTCLI",		variables_VNTCLI},
 #endif
+#if defined(APP_NATPIERCE)
+		{"NATPIERCE",		variables_NATPIERCE},
+#endif
 		{"DwebConf",		variables_DwebConf},
 		{"LANGUAGE",			variables_Language},
 		{0,0}
@@ -1724,6 +1738,9 @@
 #endif
 #if defined(APP_VNTCLI)
 		{EVM_RESTART_VNTCLI,		EVT_RESTART_VNTCLI,		RCN_RESTART_VNTCLI,	0},
+#endif
+#if defined(APP_NATPIERCE)
+		{EVM_RESTART_NATPIERCE,		EVT_RESTART_NATPIERCE,		RCN_RESTART_NATPIERCE,	0},
 #endif
 		{EVM_RESTART_FIREWALL,		EVT_RESTART_FIREWALL,		RCN_RESTART_FIREWALL,	0},
 		{0,0,0,0}

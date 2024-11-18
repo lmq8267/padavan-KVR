@@ -251,6 +251,7 @@ dir_$(CONFIG_FIRMWARE_INCLUDE_WXSEND)	                       += wxsend
 dir_$(CONFIG_FIRMWARE_INCLUDE_CLOUDFLARED)	                       += cloudflared
 dir_$(CONFIG_FIRMWARE_INCLUDE_VNTS)	                       += vnts
 dir_$(CONFIG_FIRMWARE_INCLUDE_VNTCLI)	                       += vntcli
+dir_$(CONFIG_FIRMWARE_INCLUDE_NATPIERCE)	                       += natpierce
 ifdef CONFIG_MTD_UBI
 ifneq ($(STORAGE_ENABLED),y)
 dir_y											+= optware

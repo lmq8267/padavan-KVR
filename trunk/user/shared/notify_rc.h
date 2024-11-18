@@ -94,6 +94,7 @@
 #define RCN_RESTART_WIREGUARD	"restart_wireguard"
 #define RCN_RESTART_VNTS	"restart_vnts"
 #define RCN_RESTART_VNTCLI	"restart_vntcli"
+#define RCN_RESTART_NATPIERCE	"restart_natpierce"
 #define RCN_RESTART_REBOOT		"restart_reboot"
 
 ////////////////////////////////////////////////////////////
