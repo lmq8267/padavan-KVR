@@ -994,9 +994,13 @@ handle_request(FILE *conn_fp, const conn_item_t *item)
 #endif
 
 	do_logout = (strcmp(file, "Logout.asp") == 0) ? 1 : 0;
+	char ip_str[INET6_ADDRSTRLEN];
+	if (convert_ip_to_string(&conn_ip, ip_str, sizeof(ip_str)) != 0) {
+		snprintf(ip_str, sizeof(ip_str), "Unknown");
+	}
 
 	if (handler->need_auth && login_state > 1 && !do_logout) {
-		if (!auth_check(authorization, conn_ip)) {
+		if (!auth_check(authorization, ip_str)) {
 			http_logout(&conn_ip);
 			if (method_id == HTTP_METHOD_POST)
 				eat_post_data(conn_fp, clen);

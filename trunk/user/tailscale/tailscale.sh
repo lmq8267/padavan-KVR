@@ -181,8 +181,9 @@ start_ts() {
 		exit 1
 	fi
 	CMD=""
+	get_login
 	if [ "$ts_enable" = "1" ] ; then
-		[ "$ts_dns" = "1" ] || CMD="--accept-dns=false"
+		[ "$ts_dns" = "1" ] || CMD="up --accept-dns=false"
 		[ "$ts_route" = "1" ] && CMD="${CMD} --accept-routes"
 		[ -z "$ts_routes" ] || ts_routes="$(echo $ts_routes | tr -d ' ')"
 		[ -z "$ts_routes" ] || CMD="${CMD} --advertise-routes=${ts_routes}"
@@ -202,7 +203,7 @@ start_ts() {
 	fi
 	if [ "$ts_enable" = "2" ] ; then
 		if [ ! -z "$t_CMD" ] ; then
-			get_login
+			
 			CMD="${tailscale} ${t_CMD}"
 		else
 			logger -t "Tailscaled" "自定义启动参数为空，设置为默认参数:  up"

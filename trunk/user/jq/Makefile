@@ -1,8 +1,8 @@
-SRC_NAME = jq
+SRC_NAME = jq-1.7.1
 SRC_URL = https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-1.7.1.tar.gz
 THISDIR = $(shell pwd)
 
-all: download_test extract_test config_test compress
+#all: download_test extract_test config_test compress
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
 
 download_test:
@@ -54,4 +54,4 @@ clean:
 	rm -f config_done
 
 romfs:
-	$(ROMFSINST) -p +x $(THISDIR)/$(SRC_NAME)/jq /usr/bin/jq
+	$(ROMFSINST) -p +x $(THISDIR)/jq /usr/bin/jq
