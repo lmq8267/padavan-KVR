@@ -269,6 +269,9 @@ endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_NATPIERCE),y)
 	rm -f $(INSTALLDIR)/www/Advanced_natpierce.asp
 endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_TAILSCALE),y)
+	rm -f $(INSTALLDIR)/www/Advanced_tailscale.asp
+endif
 
 clean:
 	@echo "Clean www romfs"

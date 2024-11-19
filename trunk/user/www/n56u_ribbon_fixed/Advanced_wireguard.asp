@@ -59,7 +59,7 @@ function textarea_scripts_enabled(v){
 function applyRule(){
 	showLoading();
 	
-	document.form.action_mode.value = " Restart ";
+	document.form.action_mode.value = " Restartwg ";
 	document.form.current_page.value = "/Advanced_wireguard.asp";
 	document.form.next_page.value = "";
 	

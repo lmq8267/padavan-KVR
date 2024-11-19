@@ -1353,6 +1353,27 @@
 	};
 #endif
 
+#if defined(APP_TAILSCALE)
+	struct variable variables_TAILSCALE=[] = {
+			{"tailscale_enable", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_dns", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_cmd", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_route", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_routes", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_exit", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_exitip", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_server", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_ssh", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_shields", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_host", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_key", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_reset", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_cmd2", "", NULL, EVM_RESTART_TAILSCALE},
+			{"tailscale_bin", "", NULL, EVM_RESTART_TAILSCALE},
+			{0,0,0,0}
+	};
+#endif
+
 #if defined(APP_CLOUDFLARED)
 	struct variable variables_CLOUDFLARED=[] = {
 			{"cloudflared_enable", "", NULL, EVM_RESTART_CLOUDFLARED},
@@ -1407,6 +1428,7 @@
 			{"w_vnts", "", NULL, FALSE},
 			{"w_vntcli", "", NULL, FALSE},
 			{"w_natpierce", "", NULL, FALSE},
+			{"w_tailscale", "", NULL, FALSE},
 	};
 
 	struct variable variables_WLANConfig11b[] = {
@@ -1590,6 +1612,9 @@
 #if defined(APP_VNTCLI)
 		{"VNTCLI",		variables_VNTCLI},
 #endif
+#if defined(APP_TAILSCALE)
+		{"TAILSCALE",		variables_TAILSCALE},
+#endif
 #if defined(APP_NATPIERCE)
 		{"NATPIERCE",		variables_NATPIERCE},
 #endif
@@ -1739,6 +1764,9 @@
 #endif
 #if defined(APP_VNTCLI)
 		{EVM_RESTART_VNTCLI,		EVT_RESTART_VNTCLI,		RCN_RESTART_VNTCLI,	0},
+#endif
+#if defined(APP_TAILSCALE)
+		{EVM_RESTART_TAILSCALE,		EVT_RESTART_TAILSCALE,		RCN_RESTART_TAILSCALE,	0},
 #endif
 #if defined(APP_NATPIERCE)
 		{EVM_RESTART_NATPIERCE,		EVT_RESTART_NATPIERCE,		RCN_RESTART_NATPIERCE,	0},

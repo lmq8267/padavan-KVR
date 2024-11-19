@@ -597,6 +597,11 @@ void stop_lucky(void);
 void start_lucky(void);
 void restart_lucky(void);
 #endif
+#if defined(APP_TAILSCALE)
+void stop_tailscale(void);
+void start_tailscale(void);
+void restart_tailscale(void);
+#endif
 #if defined(APP_WXSEND)
 void stop_wxsend(void);
 void start_wxsend(void);

@@ -566,6 +566,23 @@ void restart_natpierce(void){
 }
 #endif
 
+#if defined(APP_TAILSCALE)
+void stop_tailscale(void){
+	eval("/usr/bin/tailscale.sh","stop");
+}
+
+void start_tailscale(void){
+	int tailscale_enable = nvram_get_int("tailscale_enable");
+	if ( tailscale_enable == 1)
+		eval("/usr/bin/tailscale.sh","start");
+}
+
+void restart_tailscale(void){
+	stop_tailscale();
+	start_tailscale();
+}
+#endif
+
 #if defined(APP_VNTCLI)
 void stop_vntcli(void){
 	eval("/usr/bin/vnt.sh","stop");
@@ -1055,6 +1072,9 @@ stop_services(int stopall)
 #endif
 #if defined(APP_WYY)
 	stop_wyy();
+#endif
+#if defined(APP_TAILSCALE)
+	stop_tailscale();
 #endif
 #if defined(APP_ZEROTIER)
 	stop_zerotier();

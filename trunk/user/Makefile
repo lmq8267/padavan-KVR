@@ -252,6 +252,7 @@ dir_$(CONFIG_FIRMWARE_INCLUDE_CLOUDFLARED)	                       += cloudflared
 dir_$(CONFIG_FIRMWARE_INCLUDE_VNTS)	                       += vnts
 dir_$(CONFIG_FIRMWARE_INCLUDE_VNTCLI)	                       += vntcli
 dir_$(CONFIG_FIRMWARE_INCLUDE_NATPIERCE)	                       += natpierce
+dir_$(CONFIG_FIRMWARE_INCLUDE_TAILSCALE)	                       += tailscale
 ifdef CONFIG_MTD_UBI
 ifneq ($(STORAGE_ENABLED),y)
 dir_y											+= optware

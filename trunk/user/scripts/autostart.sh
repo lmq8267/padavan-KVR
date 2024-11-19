@@ -151,6 +151,11 @@ logger -t "自动启动" "正在启动皎月连"
 /usr/bin/natpierce.sh start &
 fi
 
+if [ $(nvram get tailscale_enable) = 1 ] ; then
+logger -t "自动启动" "正在启动tailscale"
+/usr/bin/tailscale.sh start &
+fi
+
 if [ $(nvram get cloudflared_enable) = 1 ] ; then
 logger -t "自动启动" "正在启动cloudflared"
 /usr/bin/cloudflared.sh start &

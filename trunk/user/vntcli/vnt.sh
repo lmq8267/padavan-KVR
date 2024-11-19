@@ -131,7 +131,7 @@ start_vntcli() {
   	fi
   	[ ! -f "$VNTCLI" ] && exit 1
 	chmod +x $VNTCLI
-	[ $(($($VNTCLI -h | wc -l))) -gt 3 ] && logger -t "VNT客户端" "程序${VNTCLI}不完整，无法运行！" && exit 1
+	[ $(($($VNTCLI -h | wc -l))) -lt 3 ] && logger -t "VNT客户端" "程序${VNTCLI}不完整，无法运行！" && exit 1
 	killall vnt-cli >/dev/null 2>&1
 	
 	if [ "$vntcli_log" = "1" ] ; then

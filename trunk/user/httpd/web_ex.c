@@ -2373,6 +2373,21 @@ static int lucky_status_hook(int eid, webs_t wp, int argc, char **argv)
 }
 #endif
 
+#if defined (APP_TAILSCALE)
+static int tailscale_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int tailscale_status_code = pids("tailscale");
+	websWrite(wp, "function tailscale_status() { return %d;}\n", tailscale_status_code);
+	return 0;
+}
+static int tailscaled_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int tailscaled_status_code = pids("tailscaled");
+	websWrite(wp, "function tailscaled_status() { return %d;}\n", tailscaled_status_code);
+	return 0;
+}
+#endif
+
 #if defined (APP_NATPIERCE)
 static int natpierce_status_hook(int eid, webs_t wp, int argc, char **argv)
 {
@@ -2704,6 +2719,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_lucky = 0;
 #endif
+#if defined(APP_TAILSCALE)
+	int found_app_tailscale = 1;
+#else
+	int found_app_tailscale = 0;
+#endif
 #if defined(APP_NATPIERCE)
 	int found_app_natpierce = 1;
 #else
@@ -2949,6 +2969,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_wxsend() { return %d;}\n"
 		"function found_app_wireguard() { return %d;}\n"
 		"function found_app_natpierce() { return %d;}\n"
+		"function found_app_tailscale() { return %d;}\n"
 		"function found_app_cloudflared() { return %d;}\n"
 		"function found_app_xupnpd() { return %d;}\n"
 		"function found_app_mentohust() { return %d;}\n",
@@ -2993,6 +3014,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_natpierce,
 		found_app_cloudflared,
 		found_app_wxsend,
+		found_app_tailscale,
 		found_app_xupnpd,
 		found_app_mentohust
 	);
@@ -3831,6 +3853,14 @@ apply_cgi(const char *url, webs_t wp)
 		websRedirect(wp, current_url);
 		return 0;
 	}
+	else if (!strcmp(value, " ClearTsLog "))
+	{
+#if defined(APP_TAILSCALE)
+		unlink("/tmp/tailscale.log");
+#endif
+		websRedirect(wp, current_url);
+		return 0;
+	}
 	else if (!strcmp(value, " Restartlucky "))
 	{
 #if defined(APP_LUCKY)
@@ -4067,10 +4097,31 @@ apply_cgi(const char *url, webs_t wp)
 #endif
 		return 0;
 	}
+	else if (!strcmp(value, " Restarttailscale "))
+	{
+#if defined(APP_TAILSCALE)
+		system("/usr/bin/tailscale.sh restart &");
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " Updatetailscale "))
+	{
+#if defined(APP_TAILSCALE)
+		system("/usr/bin/tailscale.sh update &");
+#endif
+		return 0;
+	}
 	else if (!strcmp(value, " RestartJYL "))
 	{
 #if defined(APP_NATPIERCE)
 		system("/usr/bin/natpierce.sh restart &");
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " Restartwg "))
+	{
+#if defined(APP_WIREGUARD)
+		system("/usr/bin/wireguard.sh start &");
 #endif
 		return 0;
 	}
@@ -5158,6 +5209,10 @@ struct ej_handler ej_handlers[] =
 #endif*/
 #if defined (APP_LUCKY)
 	{ "lucky_status", lucky_status_hook},
+#endif
+#if defined (APP_TAILSCALE)
+	{ "tailscale_status", tailscale_status_hook},
+	{ "tailscaled_status", tailscaled_status_hook},
 #endif
 #if defined (APP_CLOUDFLARED)
 	{ "cloudflared_status", cloudflared_status_hook},

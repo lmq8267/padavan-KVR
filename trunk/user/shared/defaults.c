@@ -523,6 +523,7 @@ struct nvram_pair router_defaults[] = {
 	{ "w_vnts", "1" },
 	{ "w_vntcli", "1" },
 	{ "w_natpierce", "1" },
+	{ "w_tailscale", "1" },
 
 	{ "ip6_service", "" },
 	{ "ip6_ppe_on", "0" },
@@ -884,6 +885,25 @@ struct nvram_pair router_defaults[] = {
 	{ "wxsend_notify_2", "0" },
 	{ "wxsend_notify_3", "0" },
 	{ "wxsend_notify_4", "0" },
+#endif
+
+#if defined(APP_TAILSCALE)
+	/*tailscale*/
+	{ "tailscale_enable", "0" },
+	{ "tailscale_dns", "0" },
+	{ "tailscale_cmd", "up" },
+	{ "tailscale_route", "1" },
+	{ "tailscale_routes", "" },
+	{ "tailscale_exit", "0" },
+	{ "tailscale_exitip", "" },
+	{ "tailscale_server", "" },
+	{ "tailscale_ssh", "0" },
+	{ "tailscale_shields", "0" },
+	{ "tailscale_host", "" },
+	{ "tailscale_key", "" },
+	{ "tailscale_reset", "1" },
+	{ "tailscale_cmd2", "" },
+	{ "tailscale_bin", "" },
 #endif
 
 #if defined(APP_WYY)

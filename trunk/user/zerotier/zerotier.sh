@@ -229,7 +229,7 @@ start_zero() {
   		[ -z "$tag" ] && tag="1.14.2"
   		dowload_zero $tag
   	fi
-  	[ ! -f "$PROG" ] && nvram set zerotier_enable=0 && exit 1
+  	[ ! -f "$PROG" ] && exit 1
    	[ ! -L "$PROGCLI" ] && ln -sf $PROG $PROGCLI
     	[ ! -L "$PROGIDT" ] && ln -sf $PROG $PROGIDT
 	kill_z
