@@ -2,17 +2,19 @@
 name: 云编译-Padavan-KVR-NEWIFI3
 
 on: 
-  release:
-    types: [published]
-  push:
-    tags:
-    - 'v*'
+  #release:
+    #types: [published]
+  #push:
+    #tags:
+    #- 'v*'
   #  branches: 
   #    - master
 #  schedule:
 #    - cron: 0 8 * * 5
-  watch:
-    types: [started]
+  #watch:
+    #types: [started]
+  workflow_dispatch:
+
 
 jobs:
   build:

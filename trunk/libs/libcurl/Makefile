@@ -4,8 +4,8 @@ SRC_URL=https://github.com/curl/curl/releases/download/curl-8_5_0/$(SRC_NAME).ta
 
 LDFLAGS += -Wl,-rpath-link=$(STAGEDIR)/lib
 
-#all: download_test extract_test config_test
-all: config_test
+all: download_test extract_test config_test
+#all: config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
 
 download_test:
