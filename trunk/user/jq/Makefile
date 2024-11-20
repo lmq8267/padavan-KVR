@@ -2,8 +2,8 @@ SRC_NAME = jq-1.7.1
 SRC_URL = https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-1.7.1.tar.gz
 THISDIR = $(shell pwd)
 
-#all: download_test extract_test config_test compress
-	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
+all:
+
 
 download_test:
 	( if [ ! -f $(SRC_NAME).tar.gz ]; then \

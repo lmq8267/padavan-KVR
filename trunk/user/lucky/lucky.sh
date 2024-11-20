@@ -86,6 +86,7 @@ lk_keep() {
 	sed -Ei '/【lucky】|^$/d' /tmp/script/_opt_script_check
 	cat >> "/tmp/script/_opt_script_check" <<-OSC
 	[ -z "\`pidof lucky\`" ] && logger -t "进程守护" "lucky 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【lucky】|^$/d' /tmp/script/_opt_script_check #【lucky】
+	[ -s /tmp/lucky.log ] && [ "\$(stat -c %s /tmp/lucky.log)" -gt 681984 ] && echo "" > /tmp/lucky.log & #【lucky】
 	OSC
 
 	fi

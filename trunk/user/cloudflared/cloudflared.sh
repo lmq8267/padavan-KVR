@@ -33,6 +33,8 @@ get_cftag() {
 
 dowload_cf() {
 	tag="$1"
+	bin_path=$(dirname "$PROG")
+	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
 	logger -t "cloudflared" "开始下载 https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared 到 $PROG"
 	for proxy in $github_proxys ; do
        curl -Lkso "$PROG" "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared" || wget --no-check-certificate -q -O "$PROG" "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared"
@@ -77,6 +79,7 @@ cf_keep() {
 	sed -Ei '/【cloudflared】|^$/d' /tmp/script/_opt_script_check
 	cat >> "/tmp/script/_opt_script_check" <<-OSC
 	[ -z "\`pidof cloudflared\`" ] && logger -t "进程守护" "cloudflared 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【cloudflared】|^$/d' /tmp/script/_opt_script_check #【cloudflared】
+	[ -s /tmp/cloudflared.log ] && [ "\$(stat -c %s /tmp/cloudflared.log)" -gt 681984 ] && echo "" > /tmp/cloudflared.log & #【cloudflared】
 	OSC
 
 	fi

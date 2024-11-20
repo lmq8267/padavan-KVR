@@ -44,6 +44,15 @@ $j(document).ready(function() {
 	init_itoggle('w_caddy');
 	init_itoggle('w_wyy');
 	init_itoggle('w_aldriver');
+	init_itoggle('w_uuplugin');
+	init_itoggle('w_lucky');
+	init_itoggle('w_wxsend');
+	init_itoggle('w_cloudflared');
+	init_itoggle('w_vnts');
+	init_itoggle('w_vntcli');
+	init_itoggle('w_natpierce');
+	init_itoggle('w_tailscale');
+	init_itoggle('w_alist');
 
 });
 </script>
@@ -87,6 +96,34 @@ if (found_app_wyy()){
 if (found_app_aldriver()){
 	showhide_div('row_waldriver', true);
 }
+if (found_app_uuplugin()){
+	showhide_div('row_wuuplugin', true);
+}
+if (found_app_lucky()){
+	showhide_div('row_wlucky', true);
+}
+if (found_app_wxsend()){
+	showhide_div('row_wwxsend', true);
+}
+if (found_app_cloudflared()){
+	showhide_div('row_wcloudflared', true);
+}
+if (found_app_vnts()){
+	showhide_div('row_wvnts', true);
+}
+if (found_app_vntcli()){
+	showhide_div('row_wvntcli', true);
+}
+if (found_app_natpierce()){
+	showhide_div('row_wnatpierce', true);
+}
+if (found_app_tailscale()){
+	showhide_div('row_wtailscale', true);
+}
+if (found_app_alist()){
+	showhide_div('row_walist', true);
+}
+
 }
 
 
@@ -400,7 +437,7 @@ function applyRule(){
 											<td>
 													<div class="main_itoggle">
 													<div id="w_aldriver_on_of">
-														<input type="checkbox" id="w_aldriver_fake" <% nvram_match_x("", "w_wyy", "1", "value=1 checked"); %><% nvram_match_x("", "w_aldriver", "0", "value=0"); %>  />
+														<input type="checkbox" id="w_aldriver_fake" <% nvram_match_x("", "w_aldriver", "1", "value=1 checked"); %><% nvram_match_x("", "w_aldriver", "0", "value=0"); %>  />
 													</div>
 												</div>
 												<div style="position: absolute; margin-left: -10000px;">
@@ -409,8 +446,132 @@ function applyRule(){
 												</div>
 											</td>
 										</tr>
-										
-									
+										<tr id="row_wuuplugin" style="display:none">
+											<th width="50%" >UU加速器</th>
+											<td>
+													<div class="main_itoggle">
+													<div id="w_uuplugin_on_of">
+														<input type="checkbox" id="w_uuplugin_fake" <% nvram_match_x("", "w_uuplugin", "1", "value=1 checked"); %><% nvram_match_x("", "w_uuplugin", "0", "value=0"); %>  />
+													</div>
+												</div>
+												<div style="position: absolute; margin-left: -10000px;">
+													<input type="radio" value="1" name="w_uuplugin" id="w_uuplugin_1" class="input" <% nvram_match_x("", "w_uuplugin", "1", "checked"); %> /><#checkbox_Yes#>
+													<input type="radio" value="0" name="w_uuplugin" id="w_uuplugin_0" class="input" <% nvram_match_x("", "w_uuplugin", "0", "checked"); %> /><#checkbox_No#>
+												</div>
+											</td>
+										</tr>
+										<tr id="row_wlucky" style="display:none">
+											<th width="50%" >Lucky</th>
+											<td>
+													<div class="main_itoggle">
+													<div id="w_lucky_on_of">
+														<input type="checkbox" id="w_lucky_fake" <% nvram_match_x("", "w_lucky", "1", "value=1 checked"); %><% nvram_match_x("", "w_lucky", "0", "value=0"); %>  />
+													</div>
+												</div>
+												<div style="position: absolute; margin-left: -10000px;">
+													<input type="radio" value="1" name="w_lucky" id="w_lucky_1" class="input" <% nvram_match_x("", "w_lucky", "1", "checked"); %> /><#checkbox_Yes#>
+													<input type="radio" value="0" name="w_lucky" id="w_lucky_0" class="input" <% nvram_match_x("", "w_lucky", "0", "checked"); %> /><#checkbox_No#>
+												</div>
+											</td>
+										</tr>
+										<tr id="row_wwxsend" style="display:none">
+											<th width="50%" >微信推送</th>
+											<td>
+													<div class="main_itoggle">
+													<div id="w_wxsend_on_of">
+														<input type="checkbox" id="w_wxsend_fake" <% nvram_match_x("", "w_wxsend", "1", "value=1 checked"); %><% nvram_match_x("", "w_wxsend", "0", "value=0"); %>  />
+													</div>
+												</div>
+												<div style="position: absolute; margin-left: -10000px;">
+													<input type="radio" value="1" name="w_wxsend" id="w_wxsend_1" class="input" <% nvram_match_x("", "w_wxsend", "1", "checked"); %> /><#checkbox_Yes#>
+													<input type="radio" value="0" name="w_wxsend" id="w_wxsend_0" class="input" <% nvram_match_x("", "w_wxsend", "0", "checked"); %> /><#checkbox_No#>
+												</div>
+											</td>
+										</tr>
+										<tr id="row_wcloudflared" style="display:none">
+											<th width="50%" >CloudFlared</th>
+											<td>
+													<div class="main_itoggle">
+													<div id="w_cloudflared_on_of">
+														<input type="checkbox" id="w_cloudflared_fake" <% nvram_match_x("", "w_cloudflared", "1", "value=1 checked"); %><% nvram_match_x("", "w_cloudflared", "0", "value=0"); %>  />
+													</div>
+												</div>
+												<div style="position: absolute; margin-left: -10000px;">
+													<input type="radio" value="1" name="w_cloudflared" id="w_cloudflared_1" class="input" <% nvram_match_x("", "w_cloudflared", "1", "checked"); %> /><#checkbox_Yes#>
+													<input type="radio" value="0" name="w_cloudflared" id="w_cloudflared_0" class="input" <% nvram_match_x("", "w_cloudflared", "0", "checked"); %> /><#checkbox_No#>
+												</div>
+											</td>
+										</tr>
+										<tr id="row_wvnts" style="display:none">
+											<th width="50%" >VNT服务器</th>
+											<td>
+													<div class="main_itoggle">
+													<div id="w_vnts_on_of">
+														<input type="checkbox" id="w_vnts_fake" <% nvram_match_x("", "w_vnts", "1", "value=1 checked"); %><% nvram_match_x("", "w_vnts", "0", "value=0"); %>  />
+													</div>
+												</div>
+												<div style="position: absolute; margin-left: -10000px;">
+													<input type="radio" value="1" name="w_vnts" id="w_vnts_1" class="input" <% nvram_match_x("", "w_vnts", "1", "checked"); %> /><#checkbox_Yes#>
+													<input type="radio" value="0" name="w_vnts" id="w_vnts_0" class="input" <% nvram_match_x("", "w_vnts", "0", "checked"); %> /><#checkbox_No#>
+												</div>
+											</td>
+										</tr>
+										<tr id="row_wvntcli" style="display:none">
+											<th width="50%" >VNT客户端</th>
+											<td>
+													<div class="main_itoggle">
+													<div id="w_vntcli_on_of">
+														<input type="checkbox" id="w_vntcli_fake" <% nvram_match_x("", "w_vntcli", "1", "value=1 checked"); %><% nvram_match_x("", "w_vntcli", "0", "value=0"); %>  />
+													</div>
+												</div>
+												<div style="position: absolute; margin-left: -10000px;">
+													<input type="radio" value="1" name="w_vntcli" id="w_vntcli_1" class="input" <% nvram_match_x("", "w_vntcli", "1", "checked"); %> /><#checkbox_Yes#>
+													<input type="radio" value="0" name="w_vntcli" id="w_vntcli_0" class="input" <% nvram_match_x("", "w_vntcli", "0", "checked"); %> /><#checkbox_No#>
+												</div>
+											</td>
+										</tr>
+										<tr id="row_wnatpierce" style="display:none">
+											<th width="50%" >皎月连</th>
+											<td>
+													<div class="main_itoggle">
+													<div id="w_natpierce_on_of">
+														<input type="checkbox" id="w_natpierce_fake" <% nvram_match_x("", "w_natpierce", "1", "value=1 checked"); %><% nvram_match_x("", "w_natpierce", "0", "value=0"); %>  />
+													</div>
+												</div>
+												<div style="position: absolute; margin-left: -10000px;">
+													<input type="radio" value="1" name="w_natpierce" id="w_natpierce_1" class="input" <% nvram_match_x("", "w_natpierce", "1", "checked"); %> /><#checkbox_Yes#>
+													<input type="radio" value="0" name="w_natpierce" id="w_natpierce_0" class="input" <% nvram_match_x("", "w_natpierce", "0", "checked"); %> /><#checkbox_No#>
+												</div>
+											</td>
+										</tr>
+										<tr id="row_wtailscale" style="display:none">
+											<th width="50%" >Tailscale</th>
+											<td>
+													<div class="main_itoggle">
+													<div id="w_tailscale_on_of">
+														<input type="checkbox" id="w_tailscale_fake" <% nvram_match_x("", "w_tailscale", "1", "value=1 checked"); %><% nvram_match_x("", "w_tailscale", "0", "value=0"); %>  />
+													</div>
+												</div>
+												<div style="position: absolute; margin-left: -10000px;">
+													<input type="radio" value="1" name="w_tailscale" id="w_tailscale_1" class="input" <% nvram_match_x("", "w_tailscale", "1", "checked"); %> /><#checkbox_Yes#>
+													<input type="radio" value="0" name="w_tailscale" id="w_tailscale_0" class="input" <% nvram_match_x("", "w_tailscale", "0", "checked"); %> /><#checkbox_No#>
+												</div>
+											</td>
+										</tr>
+										<tr id="row_walist" style="display:none">
+											<th width="50%" >Alist</th>
+											<td>
+													<div class="main_itoggle">
+													<div id="w_alist_on_of">
+														<input type="checkbox" id="w_alist_fake" <% nvram_match_x("", "w_alist", "1", "value=1 checked"); %><% nvram_match_x("", "w_alist", "0", "value=0"); %>  />
+													</div>
+												</div>
+												<div style="position: absolute; margin-left: -10000px;">
+													<input type="radio" value="1" name="w_alist" id="w_alist_1" class="input" <% nvram_match_x("", "w_alist", "1", "checked"); %> /><#checkbox_Yes#>
+													<input type="radio" value="0" name="w_alist" id="w_alist_0" class="input" <% nvram_match_x("", "w_alist", "0", "checked"); %> /><#checkbox_No#>
+												</div>
+											</td>
+										</tr>
 											<td colspan="2">
 												<br />
 												<center><input class="btn btn-primary" style="width: 219px" type="button" value="<#CTL_apply#>" onclick="applyRule()" /></center>

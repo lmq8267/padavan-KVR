@@ -2373,6 +2373,15 @@ static int lucky_status_hook(int eid, webs_t wp, int argc, char **argv)
 }
 #endif
 
+#if defined (APP_ALIST)
+static int alist_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int alist_status_code = pids("alist");
+	websWrite(wp, "function alist_status() { return %d;}\n", alist_status_code);
+	return 0;
+}
+#endif
+
 #if defined (APP_TAILSCALE)
 static int tailscale_status_hook(int eid, webs_t wp, int argc, char **argv)
 {
@@ -2719,6 +2728,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_lucky = 0;
 #endif
+#if defined(APP_ALIST)
+	int found_app_alist = 1;
+#else
+	int found_app_alist = 0;
+#endif
 #if defined(APP_TAILSCALE)
 	int found_app_tailscale = 1;
 #else
@@ -2971,6 +2985,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_natpierce() { return %d;}\n"
 		"function found_app_tailscale() { return %d;}\n"
 		"function found_app_cloudflared() { return %d;}\n"
+		"function found_app_alist() { return %d;}\n"
 		"function found_app_xupnpd() { return %d;}\n"
 		"function found_app_mentohust() { return %d;}\n",
 		found_utl_hdparm,
@@ -3014,6 +3029,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_natpierce,
 		found_app_cloudflared,
 		found_app_wxsend,
+		found_app_alist,
 		found_app_tailscale,
 		found_app_xupnpd,
 		found_app_mentohust
@@ -3812,6 +3828,20 @@ static char* lucky_command(const char *command, char *output, size_t output_size
 }
 #endif
 
+#if defined(APP_ALIST)
+static char* alist_command(const char *command, char *output, size_t output_size) {
+	FILE *fp = popen(command, "r");
+	if (fp) {
+		fread(output, sizeof(char), output_size - 1, fp);
+		output[output_size - 1] = '\0';
+		pclose(fp);
+	} else {
+		snprintf(output, output_size, "执行错误.");
+	}
+	return output;
+}
+#endif
+
 static int
 apply_cgi(const char *url, webs_t wp)
 {
@@ -3857,6 +3887,14 @@ apply_cgi(const char *url, webs_t wp)
 	{
 #if defined(APP_TAILSCALE)
 		unlink("/tmp/tailscale.log");
+#endif
+		websRedirect(wp, current_url);
+		return 0;
+	}
+	else if (!strcmp(value, " ClearalistLog "))
+	{
+#if defined(APP_ALIST)
+		unlink("/tmp/alist.log");
 #endif
 		websRedirect(wp, current_url);
 		return 0;
@@ -3973,6 +4011,18 @@ apply_cgi(const char *url, webs_t wp)
 		lucky_command(command, cmd_netfalse, sizeof(cmd_netfalse));
 		
 		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_netfalse);
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " resetpass "))
+	{
+#if defined(APP_ALIST)
+		char cmd_retpass[1024] = {0};
+		char command[1024];
+		snprintf(command, sizeof(command), "/usr/bin/alist.sh admin");
+		alist_command(command, cmd_retpass, sizeof(cmd_retpass));
+		
+		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_retpass);
 #endif
 		return 0;
 	}
@@ -4094,6 +4144,20 @@ apply_cgi(const char *url, webs_t wp)
 	{
 #if defined(APP_CLOUDFLARED)
 		system("/usr/bin/cloudflared.sh update &");
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " Restartalist "))
+	{
+#if defined(APP_ALIST)
+		system("/usr/bin/alist.sh restart &");
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " Updatealist "))
+	{
+#if defined(APP_ALIST)
+		system("/usr/bin/alist.sh update &");
 #endif
 		return 0;
 	}
@@ -5209,6 +5273,9 @@ struct ej_handler ej_handlers[] =
 #endif*/
 #if defined (APP_LUCKY)
 	{ "lucky_status", lucky_status_hook},
+#endif
+#if defined (APP_ALIST)
+	{ "alist_status", alist_status_hook},
 #endif
 #if defined (APP_TAILSCALE)
 	{ "tailscale_status", tailscale_status_hook},

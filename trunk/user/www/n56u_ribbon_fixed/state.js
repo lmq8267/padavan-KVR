@@ -466,6 +466,9 @@ if (found_app_natpierce()){
 if (found_app_tailscale()){
 	tabtitle[28] = new Array("", "Tailscale");
 }
+if (found_app_alist()){
+	tabtitle[29] = new Array("", "Alist");
+}
 
 //Level 3 Tab title
 
@@ -570,6 +573,10 @@ if (found_app_tailscale()){
 	tailscale_array = new Array("","Advanced_tailscale.asp");
 	tablink[28] = (tailscale_array);
 }
+if (found_app_alist()){
+	alist_array = new Array("","Advanced_alist.asp");
+	tablink[29] = (alist_array);
+}
 
 //Level 2 Menu
 menuL2_title = new Array(21)
@@ -660,6 +667,10 @@ if (found_app_tailscale()){
 	menuL2_title.push("Tailscale");
 } else menuL2_title.push("");
 
+if (found_app_alist()){
+	menuL2_title.push("Alist");
+} else menuL2_title.push("");
+
 menuL2_link  = new Array("", tablink[0][1], tablink[1][1], tablink[2][1], tablink[3][1], tablink[4][1], tablink[5][1], tablink[6][1], tablink[7][1], support_2g_radio() ? tablink[8][1] : "Main_EStatus_Content.asp", tablink[9][1]);
 if (found_app_scutclient()){
 	menuL2_link.push(scutclient_array[1]);
@@ -730,6 +741,9 @@ if (found_app_natpierce()){
 } else menuL2_link.push("");
 if (found_app_tailscale()){
 	menuL2_link.push(tailscale_array[1]);
+} else menuL2_link.push("");
+if (found_app_alist()){
+	menuL2_link.push(alist_array[1]);
 } else menuL2_link.push("");
 
 //Level 1 Menu in Gateway, Router mode
@@ -1630,6 +1644,7 @@ var w_vnts = '<% nvram_get_x("", "w_vnts"); %>';
 var w_vntcli = '<% nvram_get_x("", "w_vntcli"); %>';
 var w_natpierce = '<% nvram_get_x("", "w_natpierce"); %>';
 var w_tailscale = '<% nvram_get_x("", "w_tailscale"); %>';
+var w_alist = '<% nvram_get_x("", "w_alist"); %>';
 
 if (w_ai==0){
 	menuL1_link[2] = "";
@@ -1738,6 +1753,10 @@ if (w_natpierce==0){
 if (w_tailscale==0){
 	menuL2_link[29] = "";
 	menuL2_title[29] = "";
+}
+if (w_alist==0){
+	menuL2_link[30] = "";
+	menuL2_title[30] = "";
 }
 
 (function($){

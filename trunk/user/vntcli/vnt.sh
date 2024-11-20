@@ -63,6 +63,8 @@ get_tag() {
 
 dowload_vntcli() {
 	tag="$1"
+	bin_path=$(dirname "$VNTCLI")
+	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
 	logger -t "VNT客户端" "开始下载 https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 到 $VNTCLI"
 	for proxy in $github_proxys ; do
        curl -Lkso "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl" || wget --no-check-certificate -q -O "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl"

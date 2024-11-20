@@ -630,6 +630,22 @@ void restart_lucky(void){
 	start_lucky();
 }
 #endif
+#if defined(APP_ALIST)
+void stop_alist(void){
+	eval("/usr/bin/alist.sh","stop");
+}
+
+void start_alist(void){
+	int alist_enable = nvram_get_int("alist_enable");
+	if ( alist_enable == 1)
+		eval("/usr/bin/alist.sh","start");
+}
+
+void restart_alist(void){
+	stop_alist();
+	start_alist();
+}
+#endif
 #if defined(APP_CLOUDFLARED)
 void stop_cloudflared(void){
 	eval("/usr/bin/cloudflared.sh","stop");
@@ -1050,6 +1066,9 @@ stop_services(int stopall)
 #endif*/
 #if defined(APP_LUCKY)
 	stop_lucky();
+#endif
+#if defined(APP_ALIST)
+	stop_alist();
 #endif
 #if defined(APP_CLOUDFLARED)
 	stop_cloudflared();

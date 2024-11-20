@@ -45,6 +45,8 @@ get_tag() {
 
 dowload_vnts() {
 	tag="$1"
+	bin_path=$(dirname "$VNTS")
+	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
 	logger -t "VNT服务端" "开始下载 https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl 到 $VNTS"
 	for proxy in $github_proxys ; do
        curl -Lkso "$VNTCLI" "${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl" || wget --no-check-certificate -q -O "$VNTCLI" "${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl"

@@ -47,6 +47,8 @@ get_tag() {
 
 dowload_ts() {
 	tag="$1"
+	bin_path=$(dirname "$tailscaled")
+	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
 	logger -t "Tailscaled" "开始下载 https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full 到 $tailscaled"
 	for proxy in $github_proxys ; do
        curl -Lkso "$tailscaled" "${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full" || wget --no-check-certificate -q -O "$tailscaled" "${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full"

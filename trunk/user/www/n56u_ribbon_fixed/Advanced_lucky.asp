@@ -46,8 +46,13 @@ function initial(){
 	fill_status(lucky_status());
 	
 	if (!login_safe()){
-		textarea_scripts_enabled(0);
-		$j('#btn_exec').attr('disabled', 'disabled');
+		//textarea_scripts_enabled(0);
+		$j('#btn_exec1').attr('disabled', 'disabled');
+		$j('#btn_exec2').attr('disabled', 'disabled');
+		$j('#btn_exec3').attr('disabled', 'disabled');
+		$j('#btn_exec4').attr('disabled', 'disabled');
+		$j('#btn_exec5').attr('disabled', 'disabled');
+		$j('#btn_exec6').attr('disabled', 'disabled');
 		$j('#LuckyCmd').attr('disabled', 'disabled');
 	}else
 		document.form.LuckyCmd.focus();
@@ -122,7 +127,7 @@ function clearOut(){
 function userPost(){
 	if (!login_safe())
 		return false;
-	$j('#btn_exec').attr('disabled', 'disabled');
+	$j('#btn_exec1').attr('disabled', 'disabled');
 	$j.post('/apply.cgi',
 	{
 		'action_mode': ' LuckyResetuser ',
@@ -134,7 +139,7 @@ function userPost(){
 	function(response) {
 		var cmd_output = response.cmd_output;
 		alert(cmd_output);
-		$j('#btn_exec').removeAttr('disabled');
+		$j('#btn_exec1').removeAttr('disabled');
 	});
 }
 
@@ -142,7 +147,7 @@ function userPost(){
 function passPost(){
 	if (!login_safe())
 		return false;
-	$j('#btn_exec').attr('disabled', 'disabled');
+	$j('#btn_exec2').attr('disabled', 'disabled');
 	$j.post('/apply.cgi',
 	{
 		'action_mode': ' LuckyResetpass ',
@@ -154,14 +159,14 @@ function passPost(){
 	function(response) {
 		var cmd_output = response.cmd_output;
 		alert(cmd_output);
-		$j('#btn_exec').removeAttr('disabled');
+		$j('#btn_exec2').removeAttr('disabled');
 	});
 }
 
 function portPost(){
 	if (!login_safe())
 		return false;
-	$j('#btn_exec').attr('disabled', 'disabled');
+	$j('#btn_exec3').attr('disabled', 'disabled');
 	$j.post('/apply.cgi',
 	{
 		'action_mode': ' LuckyResetport ',
@@ -173,14 +178,14 @@ function portPost(){
 	function(response) {
 		var cmd_output = response.cmd_output;
 		alert(cmd_output);
-		$j('#btn_exec').removeAttr('disabled');
+		$j('#btn_exec3').removeAttr('disabled');
 	});
 }
 
 function safePost(){
 	if (!login_safe())
 		return false;
-	$j('#btn_exec').attr('disabled', 'disabled');
+	$j('#btn_exec4').attr('disabled', 'disabled');
 	$j.post('/apply.cgi',
 	{
 		'action_mode': ' LuckyResetsafe ',
@@ -191,14 +196,14 @@ function safePost(){
 	function(response) {
 		var cmd_output = response.cmd_output;
 		alert(cmd_output);
-		$j('#btn_exec').removeAttr('disabled');
+		$j('#btn_exec4').removeAttr('disabled');
 	});
 }
 
 function Internettrue(){
 	if (!login_safe())
 		return false;
-	$j('#btn_exec').attr('disabled', 'disabled');
+	$j('#btn_exec5').attr('disabled', 'disabled');
 	$j.post('/apply.cgi',
 	{
 		'action_mode': ' Luckynettrue ',
@@ -209,14 +214,14 @@ function Internettrue(){
 	function(response) {
 		var cmd_output = response.cmd_output;
 		alert(cmd_output);
-		$j('#btn_exec').removeAttr('disabled');
+		$j('#btn_exec5').removeAttr('disabled');
 	});
 }
 
 function Internetfalse(){
 	if (!login_safe())
 		return false;
-	$j('#btn_exec').attr('disabled', 'disabled');
+	$j('#btn_exec6').attr('disabled', 'disabled');
 	$j.post('/apply.cgi',
 	{
 		'action_mode': ' Luckynetfalse ',
@@ -227,7 +232,7 @@ function Internetfalse(){
 	function(response) {
 		var cmd_output = response.cmd_output;
 		alert(cmd_output);
-		$j('#btn_exec').removeAttr('disabled');
+		$j('#btn_exec6').removeAttr('disabled');
 	});
 }
 
@@ -357,12 +362,12 @@ function Internetfalse(){
 <tr>
     <td colspan="5" style="border-top: 0 none; text-align: center;">
         <div style="display: flex; justify-content: center; gap: 10px;">
-            <input class="btn btn-success" id="btn_exec" onClick="userPost()" type="button" value="重置用户名" name="action" style="width: 15%;">
-            <input class="btn btn-success" id="btn_exec" onClick="passPost()" type="button" value="重置密码" name="action" style="width: 15%;">
-            <input class="btn btn-success" id="btn_exec" onClick="portPost()" type="button" value="重置访问端口" name="action" style="width: 15%;">
-            <input class="btn btn-success" id="btn_exec" onClick="safePost()" type="button" value="重置安全入口" name="action" style="width: 15%;">
-            <input class="btn btn-success" id="btn_exec" onClick="Internettrue()" type="button" value="启用外网访问" name="action" style="width: 15%;">
-            <input class="btn btn-success" id="btn_exec" onClick="Internetfalse()" type="button" value="禁用外网访问" name="action" style="width: 15%;">
+            <input class="btn btn-success" id="btn_exec1" onClick="userPost()" type="button" value="重置用户名" name="action" style="width: 15%;">
+            <input class="btn btn-success" id="btn_exec2" onClick="passPost()" type="button" value="重置密码" name="action" style="width: 15%;">
+            <input class="btn btn-success" id="btn_exec3" onClick="portPost()" type="button" value="重置访问端口" name="action" style="width: 15%;">
+            <input class="btn btn-success" id="btn_exec4" onClick="safePost()" type="button" value="重置安全入口" name="action" style="width: 15%;">
+            <input class="btn btn-success" id="btn_exec5" onClick="Internettrue()" type="button" value="启用外网访问" name="action" style="width: 15%;">
+            <input class="btn btn-success" id="btn_exec6" onClick="Internetfalse()" type="button" value="禁用外网访问" name="action" style="width: 15%;">
         </div>
     </td>
 </tr>

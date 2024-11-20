@@ -1374,6 +1374,43 @@
 	};
 #endif
 
+#if defined(APP_ALIST)
+	struct variable variables_ALIST=[] = {
+			{"alist_enable", "", NULL, EVM_RESTART_ALIST},
+			{"alist_site_url", "", NULL, EVM_RESTART_ALIST},
+			{"alist_cdn", "", NULL, EVM_RESTART_ALIST},
+			{"alist_expires", "", NULL, EVM_RESTART_ALIST},
+			{"alist_sqlite", "", NULL, EVM_RESTART_ALIST},
+			{"alist_sqlite_host", "", NULL, EVM_RESTART_ALIST},
+			{"alist_sqlite_port", "", NULL, EVM_RESTART_ALIST},
+			{"alist_sqlite_user", "", NULL, EVM_RESTART_ALIST},
+			{"alist_sqlite_pass", "", NULL, EVM_RESTART_ALIST},
+			{"alist_sqlite_name", "", NULL, EVM_RESTART_ALIST},
+			{"alist_sqlite_tab", "", NULL, EVM_RESTART_ALIST},
+			{"alist_db_file", "", NULL, EVM_RESTART_ALIST},
+			{"alist_address", "", NULL, EVM_RESTART_ALIST},
+			{"alist_port", "", NULL, EVM_RESTART_ALIST},
+			{"alist_sport", "", NULL, EVM_RESTART_ALIST},
+			{"alist_https", "", NULL, EVM_RESTART_ALIST},
+			{"alist_cert", "", NULL, EVM_RESTART_ALIST},
+			{"alist_key", "", NULL, EVM_RESTART_ALIST},
+			{"alist_temp", "", NULL, EVM_RESTART_ALIST},
+			{"alist_bleve", "", NULL, EVM_RESTART_ALIST},
+			{"alist_log_enable", "", NULL, EVM_RESTART_ALIST},
+			{"alist_log_size", "", NULL, EVM_RESTART_ALIST},
+			{"alist_log_name", "", NULL, EVM_RESTART_ALIST},
+			{"alist_log_compress", "", NULL, EVM_RESTART_ALIST},
+			{"alist_delayed", "", NULL, EVM_RESTART_ALIST},
+			{"alist_connections", "", NULL, EVM_RESTART_ALIST},
+			{"alist_s3", "", NULL, EVM_RESTART_ALIST},
+			{"alist_s3_port", "", NULL, EVM_RESTART_ALIST},
+			{"alist_s3_ssl", "", NULL, EVM_RESTART_ALIST},
+			{"alist_bin", "", NULL, EVM_RESTART_ALIST},
+			{"alist_upx", "", NULL, EVM_RESTART_ALIST},
+			{0,0,0,0}
+	};
+#endif
+
 #if defined(APP_CLOUDFLARED)
 	struct variable variables_CLOUDFLARED=[] = {
 			{"cloudflared_enable", "", NULL, EVM_RESTART_CLOUDFLARED},
@@ -1429,6 +1466,7 @@
 			{"w_vntcli", "", NULL, FALSE},
 			{"w_natpierce", "", NULL, FALSE},
 			{"w_tailscale", "", NULL, FALSE},
+			{"w_alist", "", NULL, FALSE},
 	};
 
 	struct variable variables_WLANConfig11b[] = {
@@ -1600,6 +1638,9 @@
 #if defined(APP_LUCKY)
 		{"LUCKY",		variables_LUCKY},
 #endif
+#if defined(APP_ALIST)
+		{"ALIST",		variables_ALIST},
+#endif
 #if defined(APP_WXSEND)
 		{"WXSEND",		variables_WXSEND},
 #endif
@@ -1752,6 +1793,9 @@
 #endif
 #if defined(APP_LUCKY)
 		{EVM_RESTART_LUCKY,		EVT_RESTART_LUCKY,		RCN_RESTART_LUCKY,	0},
+#endif
+#if defined(APP_ALIST)
+		{EVM_RESTART_ALIST,		EVT_RESTART_ALIST,		RCN_RESTART_ALIST,	0},
 #endif
 #if defined(APP_WXSEND)
 		{EVM_RESTART_WXSEND,		EVT_RESTART_WXSEND,		RCN_RESTART_WXSEND,	0},

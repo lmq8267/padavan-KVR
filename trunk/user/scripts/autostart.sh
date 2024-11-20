@@ -146,6 +146,11 @@ logger -t "自动启动" "正在启动lucky"
 /usr/bin/lucky.sh start &
 fi
 
+if [ $(nvram get alist_enable) = 1 ] ; then
+logger -t "自动启动" "正在启动alist"
+/usr/bin/alist.sh start &
+fi
+
 if [ $(nvram get natpierce_enable) = 1 ] ; then
 logger -t "自动启动" "正在启动皎月连"
 /usr/bin/natpierce.sh start &

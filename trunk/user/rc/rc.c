@@ -1408,6 +1408,12 @@ handle_notifications(void)
 			restart_lucky();
 		}
 #endif
+#if defined(APP_ALIST)
+		else if (strcmp(entry->d_name, RCN_RESTART_ALIST) == 0)
+		{
+			restart_alist();
+		}
+#endif
 #if defined(APP_TAILSCALE)
 		else if (strcmp(entry->d_name, RCN_RESTART_TAILSCALE) == 0)
 		{

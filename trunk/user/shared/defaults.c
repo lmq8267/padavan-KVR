@@ -524,6 +524,7 @@ struct nvram_pair router_defaults[] = {
 	{ "w_vntcli", "1" },
 	{ "w_natpierce", "1" },
 	{ "w_tailscale", "1" },
+	{ "w_alist", "1" },
 
 	{ "ip6_service", "" },
 	{ "ip6_ppe_on", "0" },
@@ -804,7 +805,7 @@ struct nvram_pair router_defaults[] = {
 	{ "frp_tag", "" },
 #endif
 
-#if defined(APP_LUCKY)
+#if defined(APP_NATPIERCE)
 	/*皎月连*/
 	{ "natpierce_enable", "0" },
 	{ "natpierce_port", "" },
@@ -812,9 +813,9 @@ struct nvram_pair router_defaults[] = {
 	{ "natpierce_url", "" },
 #endif
 
-#if defined(APP_NATPIERCE)
+#if defined(APP_LUCKY)
 	/*lucky*/
-	{ "natpierce_enable", "0" },
+	{ "lucky_enable", "0" },
 	{ "lucky_cmd", "" },
 #endif
 
@@ -904,6 +905,41 @@ struct nvram_pair router_defaults[] = {
 	{ "tailscale_reset", "1" },
 	{ "tailscale_cmd2", "" },
 	{ "tailscale_bin", "" },
+#endif
+
+#if defined(APP_ALIST)
+	/*alist*/
+	{ "alist_enable", "0" },
+	{ "alist_site_url", "" },
+	{ "alist_cdn", "" },
+	{ "alist_expires", "48" },
+	{ "alist_sqlite", "sqlite3" },
+	{ "alist_sqlite_host", "" },
+	{ "alist_sqlite_port", "0" },
+	{ "alist_sqlite_user", "" },
+	{ "alist_sqlite_pass", "" },
+	{ "alist_sqlite_name", "" },
+	{ "alist_sqlite_tab", "x_" },
+	{ "alist_db_file", "/etc/storage/alist/data.db" },
+	{ "alist_address", "0.0.0.0" },
+	{ "alist_port", "5244" },
+	{ "alist_sport", "-1" },
+	{ "alist_https", "0" },
+	{ "alist_cert", "" },
+	{ "alist_key", "" },
+	{ "alist_temp", "/tmp/alist/temp" },
+	{ "alist_bleve", "/tmp/alist/bleve" },
+	{ "alist_log_enable", "0" },
+	{ "alist_log_size", "1" },
+	{ "alist_log_name", "/tmp/alist.log" },
+	{ "alist_log_compress", "0" },
+	{ "alist_delayed", "0" },
+	{ "alist_connections", "0" },
+	{ "alist_s3", "0" },
+	{ "alist_s3_port", "5246" },
+	{ "alist_s3_ssl", "0" },
+	{ "alist_bin", "/tmp/alist/alist" },
+	{ "alist_upx", "0" },
 #endif
 
 #if defined(APP_WYY)

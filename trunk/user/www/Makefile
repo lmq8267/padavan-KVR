@@ -272,6 +272,9 @@ endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_TAILSCALE),y)
 	rm -f $(INSTALLDIR)/www/Advanced_tailscale.asp
 endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_ALIST),y)
+	rm -f $(INSTALLDIR)/www/Advanced_alist.asp
+endif
 
 clean:
 	@echo "Clean www romfs"

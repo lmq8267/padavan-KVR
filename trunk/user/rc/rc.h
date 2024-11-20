@@ -597,6 +597,11 @@ void stop_lucky(void);
 void start_lucky(void);
 void restart_lucky(void);
 #endif
+#if defined(APP_ALIST)
+void stop_alist(void);
+void start_alist(void);
+void restart_alist(void);
+#endif
 #if defined(APP_TAILSCALE)
 void stop_tailscale(void);
 void start_tailscale(void);
