@@ -1335,7 +1335,7 @@
 #endif
 
 #if defined(APP_LUCKY)
-	struct variable variables_LUCKY=[] = {
+	struct variable variables_LUCKY[] = {
 			{"lucky_enable", "", NULL, EVM_RESTART_LUCKY},
 			{"lucky_cmd", "", NULL, EVM_RESTART_LUCKY},
 			{"scripts.lucky.conf", "File", NULL, EVM_RESTART_LUCKY},
@@ -1344,7 +1344,7 @@
 #endif
 
 #if defined(APP_NATPIERCE)
-	struct variable variables_NATPIERCE=[] = {
+	struct variable variables_NATPIERCE[] = {
 			{"natpierce_enable", "", NULL, EVM_RESTART_NATPIERCE},
 			{"natpierce_port", "", NULL, EVM_RESTART_NATPIERCE},
 			{"natpierce_bin", "", NULL, EVM_RESTART_NATPIERCE},
@@ -1354,7 +1354,7 @@
 #endif
 
 #if defined(APP_TAILSCALE)
-	struct variable variables_TAILSCALE=[] = {
+	struct variable variables_TAILSCALE[] = {
 			{"tailscale_enable", "", NULL, EVM_RESTART_TAILSCALE},
 			{"tailscale_dns", "", NULL, EVM_RESTART_TAILSCALE},
 			{"tailscale_cmd", "", NULL, EVM_RESTART_TAILSCALE},
@@ -1375,7 +1375,7 @@
 #endif
 
 #if defined(APP_ALIST)
-	struct variable variables_ALIST=[] = {
+	struct variable variables_ALIST[] = {
 			{"alist_enable", "", NULL, EVM_RESTART_ALIST},
 			{"alist_site_url", "", NULL, EVM_RESTART_ALIST},
 			{"alist_cdn", "", NULL, EVM_RESTART_ALIST},
@@ -1412,7 +1412,7 @@
 #endif
 
 #if defined(APP_CLOUDFLARED)
-	struct variable variables_CLOUDFLARED=[] = {
+	struct variable variables_CLOUDFLARED[] = {
 			{"cloudflared_enable", "", NULL, EVM_RESTART_CLOUDFLARED},
 			{"cloudflared_cmd", "", NULL, EVM_RESTART_CLOUDFLARED},
 			{"cloudflared_bin", "", NULL, EVM_RESTART_CLOUDFLARED},
@@ -1422,7 +1422,7 @@
 #endif
 
 #if defined(APP_WXSEND)
-	struct variable variables_WXSEND=[] = {
+	struct variable variables_WXSEND[] = {
 			{"wxend_enable", "", NULL, EVM_RESTART_WXSEND},
 			{"wxsend_appid", "", NULL, EVM_RESTART_WXSEND},
 			{"wxsend_appsecret", "", NULL, EVM_RESTART_WXSEND},
