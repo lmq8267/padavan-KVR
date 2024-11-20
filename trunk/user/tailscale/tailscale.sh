@@ -185,7 +185,8 @@ start_ts() {
 	CMD=""
 	get_login
 	if [ "$ts_enable" = "1" ] ; then
-		[ "$ts_dns" = "1" ] || CMD="up --accept-dns=false"
+		CMD="up"
+		[ "$ts_dns" = "1" ] || CMD=" --accept-dns=false"
 		[ "$ts_route" = "1" ] && CMD="${CMD} --accept-routes"
 		[ -z "$ts_routes" ] || ts_routes="$(echo $ts_routes | tr -d ' ')"
 		[ -z "$ts_routes" ] || CMD="${CMD} --advertise-routes=${ts_routes}"
