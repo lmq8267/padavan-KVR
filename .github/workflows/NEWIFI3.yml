@@ -1,18 +1,7 @@
-#修改TNAME: NEWIFI3 中的NEWIFI3为你需要编译的型号，注意名称要与configs/templates/目录下的名字相同
+#修改40行的TNAME: NEWIFI3 中的NEWIFI3为你需要编译的型号，注意名称要与trunk/configs/templates/目录下的名字相同
 name: 云编译-Padavan-KVR-NEWIFI3
 
 on: 
-  #release:
-    #types: [published]
-  #push:
-    #tags:
-    #- 'v*'
-  #  branches: 
-  #    - master
-#  schedule:
-#    - cron: 0 8 * * 5
-  #watch:
-    #types: [started]
   workflow_dispatch:
 
 
@@ -42,7 +31,7 @@ jobs:
       env:
         KERNEL: 3.4
       run: |
-        git clone --depth=1 https://github.com/lmq8267/padavan-KVR.git /opt/rt-n56u
+        git clone --depth=1 https://github.com/${$GITHUB_REPOSITORY_OWNER}/padavan-KVR.git /opt/rt-n56u
         cd /opt/rt-n56u/toolchain-mipsel
         sh dl_toolchain.sh
         mkdir -p /opt/images/
