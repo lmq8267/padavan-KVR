@@ -2,7 +2,7 @@ SRC_NAME = wireguard-tools-1.0.20210914
 SRC_URL = https://git.zx2c4.com/wireguard-tools/snapshot/wireguard-tools-1.0.20210914.tar.xz
 THISDIR = $(shell pwd)
 
-all: download_test extract_test
+all: 
 	$(MAKE) -C $(SRC_NAME)/src WITH_BASHCOMPLETION=no WITH_WGQUICK=yes WITH_SYSTEMDUNITS=no wg
 
 download_test:
@@ -21,5 +21,5 @@ clean:
 	fi
 
 romfs:
-	$(ROMFSINST) -p +x $(THISDIR)/$(SRC_NAME)/src/wg /usr/bin/wg
+	$(ROMFSINST) -p +x $(THISDIR)/wg /usr/bin/wg
 
