@@ -1667,9 +1667,6 @@
 #if defined(APP_LUCKY)
 		{"LUCKY",		variables_LUCKY},
 #endif
-#if defined(APP_CLOUDFLARE)
-		{"CLOUDFLARE",		variables_CLOUDFLARE},
-#endif
 #if defined(APP_ALIST)
 		{"ALIST",		variables_ALIST},
 #endif
