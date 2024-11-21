@@ -8,18 +8,25 @@ if [ "$PS1" ] ; then
     export TERMINFO=/usr/share/terminfo
     export TERM=xterm
     export clashdir=/etc/storage/clash
+    export PS1='\[\e]0;\h: \w\a\][\[\e[36;1m\]\h \[\e[35;1m\]\w\[\e[m\]]\$ '
     [ -r /etc_ro/banner ] && cat /etc_ro/banner
+    echo -e "[\033[36m$(grep Web_Title= /www/EN.dict | sed 's/Web_Title=//g'| sed 's/ 无线路由器\| Wireless Router//g')\033[0m \033[35m$(nvram get firmver_sub)\033[0m]# \033[33m$(date "+%Y-%m-%d %H:%M:%S")\033[0m"
     echo "Version: $(nvram get firmver_sub)"; echo ""
 
 fi;
 
 [ -r /opt/etc/profile ] && . /opt/etc/profile
 
+alias c='clear'
+alias f='find / -name '
 alias df='df -Th'
 alias ps='ps ww'
 alias ls='ls -hF --color=auto'
 alias ll='ls -AlhF --color=auto'
 alias htop='htop -t'
+alias mc='mc -c'
+alias md5='md5sum'
+alias sl='less /tmp/syslog.log'
 #alias clash=/etc/storage/clash/clash.sh
 alias clash=/etc/storage/ShellCrash/menu.sh
 alias crash=/etc/storage/ShellCrash/menu.sh
