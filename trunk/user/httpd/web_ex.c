@@ -5272,6 +5272,9 @@ struct ej_handler ej_handlers[] =
 #if defined (APP_VNTS)
 	{ "vnts_status", vnts_status_hook},
 #endif
+#if defined (APP_VNTCLI)
+	{ "vntcli_status", vntcli_status_hook},
+#endif
 #if defined (APP_NVPPROXY)
 	{ "nvpproxy_status", nvpproxy_status_hook},
 #endif

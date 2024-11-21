@@ -667,9 +667,9 @@ auth_check( const char *authorization, const char *conn_ip )
 	
 	/* Is this the right user and password? */
 	if (strcmp(authinfo, auth_basic_data) == 0) {
-		char log_message[512];
-		snprintf(log_message, sizeof(log_message), "用户IP:【%s】 成功登录管理界面！", conn_ip);
-		logmessage("httpd", "%s", log_message);
+		//char log_message[512];
+		//snprintf(log_message, sizeof(log_message), "用户IP:【%s】 成功登录管理界面！", conn_ip);
+		//logmessage("httpd", "%s", log_message);
 		return 1;
 	} else {
 		char *username = strtok(authinfo, ":");
