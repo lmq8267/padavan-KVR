@@ -104,22 +104,22 @@ typedef u_int8_t u8;
 #define EVM_RESTART_WYY				(1ULL << 50)
 #define EVM_RESTART_ZEROTIER		(1ULL << 51)
             //#define EVM_RESTART_NVPPROXY		(1ULL << 60)
-#define EVM_RESTART_DDNSTO	    	(1ULL << 52)
-#define EVM_RESTART_WIREGUARD		(1ULL << 53)
-#define EVM_RESTART_ALDRIVER		(1ULL << 54)
-#define EVM_RESTART_UUPLUGIN		(1ULL << 55)
-#define EVM_RESTART_LUCKY		(1ULL << 56)
-#define EVM_RESTART_WXSEND		(1ULL << 57)
-#define EVM_RESTART_CLOUDFLARED		(1ULL << 58)
-#define EVM_RESTART_VNTS		(1ULL << 59)
-#define EVM_RESTART_VNTCLI		(1ULL << 60)
-#define EVM_RESTART_NATPIERCE		(1ULL << 61)
-#define EVM_RESTART_TAILSCALE		(1ULL << 62)
-#define EVM_RESTART_ALIST		(1ULL << 63)
+		//#define EVM_RESTART_DDNSTO	    	(1ULL << 52)
+#define EVM_RESTART_WIREGUARD		(1ULL << 52)
+#define EVM_RESTART_ALDRIVER		(1ULL << 53)
+#define EVM_RESTART_UUPLUGIN		(1ULL << 54)
+#define EVM_RESTART_LUCKY		(1ULL << 55)
+#define EVM_RESTART_WXSEND		(1ULL << 56)
+#define EVM_RESTART_CLOUDFLARED		(1ULL << 57)
+#define EVM_RESTART_VNTS		(1ULL << 58)
+#define EVM_RESTART_VNTCLI		(1ULL << 59)
+#define EVM_RESTART_NATPIERCE		(1ULL << 60)
+#define EVM_RESTART_TAILSCALE		(1ULL << 61)
+#define EVM_RESTART_ALIST		(1ULL << 62)
 #define EVM_RESTART_REBOOT			(1ULL << 44)
 #define EVM_RESTART_CLOUDFLARE			(1ULL << 41)
 //#define EVM_RESTART_APP			(1ULL << 38)
-#define EVM_BLOCK_UNSAFE			(1ULL << 64) /* special case */
+#define EVM_BLOCK_UNSAFE			(1ULL << 63) /* special case */
 
 
 #define EVT_RESTART_FIREWALL		1
@@ -197,6 +197,7 @@ typedef u_int8_t u8;
 #define EVT_RESTART_VNTCLI	    	2
 #define EVT_RESTART_NATPIERCE	    	2
 #define EVT_RESTART_TAILSCALE	    	2
+#define EVT_RESTART_CLOUDFLARE	    	2
 #define EVT_RESTART_ALIST	    	2
 #define EVT_RESTART_REBOOT			40
 
