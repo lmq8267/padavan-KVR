@@ -6,7 +6,8 @@ lucky_enable=`nvram get lucky_enable`
 lucky_cmd=`nvram get lucky_cmd`
 [ -z "$lucky_cmd" ] && lucky_cmd="/etc/storage/lucky"
 [ -z "$lucky_enable" ] && lucky_enable=0 && nvram set lucky_enable=0
-
+github_proxys="$(nvram get github_proxy)"
+[ -z "$github_proxys" ] && github_proxys=" "
 logg  () {
   echo -e "\033[36;33m$(date +'%Y-%m-%d %H:%M:%S'):\033[0m\033[35;1m $1 \033[0m"
   echo "$(date +'%Y-%m-%d %H:%M:%S')：$1" >>/tmp/lucky.log
@@ -59,8 +60,9 @@ lucky_dl() {
        curl -Lkso "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz" || wget --no-check-certificate -q -O "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
 	if [ "$?" = 0 ] ; then
 		tar -xzf /tmp/lucky.tar.gz -C /tmp/var
-		chmod +x /tmp/var/lucky
-		if [ $(($(/tmp/var/lucky -h | wc -l))) -gt 3 ] ; then
+		
+		if [ $? -eq 0 ]; then
+			chmod +x /tmp/var/lucky
 			logg "下载成功"
 			lk_ver=$(/tmp/var/lucky -info | awk -F'"Version":"' '{print $2}' | awk -F'"' '{print $1}')
 			if [ -z "$lk_ver" ] ; then
@@ -111,11 +113,12 @@ lucky_start () {
   killall -9 lucky >/dev/null 2>&1
   LUCKY_CONF="/etc/storage/lucky.conf"
   find_bin 
-  get_tag
+  
   [ ! -d /etc/storage/lucky ] && mkdir -p /etc/storage/lucky
-  if [ ! -f "$PROG" ] || [ $(($($PROG -v | wc -l))) -lt 3 ] ; then
-     logg "未找到程序$PROG 或 文件不完整不匹配，开始在线下载..."
-     [ -z "$tag" ] && tag="v2.13.4" && logg "未获取到最新版本，暂用$atg"
+  if [ ! -f "$PROG" ] ; then
+     logg "未找到程序$PROG ，开始在线下载..."
+     get_tag
+     [ -z "$tag" ] && tag="v2.13.4" && logg "未获取到最新版本，暂用$tag"
      lucky_dl $tag
   fi
 
@@ -127,9 +130,10 @@ if [ ! -z "`pidof lucky`" ] ; then
   logg "lucky启动成功" 
   get_web
   lk_keep
+  get_tag
 fi
 [ -z "`pidof lucky`" ] && logg "lucky启动失败!" 
-
+exit 0
 }
 
 lucky_close () {
@@ -159,46 +163,46 @@ stop)
 	;;
 resetuser)
 	find_bin
-	newuser="$1"
+	newuser="$2"
 	[ -z "$newuser" ] && newuser="666"
 	status="$(${PROG} -setconf -key AdminAccount -value ${newuser} -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
-		echo "用户名已修改为 ${newuser} 重新启动程序生效."
+		logg "用户名已修改为 ${newuser} 重新启动程序才能登录."
 	else
-		echo "$status"
+		logg "$status"
 	fi
 	;;
 resetpass)
 	find_bin
-	newpass="$1"
+	newpass="$2"
 	[ -z "$newpass" ] && newpass="666"
 	status="$(${PROG} -setconf -key AdminPassword -value ${newpass} -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
-		echo "密码已修改为 ${newpass} 重新启动程序生效."
+		logg "密码已修改为 ${newpass} 重新启动程序才能登录."
 	else
-		echo "$status"
+		logg "$status"
 	fi
 	;;
 resetport)
 	find_bin
-	newport="$1"
+	newport="$2"
 	[ -z "$newport" ] && newport="16601"
 	status="$(${PROG} -setconf -key AdminWebListenPort -value ${newport} -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
-		echo "http访问端口已修改为 ${newport} "
+		logg "http访问端口已修改为 ${newport} "
 	else
-		echo "$status"
+		logg "$status"
 	fi
 	get_web
 	;;
 resetsafe)
 	find_bin
-	newsafe="$1"
+	newsafe="$2"
 	status="$(${PROG} -setconf -key SetSafeURL -value ${newsafe} -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
-		echo "安全入口已修改为 ${newsafe} "
+		logg "安全入口已修改为 ${newsafe} "
 	else
-		echo "$status"
+		logg "$status"
 	fi
 	get_web
 	;;
@@ -206,18 +210,18 @@ internettrue)
 	find_bin
 	status="$(${PROG} -setconf -key AllowInternetaccess -value true -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
-		echo "已启用外网访问！"
+		logg "已启用外网访问！"
 	else
-		echo "$status"
+		logg "$status"
 	fi
 	;;
 internetfalse)
 	find_bin
 	status="$(${PROG} -setconf -key AllowInternetaccess -value false -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
-		echo "已禁用外网访问！"
+		logg "已禁用外网访问！"
 	else
-		echo "$status"
+		logg "$status"
 	fi
 	;;
 *)

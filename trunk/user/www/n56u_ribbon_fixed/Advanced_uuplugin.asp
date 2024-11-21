@@ -37,7 +37,7 @@ function initial(){
 	show_banner(2);
 	show_menu(5, 22, 0);
 	show_footer();
-	fill_status(uu_status());
+	fill_status(uuplugin_status());
 
 
 }

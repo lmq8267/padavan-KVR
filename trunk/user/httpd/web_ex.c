@@ -3823,29 +3823,49 @@ int ej_shown_language_option(int eid, webs_t wp, int argc, char **argv) {
 
 #if defined(APP_LUCKY)
 static char* lucky_command(const char *command, char *output, size_t output_size) {
-	FILE *fp = popen(command, "r");
-	if (fp) {
-		fread(output, sizeof(char), output_size - 1, fp);
-		output[output_size - 1] = '\0';
-		pclose(fp);
-	} else {
-		snprintf(output, output_size, "执行错误.");
-	}
-	return output;
+    FILE *fp = popen(command, "r");
+    if (fp) {
+        char *ptr = output;
+        size_t remaining = output_size - 1; 
+        char buffer[256];
+
+        while (fgets(buffer, sizeof(buffer), fp) != NULL) {
+            size_t len = strlen(buffer);
+            if (len > remaining) break; 
+            strncpy(ptr, buffer, remaining);
+            ptr += len;
+            remaining -= len;
+        }
+        *ptr = '\0'; 
+        pclose(fp);
+    } else {
+        snprintf(output, output_size, "执行错误.");
+    }
+    return output;
 }
 #endif
 
 #if defined(APP_ALIST)
 static char* alist_command(const char *command, char *output, size_t output_size) {
-	FILE *fp = popen(command, "r");
-	if (fp) {
-		fread(output, sizeof(char), output_size - 1, fp);
-		output[output_size - 1] = '\0';
-		pclose(fp);
-	} else {
-		snprintf(output, output_size, "执行错误.");
-	}
-	return output;
+    FILE *fp = popen(command, "r");
+    if (fp) {
+        char *ptr = output;
+        size_t remaining = output_size - 1; 
+        char buffer[256];
+
+        while (fgets(buffer, sizeof(buffer), fp) != NULL) {
+            size_t len = strlen(buffer);
+            if (len > remaining) break; 
+            strncpy(ptr, buffer, remaining);
+            ptr += len;
+            remaining -= len;
+        }
+        *ptr = '\0'; 
+        pclose(fp);
+    } else {
+        snprintf(output, output_size, "执行错误.");
+    }
+    return output;
 }
 #endif
 
@@ -4021,7 +4041,7 @@ apply_cgi(const char *url, webs_t wp)
 #endif
 		return 0;
 	}
-	else if (!strcmp(value, " resetpass "))
+	else if (!strcmp(value, " AlistReset "))
 	{
 #if defined(APP_ALIST)
 		char cmd_retpass[1024] = {0};

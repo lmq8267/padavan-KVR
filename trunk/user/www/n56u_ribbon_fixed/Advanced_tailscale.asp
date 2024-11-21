@@ -155,7 +155,7 @@ function change_tailscale_enable(mflag){
 function button_restarttailscale() {
     var m = document.form.tailscale_enable.value;
 
-    var actionMode = (m == "1" || m == "2") ? 'Restarttailscale' : 'Updatetailscale';
+    var actionMode = (m == "1" || m == "2") ? ' Restarttailscale ' : ' Updatetailscale ';
 
     change_tailscale_enable(m); 
 
@@ -166,8 +166,6 @@ function button_restarttailscale() {
 }
 
 function clearLog(){
-	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_tailscale.asp#log";
 	document.form.next_host.value = "Advanced_tailscale.asp#log";
 	document.form.action_mode.value = " ClearTsLog ";
 	document.form.submit();
@@ -429,10 +427,10 @@ function clearLog(){
 	</tr>
 	<tr>
 	<td width="15%" style="text-align: left; padding-bottom: 0px;">
-	<input type="button" onClick="location.href=location.href" value="<#CTL_refresh#>" class="btn btn-primary" style="width: 200px">
+	<input type="button" onClick="location.reload()" value="刷新日志" class="btn btn-primary" style="width: 200px">
 	</td>
 	<td width="75%" style="text-align: right; padding-bottom: 0px;">
-	<input type="button" onClick="clearLog();" value="<#CTL_clear#>" class="btn btn-info" style="width: 200px">
+	<input type="button" onClick="clearLog();" value="清除日志" class="btn btn-info" style="width: 200px">
 	</td>
 	</tr>
 	</table>

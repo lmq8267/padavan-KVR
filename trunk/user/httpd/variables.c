@@ -774,21 +774,6 @@
 			{"aliddns_domain6", "", NULL, EVM_RESTART_ALIDDNS },
 			{"scripts.ddns_script.sh", "File", NULL, EVM_RESTART_ALIDDNS},
 #endif
-#if defined(APP_CLOUDFLARE)
-			{"cloudflare_enable", "", NULL, EVM_RESTART_CLOUDFLARE },
-			{"cloudflare_interval", "", NULL, EVM_RESTART_CLOUDFLARE },
-			{"cloudflare_token", "", NULL, EVM_RESTART_CLOUDFLARE },
-			{"cloudflare_Email", "", NULL, EVM_RESTART_CLOUDFLARE },
-			{"cloudflare_Key", "", NULL, EVM_RESTART_CLOUDFLARE },
-			{"cloudflare_CA_Key", "", NULL, EVM_RESTART_CLOUDFLARE },
-			{"cloudflare_host", "", NULL, EVM_RESTART_CLOUDFLARE },
-			{"cloudflare_host2", "", NULL, EVM_RESTART_CLOUDFLARE },
-			{"cloudflare_host6", "", NULL, EVM_RESTART_CLOUDFLARE },
-			{"cloudflare_domian", "", NULL, EVM_RESTART_CLOUDFLARE },
-			{"cloudflare_domian2", "", NULL, EVM_RESTART_CLOUDFLARE },
-			{"cloudflare_domian6", "", NULL, EVM_RESTART_CLOUDFLARE },
-			{"scripts.ddns_script.sh", "File", NULL, EVM_RESTART_CLOUDFLARE},
-#endif
 			{"ManualDHCPList", "Group", ARGV((char*)variables_LANHostConfig_ManualDHCPList, "8", "55", "dhcp_staticnum_x"), EVM_RESTART_DHCPD},
 			{"VPNSACLList", "Group", ARGV((char*)variables_LANHostConfig_VPNSACLList, "8", "107", "vpns_num_x"), EVM_RESTART_VPNSVR},
 			{0,0,0,0}
@@ -962,6 +947,23 @@
 			{"mentohust_service", "", NULL, EVM_RESTART_MENTOHUST},
 			{0,0,0,0}
 	};
+#endif
+
+#if defined(APP_CLOUDFLARE)
+			{"cloudflare_enable", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_interval", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_token", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_Email", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_Key", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_CA_Key", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_host", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_host2", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_host6", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_domian", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_domian2", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_domian6", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"scripts.ddns_script.sh", "File", NULL, EVM_RESTART_CLOUDFLARE},
+			{0,0,0,0}
 #endif
 
 #if defined(APP_DNSFORWARDER)
@@ -1451,7 +1453,7 @@
 
 #if defined(APP_WXSEND)
 	struct variable variables_WXSEND[] = {
-			{"wxend_enable", "", NULL, EVM_RESTART_WXSEND},
+			{"wxsend_enable", "", NULL, EVM_RESTART_WXSEND},
 			{"wxsend_appid", "", NULL, EVM_RESTART_WXSEND},
 			{"wxsend_appsecret", "", NULL, EVM_RESTART_WXSEND},
 			{"wxsend_touser", "", NULL, EVM_RESTART_WXSEND},
@@ -1675,6 +1677,9 @@
 #endif
 #if defined(APP_CLOUDFLARED)
 		{"CLOUDFLARED",		variables_CLOUDFLARED},
+#endif
+#if defined(APP_CLOUDFLARE)
+		{"CLOUDFLARE",		variables_CLOUDFLARE},
 #endif
 #if defined(APP_VNTS)
 		{"VNTS",		variables_VNTS},

@@ -34,7 +34,7 @@ dl_ald() {
 	if [ ! -z "$tag" ] ; then
 		logger -t "【阿里云盘】" "下载 $tag 下载较慢，耐心等待"
  		for proxy in $github_proxys ; do
-       		curl -Lkso "/tmp/aliyundrive/aliyundrive.tar.gz" "${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz" || wget --no-check-certificate -q -O "/tmp/aliyundrive/aliyundrive.tar.gz" "${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz"
+       		curl -Lko "/tmp/aliyundrive/aliyundrive.tar.gz" "${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz" || wget --no-check-certificate -O "/tmp/aliyundrive/aliyundrive.tar.gz" "${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz"
 			if [ "$?" = 0 ] ; then
 				tar -xzvf /tmp/aliyundrive/aliyundrive.tar.gz -C /tmp/var
 				rm -rf /tmp/aliyundrive/aliyundrive.tar.gz
@@ -132,17 +132,15 @@ kill_ald() {
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
 	fi
-	aliyundrive_process=$(pidof aliyundrive-webdav)
-	if [ -n "$aliyundrive_process" ]; then
+	
+	if [ ! -z "`pidof aliyundrive-webdav`" ]; then
 		logger -t "【阿里云盘】" "关闭进程..."
 		killall aliyundrive-webdav >/dev/null 2>&1
 		kill -9 "$aliyundrive_process" >/dev/null 2>&1
                
 	fi
 }
-stop_ald() {
-	kill_ald
-	}
+
 
 
 check_ald() {
@@ -158,7 +156,8 @@ start)
 	start_ald &
 	;;
 stop)
-	stop_ald
+	kill_ald
+	logger -t "【阿里云盘】" "已关闭"
 	;;
 *)
 	check_ald &

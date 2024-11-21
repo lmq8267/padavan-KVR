@@ -115,10 +115,10 @@ start_cf() {
 	exit 0
 }
 kill_cf() {
-	cloudflared_process=$(pidof cloudflared)
+	
 	rm -rf /tmp/cloudflared.log
-	if [ -n "$cloudflared_process" ]; then
-		logger -t "cloudflared" "有进程 $cloudflared_proces 在运行，结束中..."
+	if [ ! -z "`pidof cloudflared`" ] ; then
+		#logger -t "cloudflared" "有进程 $cloudflared_proces 在运行，结束中..."
 		killall cloudflared >/dev/null 2>&1
 	fi
 }
@@ -131,7 +131,7 @@ stop_cf() {
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
 	fi
 	kill_cf
-	[ ! -z "`pidof cloudflared`" ] && logger -t "cloudflared" "cloudflared关闭成功!"
+	[ -z "`pidof cloudflared`" ] && logger -t "cloudflared" "cloudflared关闭成功!"
 }
 
 case $1 in

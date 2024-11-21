@@ -43,7 +43,7 @@ scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 
 get_tag() {
 	curltest=`which curl`
-	logger -t "Alist" "开始获取最新版本..."
+	#logger -t "Alist" "开始获取最新版本..."
     	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
       		tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --output-document=-  https://api.github.com/repos/${repo}/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
 	 	[ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/${repo}/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
@@ -74,15 +74,16 @@ dowload_al() {
 		url="https://github.com/AlistGo/alist/releases/download/${tag}/alist-linux-musl-mipsle.tar.gz"
 	fi
 	logger -t "Alist" "开始下载 ${url} "
+	[ -z "$github_proxys" ] && logger -t "Alist" "加速镜像地址为空.."
 	for proxy in $github_proxys ; do
-       curl -Lkso "/tmp/alist.tar.gz" "${proxy}${url}" || wget --no-check-certificate -q -O "/tmp/alist.tar.gz" "${proxy}${url}"
+       curl -Lko "/tmp/alist.tar.gz" "${proxy}${url}" || wget --no-check-certificate -O "/tmp/alist.tar.gz" "${proxy}${url}"
 	if [ "$?" = 0 ] ; then
 		logger -t "Alist" "开始解压..."
-		tar -xzf /tmp/alist.tar.gz -C /tmp
-		chmod +x /tmp/alist
-		if [ $(($(/tmp/alist -h | wc -l))) -gt 3 ] ; then
+		tar -xzf /tmp/alist.tar.gz -C /tmp/alist
+		chmod +x /tmp/alist/alist
+		if [ $(($(/tmp/alist/alist -h | wc -l))) -gt 3 ] ; then
 			logger -t "Alist" "解压成功"
-			cp -rf /tmp/alist $alist
+			cp -rf /tmp/alist/alist $alist
 			al_ver=$($alist version | grep -Ew "^Version" | awk '{print $2}')
 			if [ -z "$al_ver" ] ; then
 				nvram set alist_ver=""
@@ -178,71 +179,131 @@ set_json() {
 	[ -z "$delayed" ] && delayed=0 && nvram set alist_delayed=0
 	[ -z "$connections" ] && connections=0 && nvram set alist_connections=0
 	[ -z "$s3_port" ] && s3_port="5246" && nvram set alist_s3_port="5246"
-jq --arg site_url0 "$site_url" \
-   --arg cdn0 "$cdn" \
-   --argjson expires0 "$expires" \
-   --arg sqlite0 "$sqlite" \
-   --arg sqlite_host0 "$sqlite_host" \
-   --argjson sqlite_port0 "$sqlite_port" \
-   --arg sqlite_user0 "$sqlite_user" \
-   --arg sqlite_pass0 "$sqlite_pass" \
-   --arg sqlite_name0 "$sqlite_name" \
-   --arg sqlite_tab0 "$sqlite_tab" \
-   --arg db_file0 "$db_file" \
-   --arg alist_addr0 "$alist_addr" \
-   --argjson alist_port0 "$alist_port" \
-   --argjson alist_sport0 "$alist_sport" \
-   --argjson alist_https0 "$alist_https" \
-   --arg alist_cert0 "$alist_cert" \
-   --arg alist_key0 "$alist_key" \
-   --arg alist_temp0 "$alist_temp" \
-   --arg alist_bleve0 "$alist_bleve" \
-   --argjson log_enable0 "$log_enable0" \
-   --argjson log_size0 "$log_size" \
-   --arg log_name0 "$log_name" \
-   --argjson log_compress0 "$log_compress" \
-   --argjson delayed0 "$delayed" \
-   --argjson connections0 "$connections" \
-   --argjson alist_s30 "$alist_s3" \
-   --argjson s3_port0 "$s3_port" \
-   --argjson s3_ssl0 "$s3_ssl" \
-   '.site_url = $site_url0 |
-    .cdn = $cdn0 |
-    .token_expires_in = $expires0 |
-    .database.type = $sqlite0 |
-    .database.host = $sqlite_host0 |
-    .database.port = $sqlite_port0 |
-    .database.user = $sqlite_user0 |
-    .database.password = $sqlite_pass0 |
-    .database.name = $sqlite_name0 |
-    .database.db_file = $db_file0 |
-    .database.table_prefix = $sqlite_tab0 |
-    .scheme.address = $alist_addr0 |
-    .scheme.http_port = $alist_port0 |
-    .scheme.https_port = $alist_sport0 |
-    .scheme.force_https = $alist_https0 |
-    .scheme.cert_file = $alist_cert0 |
-    .scheme.key_file = $alist_key0 |
-    .temp_dir = $alist_temp0 |
-    .bleve_dir = $alist_bleve0 |
-    .log.enable = $log_enable0 |
-    .log.name = $log_name0 |
-    .log.max_size = $log_size0 |
-    .log.max_backups = 1 |
-    .log.max_age = 1 |
-    .log.compress = $log_compress0 |
-    .delayed_start = $delayed0 |
-    .max_connections = $connections0 |
-    .s3.enable = $alist_s30 |
-    .s3.port = $s3_port0 |
-    .s3.ssl = $s3_ssl0' \
-   "$json" > /tmp/alist.config.json
+	if [ -s "$json" ] ; then
+		cp -f $json /tmp/alist_temp.json
+		t_temp=/tmp/alist_temp.json
+		t_temp2=/tmp/alist_temp2.json
+		if [ ! -z "$site_url" ] ; then
+			jq --arg As "$site_url" ' .site_url = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$cdn" ] ; then
+			jq --arg As "$cdn" ' .cdn = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$expires" ] ; then
+			jq --argjson An "$expires" ' .token_expires_in = $An ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$sqlite" ] ; then
+			jq --arg As "$sqlite" ' .database.type = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$sqlite_host" ] ; then
+			jq --arg As "$sqlite_host" ' .database.host = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$sqlite_port" ] ; then
+			jq --argjson An "$sqlite_port" ' .database.port = $An ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$sqlite_user" ] ; then
+			jq --arg As "$sqlite_user" ' .database.user = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$sqlite_pass" ] ; then
+			jq --arg As "$sqlite_pass" ' .database.password = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$sqlite_name" ] ; then
+			jq --arg As "$sqlite_name" ' .database.name = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$sqlite_tab" ] ; then
+			jq --arg As "$sqlite_tab" ' .database.table_prefix = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$db_file" ] ; then
+			jq --arg As "$db_file" ' .database.db_file = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$alist_addr" ] ; then
+			jq --arg As "$alist_addr" ' .scheme.address = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$alist_port" ] ; then
+			jq --argjson An "$alist_port" ' .scheme.http_port = $An ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$alist_sport" ] ; then
+			jq --argjson An "$alist_sport" ' .scheme.https_port = $An ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$alist_https" ] ; then
+			jq --argjson An "$alist_https" ' .scheme.force_https = $An ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$alist_cert" ] ; then
+			jq --arg As "$alist_cert" ' .scheme.cert_file = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$alist_key" ] ; then
+			jq --arg As "$alist_key" ' .scheme.key_file = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$alist_temp" ] ; then
+			jq --arg As "$alist_temp" ' .temp_dir = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$alist_bleve" ] ; then
+			jq --arg As "$alist_bleve" ' .bleve_dir = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$log_enable0" ] ; then
+			jq --argjson An "$log_enable0" ' .log.enable = $An ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$log_size" ] ; then
+			jq --argjson An "$log_size" ' .log.max_size = $An ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$log_name" ] ; then
+			jq --arg As "$log_name" ' .log.name = $As ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		jq ' .log.max_backups = 1 | .log.max_age = 1 ' $t_temp > $t_temp2
+		cp -f $t_temp2 $t_temp
+		if [ ! -z "$log_compress" ] ; then
+			jq --argjson An "$log_compress" ' .log.compress = $An ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$delayed" ] ; then
+			jq --argjson An "$delayed" ' .delayed_start = $An ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$connections" ] ; then
+			jq --argjson An "$connections" ' .max_connections = $An ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$alist_s3" ] ; then
+			jq --argjson An "$alist_s3" ' .s3.enable = $An ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$s3_port" ] ; then
+			jq --argjson An "$s3_port" ' .s3.port = $An ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+		if [ ! -z "$s3_ssl" ] ; then
+			jq --argjson An "$s3_ssl" ' .s3.ssl = $An ' $t_temp > $t_temp2
+			cp -f $t_temp2 $t_temp
+		fi
+	fi
 
-	if [ "$(cat $json | tr -d ' ' | tr -d '\n')" != "$(cat /tmp/alist.config.json | tr -d ' ' | tr -d '\n')" ] ; then
+	if [ "$(cat $json | tr -d ' ' | tr -d '\n')" != "$(cat $t_temp | tr -d ' ' | tr -d '\n')" ] ; then
 		logger -t "Alist" "参数变动，写入配置文件 $json "
 		echo -e "###旧配置：\n $(cat $json)\n" >>/tmp/alist.log
-		echo -e "###新配置：\n $(cat /tmp/alist.config.json)\n" >>/tmp/alist.log
-		cp -f /tmp/alist.config.json $json
+		echo -e "###新配置：\n $(cat $t_temp)\n" >>/tmp/alist.log
+		cp -f $t_temp $json
 	fi
 }
 
@@ -251,11 +312,11 @@ start_al() {
 	logger -t "Alist" "正在启动alist"
 	echo "正在启动alist" >/tmp/alist.log
 	sed -Ei '/【Alist】|^$/d' /tmp/script/_opt_script_check
-	get_tag
-	
+
  	if [ ! -f "$alist" ] ; then
 		logger -t "Alist" "主程序${alist}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
+  		get_tag
   		[ -z "$tag" ] && tag="v3.39.4"
   		dowload_al $tag
   	fi
@@ -272,6 +333,10 @@ start_al() {
 	db_path=$(dirname "$db_file")
 	[ ! -d "$db_path" ] && mkdir -p "$db_path"
 	json="${db_path}/config.json"
+	if [ ! -s "$json" ]; then
+  		rm -f $json
+  		logger -t "Alist" "$json 配置文件为空， 删除..."
+	fi
 	"$alist" admin >/tmp/var/admin.account 2>&1
 	user=$(cat /tmp/var/admin.account | grep "username" | awk -F 'username:' '{print $2}' | tr -d " ")
     	pass=$(cat /tmp/var/admin.account | grep "password is" | awk -F 'password is:' '{print $2}' | tr -d " ")
@@ -285,16 +350,17 @@ start_al() {
 	if [ ! -z "`pidof alist`" ] ; then
 		logger -t "Alist" "运行成功！"
 		al_keep
+		get_tag
 	else
 		logger -t "Alist" "运行失败！"
 	fi
 	exit 0
 }
 kill_al() {
-	al_process=$(pidof alist)
+	
 	rm -rf /tmp/alist.log
-	if [ -n "$al_process" ]; then
-		logger -t "Alist" "有进程 $al_proces 在运行，结束中..."
+	if [ ! -z "`pidof alist`" ]; then
+		#logger -t "Alist" "有进程 ${al_proces} 在运行，结束中..."
 		killall alist >/dev/null 2>&1
 	fi
 }
@@ -307,7 +373,7 @@ stop_al() {
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
 	fi
 	kill_al
-	[ ! -z "`pidof alist`" ] && logger -t "Alist" "alist关闭成功!"
+	[ -z "`pidof alist`" ] && logger -t "Alist" "alist关闭成功!"
 }
 
 case $1 in

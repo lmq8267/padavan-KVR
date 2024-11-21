@@ -22,8 +22,7 @@
 <script type="text/javascript" src="/help.js"></script>
 <script>
 var $j = jQuery.noConflict();
-<% lucky_status(); %>
-<% login_state_hook(); %>
+
 $j(document).ready(function() {
 
 	init_itoggle('lucky_enable');
@@ -38,8 +37,10 @@ $j(document).ready(function() {
 
 </script>
 <script>
-
+<% lucky_status(); %>
+<% login_state_hook(); %>
 function initial(){
+
 	show_banner(2);
 	show_menu(5, 23, 0);
 	show_footer();
@@ -104,8 +105,6 @@ function done_validating(action){
 //}
 
 function clearLog(){
-	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_lucky.asp#log";
 	document.form.next_host.value = "Advanced_lucky.asp#log";
 	document.form.action_mode.value = " ClearluckyLog ";
 	document.form.submit();
@@ -386,11 +385,10 @@ function Internetfalse(){
 	</tr>
 	<tr>
 	<td width="15%" style="text-align: left; padding-bottom: 0px;">
-	<input type="button" onClick="location.href=location.href" value="<#CTL_refresh#>" class="btn btn-primary" style="width: 200px">
+	<input type="button" onClick="location.reload()" value="刷新日志" class="btn btn-primary" style="width: 200px">
 	</td>
 	<td width="75%" style="text-align: right; padding-bottom: 0px;">
-	<input type="button" onClick="clearLog();" value="<#CTL_clear#>" class="btn btn-info" style="width: 200px">
-	</td>
+	<input type="button" onClick="clearLog();" value="清除日志" class="btn btn-info" style="width: 200px">	</td>
 	</tr>
 	</table>
 	</div>

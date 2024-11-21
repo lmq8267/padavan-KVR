@@ -96,7 +96,7 @@ function change_cloudflared_enable(mflag){
 function button_updatecloudflared() {
     var m = document.form.cloudflared_enable.value;
 
-    var actionMode = (m == "1") ? 'Restartcloudflared' : 'Updatecloudflared';
+    var actionMode = (m == "1") ? ' Restartcloudflared ' : ' Updatecloudflared ';
 
     change_cloudflared_enable(m); 
 
@@ -107,8 +107,6 @@ function button_updatecloudflared() {
 }
 
 function clearLog(){
-	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_cloudflared.asp#log";
 	document.form.next_host.value = "Advanced_cloudflared.asp#log";
 	document.form.action_mode.value = " ClearluckyLog ";
 	document.form.submit();
@@ -237,10 +235,10 @@ function clearLog(){
 	</tr>
 	<tr>
 	<td width="15%" style="text-align: left; padding-bottom: 0px;">
-	<input type="button" onClick="location.href=location.href" value="<#CTL_refresh#>" class="btn btn-primary" style="width: 200px">
+	<input type="button" onClick="location.reload()" value="刷新日志" class="btn btn-primary" style="width: 200px">
 	</td>
 	<td width="75%" style="text-align: right; padding-bottom: 0px;">
-	<input type="button" onClick="clearLog();" value="<#CTL_clear#>" class="btn btn-info" style="width: 200px">
+	<input type="button" onClick="clearLog();" value="清除日志" class="btn btn-info" style="width: 200px">
 	</td>
 	</tr>
 	</table>

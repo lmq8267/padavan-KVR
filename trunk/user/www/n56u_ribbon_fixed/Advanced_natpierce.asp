@@ -233,7 +233,7 @@ function button_restartJYL(){
 	</tr>
 	<tr>
 	<td width="15%" style="text-align: left; padding-bottom: 0px;">
-	<input type="button" onClick="location.href=location.href" value="<#CTL_refresh#>" class="btn btn-primary" style="width: 200px">
+	<input type="button" onClick="location.reload()" value="刷新日志" class="btn btn-primary" style="width: 200px">
 	</td>
 	</tr>
 	</table>

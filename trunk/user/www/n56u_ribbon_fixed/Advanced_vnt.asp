@@ -121,13 +121,6 @@ function textarea_scripts_enabled(v){
     	inputCtrl(document.form['scripts.vnt.conf'], v);
 }
 
-function clearLog(){
-	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnt.asp#log";
-	document.form.next_host.value = location.host;
-	document.form.action_mode.value = " ClearvntcliLog ";
-	document.form.submit();
-}
 
 function change_vntcli_model(mflag){
 	var m = document.form.vntcli_model.value;
@@ -322,7 +315,7 @@ function showMAPPList(){
 function button_button_restartvntcli() {
     var m = document.form.vntcli_enable.value;
 
-    var actionMode = (m == "1" || m == "2") ? 'Restartvntcli' : 'Updatevntcli';
+    var actionMode = (m == "1" || m == "2") ? ' Restartvntcli ' : ' Updatevntcli ';
 
     change_vntcli_enable(m); 
 
@@ -333,48 +326,36 @@ function button_button_restartvntcli() {
 }
 
 function clearLog(){
-	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnt.asp#log";
 	document.form.next_host.value = "Advanced_vnt.asp#log";
-	document.form.action_mode.value = "ClearvntcliLog";
+	document.form.action_mode.value = " ClearvntcliLog ";
 	document.form.submit();
 }
 
 function button_vntcli_info(){
-	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnt.asp#log";
 	document.form.next_host.value = "Advanced_vnt.asp";
 	document.form.action_mode.value = " CMDvntinfo ";
 	document.form.submit();
 }
 
 function button_vntcli_all(){
-	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnt.asp#sta";
 	document.form.next_host.value = "Advanced_vnt.asp#sta";
 	document.form.action_mode.value = " CMDvntall ";
 	document.form.submit();
 }
 
 function button_vntcli_list(){
-	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnt.asp#sta";
 	document.form.next_host.value = "Advanced_vnt.asp#sta";
 	document.form.action_mode.value = " CMDvntlist ";
 	document.form.submit();
 }
 
 function button_vntcli_route(){
-	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnt.asp#sta";
 	document.form.next_host.value = "Advanced_vnt.asp#sta";
 	document.form.action_mode.value = " CMDvntroute ";
 	document.form.submit();
 }
 
 function button_vntcli_status(){
-	document.form.action="apply.cgi";
-	document.form.current_page.value = "Advanced_vnt.asp#sta";
 	document.form.next_host.value = "Advanced_vnt.asp#sta";
 	document.form.action_mode.value = " CMDvntstatus ";
 	document.form.submit();
@@ -824,13 +805,13 @@ function button_vntcli_status(){
 	</tr>
 	<tr>
 	<td width="15%" style="text-align: left; padding-bottom: 0px;">
-	<input type="button" onClick="location.href=location.href" value="<#CTL_refresh#>" class="btn btn-primary" style="width: 200px">
+	<input type="button" onClick="location.reload()" value="刷新日志" class="btn btn-primary" style="width: 200px">
 	</td>
 	<td width="15%" style="text-align: left; padding-bottom: 0px;">
 	<input type="button" onClick="location.href='vnt-cli.log'" value="<#CTL_onlysave#>" class="btn btn-success" style="width: 200px">
 	</td>
 	<td width="75%" style="text-align: right; padding-bottom: 0px;">
-	<input type="button" onClick="clearLog();" value="<#CTL_clear#>" class="btn btn-info" style="width: 200px">
+	<input type="button" onClick="clearLog();" value="清除日志" class="btn btn-info" style="width: 200px">
 	</td>
 	</tr>
 	<br><td colspan="5" style="border-top: 0 none; text-align: center; padding-top: 4px;">

@@ -102,7 +102,7 @@ frp_dl ()
 	mkdir -p /tmp/frp
 	logger -t "frp" "开始下载 https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz"
 	for proxy in $github_proxys ; do
-       curl -Lkso "/tmp/frp_linux_mipsle.tar.gz" "${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz" || wget --no-check-certificate -q -O "/tmp/frp_linux_mipsle.tar.gz" "${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz"
+       curl -Lko "/tmp/frp_linux_mipsle.tar.gz" "${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz" || wget --no-check-certificate -O "/tmp/frp_linux_mipsle.tar.gz" "${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz"
 	if [ "$?" = 0 ] ; then
 		tar -xz -C /tmp -f /tmp/frp_linux_mipsle.tar.gz
 		frpc_size="$(du -k /tmp/frp_${newtag}_linux_mipsle/frpc | awk '{print int($1 / 1024)}')"

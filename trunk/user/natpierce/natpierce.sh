@@ -13,7 +13,7 @@ jyl_conf="/etc/storage/jyl/config"
 [ ! -d "/tmp/jyl" ] && mkdir -p /tmp/jyl
 [ -z "$natpierce_enable" ] && natpierce_enable=0 && nvram set natpierce_enable=0
 
-logg  () {
+logg() {
   echo -e "\033[36;33m$(date +'%Y-%m-%d %H:%M:%S'):\033[0m\033[35;1m $1 \033[0m"
   echo "$(date +'%Y-%m-%d %H:%M:%S'): $1" >>/tmp/natpierce.log
   logger -t "【皎月连】" "$1"

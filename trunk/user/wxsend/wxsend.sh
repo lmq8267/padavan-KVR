@@ -98,7 +98,7 @@ user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
         wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=- "https://[2606:4700:4700::1002]/cdn-cgi/trace" | awk -F= '/ip/{print $2}'
         #wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=- "https://ipv6.icanhazip.com"
     else
-        curl -6 -L --user-agent "$user_agent" -s "https://[2606:4700:4700::1002]/cdn-cgi/trace" | awk -F= '/ip/{print $2}'
+        curl -6 -Lk --user-agent "$user_agent" -s "https://[2606:4700:4700::1002]/cdn-cgi/trace" | awk -F= '/ip/{print $2}'
         #curl -6 -L --user-agent "$user_agent" -s "https://ipv6.icanhazip.com"
     fi
     }
@@ -122,6 +122,9 @@ wxsend_notify_1=`nvram get wxsend_notify_1`
 wxsend_notify_2=`nvram get wxsend_notify_2`
 wxsend_notify_3=`nvram get wxsend_notify_3`
 wxsend_notify_4=`nvram get wxsend_notify_4`
+wxsend_title=`nvram get wxsend_title`
+[ -z "$wxsend_title" ] && wxsend_title=`nvram get computer_name` && nvram set wxsend_title="$wxsend_title"
+[ -z "$wxsend_title" ] && wxsend_title="Padavan" && nvram set wxsend_title="$wxsend_title"
 curltest=`which curl`
 ping_text=`ping -4 223.5.5.5 -c 1 -w 2 -q`
 ping_time=`echo $ping_text | awk -F '/' '{print $4}'| awk -F '.' '{print $1}'`
@@ -260,12 +263,12 @@ initconfig
 get_token () {
 touch /tmp/wx_access_token
 access_token="$(cat /tmp/wx_access_token)"
-http_type="$(curl -L -s "https://api.weixin.qq.com/cgi-bin/get_api_domain_ip?access_token=$access_token")"
+http_type="$(curl -Lk -s "https://api.weixin.qq.com/cgi-bin/get_api_domain_ip?access_token=$access_token")"
 get_api_domain="$(echo $http_type | grep ip_list)"
 if [ ! -z "$get_api_domain" ] ; then
 echo "Access token 有效"
 else
-http_type="$(curl -L -s "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=$wxsend_appid&secret=$wxsend_appsecret")"
+http_type="$(curl -Lk -s "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=$wxsend_appid&secret=$wxsend_appsecret")"
 access_token="$(echo $http_type | grep -o "\"access_token\":\"[^\,\"\}]*" | awk -F 'access_token":"' '{print $2}')"
 if [ ! -z "$access_token" ] ; then
 expires_in="$(echo $http_type | grep -o "\"expires_in\":[^\,\"\}]*" | awk -F 'expires_in":' '{print $2}')"
@@ -334,7 +337,7 @@ for(i=1;i<=NF;++i) { \
 }')"
 
 
-curl -L -s -H "Content-type: application/json;charset=UTF-8" -H "Accept: application/json" -H "Cache-Control: no-cache" -H "Pragma: no-cache" -X POST -d '{"touser":"'"$wxsend_touser"'","template_id":"'"$wxsend_template_id"'","data":{"title":{"value":"'" "'"},'"$content_value"'}}' "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=$access_token"
+curl -Lk -s -H "Content-type: application/json;charset=UTF-8" -H "Accept: application/json" -H "Cache-Control: no-cache" -H "Pragma: no-cache" -X POST -d '{"touser":"'"$wxsend_touser"'","template_id":"'"$wxsend_template_id"'","data":{"title":{"value":"'" "'"},'"$content_value"'}}' "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=$access_token"
 
 else
 logger -t "【微信推送】" "获取 Access token 错误，请看看哪里问题？"

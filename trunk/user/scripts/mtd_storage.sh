@@ -285,7 +285,7 @@ sync && echo 3 > /proc/sys/vm/drop_caches
 
 #**************github下载加速******************
 #设置github加速下载镜像代理地址，失效请自行更换(按下方格式填写，每行一个，末尾加/)
-nvram get github_proxy="https://github.moeyy.xyz/
+nvram set github_proxy="https://github.moeyy.xyz/
 https://gh.llkk.cc/
 https://mirror.ghproxy.com/
 https://ghproxy.net/

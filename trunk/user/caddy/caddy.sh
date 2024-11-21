@@ -18,18 +18,18 @@ caddy_dl() {
        if [ ! -f "$caddy_dir/caddy/caddy_filebrowser" ]; then
 		logger -t "【caddy】" "找不到caddy_filebrowser文件，下载caddy_filebrowser程序"
 		for proxy in $github_proxys ; do
-		curl -L -k -s -o "$caddy_dir/caddy/caddy_filebrowser" --connect-timeout 10 --retry 3 "${proxy}https://github.com/chongshengB/rt-n56u/raw/refs/heads/master/trunk/user/caddy/caddy_filebrowser" || wget --no-check-certificate -q -O "$caddy_dir/caddy/caddy_filebrowser" "${proxy}https://github.com/chongshengB/rt-n56u/raw/refs/heads/master/trunk/user/caddy/caddy_filebrowser"
+		curl -L -k -o "$caddy_dir/caddy/caddy_filebrowser" --connect-timeout 10 --retry 3 "${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/caddy/caddy_filebrowser" || wget --no-check-certificate -O "$caddy_dir/caddy/caddy_filebrowser" "${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/caddy/caddy_filebrowser"
 		if [ "$?" = 0 ] ; then
 			chmod +x $caddy_dir/caddy/caddy_filebrowser
 			if [ $(($($caddy_dir/caddy/caddy_filebrowser -h | wc -l))) -gt 3 ] ; then
 				logger -t "【caddy】" "$caddy_dir/caddy/caddy_filebrowser 下载成功"
 				break
        		else
-	   			logger -t "【caddy】" "下载不完整，删除...请手动下载 ${proxy}https://github.com/chongshengB/rt-n56u/raw/refs/heads/master/trunk/user/caddy/caddy_filebrowser 上传到  $caddy_dir/caddy/caddy_filebrowser"
+	   			logger -t "【caddy】" "下载不完整，删除...请手动下载 ${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/caddy/caddy_filebrowser 上传到  $caddy_dir/caddy/caddy_filebrowser"
 				rm -f $caddy_dir/caddy/caddy_filebrowser
 	  		fi
 		else
-			logger -t "【caddy】" "下载失败${proxy}https://github.com/chongshengB/rt-n56u/raw/refs/heads/master/trunk/user/caddy/caddy_filebrowser"
+			logger -t "【caddy】" "下载失败${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/caddy/caddy_filebrowser"
    		fi
 		
 		done
