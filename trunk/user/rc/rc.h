@@ -572,6 +572,11 @@ void stop_aliddns(void);
 void start_aliddns(void);
 void restart_aliddns(void);
 #endif
+#if defined(APP_CLOUDFLARE)
+void stop_cloudflare(void);
+void start_cloudflare(void);
+void restart_cloudflare(void);
+#endif
 #if defined(APP_FRP)
 void stop_frp(void);
 void start_frp(void);

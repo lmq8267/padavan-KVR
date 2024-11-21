@@ -97,6 +97,7 @@
 #define RCN_RESTART_TAILSCALE	"restart_tailscale"
 #define RCN_RESTART_NATPIERCE	"restart_natpierce"
 #define RCN_RESTART_ALIST	"restart_alist"
+#define RCN_RESTART_CLOUDFLARE	"restart_cloudflare"
 #define RCN_RESTART_REBOOT		"restart_reboot"
 
 ////////////////////////////////////////////////////////////

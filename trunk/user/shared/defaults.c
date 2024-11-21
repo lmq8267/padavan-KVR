@@ -468,9 +468,25 @@ struct nvram_pair router_defaults[] = {
 
 	/* Pdnsd */
 	{ "dns_enable", "0" },
-	{ "dns_server", "223.5.5.5,114.114.114.114" },
+	{ "dns_server", "119.29.29.29,114.114.114.114" },
 	{ "dns_server_port", "5333" },
 	{ "dns_server_bind", "0.0.0.0" },
+
+#if defined(APP_CLOUDFLARE)
+	/* CF-ddns */
+	{ "cloudflare_enable", "0" },
+	{ "cloudflare_interval", "600" },
+	{ "cloudflare_token", "" },
+	{ "cloudflare_Email", ""  },
+	{ "cloudflare_Key", "" },
+	{ "cloudflare_CA_Key", "" },
+	{ "cloudflare_host", "" },
+	{ "cloudflare_host2", "" },
+	{ "cloudflare_host6", "" },
+	{ "cloudflare_domian", "" },
+	{ "cloudflare_domain2", "" },
+	{ "cloudflare_domain6", "" },
+#endif
 
 #if defined(APP_ALIDDNS)
 	/* Aliddns */
@@ -525,6 +541,7 @@ struct nvram_pair router_defaults[] = {
 	{ "w_natpierce", "1" },
 	{ "w_tailscale", "1" },
 	{ "w_alist", "1" },
+	{ "w_cloudflare", "1" },
 
 	{ "ip6_service", "" },
 	{ "ip6_ppe_on", "0" },

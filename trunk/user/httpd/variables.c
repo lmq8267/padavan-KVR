@@ -112,6 +112,19 @@
 			{"zero_route_x", "24", NULL, FALSE},
 			{0,0,0,0}
 		};
+	struct variable variables_VNTCLI_VNTCLImapp[] = {
+			{"vntcli_mappnet_x", "24", NULL, FALSE},
+			{"vntcli_mappport_x", "24", NULL, FALSE},
+			{"vntcli_mappip_x", "24", NULL, FALSE},
+			{"vntcli_mapeerport_x", "24", NULL, FALSE},
+			{0,0,0,0}
+		};
+	struct variable variables_VNTCLI_VNTCLIroute[] = {
+			{"vntcli_name_x", "24", NULL, FALSE},
+			{"vntcli_route", "24", NULL, FALSE},
+			{"vntcli_ip_x", "24", NULL, FALSE},
+			{0,0,0,0}
+		};
 	struct variable variables_SspConf_SspList[] = {
 			{"ssp_type_x", "24", NULL, FALSE},
 			{"ssp_name_x", "24", NULL, FALSE},
@@ -760,6 +773,21 @@
 			{"aliddns_domain2", "", NULL, EVM_RESTART_ALIDDNS },
 			{"aliddns_domain6", "", NULL, EVM_RESTART_ALIDDNS },
 			{"scripts.ddns_script.sh", "File", NULL, EVM_RESTART_ALIDDNS},
+#endif
+#if defined(APP_CLOUDFLARE)
+			{"cloudflare_enable", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_interval", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_token", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_Email", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_Key", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_CA_Key", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_host", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_host2", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_host6", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_domian", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_domian2", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"cloudflare_domian6", "", NULL, EVM_RESTART_CLOUDFLARE },
+			{"scripts.ddns_script.sh", "File", NULL, EVM_RESTART_CLOUDFLARE},
 #endif
 			{"ManualDHCPList", "Group", ARGV((char*)variables_LANHostConfig_ManualDHCPList, "8", "55", "dhcp_staticnum_x"), EVM_RESTART_DHCPD},
 			{"VPNSACLList", "Group", ARGV((char*)variables_LANHostConfig_VPNSACLList, "8", "107", "vpns_num_x"), EVM_RESTART_VPNSVR},
@@ -1467,6 +1495,7 @@
 			{"w_natpierce", "", NULL, FALSE},
 			{"w_tailscale", "", NULL, FALSE},
 			{"w_alist", "", NULL, FALSE},
+			{"w_cloudflare", "", NULL, FALSE},
 	};
 
 	struct variable variables_WLANConfig11b[] = {
@@ -1638,6 +1667,9 @@
 #if defined(APP_LUCKY)
 		{"LUCKY",		variables_LUCKY},
 #endif
+#if defined(APP_CLOUDFLARE)
+		{"CLOUDFLARE",		variables_CLOUDFLARE},
+#endif
 #if defined(APP_ALIST)
 		{"ALIST",		variables_ALIST},
 #endif
@@ -1793,6 +1825,9 @@
 #endif
 #if defined(APP_LUCKY)
 		{EVM_RESTART_LUCKY,		EVT_RESTART_LUCKY,		RCN_RESTART_LUCKY,	0},
+#endif
+#if defined(APP_CLOUDFLARE)
+		{EVM_RESTART_CLOUDFLARE,		EVT_RESTART_CLOUDFLARE,		RCN_RESTART_CLOUDFLARE,	0},
 #endif
 #if defined(APP_ALIST)
 		{EVM_RESTART_ALIST,		EVT_RESTART_ALIST,		RCN_RESTART_ALIST,	0},

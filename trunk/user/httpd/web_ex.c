@@ -2763,6 +2763,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_aliddns = 0;
 #endif
+#if defined(APP_CLOUDFLARE)
+	int found_app_cloudflare = 1;
+#else
+	int found_app_cloudflare = 0;
+#endif
 #if defined(APP_DNSFORWARDER)
 	int found_app_dnsforwarder = 1;
 #else
@@ -2985,6 +2990,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_natpierce() { return %d;}\n"
 		"function found_app_tailscale() { return %d;}\n"
 		"function found_app_cloudflared() { return %d;}\n"
+		"function found_app_cloudflare() { return %d;}\n"
 		"function found_app_alist() { return %d;}\n"
 		"function found_app_xupnpd() { return %d;}\n"
 		"function found_app_mentohust() { return %d;}\n",
@@ -3028,6 +3034,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_wireguard,
 		found_app_natpierce,
 		found_app_cloudflared,
+		found_app_cloudflare,
 		found_app_wxsend,
 		found_app_alist,
 		found_app_tailscale,

@@ -115,7 +115,7 @@ typedef u_int8_t u8;
 #define EVM_RESTART_TAILSCALE		(1ULL << 71)
 #define EVM_RESTART_ALIST		(1ULL << 72)
 #define EVM_RESTART_REBOOT			(1ULL << 73)
-
+//#define EVM_RESTART_CLOUDFLARE		(1ULL << 72)
 #define EVM_BLOCK_UNSAFE			(1ULL << 74) /* special case */
 
 
@@ -195,6 +195,7 @@ typedef u_int8_t u8;
 #define EVT_RESTART_NATPIERCE	    	2
 #define EVT_RESTART_TAILSCALE	    	2
 #define EVT_RESTART_ALIST	    	2
+#define EVT_RESTART_CLOUDFLARE	    	2
 #define EVT_RESTART_REBOOT			40
 
 struct variable

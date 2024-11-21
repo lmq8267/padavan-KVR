@@ -4,7 +4,7 @@ SRC_NAME=openvpn-2.5.9
 CFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden
 LDFLAGS += -Wl,--gc-sections
 
-all: config_test
+all: extract_test config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
 
 extract_test:

@@ -711,6 +711,23 @@ void restart_aliddns(void){
 }
 #endif
 
+#if defined(APP_CLOUDFLARE)
+void stop_cloudflare(void){
+	eval("/usr/bin/cloudflare.sh","stop");
+}
+
+void start_cloudflare(void){
+	int cloudflare_enable = nvram_get_int("cloudflare_enable");
+	if ( cloudflare_enable == 1)
+		eval("/usr/bin/cloudflare.sh","start");
+}
+
+void restart_cloudflare(void){
+	stop_cloudflare();
+	start_cloudflare();
+}
+#endif
+
 #if defined(APP_NVPPROXY)
 void stop_nvpproxy(void){
 	eval("/usr/bin/nvpproxy.sh","stop");
@@ -1103,6 +1120,9 @@ stop_services(int stopall)
 #endif
 #if defined(APP_ALIDDNS)
 	stop_aliddns();
+#endif
+#if defined(APP_CLOUDFLARE)
+	stop_cloudflare();
 #endif
 #if defined(APP_SMARTDNS)
 	stop_smartdns();
