@@ -4,7 +4,7 @@ export GOPROXY=https://goproxy.cn
 UM_VERSION := 0.2.13
 UM_URL := https://github.com/cnsilvan/UnblockNeteaseMusic/archive/$(UM_VERSION).tar.gz
 
-all:download_um build_extract build
+all:
 
 build_extract:
 	mkdir -p $(THISDIR)/UnblockNeteaseMusicGo
@@ -30,4 +30,3 @@ clean:
 romfs:
 	$(ROMFSINST) $(THISDIR)/file/ /etc_ro/UnblockNeteaseMusicGo/
 	$(ROMFSINST) $(THISDIR)/scripts/ /usr/bin/
-	$(ROMFSINST) -p +x $(THISDIR)/bin/UnblockNeteaseMusic /usr/bin/UnblockNeteaseMusic
