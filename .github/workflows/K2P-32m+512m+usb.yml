@@ -31,8 +31,7 @@ jobs:
       env:
         KERNEL: 3.4
       run: |
-        echo ${GITHUB_REPOSITORY_OWNER}
-        git clone --depth=1 https://github.com/cn1095/padavan-KVR.git /opt/rt-n56u
+        git clone --depth=1 https://github.com/${GITHUB_REPOSITORY_OWNER}/padavan-KVR.git /opt/rt-n56u
         cd /opt/rt-n56u/toolchain-mipsel
         sh dl_toolchain.sh
         mkdir -p /opt/images/
