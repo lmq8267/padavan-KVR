@@ -1107,6 +1107,8 @@ watchdog_on_sigusr2(void)
 		wd_alarmtimer(0, WD_URGENT_PERIOD);
 }
 
+static time_t last_exec_time = 0;
+
 static void
 watchdog_on_timer(void)
 {
@@ -1152,7 +1154,7 @@ watchdog_on_timer(void)
 		dnsmasq_process_check();
 
 	inet_handler(is_ap_mode);
-	static time_t last_exec_time = 0;
+	
 	time_t current_time = time(NULL);
 	if (current_time - last_exec_time >= 80) {
 		if (access("/tmp/script/_opt_script_check", F_OK) == 0) {
