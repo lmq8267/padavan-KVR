@@ -665,10 +665,6 @@ auth_check( const char *authorization, const char *conn_ip )
 	auth_len = b64_decode(authorization+6, authinfo, sizeof(authinfo)-1);
 	authinfo[auth_len] = '\0';
 	
-	/* 将解码后的用户名和密码进行分割 */
-	char *username = strtok(authinfo, ":");
-	char *password = strtok(NULL, ":");
-
 	/* Is this the right user and password? */
 	if (strcmp(authinfo, auth_basic_data) == 0) {
 		char log_message[512];
@@ -676,6 +672,8 @@ auth_check( const char *authorization, const char *conn_ip )
 		logmessage("httpd", "%s", log_message);
 		return 1;
 	} else {
+		char *username = strtok(authinfo, ":");
+		char *password = strtok(NULL, ":");
 		if (username != NULL && password != NULL) {
         	char log_message[512];
         	snprintf(log_message, sizeof(log_message), 
