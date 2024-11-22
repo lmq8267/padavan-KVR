@@ -83,21 +83,41 @@ update_ts() {
 }
 
 get_info() {
+	nvram set tailscale_info=""
 	$tailscale status >/tmp/tailscale.status 2>&1
 	if [ -z "$(cat /tmp/tailscale.status | grep  'Logged' | grep  'out')" ] ; then
 		echo "$(cat /tmp/tailscale.status)" >>/tmp/tailscale.log 
 		ts_IP="$($tailscale ip | sed -n 1p)"
 		if echo "$ts_IP" | grep -Eq '^([0-9]{1,3}\.){3}[0-9]{1,3}$'; then
 			ts_info="$($tailscale whois $ts_IP)"
-			device_name=$(echo "$(cat /tmp/tailscale.login)" | awk -F 'Name: ' 'NR==2 {print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
-			device_id=$(echo "$(cat /tmp/tailscale.login)" | awk -F 'ID: ' 'NR==3 {print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
-			user_name=$(echo "$(cat /tmp/tailscale.login)" | awk -F 'Name: ' 'NR==6 {print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
-			user_id=$(echo "$(cat /tmp/tailscale.login)" | awk -F 'ID: ' 'NR==7 {print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
+			device_name=$(echo "$ts_info" | awk -F 'Name: ' 'NR==2 {print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
+			device_id=$(echo "$ts_info" | awk -F 'ID: ' 'NR==3 {print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
+			user_name=$(echo "$ts_info" | awk -F 'Name: ' 'NR==6 {print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
+			user_id=$(echo "$ts_info" | awk -F 'ID: ' 'NR==7 {print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//')
+			
+			[ ! -z "$user_name" ] && adminuser="绑定账户: $user_name "
+			[ ! -z "$ts_IP" ] && adminip=" 设备IP: $ts_IP "
+			[ ! -z "$device_id" ] && adminid=" 设备ID: $device_id "
 			logger -t "Tailscaled" "设备名称: $device_name 设备IP: $ts_IP 设备ID: $device_id"
 			logger -t "Tailscaled" "绑定账户: $user_name  账户ID： $user_id"
-			nvram set tailscale_info="绑定账户: $user_name  设备IP: $ts_IP  设备ID: $device_id"
+			nvram set tailscale_info="${adminuser}${adminip}${adminid}"
 		fi
 	fi
+}
+
+get_login() {
+	$tailscale status >/tmp/tailscale.status 2>&1
+	nvram set tailscale_login=""
+	if [ ! -z "$(cat /tmp/tailscale.status | grep  'Logged' | grep  'out')" ] ; then
+		logger -t "Tailscaled" "初次安装或配置文件为空，开始获取设备绑定地址..."
+		login_url=$(cat /tmp/tailscale.status | awk -F 'Log in at: ' '{print $2}')
+		logger -t "Tailscaled" "设备绑定地址: $login_url"
+		nvram set tailscale_login="$login_url"
+		[ -z "$login_url" ] && logger -t "Tailscaled" "无法获取设备绑定地址，请打开SSH手动运行 $tailscale login 获取设备绑定地址"
+	else
+		get_info
+	fi
+
 }
 
 ts_keep() {
@@ -111,27 +131,7 @@ ts_keep() {
 	OSC
 
 	fi
-	get_info
-}
-
-get_login() {
-	t=1
-	$tailscale status >/tmp/tailscale.status 2>&1
-	if [ ! -z "$(cat /tmp/tailscale.status | grep  'Logged' | grep  'out')" ] ; then
-		$tailscale login >/tmp/tailscale.login 2>&1 &
-		while [ "$t" -lt 3 ] ; do
-			sleep 2
-			login_url=$(cat /tmp/tailscale.login | awk -F 'Log in at: ' '{print $2}')
-			if [ ! -z "$login_url" ]; then
-        			logger -t "Tailscaled" "初次安装或配置文件为空，请先绑定设备 $login_url"
-        			nvram set tailscale_login="$login_url"
-        			break
-        		fi
-			t=`expr $t + 1`
-		done
-		[ ! -z "`pidof tailscale`" ] && killall tailscale >/dev/null 2>&1
-	fi
-
+	get_login
 }
 
 start_ts() {
@@ -163,7 +163,7 @@ start_ts() {
 	fi
 	#[ $(($($tailscaled -h | wc -l))) -lt 3 ] && logger -t "Tailscaled" "程序${tailscaled}不完整，无法运行！" && exit 1
 	$tailscaled --cleanup >/tmp/tailscale.log
-	tdCMD="$tailscaled --state=/etc/storage/tailscale/tailscale.state --socket=/var/run/tailscaled.sock"
+	tdCMD="$tailscaled --state=/etc/storage/tailscale/lib/tailscaled.state --socket=/var/run/tailscale/tailscaled.sock"
 	logger -t "Tailscaled" "运行主程序 $tdCMD"
 	eval "$tdCMD >>/tmp/tailscale.log 2>&1" &
 	sleep 4
@@ -178,7 +178,6 @@ start_ts() {
 		exit 1
 	fi
 	CMD=""
-	get_login
 	if [ "$ts_enable" = "1" ] ; then
 		CMD="up"
 		[ "$ts_dns" = "1" ] || CMD="${CMD} --accept-dns=false"
@@ -210,8 +209,8 @@ start_ts() {
 		fi
 	fi
 	logger -t "Tailscaled" "运行子程序 ${CMD}"
-	eval "$cmd >>/tmp/tailscale.log 2>&1" &
-	sleep 4
+	eval "$CMD >>/tmp/tailscale.log 2>&1" &
+	sleep 5
 	if [ ! -z "`pidof tailscale`" ] ; then
 		logger -t "Tailscaled" "子程序运行成功！"
 	else
