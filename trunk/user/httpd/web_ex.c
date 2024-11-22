@@ -3890,15 +3890,15 @@ apply_cgi(const char *url, webs_t wp)
 #if defined(APP_LUCKY)
 		char *cmd_luckyuser = websGetVar(wp, "LuckyCmd", "");
 		if (cmd_luckyuser != NULL && strlen(cmd_luckyuser) > 50) {
-			websWrite(wp, "{\"sys_result\": 0, \"message\": \" 重置的用户名也太长了吧，不怕记不住吗？改改吧~ \"}");
+			websWrite(wp, "{\"sys_result\": 0, \"message\": \"重置的用户名也太长了吧，不怕记不住吗？改改吧~\"}");
 		} else {
 			char command[1024];
 			snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetuser %s &", cmd_luckyuser);
  			int result = system(command);
 			if (result == 0) {
-				websWrite(wp, "{\"sys_result\": 1, \"message\": \" 用户名已修改，请重启程序！ \"}");
+				websWrite(wp, "{\"sys_result\": 1, \"message\": \"用户名已修改，请重启程序！\"}");
 			} else {
-				websWrite(wp, "{\"sys_result\": 0, \"message\": \" 操作失败！ \"}");
+				websWrite(wp, "{\"sys_result\": 0, \"message\": \"操作失败！\"}");
 			}
 		}
 #endif
@@ -3909,15 +3909,15 @@ apply_cgi(const char *url, webs_t wp)
 #if defined(APP_LUCKY)
 		char *cmd_luckypass = websGetVar(wp, "LuckyCmd", "");
 		if (cmd_luckypass != NULL && strlen(cmd_luckypass) > 50) {
-			websWrite(wp, "{\"sys_result\": 0, \"message\": \" 重置的密码也太长了吧，不怕记不住吗？改改吧~ \"}");
+			websWrite(wp, "{\"sys_result\": 0, \"message\": \"重置的密码也太长了吧，不怕记不住吗？改改吧~\"}");
 		} else {
 			char command[1024];
 			snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetpass %s &", cmd_luckypass);
  			int result = system(command);
 			if (result == 0) {
-				websWrite(wp, "{\"sys_result\": 1, \"message\": \" 密码已修改，请重启程序！ \"}");
+				websWrite(wp, "{\"sys_result\": 1, \"message\": \"密码已修改，请重启程序！\"}");
 			} else {
-				websWrite(wp, "{\"sys_result\": 0, \"message\": \" 操作失败！ \"}");
+				websWrite(wp, "{\"sys_result\": 0, \"message\": \"操作失败！\"}");
 			}
 		}
 #endif
@@ -3928,7 +3928,7 @@ apply_cgi(const char *url, webs_t wp)
 #if defined(APP_LUCKY)
 		char *cmd_luckyport = websGetVar(wp, "LuckyCmd", "");
 		if (cmd_luckyport != NULL && strlen(cmd_luckyport) > 6) {
-			websWrite(wp, "{\"sys_result\": 0, \"message\": \" 重置的端口也太长了吧，改改吧~ \"}");
+			websWrite(wp, "{\"sys_result\": 0, \"message\": \"重置的端口也太长了吧，改改吧~\"}");
 		} else {
 			char command[1024];
 			snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetport %s &", cmd_luckyport);
@@ -3947,15 +3947,15 @@ apply_cgi(const char *url, webs_t wp)
 #if defined(APP_LUCKY)
 		char *cmd_luckysafe = websGetVar(wp, "LuckyCmd", "");
 		if (cmd_luckysafe != NULL && strlen(cmd_luckysafe) > 50) {
-			websWrite(wp, "{\"sys_result\": 0, \"message\": \" 重置的安全入口也太长了吧，不怕记不住吗？改改吧~ \"}");
+			websWrite(wp, "{\"sys_result\": 0, \"message\": \"重置的安全入口也太长了吧，不怕记不住吗？改改吧~\"}");
 		} else {
 			char command[1024];
 			snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetsafe %s &", cmd_luckysafe);
  			int result = system(command);
 			if (result == 0) {
-				websWrite(wp, "{\"sys_result\": 1, \"message\": \" 已重置！ \"}");
+				websWrite(wp, "{\"sys_result\": 1, \"message\": \"已重置！\"}");
 			} else {
-				websWrite(wp, "{\"sys_result\": 0, \"message\": \" 操作失败！ \"}");
+				websWrite(wp, "{\"sys_result\": 0, \"message\": \"操作失败！\"}");
 			}
 		}
 #endif
@@ -3966,9 +3966,9 @@ apply_cgi(const char *url, webs_t wp)
 #if defined(APP_LUCKY)
 		int result = system("/usr/bin/lucky.sh internettrue &");
 		if (result == 0) {
-			websWrite(wp, "{\"sys_result\": 1, \"message\": \" 已启用！ \"}");
+			websWrite(wp, "{\"sys_result\": 1, \"message\": \"已启用！\"}");
 		} else {
-			websWrite(wp, "{\"sys_result\": 0, \"message\": \" 操作失败！ \"}");
+			websWrite(wp, "{\"sys_result\": 0, \"message\": \"操作失败！\"}");
 		}
 #endif
 		return 0;
@@ -3978,9 +3978,9 @@ apply_cgi(const char *url, webs_t wp)
 #if defined(APP_LUCKY)
 		int result = system("/usr/bin/lucky.sh internetfalse &");
 		if (result == 0) {
-			websWrite(wp, "{\"sys_result\": 1, \"message\": \" 已禁用！ \"}");
+			websWrite(wp, "{\"sys_result\": 1, \"message\": \"已禁用！\"}");
 		} else {
-			websWrite(wp, "{\"sys_result\": 0, \"message\": \" 操作失败！ \"}");
+			websWrite(wp, "{\"sys_result\": 0, \"message\": \"操作失败！\"}");
 		}
 #endif
 		return 0;
@@ -3990,9 +3990,9 @@ apply_cgi(const char *url, webs_t wp)
 #if defined(APP_ALIST)
 		int result = system("/usr/bin/alist.sh admin &");
 		if (result == 0) {
-			websWrite(wp, "{\"sys_result\": 1, \"message\": \" 重置成功！ \"}");
+			websWrite(wp, "{\"sys_result\": 1, \"message\": \"重置成功！\"}");
 		} else {
-			websWrite(wp, "{\"sys_result\": 0, \"message\": \" 操作失败！ \"}");
+			websWrite(wp, "{\"sys_result\": 0, \"message\": \"操作失败！\"}");
 		}	
 #endif
 		return 0;

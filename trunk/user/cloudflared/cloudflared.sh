@@ -37,7 +37,7 @@ dowload_cf() {
 	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
 	logger -t "cloudflared" "开始下载 https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared 到 $PROG"
 	for proxy in $github_proxys ; do
-       curl -Lkso "$PROG" "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared" || wget --no-check-certificate -q -O "$PROG" "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared"
+       curl -Lko "$PROG" "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared" || wget --no-check-certificate -O "$PROG" "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared"
 	if [ "$?" = 0 ] ; then
 		chmod +x $PROG
 		if [ $(($($PROG -h | wc -l))) -gt 3 ] ; then

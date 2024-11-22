@@ -8,6 +8,7 @@ lucky_cmd=`nvram get lucky_cmd`
 [ -z "$lucky_enable" ] && lucky_enable=0 && nvram set lucky_enable=0
 github_proxys="$(nvram get github_proxy)"
 [ -z "$github_proxys" ] && github_proxys=" "
+user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 logg  () {
   echo -e "\033[36;33m$(date +'%Y-%m-%d %H:%M:%S'):\033[0m\033[35;1m $1 \033[0m"
   echo "$(date +'%Y-%m-%d %H:%M:%S')：$1" >>/tmp/lucky.log

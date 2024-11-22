@@ -762,7 +762,7 @@ function button_vntcli_status(){
 	<table width="100%" cellpadding="4" cellspacing="0" class="table">
 	<tr>
 		<td colspan="3" style="border-top: 0 none; padding-bottom: 0px;">
-			<textarea rows="21" class="span12" style="height:377px; font-family:'Courier New', Courier, mono; font-size:13px;" readonly="readonly" wrap="off" id="textarea"><% nvram_dump("vnt-cli.cmd",""); %></textarea>
+			<textarea rows="21" class="span12" style="height:377px; font-family:'Courier New', Courier, mono; font-size:13px;" readonly="readonly" wrap="off" id="textarea"><% nvram_dump("vnt-cli_cmd.log",""); %></textarea>
 		</td>
 	</tr>
 	<tr>

@@ -8,7 +8,7 @@ natpierce=`nvram get natpierce_bin`
 jyl_url=`nvram get natpierce_url`
 [ -z "$jyl_url" ] && jyl_url="https://natpierce.oss-cn-beijing.aliyuncs.com/linux/natpierce-mipsel-v1.03.tar.gz"
 jyl_conf="/etc/storage/jyl/config"
-[ -z "natpierce" ] && natpierce="/tmp/jyl/natpierce"
+[ -z "$natpierce" ] && natpierce="/tmp/jyl/natpierce"
 [ ! -d "/etc/storage/jyl" ] && mkdir -p /etc/storage/jyl
 [ ! -d "/tmp/jyl" ] && mkdir -p /tmp/jyl
 natpierce_enable=`nvram get natpierce_enable`
@@ -38,7 +38,7 @@ jyl_start () {
   sed -Ei '/【皎月连】|^$/d' /tmp/script/_opt_script_check
   [ -z "`pidof natpierce`" ] || kill -9 $(pidof natpierce) >/dev/null 2>&1
   path=$(dirname "$natpierce")
-  if [ ! -f "$natpierce" ] || [ $(($($natpierce -h | wc -l))) -lt 2 ] ; then
+  if [ ! -f "$natpierce" ] ; then
   	logg "未找到 $natpierce 开始在线下载 $jyl_url"
   	curl -Lko "/tmp/natpierce.tar.gz" "$jyl_url" || wget --no-check-certificate -O "/tmp/natpierce.tar.gz" "$jyl_url"
   	if [ "$?" = 0 ] ; then
@@ -66,12 +66,17 @@ jyl_start () {
   	logg "未发现配置文件，新安装设备，开始生成配置文件..."
   	eval "${natpierce} ${CMD} >>/tmp/natpierce.log 2>&1" &
   	sleep 4
+  	
   	[ -z "`pidof natpierce`" ] || kill -9 $(pidof natpierce) >/dev/null 2>&1
-  	if [ ! -f "$jyl_conf" ] || [ ! -s "$jyl_conf" ] ; then
-  		logg "$jyl_conf 生成失败"
+  	if [ ! -f "${path}/config" ] || [ ! -s "${path}/config" ] ; then
+  		logg "生成失败"
   	else
-  		ln -sf "$jyl_conf" "${path}/config"
+  		logg "生成成功！保存到闪存 $jyl_conf"
+  		cp -f ${path}/config $jyl_conf
   	fi
+  fi
+  if [ -f "$jyl_conf" ] && [ -s "$jyl_conf" ] ; then
+  	ln -sf "$jyl_conf" "${path}/config"
   fi
   logg "运行 ${natpierce} ${CMD}"
   [ -z "`pidof natpierce`" ] || kill -9 $(pidof natpierce) >/dev/null 2>&1
