@@ -65,7 +65,7 @@ function change_zerotier_enable(mflag){
 function button_updatezerotier() {
     var m = document.form.zerotier_enable.value;
 
-    var actionMode = (m == "1") ? 'Restartzerotier' : 'Updatezerotier';
+    var actionMode = (m == "1") ? ' Restartzerotier ' : ' Updatezerotier ';
 
     change_zerotier_enable(m); 
 
@@ -348,9 +348,9 @@ function showMRULESList(){
 										</table>
 										<tr>
 											<td colspan="4" style="border-top: 0 none; padding-bottom: 20px;">
-												<br />
+												
 												<center><input class="btn btn-primary" style="width: 219px" type="button" value="<#CTL_apply#>" onclick="applyRule()" /></center>
-											</td>
+											</td><br />
 										</tr>
 									</table>
 								</div>
