@@ -109,10 +109,11 @@ get_login() {
 	$tailscale status >/tmp/tailscale.status 2>&1
 	nvram set tailscale_login=""
 	if [ ! -z "$(cat /tmp/tailscale.status | grep  'Logged' | grep  'out')" ] ; then
-		logger -t "Tailscaled" "初次安装或配置文件为空，开始获取设备绑定地址..."
+		logger -t "Tailscaled" "初次安装或密钥文件为空，开始获取设备绑定地址..."
 		login_url=$(cat /tmp/tailscale.status | awk -F 'Log in at: ' '{print $2}')
 		logger -t "Tailscaled" "设备绑定地址: $login_url"
 		nvram set tailscale_login="$login_url"
+		logger -t "Tailscaled" "绑定设备后请勿立即重启，防止密钥文件/etc/storage/tailscale/lib/tailscaled.state重启丢失"
 		[ -z "$login_url" ] && logger -t "Tailscaled" "无法获取设备绑定地址，请打开SSH手动运行 $tailscale login 获取设备绑定地址"
 	else
 		get_info
@@ -205,7 +206,7 @@ start_ts() {
 		else
 			logger -t "Tailscaled" "自定义启动参数为空，设置为默认参数:  up"
 			CMD="${tailscale} up"
-			nvram get tailscale_cmd="up"
+			nvram set tailscale_cmd="up"
 		fi
 	fi
 	logger -t "Tailscaled" "运行子程序 ${CMD}"
