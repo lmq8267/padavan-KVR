@@ -11,7 +11,7 @@ jyl_conf="/etc/storage/jyl/config"
 [ -z "natpierce_bin" ] && natpierce="/tmp/jyl/natpierce"
 [ ! -d "/etc/storage/jyl" ] && mkdir -p /etc/storage/jyl
 [ ! -d "/tmp/jyl" ] && mkdir -p /tmp/jyl
-natpierce_enable==`nvram get natpierce_enable`
+natpierce_enable=`nvram get natpierce_enable`
 [ -z "$natpierce_enable" ] && natpierce_enable=0 && nvram set natpierce_enable=0
 
 logg() {
