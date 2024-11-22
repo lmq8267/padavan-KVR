@@ -950,6 +950,7 @@
 #endif
 
 #if defined(APP_CLOUDFLARE)
+	struct variable variables_CLOUDFLARE[] = {
 			{"cloudflare_enable", "", NULL, EVM_RESTART_CLOUDFLARE },
 			{"cloudflare_interval", "", NULL, EVM_RESTART_CLOUDFLARE },
 			{"cloudflare_token", "", NULL, EVM_RESTART_CLOUDFLARE },
@@ -964,6 +965,7 @@
 			{"cloudflare_domian6", "", NULL, EVM_RESTART_CLOUDFLARE },
 			{"scripts.ddns_script.sh", "File", NULL, EVM_RESTART_CLOUDFLARE},
 			{0,0,0,0}
+		};
 #endif
 
 #if defined(APP_DNSFORWARDER)
