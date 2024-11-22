@@ -238,7 +238,7 @@ start_zero() {
 }
 kill_z() {
 	zerotier_process=$(pidof zerotier-one)
-	if [ -n "$zerotier_process" ]; then
+	if [ ! -z "$zerotier_process" ]; then
 		logger -t "zerotier" "有进程 $zerotier_proces 在运行，结束中..."
 		killall zerotier-one >/dev/null 2>&1
 		kill -9 "$zerotier_process" >/dev/null 2>&1

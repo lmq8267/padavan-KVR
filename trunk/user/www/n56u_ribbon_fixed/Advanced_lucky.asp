@@ -23,7 +23,8 @@
 <script type="text/javascript" src="/help.js"></script>
 <script>
 var $j = jQuery.noConflict();
-
+<% lucky_status(); %>
+<% login_state_hook(); %>
 $j(document).ready(function() {
 
 	init_itoggle('lucky_enable');
@@ -38,8 +39,7 @@ $j(document).ready(function() {
 
 </script>
 <script>
-<% lucky_status(); %>
-<% login_state_hook(); %>
+
 function initial(){
 
 	show_banner(2);
@@ -106,10 +106,15 @@ function done_validating(action){
 //}
 
 function clearLog(){
-	document.form.current_page.value = "Advanced_lucky.asp#log";
-	document.form.next_host.value = "Advanced_lucky.asp#log";
-	document.form.action_mode.value = " ClearluckyLog ";
-	document.form.submit();
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi', {
+		'action_mode': ' ClearluckyLog ',
+		'next_host': 'Advanced_lucky.asp#log'
+	}).always(function() {
+		setTimeout(function() {
+			location.reload(); 
+		}, 3000);
+	});
 }
 
 function button_restartlucky(){

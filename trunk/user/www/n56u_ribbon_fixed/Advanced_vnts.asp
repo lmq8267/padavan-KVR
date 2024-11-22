@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!--Copyright by hiboy-->
 <html>
 <head>
 <title><#Web_Title#> - VNTS服务器</title>
@@ -24,7 +23,8 @@
 <script type="text/javascript" src="/help.js"></script>
 <script>
 var $j = jQuery.noConflict();
-
+<% vnts_status(); %>
+<% login_state_hook(); %>
 $j(document).ready(function() {
 
 	init_itoggle('vnts_enable',change_vnts_enable);
@@ -43,8 +43,7 @@ $j(document).ready(function() {
 
 </script>
 <script>
-<% vnts_status(); %>
-<% login_state_hook(); %>
+
 function initial(){
 	show_banner(2);
 	show_menu(5, 26, 0);
@@ -122,10 +121,15 @@ function button_restartvnts() {
 }
 
 function clearLog(){
-	document.form.current_page.value = "Advanced_vnts.asp#log";
-	document.form.next_host.value = "Advanced_vnts.asp#log";
-	document.form.action_mode.value = " ClearvntsLog ";
-	document.form.submit();
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi', {
+		'action_mode': ' ClearvntsLog ',
+		'next_host': 'Advanced_vnts.asp#log'
+	}).always(function() {
+		setTimeout(function() {
+			location.reload(); 
+		}, 3000);
+	});
 }
 
 function button_vnts_web(){

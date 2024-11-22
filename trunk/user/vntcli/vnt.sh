@@ -227,7 +227,7 @@ EOF
 			CMD="${CMD} -d ${$vntcli_id}"
 		fi
 	else
-		CMD="${CMD} -d ${$vntcli_id}"
+		CMD="${CMD} -d ${vntcli_id}"
 	fi
 	[ -z "$vntcli_tunname" ] || CMD="${CMD} --nic ${vntcli_tunname}"
 	[ -z "$vntcli_mtu" ] || CMD="${CMD} -u ${vntcli_mtu}"

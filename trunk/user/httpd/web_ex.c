@@ -3854,6 +3854,14 @@ apply_cgi(const char *url, webs_t wp)
 		websRedirect(wp, current_url);
 		return 0;
 	}
+	else if (!strcmp(value, " ClearcfdLog "))
+	{
+#if defined(APP_CLOUDFLARED)
+		unlink("/tmp/cloudflared.log");
+#endif
+		websRedirect(wp, current_url);
+		return 0;
+	}
 	else if (!strcmp(value, " ClearluckyLog "))
 	{
 #if defined(APP_LUCKY)

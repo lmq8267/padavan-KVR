@@ -24,7 +24,7 @@
 <script>
 var $j = jQuery.noConflict();
 
-
+<% natpierce_status(); %>
 $j(document).ready(function() {
 
 	init_itoggle('natpierce_enable');
@@ -39,7 +39,7 @@ $j(document).ready(function() {
 
 </script>
 <script>
-<% natpierce_status(); %>
+
 function initial(){
 	show_banner(2);
 	show_menu(5,28,0);

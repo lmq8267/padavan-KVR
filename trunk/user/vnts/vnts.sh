@@ -204,7 +204,7 @@ stop_vnts() {
 		ip6tables -D INPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
 		ip6tables -D INPUT -p udp --dport $vnts_web_port -j ACCEPT 2>/dev/null
 	fi
-	[ ! -z "`pidof vnts`" ] && logger -t "VNT服务端" "进程已关闭!"
+	[ -z "`pidof vnts`" ] && logger -t "VNT服务端" "进程已关闭!"
 }
 
 case $1 in

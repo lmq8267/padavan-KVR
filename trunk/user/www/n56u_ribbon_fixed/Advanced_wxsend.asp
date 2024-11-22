@@ -24,7 +24,8 @@
 <script type="text/javascript" src="/help.js"></script>
 <script>
 var $j = jQuery.noConflict();
-
+<% wxsend_status(); %>
+<% login_state_hook(); %>
 $j(document).ready(function() {
 
 	init_itoggle('wxsend_enable',change_wxsend_enable);
@@ -33,8 +34,7 @@ $j(document).ready(function() {
 
 </script>
 <script>
-<% wxsend_status(); %>
-<% login_state_hook(); %>
+
 function initial(){
 	show_banner(2);
 	show_menu(5, 24, 0);

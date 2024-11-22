@@ -312,18 +312,18 @@ start_al() {
 	logger -t "Alist" "正在启动alist"
 	echo "正在启动alist" >/tmp/alist.log
 	sed -Ei '/【Alist】|^$/d' /tmp/script/_opt_script_check
-
+	get_tag
  	if [ ! -f "$alist" ] ; then
 		logger -t "Alist" "主程序${alist}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
-  		get_tag
+  		
   		[ -z "$tag" ] && tag="v3.39.4"
   		dowload_al $tag
   	fi
   	[ ! -f "$alist" ] && exit 1
 	kill_al
 	[ ! -x "$alist" ] && chmod +x $alist
-	[ $(($($alist -h | wc -l))) -lt 3 ] && logger -t "Alist" "程序${alist}不完整，无法运行！" && exit 1
+	#[ $(($($alist -h | wc -l))) -lt 3 ] && logger -t "Alist" "程序${alist}不完整，无法运行！" && exit 1
 	jq_test="$(which jq)"
 	[ -z "$jq_test" ] && logger -t "Alist" "缺少依赖程序 jq ，请下载 https://opt.cn2qq.com/opt-file/jq 后上传到/etc/storage/bin/jq 再运行." && exit 1
 	if [ -z "$db_file" ] ; then
@@ -350,7 +350,7 @@ start_al() {
 	if [ ! -z "`pidof alist`" ] ; then
 		logger -t "Alist" "运行成功！"
 		al_keep
-		get_tag
+		
 	else
 		logger -t "Alist" "运行失败！"
 	fi

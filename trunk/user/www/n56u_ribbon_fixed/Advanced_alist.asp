@@ -23,7 +23,8 @@
 <script type="text/javascript" src="/help.js"></script>
 <script>
 var $j = jQuery.noConflict();
-
+<% alist_status(); %>
+<% login_state_hook(); %>
 $j(document).ready(function() {
 	init_itoggle('alist_enable',change_alist_enable);
 	init_itoggle('alist_https');
@@ -43,8 +44,7 @@ $j(document).ready(function() {
 
 </script>
 <script>
-<% alist_status(); %>
-<% login_state_hook(); %>
+
 function initial(){
 	show_banner(2);
 	show_menu(5, 30, 0);
@@ -178,10 +178,15 @@ function button_alist(){
 }
 
 function clearLog(){
-	document.form.current_page.value = "Advanced_alist.asp#log";
-	document.form.next_host.value = "Advanced_alist.asp#log";
-	document.form.action_mode.value = " ClearalistLog ";
-	document.form.submit();
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi', {
+		'action_mode': ' ClearalistLog ',
+		'next_host': 'Advanced_alist.asp#log'
+	}).always(function() {
+		setTimeout(function() {
+			location.reload(); 
+		}, 3000);
+	});
 }
 
 </script>

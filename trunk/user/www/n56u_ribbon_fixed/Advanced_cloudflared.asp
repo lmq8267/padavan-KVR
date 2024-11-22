@@ -23,7 +23,8 @@
 <script type="text/javascript" src="/help.js"></script>
 <script>
 var $j = jQuery.noConflict();
-
+<% cloudflared_status(); %>
+<% login_state_hook(); %>
 $j(document).ready(function() {
 
 	init_itoggle('cloudflared_enable',change_cloudflared_enable);
@@ -38,8 +39,7 @@ $j(document).ready(function() {
 
 </script>
 <script>
-<% cloudflared_status(); %>
-<% login_state_hook(); %>
+
 function initial(){
 	show_banner(2);
 	show_menu(5,25,0);
@@ -108,10 +108,15 @@ function button_updatecloudflared() {
 }
 
 function clearLog(){
-	document.form.current_page.value = "Advanced_cloudflared.asp#log";
-	document.form.next_host.value = "Advanced_cloudflared.asp#log";
-	document.form.action_mode.value = " ClearluckyLog ";
-	document.form.submit();
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi', {
+		'action_mode': ' ClearcfdLog ',
+		'next_host': 'Advanced_cloudflared.asp#log'
+	}).always(function() {
+		setTimeout(function() {
+			location.reload(); 
+		}, 3000);
+	});
 }
 
 </script>

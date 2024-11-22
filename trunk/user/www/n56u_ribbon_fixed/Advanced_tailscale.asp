@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!--Copyright by hiboy-->
 <html>
 <head>
 <title><#Web_Title#> - Tailsale</title>
@@ -24,7 +23,8 @@
 <script type="text/javascript" src="/help.js"></script>
 <script>
 var $j = jQuery.noConflict();
-
+<% tailscale_status(); %>
+<% tailscaled_status(); %>
 $j(document).ready(function() {
 	init_itoggle('tailscale_dns');
 	init_itoggle('tailscale_route');
@@ -43,8 +43,7 @@ $j(document).ready(function() {
 
 </script>
 <script>
-<% tailscale_status(); %>
-<% tailscaled_status(); %>
+
 function initial(){
 	show_banner(2);
 	show_menu(5, 29, 0);
@@ -167,9 +166,15 @@ function button_restarttailscale() {
 }
 
 function clearLog(){
-	document.form.next_host.value = "Advanced_tailscale.asp#log";
-	document.form.action_mode.value = " ClearTsLog ";
-	document.form.submit();
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi', {
+		'action_mode': ' ClearTsLog ',
+		'next_host': 'Advanced_tailscale.asp#log'
+	}).always(function() {
+		setTimeout(function() {
+			location.reload(); 
+		}, 3000);
+	});
 }
 
 </script>

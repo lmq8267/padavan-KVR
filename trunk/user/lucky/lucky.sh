@@ -114,11 +114,10 @@ lucky_start () {
   killall -9 lucky >/dev/null 2>&1
   LUCKY_CONF="/etc/storage/lucky.conf"
   find_bin 
-  
+  get_tag
   [ ! -d /etc/storage/lucky ] && mkdir -p /etc/storage/lucky
   if [ ! -f "$PROG" ] ; then
      logg "未找到程序$PROG ，开始在线下载..."
-     get_tag
      [ -z "$tag" ] && tag="v2.13.4" && logg "未获取到最新版本，暂用$tag"
      lucky_dl $tag
   fi
@@ -131,7 +130,6 @@ if [ ! -z "`pidof lucky`" ] ; then
   logg "lucky启动成功" 
   get_web
   lk_keep
-  get_tag
 fi
 [ -z "`pidof lucky`" ] && logg "lucky启动失败!" 
 exit 0

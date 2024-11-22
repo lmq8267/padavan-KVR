@@ -36,7 +36,7 @@ uu_start () {
   mkdir -p /tmp/uu
   if [ -s "$PROG" ] ; then
      chmod a+x $PROG
-     [ $(($($PROG -v | wc -l))) -lt 3 ]  && rm -rf $PROG 
+     #[ $(($($PROG -v | wc -l))) -lt 3 ]  && rm -rf $PROG 
   fi
 if [ ! -s "$PROG" ] || [ ! -s "$UU_CONF" ] ; then
    logg "$PROG 程序未找到，开始下载"

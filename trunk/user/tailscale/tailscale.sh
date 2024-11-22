@@ -161,7 +161,7 @@ start_ts() {
 	if [ ! -L "$tailscale" ] || [ "$(ls -l $tailscale | awk '{print $NF}')" != "$tailscaled" ] ; then
 		ln -sf "$tailscaled" "$tailscale"
 	fi
-	[ $(($($tailscaled -h | wc -l))) -lt 3 ] && logger -t "Tailscaled" "程序${tailscaled}不完整，无法运行！" && exit 1
+	#[ $(($($tailscaled -h | wc -l))) -lt 3 ] && logger -t "Tailscaled" "程序${tailscaled}不完整，无法运行！" && exit 1
 	$tailscaled --cleanup >/tmp/tailscale.log
 	tdCMD="$tailscaled --state=/etc/storage/tailscale/tailscale.state --socket=/var/run/tailscaled.sock"
 	logger -t "Tailscaled" "运行主程序 $tdCMD"
@@ -224,7 +224,7 @@ kill_ts() {
 	tsd_process=$(pidof tailscaled)
 	ts_process=$(pidof tailscaled)
 	rm -rf /tmp/tailscale.log
-	if [ -n "$ts_process" ] || [ -n "$tsd_process" ]; then
+	if [ ! -z "$ts_process" ] || [ ! -z "$tsd_process" ]; then
 		logger -t "Tailscaled" "有进程在运行，结束中..."
 		[ -f "$tailscaled" ] && $tailscaled --cleanup >/tmp/tailscale.log
 		killall tailscaled >/dev/null 2>&1
@@ -240,7 +240,7 @@ stop_ts() {
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
 	fi
 	kill_ts
-	[ ! -z "`pidof tailscaled`" ] && logger -t "Tailscale" "tailscaled关闭成功!"
+	[ -z "`pidof tailscaled`" ] && logger -t "Tailscale" "tailscaled关闭成功!"
 }
 
 case $1 in

@@ -101,7 +101,7 @@ start_cf() {
   	[ ! -f "$PROG" ] && exit 1
 	kill_cf
 	chmod +x $PROG
-	[ $(($($PROG -h | wc -l))) -lt 3 ] && logger -t "cloudflared" "程序${PROG}不完整，无法运行！" && exit 1
+	#[ $(($($PROG -h | wc -l))) -lt 3 ] && logger -t "cloudflared" "程序${PROG}不完整，无法运行！" && exit 1
 	cmd="${PROG} ${CMD}"
 	logger -t "cloudflared" "运行${cmd}"
 	eval "$cmd" &

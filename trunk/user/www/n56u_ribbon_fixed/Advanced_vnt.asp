@@ -23,7 +23,8 @@
 <script type="text/javascript" src="/help.js"></script>
 <script>
 var $j = jQuery.noConflict();
-
+<% vntcli_status(); %>
+<% login_state_hook(); %>
 $j(document).ready(function() {
 
 	init_itoggle('vntcli_log');
@@ -43,8 +44,7 @@ $j(document).ready(function() {
 
 </script>
 <script>
-<% vntcli_status(); %>
-<% login_state_hook(); %>
+
 var m_routelist = [<% get_nvram_list("VNTCLI", "VNTCLIroute"); %>];
 var mroutelist_ifield = 4;
 if(m_routelist.length > 0){
@@ -314,40 +314,76 @@ function showMAPPList(){
 }
 
 function clearLog(){
-	document.form.current_page.value = "Advanced_vnt.asp#log";
-	document.form.next_host.value = "Advanced_vnt.asp#log";
-	document.form.action_mode.value = " ClearvntcliLog ";
-	document.form.submit();
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi', {
+		'action_mode': ' ClearvntcliLog ',
+		'next_host': 'Advanced_vnt.asp#log'
+	}).always(function() {
+		setTimeout(function() {
+			location.reload(); 
+		}, 3000);
+	});
 }
 
 function button_vntcli_info(){
-	document.form.next_host.value = "Advanced_vnt.asp";
-	document.form.action_mode.value = " CMDvntinfo ";
-	document.form.submit();
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi', {
+		'action_mode': ' CMDvntinfo ',
+		'next_host': 'Advanced_vnt.asp#sta'
+	}).always(function() {
+		setTimeout(function() {
+			location.reload(); 
+		}, 3000);
+	});
 }
 
 function button_vntcli_all(){
-	document.form.next_host.value = "Advanced_vnt.asp#sta";
-	document.form.action_mode.value = " CMDvntall ";
-	document.form.submit();
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi', {
+		'action_mode': ' CMDvntall ',
+		'next_host': 'Advanced_vnt.asp#sta'
+	}).always(function() {
+		setTimeout(function() {
+			location.reload(); 
+		}, 3000);
+	});
 }
 
 function button_vntcli_list(){
-	document.form.next_host.value = "Advanced_vnt.asp#sta";
-	document.form.action_mode.value = " CMDvntlist ";
-	document.form.submit();
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi', {
+		'action_mode': ' CMDvntlist ',
+		'next_host': 'Advanced_vnt.asp#sta'
+	}).always(function() {
+		setTimeout(function() {
+			location.reload(); 
+		}, 3000);
+	});
 }
 
 function button_vntcli_route(){
-	document.form.next_host.value = "Advanced_vnt.asp#sta";
-	document.form.action_mode.value = " CMDvntroute ";
-	document.form.submit();
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi', {
+		'action_mode': ' CMDvntroute ',
+		'next_host': 'Advanced_vnt.asp#sta'
+	}).always(function() {
+		setTimeout(function() {
+			location.reload(); 
+		}, 3000);
+	});
 }
 
-function button_vntcli_status(){
-	document.form.next_host.value = "Advanced_vnt.asp#sta";
-	document.form.action_mode.value = " CMDvntstatus ";
-	document.form.submit();
+
+function button_vntcli_status() {
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi', {
+		'action_mode': ' CMDvntstatus ',
+		'next_host': 'Advanced_vnt.asp#sta'
+	}).always(function() {
+		setTimeout(function() {
+			location.reload(); 
+		}, 3000);
+	});
 }
 
 </script>
