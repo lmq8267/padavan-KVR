@@ -139,6 +139,7 @@ start_ts() {
 	[ "$ts_enable" = "0" ] && exit 1
 	if [ "$ts_enable" = "3" ] ; then
 		logger -t "Tailscaled" "正在清除配置文件/etc/storage/tailscale/* ..."
+		kill_ts
 		rm -rf /etc/storage/tailscale/*
 		nvram set tailscale_enable=0
 		nvram set tailscale_login=""
