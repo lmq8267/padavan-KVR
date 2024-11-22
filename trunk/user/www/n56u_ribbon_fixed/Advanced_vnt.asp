@@ -266,9 +266,9 @@ function showROUTEList(){
 	else{
 	    for(var i = 0; i < m_routelist.length; i++){
 		code +='<tr id="rowrl' + i + '">';
-		code +='<td width="30%">&nbsp;' + m_routelist[i][0] + '</td>';
-		code +='<td width="40%">&nbsp;' + m_routelist[i][1] + '</td>';
-		code +='<td width="40%">' + m_routelist[i][2] + '</td>';
+		code +='<td width="28%">&nbsp;' + m_routelist[i][0] + '</td>';
+		code +='<td width="38%">&nbsp;' + m_routelist[i][1] + '</td>';
+		code +='<td colspan="2" width="40%">' + m_routelist[i][2] + '</td>';
 		code +='<td width="50%"></td>';
 		code +='<center><td width="20%" style="text-align: center;"><input type="checkbox" name="VNTCLIroute_s" value="' + m_routelist[i][mroutelist_ifield] + '" onClick="changeBgColorrl(this,' + i + ');" id="check' + m_routelist[i][mroutelist_ifield] + '"></td></center>';
 		
