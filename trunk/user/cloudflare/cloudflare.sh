@@ -161,6 +161,7 @@ kill_ps "$scriptname keep"
 kill_ps "/tmp/script/_cloudflare"
 kill_ps "_cloudflare.sh"
 kill_ps "$scriptname"
+logger -t "【cloudflare动态域名】" "已停止运行"
 }
 
 cloudflare_start () {
@@ -411,15 +412,6 @@ arDdnsCheck() {
 	echo $lastIP
 	echo "Last IP is the same as current IP!"
 	return 1
-}
-
-initopt () {
-optPath=`grep ' /opt ' /proc/mounts | grep tmpfs`
-[ ! -z "$optPath" ] && return
-if [ ! -z "$(echo $scriptfilepath | grep -v "/opt/etc/init")" ] && [ -s "/opt/etc/init.d/rc.func" ] ; then
-	{ echo '#!/bin/bash' ; echo $scriptfilepath '"$@"' '&' ; } > /opt/etc/init.d/$scriptname && chmod 777  /opt/etc/init.d/$scriptname
-fi
-
 }
 
 initconfig () {

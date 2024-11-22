@@ -270,6 +270,17 @@ function button_restartwxsend() {
 	</td>
 	</tr>
 	<tr>
+	<th style="border: 0 none;" width="30%">管理界面登录提醒:</th>
+	<td style="border-top: 0 none;">
+	<select name="wxsend_login" class="input">
+	<option value="0" <% nvram_match_x("","wxsend_login", "0","selected"); %>>关闭</option>
+	<option value="1" <% nvram_match_x("","wxsend_login", "1","selected"); %>>登录成功</option>
+	<option value="2" <% nvram_match_x("","wxsend_login", "2","selected"); %>>验证失败</option>
+	<option value="3" <% nvram_match_x("","wxsend_login", "3","selected"); %>>登录成功 & 验证失败</option>
+	  </select>
+	</td>
+	</tr>
+	<tr>
 	<th style="border: 0 none;" width="30%">自定义提醒:</th>
 	<td style="border-top: 0 none;">
 	<select name="wxsend_notify_4" class="input">

@@ -903,6 +903,7 @@ struct nvram_pair router_defaults[] = {
 	{ "wxsend_notify_2", "0" },
 	{ "wxsend_notify_3", "0" },
 	{ "wxsend_notify_4", "0" },
+	{ "wxsend_login", "0" },
 #endif
 
 #if defined(APP_TAILSCALE)

@@ -49,22 +49,17 @@ dowload_vnts() {
 	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
 	logger -t "VNT服务端" "开始下载 https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl 到 $VNTS"
 	for proxy in $github_proxys ; do
-       curl -Lko "$VNTCLI" "${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl" || wget --no-check-certificate -O "$VNTCLI" "${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl"
+       curl -Lko "$VNTS" "${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl" || wget --no-check-certificate -O "$VNTS" "${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl"
 	if [ "$?" = 0 ] ; then
 		chmod +x $VNTS
-		if [ $(($($VNTS -h | wc -l))) -gt 3 ] ; then
-			logger -t "VNT服务端" "$VNTS 下载成功"
-			vnts_ver=$($VNTS --version | awk -F 'version:' '{print $2}' | tr -d ' ' | tr -d '\n')
-			if [ -z "$vnts_ver" ] ; then
-				nvram set vnts_ver=""
-			else
-				nvram set vnts_ver="v${vnts_ver}"
-			fi
-			break
-       	else
-	   		logger -t "VNT服务端" "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl 上传到  $VNTS"
-			rm -f $VNTS
-	  	fi
+		logger -t "VNT服务端" "$VNTS 下载成功"
+		vnts_ver=$($VNTS --version | awk -F 'version:' '{print $2}' | tr -d ' ' | tr -d '\n')
+		if [ -z "$vnts_ver" ] ; then
+			nvram set vnts_ver=""
+		else
+			nvram set vnts_ver="v${vnts_ver}"
+		fi
+		break
 	else
 		logger -t "VNT服务端" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl 上传到  $VNTS"
    	fi
@@ -98,7 +93,6 @@ start_vnts() {
   	fi
   	[ ! -f "$VNTS" ] && exit 1
   	chmod +x $VNTS
-	[ $(($($VNTS -h | wc -l))) -gt 3 ] || logger -t "VNT服务端" "程序${VNTS}不完整，无法运行！" && exit 1
 	killall -9 vnts >/dev/null 2>&1
 	if [ "$vnts_log" = "1" ] ; then
 		path=$(dirname "$VNTS")

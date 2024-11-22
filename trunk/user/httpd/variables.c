@@ -1035,7 +1035,6 @@
 			{"vntcli_bin", "", NULL, EVM_RESTART_VNTCLI},
 			{"scripts.vnt.conf", "File", NULL, EVM_RESTART_VNTCLI},
 			{"vntcli_routenum_x", "", NULL, EVM_RESTART_VNTCLI},
-			{"vntcli_mappnum_x", "", NULL, EVM_RESTART_VNTCLI},
 			{"VNTCLIroute", "Group", ARGV((char*)variables_VNTCLI_VNTCLIroute, "8", "55", "vntcli_routenum_x"), EVM_RESTART_VNTCLI},
 			{"vntcli_mappnum_x", "", NULL, EVM_RESTART_VNTCLI},
 			{"VNTCLImapp", "Group", ARGV((char*)variables_VNTCLI_VNTCLImapp, "8", "55", "vntcli_mappnum_x"), EVM_RESTART_VNTCLI},
@@ -1463,6 +1462,7 @@
 			{"wxsend_notify_2", "", NULL, EVM_RESTART_WXSEND},
 			{"wxsend_notify_3", "", NULL, EVM_RESTART_WXSEND},
 			{"wxsend_notify_4", "", NULL, EVM_RESTART_WXSEND},
+			{"wxsend_login", "", NULL, EVM_RESTART_WXSEND},
 			{"scripts.wxsend_script.sh", "File", NULL, EVM_RESTART_WXSEND},
 			{0,0,0,0}
 	};

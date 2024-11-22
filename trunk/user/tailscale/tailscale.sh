@@ -54,19 +54,14 @@ dowload_ts() {
        curl -Lko "$tailscaled" "${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full" || wget --no-check-certificate -O "$tailscaled" "${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full"
 	if [ "$?" = 0 ] ; then
 		chmod +x $tailscaled
-		if [ $(($($tailscaled -h | wc -l))) -gt 3 ] ; then
-			logger -t "Tailscaled" "$tailscaled 下载成功"
-			ts_ver=$($tailscaled -version | sed -n 1p | awk -F '-' '{print $1}')
-			if [ -z "$ts_ver" ] ; then
-				nvram set tailscale_ver=""
-			else
-				nvram set tailscale_ver=$ts_ver
-			fi
-			break
-       	else
-	   		logger -t "Tailscaled" "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full 上传到  $tailscaled"
-			rm -f $tailscaled
-	  	fi
+		logger -t "Tailscaled" "$tailscaled 下载成功"
+		ts_ver=$($tailscaled -version | sed -n 1p | awk -F '-' '{print $1}')
+		if [ -z "$ts_ver" ] ; then
+			nvram set tailscale_ver=""
+		else
+			nvram set tailscale_ver=$ts_ver
+		fi
+		break
 	else
 		logger -t "Tailscaled" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full 上传到  $tailscaled"
    	fi

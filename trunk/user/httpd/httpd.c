@@ -675,11 +675,20 @@ auth_check( const char *authorization, const char *conn_ip )
 		char *username = strtok(authinfo, ":");
 		char *password = strtok(NULL, ":");
 		if (username != NULL && password != NULL) {
-        	char log_message[512];
-        	snprintf(log_message, sizeof(log_message), 
-                 "用户IP:【%s】 用户名:【%s】 密码:【%s】 登录管理界面验证失败！", 
-                 conn_ip, username ? username : "未知", password ? password : "未知");
-                 logmessage("httpd", "%s", log_message);
+        		char log_message[512];
+        		snprintf(log_message, sizeof(log_message), 
+                 	"用户IP:【%s】 用户名:【%s】 密码:【%s】 登录管理界面验证失败！", 
+                 	conn_ip, username ? username : "未知", password ? password : "未知");
+                 	logmessage("httpd", "%s", log_message);
+                 	if (nvram_get_int("wxsend_login") == 2 || nvram_get_int("wxsend_login") == 3) && nvram_get_int("wxsend_enable") == 1) {
+				const char *wx_title = nvram_get("wxsend_title");
+				if (!wx_title || strlen(wx_title) == 0) {
+					wx_title = "【登录通知】";
+				}
+				char wx_command[1024];
+				snprintf(wx_command, sizeof(wx_command), "/usr/bin/wxsend.sh send_message \"%s\" \"用户IP：\" \"%s\" \"登录管理界面验证失败\"", wx_title, ip_str);
+				system(wx_command);
+			}
         	}
         	return 0;
     	}
@@ -1006,8 +1015,22 @@ handle_request(FILE *conn_fp, const conn_item_t *item)
 			return;
 		}
 		
-		if (login_state == 2)
+		if (login_state == 2) {
 			http_login(&conn_ip);
+			char log_message[512];
+			snprintf(log_message, sizeof(log_message), "用户IP:【%s】 成功登录管理界面！", ip_str);
+			logmessage("httpd", "%s", log_message);
+			if (nvram_get_int("wxsend_login") == 1 || nvram_get_int("wxsend_login") == 3) && nvram_get_int("wxsend_enable") == 1) {
+				const char *wx_title = nvram_get("wxsend_title");
+				if (!wx_title || strlen(wx_title) == 0) {
+					wx_title = "【登录通知】";
+				}
+				char wx_command[1024];
+				snprintf(wx_command, sizeof(wx_command), "/usr/bin/wxsend.sh send_message \"%s\" \"用户IP：\" \"%s\" \"成功登录管理界面！\"", wx_title, ip_str);
+				system(wx_command);
+			}
+			
+		}
 	}
 
 	if (method_id == HTTP_METHOD_POST) {

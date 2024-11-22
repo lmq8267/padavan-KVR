@@ -3821,54 +3821,6 @@ int ej_shown_language_option(int eid, webs_t wp, int argc, char **argv) {
 	return 0;
 }
 
-#if defined(APP_LUCKY)
-static char* lucky_command(const char *command, char *output, size_t output_size) {
-    FILE *fp = popen(command, "r");
-    if (fp) {
-        char *ptr = output;
-        size_t remaining = output_size - 1; 
-        char buffer[256];
-
-        while (fgets(buffer, sizeof(buffer), fp) != NULL) {
-            size_t len = strlen(buffer);
-            if (len > remaining) break; 
-            strncpy(ptr, buffer, remaining);
-            ptr += len;
-            remaining -= len;
-        }
-        *ptr = '\0'; 
-        pclose(fp);
-    } else {
-        snprintf(output, output_size, "执行错误.");
-    }
-    return output;
-}
-#endif
-
-#if defined(APP_ALIST)
-static char* alist_command(const char *command, char *output, size_t output_size) {
-    FILE *fp = popen(command, "r");
-    if (fp) {
-        char *ptr = output;
-        size_t remaining = output_size - 1; 
-        char buffer[256];
-
-        while (fgets(buffer, sizeof(buffer), fp) != NULL) {
-            size_t len = strlen(buffer);
-            if (len > remaining) break; 
-            strncpy(ptr, buffer, remaining);
-            ptr += len;
-            remaining -= len;
-        }
-        *ptr = '\0'; 
-        pclose(fp);
-    } else {
-        snprintf(output, output_size, "执行错误.");
-    }
-    return output;
-}
-#endif
-
 static int
 apply_cgi(const char *url, webs_t wp)
 {
@@ -3939,15 +3891,21 @@ apply_cgi(const char *url, webs_t wp)
 		char cmd_resetuser[1024] = {0};
 		char *cmd_luckyuser = websGetVar(wp, "LuckyCmd", "");
 		if (cmd_luckyuser != NULL && strlen(cmd_luckyuser) > 50) {
-			snprintf(cmd_resetuser, sizeof(cmd_resetuser), " 重置的用户名也太长了吧，不怕记不住吗？改改吧~");
+			snprintf(cmd_resetuser, sizeof(cmd_resetuser), " 重置的用户名也太长了吧，不怕记不住吗？改改吧~ ");
 		} else {
 			char command[1024];
+			int ret;
 			if (cmd_luckyuser == NULL || strlen(cmd_luckyuser) == 0) {
 				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetuser");
 			} else {
 				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetuser %s", cmd_luckyuser);
 			}
-			lucky_command(command, cmd_resetuser, sizeof(cmd_resetuser));
+			ret = system(command);
+			if (ret == 0) {
+				snprintf(cmd_resetuser, sizeof(cmd_resetuser), " 操作成功,请重启程序 ");
+			} else {
+				snprintf(cmd_resetuser, sizeof(cmd_resetuser), " 操作失败 ");
+			}
 		}
 		
 		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_resetuser);
@@ -3960,15 +3918,22 @@ apply_cgi(const char *url, webs_t wp)
 		char cmd_resetpass[1024] = {0};
 		char *cmd_luckypass = websGetVar(wp, "LuckyCmd", "");
 		if (cmd_luckypass != NULL && strlen(cmd_luckypass) > 50) {
-			snprintf(cmd_resetpass, sizeof(cmd_resetpass), " 重置的密码也太长了吧，不怕记不住吗？改改吧~");
+			snprintf(cmd_resetpass, sizeof(cmd_resetpass), " 重置的密码也太长了吧，不怕记不住吗？改改吧~ ");
 		} else {
 			char command[1024];
+			int ret;
 			if (cmd_luckypass == NULL || strlen(cmd_luckypass) == 0) {
 				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetpass");
 			} else {
 				snprintf(command, sizeof(command), "/usr/bin/lucky.sh Resetpass %s", cmd_luckypass);
 			}
-			lucky_command(command, cmd_resetpass, sizeof(cmd_resetpass));
+			ret = system(command);
+			if (ret == 0) {
+				snprintf(cmd_resetpass, sizeof(cmd_resetpass), " 操作成功,请重启程序 ");
+			} else {
+				snprintf(cmd_resetpass, sizeof(cmd_resetpass), " 操作失败 ");
+			}
+			
 		}
 		
 		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_resetpass);
@@ -3984,12 +3949,18 @@ apply_cgi(const char *url, webs_t wp)
 			snprintf(cmd_resetport, sizeof(cmd_resetport), " 重置的端口也太长了吧，改改吧~");
 		} else {
 			char command[1024];
+			int ret;
 			if (cmd_luckyport == NULL || strlen(cmd_luckyport) == 0) {
 				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetport");
 			} else {
 				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetport %s", cmd_luckyport);
 			}
-			lucky_command(command, cmd_resetport, sizeof(cmd_resetport));
+			ret = system(command);
+			if (ret == 0) {
+				snprintf(cmd_resetport, sizeof(cmd_resetport), " 操作成功 ");
+			} else {
+				snprintf(cmd_resetport, sizeof(cmd_resetport), " 操作失败 ");
+			}
 		}
 		
 		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_resetport);
@@ -4002,15 +3973,21 @@ apply_cgi(const char *url, webs_t wp)
 		char cmd_resetsafe[1024] = {0};
 		char *cmd_luckysafe = websGetVar(wp, "LuckyCmd", "");
 		if (cmd_luckysafe != NULL && strlen(cmd_luckysafe) > 50) {
-			snprintf(cmd_resetsafe, sizeof(cmd_resetsafe), " 重置的安全入口也太长了吧，不怕记不住吗？改改吧~");
+			snprintf(cmd_resetsafe, sizeof(cmd_resetsafe), " 重置的安全入口也太长了吧，不怕记不住吗？改改吧~ ");
 		} else {
 			char command[1024];
+			int ret;
 			if (cmd_luckysafe == NULL || strlen(cmd_luckysafe) == 0) {
 				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetsafe");
 			} else {
 				snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetsafe %s", cmd_luckysafe);
 			}
-			lucky_command(command, cmd_resetsafe, sizeof(cmd_resetsafe));
+			ret = system(command);
+			if (ret == 0) {
+				snprintf(cmd_resetsafe, sizeof(cmd_resetsafe), " 操作成功 ");
+			} else {
+				snprintf(cmd_resetsafe, sizeof(cmd_resetsafe), " 操作失败 ");
+			}
 		}
 		
 		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_resetsafe);
@@ -4022,8 +3999,14 @@ apply_cgi(const char *url, webs_t wp)
 #if defined(APP_LUCKY)
 		char cmd_nettrue[1024] = {0};
 		char command[1024];
+		int ret;
 		snprintf(command, sizeof(command), "/usr/bin/lucky.sh internettrue");
-		lucky_command(command, cmd_nettrue, sizeof(cmd_nettrue));
+		ret = system(command);
+		if (ret == 0) {
+			snprintf(cmd_nettrue, sizeof(cmd_nettrue), " 操作成功 ");
+		} else {
+			snprintf(cmd_nettrue, sizeof(cmd_nettrue), " 操作失败 ");
+		}
 		
 		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_nettrue);
 #endif
@@ -4034,8 +4017,14 @@ apply_cgi(const char *url, webs_t wp)
 #if defined(APP_LUCKY)
 		char cmd_netfalse[1024] = {0};
 		char command[1024];
+		int ret;
 		snprintf(command, sizeof(command), "/usr/bin/lucky.sh internetfalse");
-		lucky_command(command, cmd_netfalse, sizeof(cmd_netfalse));
+		ret = system(command);
+		if (ret == 0) {
+			snprintf(cmd_netfalse, sizeof(cmd_netfalse), " 操作成功 ");
+		} else {
+			snprintf(cmd_netfalse, sizeof(cmd_netfalse), " 操作失败 ");
+		}
 		
 		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_netfalse);
 #endif
@@ -4046,8 +4035,14 @@ apply_cgi(const char *url, webs_t wp)
 #if defined(APP_ALIST)
 		char cmd_retpass[1024] = {0};
 		char command[1024];
+		int ret;
 		snprintf(command, sizeof(command), "/usr/bin/alist.sh admin");
-		alist_command(command, cmd_retpass, sizeof(cmd_retpass));
+		ret = system(command);
+		if (ret == 0) {
+			snprintf(cmd_retpass, sizeof(cmd_retpass), " 操作成功 ");
+		} else {
+			snprintf(cmd_retpass, sizeof(cmd_retpass), " 操作失败 ");
+		}
 		
 		websWrite(wp, "{\"cmd_output\": \"%s\"}", cmd_retpass);
 #endif
