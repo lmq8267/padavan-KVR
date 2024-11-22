@@ -67,7 +67,7 @@ dowload_vntcli() {
 	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
 	logger -t "VNT客户端" "开始下载 https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 到 $VNTCLI"
 	for proxy in $github_proxys ; do
-       curl -Lkso "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl" || wget --no-check-certificate -q -O "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl"
+       curl -Lko "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl" || wget --no-check-certificate -O "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl"
 	if [ "$?" = 0 ] ; then
 		chmod +x $VNTCLI
 		if [ $(($($VNTCLI -h | wc -l))) -gt 3 ] ; then
@@ -189,6 +189,7 @@ EOF
 	[ -z "$vntcli_token" ] || CMD="-k $vntcli_token"
 	[ -z "$vntcli_ip" ] || CMD="${CMD} --ip ${vntcli_ip}"
 	if [ ! -z "$vntcli_localadd" ] ; then
+		vntcli_localadd=$(echo $vntcli_localadd | tr -d '\r')
 		for localadd in $vntcli_localadd ; do
 			[ -z "$localadd" ] && continue
 			CMD="${CMD} -o ${localadd}"
@@ -232,12 +233,14 @@ EOF
 	[ -z "$vntcli_mtu" ] || CMD="${CMD} -u ${vntcli_mtu}"
 	
 	if [ ! -z "$vntcli_dns" ] ; then
+		vntcli_dns=$(echo $vntcli_dns | tr -d '\r')
 		for dns in $vntcli_dns ; do
 			[ -z "$dns" ] && continue
 			CMD="${CMD} --dns ${dns}"
 		done	
 	fi
 	if [ ! -z "$vntcli_stun" ] ; then
+		vntcli_stun=$(echo $vntcli_stun | tr -d '\r')
 		for stun in $vntcli_stun ; do
 			[ -z "$stun" ] && continue
 			CMD="${CMD} -e ${stun}"
@@ -253,6 +256,11 @@ EOF
 	do
 		p=`expr $m - 1`
 		vnt_mappnet=`nvram get vntcli_mappnet_x$p`
+		if [ "$vnt_mappnet" = "1" ]  ; then
+			vnt_mappnet="udp"
+		else
+			vnt_mappnet="tcp"
+		fi
 		vnt_mappport=`nvram get vntcli_mappport_x$p`
 		vnt_mappip=`nvram get vntcli_mappip_x$p`
 		vnt_mapeerport=`nvram get vntcli_mapeerport_x$p`
@@ -312,7 +320,7 @@ vntpath=$(dirname "$VNTCLI")
 cmdfile="/tmp/vnt-cli.cmd"
 
 vnt_info() {
-	if [ -n "$vnt_process" ] ; then
+	if [ ! -z "$vnt_process" ] ; then
 		cd $vntpath
 		./vnt-cli --info >$cmdfile
 	else
@@ -322,7 +330,7 @@ vnt_info() {
 }
 
 vnt_all() {
-	if [ -n "$vnt_process" ] ; then
+	if [ ! -z "$vnt_process" ] ; then
 		cd $vntpath
 		./vnt-cli --all >$cmdfile
 	else
@@ -332,7 +340,7 @@ vnt_all() {
 }
 
 vnt_list() {
-	if [ -n "$vnt_process" ] ; then
+	if [ ! -z "$vnt_process" ] ; then
 		cd $vntpath
 		./vnt-cli --list >$cmdfile
 	else
@@ -342,7 +350,7 @@ vnt_list() {
 }
 
 vnt_route() {
-	if [ -n "$vnt_process" ] ; then
+	if [ ! -z "$vnt_process" ] ; then
 		cd $vntpath
 		./vnt-cli --route >$cmdfile
 	else
@@ -352,7 +360,7 @@ vnt_route() {
 }
 
 vnt_status() {
-	if [ -n "$vnt_process" ] ; then
+	if [ ! -z "$vnt_process" ] ; then
 		vntcpu="$(top -b -n1 | grep -E "$(pidof vnt-cli)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /vnt-cli/) break; else cpu=i}} END {print $cpu}')"
 		echo -e "\t\t vnt-cli 运行状态\n" >$cmdfile
 		[ ! -z "$vntcpu" ] && echo "CPU占用 ${vntcpu}% " >>$cmdfile

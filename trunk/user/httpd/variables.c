@@ -121,7 +121,7 @@
 		};
 	struct variable variables_VNTCLI_VNTCLIroute[] = {
 			{"vntcli_name_x", "24", NULL, FALSE},
-			{"vntcli_route", "24", NULL, FALSE},
+			{"vntcli_route_x", "24", NULL, FALSE},
 			{"vntcli_ip_x", "24", NULL, FALSE},
 			{0,0,0,0}
 		};

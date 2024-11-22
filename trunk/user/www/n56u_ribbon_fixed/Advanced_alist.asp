@@ -23,8 +23,7 @@
 <script type="text/javascript" src="/help.js"></script>
 <script>
 var $j = jQuery.noConflict();
-<% alist_status(); %>
-<% login_state_hook(); %>
+
 $j(document).ready(function() {
 	init_itoggle('alist_enable',change_alist_enable);
 	init_itoggle('alist_https');
@@ -44,7 +43,8 @@ $j(document).ready(function() {
 
 </script>
 <script>
-
+<% alist_status(); %>
+<% login_state_hook(); %>
 function initial(){
 	show_banner(2);
 	show_menu(5, 30, 0);
@@ -137,12 +137,20 @@ function resetpass(){
 		'action_mode': ' AlistReset ',
 		'current_page': 'Advanced_alist.asp#log',
 		'next_page': 'Advanced_alist.asp#log',
-	},
+	})
 	
-	function(response) {
-		var cmd_output = response.cmd_output;
-		alert(cmd_output);
-		$j('#btn_exec').removeAttr('disabled');
+	.done(function(response) {
+		if (response.sys_result === 1) {
+			alert(response.message); 
+		} else {
+			alert(response.message);
+		}
+	})
+	.fail(function(xhr, status, error) {
+		alert("请求失败，请重试！");
+	})
+	.always(function() {
+		$('#btn_exec').removeAttr('disabled');
 	});
 }
 
@@ -156,6 +164,7 @@ function button_alist(){
 }
 
 function clearLog(){
+	document.form.current_page.value = "Advanced_alist.asp#log";
 	document.form.next_host.value = "Advanced_alist.asp#log";
 	document.form.action_mode.value = " ClearalistLog ";
 	document.form.submit();

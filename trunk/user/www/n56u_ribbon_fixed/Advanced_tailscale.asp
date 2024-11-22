@@ -23,8 +23,7 @@
 <script type="text/javascript" src="/help.js"></script>
 <script>
 var $j = jQuery.noConflict();
-<% tailscale_status(); %>
-<% tailscaled_status(); %>
+
 $j(document).ready(function() {
 	init_itoggle('tailscale_dns');
 	init_itoggle('tailscale_route');
@@ -43,7 +42,8 @@ $j(document).ready(function() {
 
 </script>
 <script>
-
+<% tailscale_status(); %>
+<% tailscaled_status(); %>
 function initial(){
 	show_banner(2);
 	show_menu(5, 29, 0);

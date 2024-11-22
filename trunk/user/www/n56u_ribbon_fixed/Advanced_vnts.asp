@@ -23,8 +23,7 @@
 <script type="text/javascript" src="/help.js"></script>
 <script>
 var $j = jQuery.noConflict();
-<% vnts_status(); %>
-<% login_state_hook(); %>
+
 $j(document).ready(function() {
 
 	init_itoggle('vnts_enable',change_vnts_enable);
@@ -43,7 +42,8 @@ $j(document).ready(function() {
 
 </script>
 <script>
-
+<% vnts_status(); %>
+<% login_state_hook(); %>
 function initial(){
 	show_banner(2);
 	show_menu(5, 26, 0);
@@ -121,6 +121,7 @@ function button_restartvnts() {
 }
 
 function clearLog(){
+	document.form.current_page.value = "Advanced_vnts.asp#log";
 	document.form.next_host.value = "Advanced_vnts.asp#log";
 	document.form.action_mode.value = " ClearvntsLog ";
 	document.form.submit();

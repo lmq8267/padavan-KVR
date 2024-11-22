@@ -8,7 +8,7 @@ natpierce=`nvram get natpierce_bin`
 jyl_url=`nvram get natpierce_url`
 [ -z "$jyl_url" ] && jyl_url="https://natpierce.oss-cn-beijing.aliyuncs.com/linux/natpierce-mipsel-v1.03.tar.gz"
 jyl_conf="/etc/storage/jyl/config"
-[ -z "natpierce_bin" ] && natpierce="/tmp/jyl/natpierce"
+[ -z "natpierce" ] && natpierce="/tmp/jyl/natpierce"
 [ ! -d "/etc/storage/jyl" ] && mkdir -p /etc/storage/jyl
 [ ! -d "/tmp/jyl" ] && mkdir -p /tmp/jyl
 natpierce_enable=`nvram get natpierce_enable`
@@ -40,27 +40,23 @@ jyl_start () {
   path=$(dirname "$natpierce")
   if [ ! -f "$natpierce" ] || [ $(($($natpierce -h | wc -l))) -lt 2 ] ; then
   	logg "未找到 $natpierce 开始在线下载 $jyl_url"
-  	curl -Lkso /tmp/natpierce.tar.gz "$jyl_url" || wget --no-check-certificate -q -O /tmp/natpierce.tar.gz "$jyl_url"
+  	curl -Lko "/tmp/natpierce.tar.gz" "$jyl_url" || wget --no-check-certificate -O "/tmp/natpierce.tar.gz" "$jyl_url"
   	if [ "$?" = 0 ] ; then
   		router_size="$(check_disk_size $path)"
   		tar -xzf /tmp/natpierce.tar.gz -C /tmp/jyl
   		jyl_size="$(du -k /tmp/jyl/natpierce | awk '{print int($1 / 1024)}')"
   		logg "${path} 目录可用剩余${router_size}M 程序大小 ${jyl_size}M ,注意可用空间足够，若安装失败请修改路径为内存/tmp/jyl/natpierce"
 		chmod +x /tmp/jyl/natpierce
-		if [ $(($(/tmp/jyl/natpierce -h | wc -l))) -gt 2 ] ; then
-			logg "下载成功"
-			cp -rf /tmp/jyl/natpierce "$natpierce"
-			break
-       	else
-	   		logg "下载不完整，请手动下载 $jyl_url 解压上传到  $natpierce"
-	  	fi
+		logg "下载成功"
+		cp -rf /tmp/jyl/natpierce "$natpierce"
+		break
 	else
 		logg "下载失败，请手动下载 $jyl_url 解压上传到  $natpierce"
    	fi
   fi
   [ ! -x "$natpierce" ] && chmod +x "$natpierce"
-  if [ ! -f "$natpierce" ] || [ $(($($natpierce -h | wc -l))) -lt 2 ] ; then
-  	logg "下载失败或空间不足 无法启动请检查"
+  if [ ! -f "$natpierce" ] ; then
+  	logg "下载失败 无法启动请检查"
   	exit 1
   fi
   CMD=""

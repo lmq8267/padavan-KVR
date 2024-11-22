@@ -140,6 +140,7 @@ EOF
 	CMD=""
 	[ -z "$vnts_port" ] || CMD="-p $vnts_port"
 	if [ ! -z "$vnts_token" ] ; then
+		vnts_token=$(echo $vnts_token | tr -d '\r')
 		for token in $vnts_token ; do
 			[ -z "$token" ] && continue
 			CMD="${CMD} -w ${token}"

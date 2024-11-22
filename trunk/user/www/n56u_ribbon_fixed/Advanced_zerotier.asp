@@ -350,8 +350,8 @@ function showMRULESList(){
 											<td colspan="4" style="border-top: 0 none; padding-bottom: 20px;">
 												
 												<center><input class="btn btn-primary" style="width: 219px" type="button" value="<#CTL_apply#>" onclick="applyRule()" /></center>
-											</td><br />
-										</tr>
+											</td>
+										</tr><br />
 									</table>
 								</div>
 							</div>

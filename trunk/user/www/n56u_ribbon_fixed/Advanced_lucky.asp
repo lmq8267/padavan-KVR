@@ -105,6 +105,7 @@ function done_validating(action){
 //}
 
 function clearLog(){
+	document.form.current_page.value = "Advanced_lucky.asp#log";
 	document.form.next_host.value = "Advanced_lucky.asp#log";
 	document.form.action_mode.value = " ClearluckyLog ";
 	document.form.submit();
@@ -133,12 +134,20 @@ function userPost(){
 		'current_page': 'Advanced_lucky.asp',
 		'next_page': 'Advanced_lucky.asp',
 		'LuckyCmd': $j('#LuckyCmd').val()
-	},
+	})
 	
-	function(response) {
-		var cmd_output = response.cmd_output;
-		alert(cmd_output);
-		$j('#btn_exec1').removeAttr('disabled');
+	.done(function(response) {
+		if (response.sys_result === 1) {
+			alert(response.message); 
+		} else {
+			alert(response.message);
+		}
+	})
+	.fail(function(xhr, status, error) {
+		alert("请求失败，请重试！");
+	})
+	.always(function() {
+		$('#btn_exec1').removeAttr('disabled');
 	});
 }
 
@@ -153,12 +162,20 @@ function passPost(){
 		'current_page': 'Advanced_lucky.asp',
 		'next_page': 'Advanced_lucky.asp',
 		'LuckyCmd': $j('#LuckyCmd').val()
-	},
+	})
 	
-	function(response) {
-		var cmd_output = response.cmd_output;
-		alert(cmd_output);
-		$j('#btn_exec2').removeAttr('disabled');
+	.done(function(response) {
+		if (response.sys_result === 1) {
+			alert(response.message); 
+		} else {
+			alert(response.message);
+		}
+	})
+	.fail(function(xhr, status, error) {
+		alert("请求失败，请重试！");
+	})
+	.always(function() {
+		$('#btn_exec2').removeAttr('disabled');
 	});
 }
 
@@ -172,12 +189,20 @@ function portPost(){
 		'current_page': 'Advanced_lucky.asp',
 		'next_page': 'Advanced_lucky.asp',
 		'LuckyCmd': $j('#LuckyCmd').val()
-	},
+	})
 	
-	function(response) {
-		var cmd_output = response.cmd_output;
-		alert(cmd_output);
-		$j('#btn_exec3').removeAttr('disabled');
+	.done(function(response) {
+		if (response.sys_result === 1) {
+			alert(response.message); 
+		} else {
+			alert(response.message);
+		}
+	})
+	.fail(function(xhr, status, error) {
+		alert("请求失败，请重试！");
+	})
+	.always(function() {
+		$('#btn_exec3').removeAttr('disabled');
 	});
 }
 
@@ -190,12 +215,20 @@ function safePost(){
 		'action_mode': ' LuckyResetsafe ',
 		'current_page': 'Advanced_lucky.asp',
 		'next_page': 'Advanced_lucky.asp',
-	},
+	})
 	
-	function(response) {
-		var cmd_output = response.cmd_output;
-		alert(cmd_output);
-		$j('#btn_exec4').removeAttr('disabled');
+	.done(function(response) {
+		if (response.sys_result === 1) {
+			alert(response.message); 
+		} else {
+			alert(response.message);
+		}
+	})
+	.fail(function(xhr, status, error) {
+		alert("请求失败，请重试！");
+	})
+	.always(function() {
+		$('#btn_exec4').removeAttr('disabled');
 	});
 }
 
@@ -208,12 +241,20 @@ function Internettrue(){
 		'action_mode': ' Luckynettrue ',
 		'current_page': 'Advanced_lucky.asp',
 		'next_page': 'Advanced_lucky.asp',
-	},
+	})
 	
-	function(response) {
-		var cmd_output = response.cmd_output;
-		alert(cmd_output);
-		$j('#btn_exec5').removeAttr('disabled');
+	.done(function(response) {
+		if (response.sys_result === 1) {
+			alert(response.message); 
+		} else {
+			alert(response.message);
+		}
+	})
+	.fail(function(xhr, status, error) {
+		alert("请求失败，请重试！");
+	})
+	.always(function() {
+		$('#btn_exec5').removeAttr('disabled');
 	});
 }
 
@@ -226,12 +267,20 @@ function Internetfalse(){
 		'action_mode': ' Luckynetfalse ',
 		'current_page': 'Advanced_lucky.asp',
 		'next_page': 'Advanced_lucky.asp',
-	},
+	})
 	
-	function(response) {
-		var cmd_output = response.cmd_output;
-		alert(cmd_output);
-		$j('#btn_exec6').removeAttr('disabled');
+	.done(function(response) {
+		if (response.sys_result === 1) {
+			alert(response.message); 
+		} else {
+			alert(response.message);
+		}
+	})
+	.fail(function(xhr, status, error) {
+		alert("请求失败，请重试！");
+	})
+	.always(function() {
+		$('#btn_exec6').removeAttr('disabled');
 	});
 }
 

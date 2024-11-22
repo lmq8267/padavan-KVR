@@ -22,8 +22,7 @@
 <script type="text/javascript" src="/help.js"></script>
 <script>
 var $j = jQuery.noConflict();
-<% uuplugin_status(); %>
-<% login_state_hook(); %>
+
 $j(document).ready(function() {
 
 	init_itoggle('uu_enable');
@@ -32,7 +31,8 @@ $j(document).ready(function() {
 
 </script>
 <script>
-
+<% uuplugin_status(); %>
+<% login_state_hook(); %>
 function initial(){
 	show_banner(2);
 	show_menu(5, 22, 0);

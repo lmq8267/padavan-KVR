@@ -22,8 +22,7 @@
 <script type="text/javascript" src="/help.js"></script>
 <script>
 var $j = jQuery.noConflict();
-<% vntcli_status(); %>
-<% login_state_hook(); %>
+
 $j(document).ready(function() {
 
 	init_itoggle('vntcli_log');
@@ -43,7 +42,8 @@ $j(document).ready(function() {
 
 </script>
 <script>
-
+<% vntcli_status(); %>
+<% login_state_hook(); %>
 var m_routelist = [<% get_nvram_list("VNTCLI", "VNTCLIroute"); %>];
 var mroutelist_ifield = 4;
 if(m_routelist.length > 0){
@@ -171,7 +171,7 @@ function change_vntcli_enable(mflag){
 function button_restartvntcli() {
     var m = document.form.vntcli_enable.value;
 
-    var actionMode = (m == "1" || m == "2") ? 'Restartvntcli' : 'Updatevntcli';
+    var actionMode = (m == "1" || m == "2") ? ' Restartvntcli ' : ' Updatevntcli ';
 
     change_vntcli_enable(m); 
 
@@ -312,20 +312,8 @@ function showMAPPList(){
 	$("MmappRULESList_Block").innerHTML = code;
 }
 
-function button_button_restartvntcli() {
-    var m = document.form.vntcli_enable.value;
-
-    var actionMode = (m == "1" || m == "2") ? ' Restartvntcli ' : ' Updatevntcli ';
-
-    change_vntcli_enable(m); 
-
-    var $j = jQuery.noConflict(); 
-    $j.post('/apply.cgi', {
-        'action_mode': actionMode 
-    });
-}
-
 function clearLog(){
+	document.form.current_page.value = "Advanced_vnt.asp#log";
 	document.form.next_host.value = "Advanced_vnt.asp#log";
 	document.form.action_mode.value = " ClearvntcliLog ";
 	document.form.submit();
