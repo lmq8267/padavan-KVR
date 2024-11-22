@@ -302,6 +302,11 @@ stop_vnt() {
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
 	fi
 	$VNTCLI --stop >>/tmp/vnt-cli.log
+	if [ -z "$vntcli_tunname" ] ; then
+		tunname="vnt-tun"
+	else
+		tunname="${vntcli_tunname}"
+	fi
 	killall vnt-cli >/dev/null 2>&1
 	if [ ! -z "$vnt_tcp_port" ] ; then
 		 iptables -D INPUT -p tcp --dport $vnt_tcp_port -j ACCEPT 2>/dev/null

@@ -71,7 +71,7 @@ lucky_dl() {
 			else
 				nvram set lucky_ver=$lk_ver
 			fi
-			cp /tmp/var/lucky $PROG
+			cp -f /tmp/var/lucky $PROG
 			rm -rf /tmp/lucky.tar.gz /tmp/var/lucky
 			break
        	else
