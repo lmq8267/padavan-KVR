@@ -4064,35 +4064,35 @@ apply_cgi(const char *url, webs_t wp)
 	else if (!strcmp(value, " CMDvntinfo "))
 	{
 #if defined(APP_VNTCLI)
-		doSystem("/usr/bin/vnt.sh %s", "vntinfo");
+		system("/usr/bin/vnt.sh vntinfo &");
 #endif
 		return 0;
 	}
 	else if (!strcmp(value, " CMDvntall "))
 	{
 #if defined(APP_VNTCLI)
-		doSystem("/usr/bin/vnt.sh %s", "vntall");
+		system("/usr/bin/vnt.sh vntall &");
 #endif
 		return 0;
 	}
 	else if (!strcmp(value, " CMDvntlist "))
 	{
 #if defined(APP_VNTCLI)
-		doSystem("/usr/bin/vnt.sh %s", "vntlist");
+		system("/usr/bin/vnt.sh vntlist &");
 #endif
 		return 0;
 	}
 	else if (!strcmp(value, " CMDvntroute "))
 	{
 #if defined(APP_VNTCLI)
-		doSystem("/usr/bin/vnt.sh %s", "vntroute");
+		system("/usr/bin/vnt.sh vntroute &");
 #endif
 		return 0;
 	}
 	else if (!strcmp(value, " CMDvntstatus "))
 	{
 #if defined(APP_VNTCLI)
-		doSystem("/usr/bin/vnt.sh %s", "vntstatus");
+		system("/usr/bin/vnt.sh vntstatus &");
 #endif
 		return 0;
 	}

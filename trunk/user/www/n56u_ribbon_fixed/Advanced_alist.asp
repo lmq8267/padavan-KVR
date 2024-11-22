@@ -132,26 +132,40 @@ function resetpass(){
 	if (!login_safe())
 		return false;
 	$j('#btn_exec').attr('disabled', 'disabled');
-	$j.post('/apply.cgi',
-	{
-		'action_mode': ' AlistReset ',
-		'current_page': 'Advanced_alist.asp#log',
-		'next_page': 'Advanced_alist.asp#log',
-	})
-	
-	.done(function(response) {
-		if (response.sys_result === 1) {
-			alert(response.message); 
-		} else {
-			alert(response.message);
-		}
-	})
-	.fail(function(xhr, status, error) {
-		alert("请求失败，请重试！");
-	})
-	.always(function() {
-		$('#btn_exec').removeAttr('disabled');
-	});
+	$j.ajax({
+        type: "post",
+        url: "/apply.cgi",
+        data: {
+            'action_mode': ' AlistReset ',
+            'current_page': 'Advanced_alist.asp#log',
+            'next_page': 'Advanced_alist.asp#log'
+        },
+        dataType: "json", 
+        success: function(response) {
+            if (response && typeof response === 'object') {
+                const sys_result = response.sys_result; 
+                const message = response.message;     
+                
+                
+                alert(message);
+
+                
+                if (sys_result === 1) {
+                    console.log("操作成功");
+                } else {
+                    console.error("操作失败");
+                }
+            } 
+        },
+        error: function() {
+            alert("请求失败，请稍后再试！");
+        },
+        complete: function() {
+            setTimeout(function() {
+                $j('#btn_exec').removeAttr('disabled');
+            }, 3000);
+        }
+    });
 }
 
 function button_alist(){

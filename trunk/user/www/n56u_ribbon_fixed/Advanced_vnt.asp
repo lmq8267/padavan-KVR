@@ -17,6 +17,7 @@
 <script type="text/javascript" src="/bootstrap/js/engage.itoggle.min.js"></script>
 <script type="text/javascript" src="/state.js"></script>
 <script type="text/javascript" src="/general.js"></script>
+<script type="text/javascript" src="/client_function.js"></script>
 <script type="text/javascript" src="/itoggle.js"></script>
 <script type="text/javascript" src="/popup.js"></script>
 <script type="text/javascript" src="/help.js"></script>
@@ -265,7 +266,7 @@ function showROUTEList(){
 	else{
 	    for(var i = 0; i < m_routelist.length; i++){
 		code +='<tr id="rowrl' + i + '">';
-		code +='<td width="20%">&nbsp;' + m_routelist[i][0] + '</td>';
+		code +='<td width="30%">&nbsp;' + m_routelist[i][0] + '</td>';
 		code +='<td width="40%">&nbsp;' + m_routelist[i][1] + '</td>';
 		code +='<td width="40%">' + m_routelist[i][2] + '</td>';
 		code +='<td width="50%"></td>';
@@ -294,9 +295,9 @@ function showMAPPList(){
 		vntcli_mappnet="UDP";
 		}
 		code +='<tr id="rowrl' + i + '">';
-		code +='<td width="20%">&nbsp;' + vntcli_mappnet + '</td>';
-		code +='<td width="20%">&nbsp;' + m_mapplist[i][1] + '</td>';
-		code +='<td width="40%">' + m_mapplist[i][2] + '</td>';
+		code +='<td width="15%">&nbsp;' + vntcli_mappnet + '</td>';
+		code +='<td width="25%">&nbsp;' + m_mapplist[i][1] + '</td>';
+		code +='<td width="30%">' + m_mapplist[i][2] + '</td>';
 		code +='<td width="20%">&nbsp;' + m_mapplist[i][3] + '</td>';
 		code +='<td width="50%"></td>';
 		code +='<center><td width="20%" style="text-align: center;"><input type="checkbox" name="VNTCLImapp_s" value="' + m_mapplist[i][mmapplist_ifield] + '" onClick="changeBgColorrl(this,' + i + ');" id="check' + m_mapplist[i][mmapplist_ifield] + '"></td></center>';

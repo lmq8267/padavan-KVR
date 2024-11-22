@@ -18,6 +18,7 @@
 <script type="text/javascript" src="/state.js"></script>
 <script type="text/javascript" src="/general.js"></script>
 <script type="text/javascript" src="/itoggle.js"></script>
+<script type="text/javascript" src="/client_function.js"></script>
 <script type="text/javascript" src="/popup.js"></script>
 <script type="text/javascript" src="/help.js"></script>
 <script>
@@ -128,27 +129,41 @@ function userPost(){
 	if (!login_safe())
 		return false;
 	$j('#btn_exec1').attr('disabled', 'disabled');
-	$j.post('/apply.cgi',
-	{
+	$j.ajax({
+        type: "post",
+        url: "/apply.cgi",
+        data: {
 		'action_mode': ' LuckyResetuser ',
 		'current_page': 'Advanced_lucky.asp',
 		'next_page': 'Advanced_lucky.asp',
 		'LuckyCmd': $j('#LuckyCmd').val()
-	})
-	
-	.done(function(response) {
-		if (response.sys_result === 1) {
-			alert(response.message); 
-		} else {
-			alert(response.message);
-		}
-	})
-	.fail(function(xhr, status, error) {
-		alert("请求失败，请重试！");
-	})
-	.always(function() {
-		$('#btn_exec1').removeAttr('disabled');
-	});
+	},
+        dataType: "json", 
+        success: function(response) {
+            if (response && typeof response === 'object') {
+                const sys_result = response.sys_result; 
+                const message = response.message;     
+                
+                
+                alert(message);
+
+                
+                if (sys_result === 1) {
+                    console.log("操作成功");
+                } else {
+                    console.error("操作失败");
+                }
+            } 
+        },
+        error: function() {
+            alert("请求失败，请稍后再试！");
+        },
+        complete: function() {
+            setTimeout(function() {
+                $j('#btn_exec1').removeAttr('disabled');
+            }, 3000);
+        }
+    });
 }
 
 
@@ -156,132 +171,202 @@ function passPost(){
 	if (!login_safe())
 		return false;
 	$j('#btn_exec2').attr('disabled', 'disabled');
-	$j.post('/apply.cgi',
-	{
+	$j.ajax({
+        type: "post",
+        url: "/apply.cgi",
+        data: {
 		'action_mode': ' LuckyResetpass ',
 		'current_page': 'Advanced_lucky.asp',
 		'next_page': 'Advanced_lucky.asp',
 		'LuckyCmd': $j('#LuckyCmd').val()
-	})
-	
-	.done(function(response) {
-		if (response.sys_result === 1) {
-			alert(response.message); 
-		} else {
-			alert(response.message);
-		}
-	})
-	.fail(function(xhr, status, error) {
-		alert("请求失败，请重试！");
-	})
-	.always(function() {
-		$('#btn_exec2').removeAttr('disabled');
-	});
+	},
+        dataType: "json", 
+        success: function(response) {
+            if (response && typeof response === 'object') {
+                const sys_result = response.sys_result; 
+                const message = response.message;     
+                
+                
+                alert(message);
+
+                
+                if (sys_result === 1) {
+                    console.log("操作成功");
+                } else {
+                    console.error("操作失败");
+                }
+            } 
+        },
+        error: function() {
+            alert("请求失败，请稍后再试！");
+        },
+        complete: function() {
+            setTimeout(function() {
+                $j('#btn_exec2').removeAttr('disabled');
+            }, 3000);
+        }
+    });
 }
 
 function portPost(){
 	if (!login_safe())
 		return false;
 	$j('#btn_exec3').attr('disabled', 'disabled');
-	$j.post('/apply.cgi',
-	{
+	$j.ajax({
+        type: "post",
+        url: "/apply.cgi",
+        data: {
 		'action_mode': ' LuckyResetport ',
 		'current_page': 'Advanced_lucky.asp',
 		'next_page': 'Advanced_lucky.asp',
 		'LuckyCmd': $j('#LuckyCmd').val()
-	})
-	
-	.done(function(response) {
-		if (response.sys_result === 1) {
-			alert(response.message); 
-		} else {
-			alert(response.message);
-		}
-	})
-	.fail(function(xhr, status, error) {
-		alert("请求失败，请重试！");
-	})
-	.always(function() {
-		$('#btn_exec3').removeAttr('disabled');
-	});
+	},
+        dataType: "json", 
+        success: function(response) {
+            if (response && typeof response === 'object') {
+                const sys_result = response.sys_result; 
+                const message = response.message;     
+                
+                
+                alert(message);
+
+                
+                if (sys_result === 1) {
+                    console.log("操作成功");
+                } else {
+                    console.error("操作失败");
+                }
+            } 
+        },
+        error: function() {
+            alert("请求失败，请稍后再试！");
+        },
+        complete: function() {
+            setTimeout(function() {
+                $j('#btn_exec3').removeAttr('disabled');
+            }, 3000);
+        }
+    });
 }
 
 function safePost(){
 	if (!login_safe())
 		return false;
 	$j('#btn_exec4').attr('disabled', 'disabled');
-	$j.post('/apply.cgi',
-	{
+	$j.ajax({
+        type: "post",
+        url: "/apply.cgi",
+        data: {
 		'action_mode': ' LuckyResetsafe ',
 		'current_page': 'Advanced_lucky.asp',
 		'next_page': 'Advanced_lucky.asp',
-	})
-	
-	.done(function(response) {
-		if (response.sys_result === 1) {
-			alert(response.message); 
-		} else {
-			alert(response.message);
-		}
-	})
-	.fail(function(xhr, status, error) {
-		alert("请求失败，请重试！");
-	})
-	.always(function() {
-		$('#btn_exec4').removeAttr('disabled');
-	});
+	},
+        dataType: "json", 
+        success: function(response) {
+            if (response && typeof response === 'object') {
+                const sys_result = response.sys_result; 
+                const message = response.message;     
+                
+                
+                alert(message);
+
+                
+                if (sys_result === 1) {
+                    console.log("操作成功");
+                } else {
+                    console.error("操作失败");
+                }
+            } 
+        },
+        error: function() {
+            alert("请求失败，请稍后再试！");
+        },
+        complete: function() {
+            setTimeout(function() {
+                $j('#btn_exec4').removeAttr('disabled');
+            }, 3000);
+        }
+    });
 }
 
 function Internettrue(){
 	if (!login_safe())
 		return false;
 	$j('#btn_exec5').attr('disabled', 'disabled');
-	$j.post('/apply.cgi',
-	{
+	$j.ajax({
+        type: "post",
+        url: "/apply.cgi",
+        data: {
 		'action_mode': ' Luckynettrue ',
 		'current_page': 'Advanced_lucky.asp',
 		'next_page': 'Advanced_lucky.asp',
-	})
-	
-	.done(function(response) {
-		if (response.sys_result === 1) {
-			alert(response.message); 
-		} else {
-			alert(response.message);
-		}
-	})
-	.fail(function(xhr, status, error) {
-		alert("请求失败，请重试！");
-	})
-	.always(function() {
-		$('#btn_exec5').removeAttr('disabled');
-	});
+	},
+        dataType: "json", 
+        success: function(response) {
+            if (response && typeof response === 'object') {
+                const sys_result = response.sys_result; 
+                const message = response.message;     
+                
+                
+                alert(message);
+
+                
+                if (sys_result === 1) {
+                    console.log("操作成功");
+                } else {
+                    console.error("操作失败");
+                }
+            } 
+        },
+        error: function() {
+            alert("请求失败，请稍后再试！");
+        },
+        complete: function() {
+            setTimeout(function() {
+                $j('#btn_exec5').removeAttr('disabled');
+            }, 3000);
+        }
+    });
 }
 
 function Internetfalse(){
 	if (!login_safe())
 		return false;
 	$j('#btn_exec6').attr('disabled', 'disabled');
-	$j.post('/apply.cgi',
-	{
+	$j.ajax({
+        type: "post",
+        url: "/apply.cgi",
+        data: {
 		'action_mode': ' Luckynetfalse ',
 		'current_page': 'Advanced_lucky.asp',
 		'next_page': 'Advanced_lucky.asp',
-	})
-	
-	.done(function(response) {
-		if (response.sys_result === 1) {
-			alert(response.message); 
-		} else {
-			alert(response.message);
-		}
-	})
-	.fail(function(xhr, status, error) {
-		alert("请求失败，请重试！");
-	})
-	.always(function() {
-		$('#btn_exec6').removeAttr('disabled');
-	});
+	},
+        dataType: "json", 
+        success: function(response) {
+            if (response && typeof response === 'object') {
+                const sys_result = response.sys_result; 
+                const message = response.message;     
+                
+                
+                alert(message);
+
+                
+                if (sys_result === 1) {
+                    console.log("操作成功");
+                } else {
+                    console.error("操作失败");
+                }
+            } 
+        },
+        error: function() {
+            alert("请求失败，请稍后再试！");
+        },
+        complete: function() {
+            setTimeout(function() {
+                $j('#btn_exec6').removeAttr('disabled');
+            }, 3000);
+        }
+    });
 }
 
 </script>
