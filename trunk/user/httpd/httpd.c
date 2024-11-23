@@ -652,7 +652,7 @@ send_authenticate( FILE *conn_fp )
 }
 
 static int
-auth_check( const char *authorization, const char *conn_ip )
+auth_check( const char *authorization, const char *conn_ip, int do_wxsend )
 {
 	char authinfo[256];
 	int auth_len;
@@ -672,6 +672,7 @@ auth_check( const char *authorization, const char *conn_ip )
 		//logmessage("httpd", "%s", log_message);
 		return 1;
 	} else {
+		if (!do_wxsend) {
 		char *username = strtok(authinfo, ":");
 		char *password = strtok(NULL, ":");
 		if (username != NULL && password != NULL) {
@@ -689,6 +690,7 @@ auth_check( const char *authorization, const char *conn_ip )
 				snprintf(wx_command, sizeof(wx_command), "/usr/bin/wxsend.sh send_message \"%s\" \"用户IP：\" \"%s\" \"登录管理界面验证失败\"", wx_title, conn_ip);
 				system(wx_command);
 			}
+        	}
         	}
         	return 0;
     	}
@@ -857,7 +859,7 @@ handle_request(FILE *conn_fp, const conn_item_t *item)
 	char line[4096];
 	char *method, *path, *protocol, *authorization, *boundary;
 	char *cur, *end, *cp, *file, *query;
-	int len, login_state, method_id, do_logout, clen = 0;
+	int len, login_state, method_id, do_logout, do_wxsend, clen = 0;
 	time_t if_modified_since = (time_t)-1;
 	struct mime_handler *handler;
 	struct stat st, *p_st = NULL;
@@ -1001,13 +1003,14 @@ handle_request(FILE *conn_fp, const conn_item_t *item)
 #endif
 
 	do_logout = (strcmp(file, "Logout.asp") == 0) ? 1 : 0;
+	do_wxsend = ((strcmp(file, "log_content.asp") == 0) || (strcmp(file, "system_status_data.asp") == 0) || (strcmp(file, "status_internet.asp") == 0)) ? 1 : 0;
 	char ip_str[INET6_ADDRSTRLEN];
 	if (convert_ip_to_string(&conn_ip, ip_str, sizeof(ip_str)) != 0) {
 		snprintf(ip_str, sizeof(ip_str), "Unknown");
 	}
 
 	if (handler->need_auth && login_state > 1 && !do_logout) {
-		if (!auth_check(authorization, ip_str)) {
+		if (!auth_check(authorization, ip_str, do_wxsend)) {
 			http_logout(&conn_ip);
 			if (method_id == HTTP_METHOD_POST)
 				eat_post_data(conn_fp, clen);
@@ -1017,6 +1020,7 @@ handle_request(FILE *conn_fp, const conn_item_t *item)
 		
 		if (login_state == 2) {
 			http_login(&conn_ip);
+			if (!do_wxsend) {
 			char log_message[512];
 			snprintf(log_message, sizeof(log_message), "用户IP:【%s】 成功登录管理界面！", ip_str);
 			logmessage("httpd", "%s", log_message);
@@ -1030,6 +1034,7 @@ handle_request(FILE *conn_fp, const conn_item_t *item)
 				system(wx_command);
 			}
 			
+		}
 		}
 	}
 
