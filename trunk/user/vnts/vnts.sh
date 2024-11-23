@@ -80,6 +80,20 @@ update_vnts() {
 	fi
 	exit 0
 }
+scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
+vnts_keep() {
+	logger -t "VNT服务端" "守护进程启动"
+	if [ -s /tmp/script/_opt_script_check ]; then
+	sed -Ei '/【VNT服务端】|^$/d' /tmp/script/_opt_script_check
+	cat >> "/tmp/script/_opt_script_check" <<-OSC
+	[ -z "\`pidof vnts\`" ] && logger -t "进程守护" "VNT服务端 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【VNT服务端】|^$/d' /tmp/script/_opt_script_check #【VNT服务端】
+	[ -z "\$(iptables -L -n -v | grep '$vnts_port')" ] && logger -t "进程守护" "vnt-cli 防火墙规则失效" && eval "$scriptfilepath start &" && sed -Ei '/【VNT服务端】|^$/d' /tmp/script/_opt_script_check #【VNT服务端】
+	OSC
+
+	fi
+
+
+}
 
 start_vnts() {
 	[ "$vnts_enable" = "1" ] || exit 1
@@ -93,6 +107,7 @@ start_vnts() {
   	fi
   	[ ! -f "$VNTS" ] && exit 1
   	chmod +x $VNTS
+  	sed -Ei '/【VNT服务端】|^$/d' /tmp/script/_opt_script_check
 	killall -9 vnts >/dev/null 2>&1
 	if [ "$vnts_log" = "1" ] ; then
 		path=$(dirname "$VNTS")
@@ -176,6 +191,7 @@ EOF
 			ip6tables -I INPUT -p tcp --dport $vnts_web_port -j ACCEPT
 			ip6tables -I INPUT -p udp --dport $vnts_web_port -j ACCEPT
 		fi
+		vnts_keep
 		echo `date +%s` > /tmp/vnts_time
 	else
 		logger -t "VNT服务端" "运行失败！"
@@ -186,6 +202,7 @@ EOF
 
 stop_vnts() {
 	logger -t "VNT服务端" "正在关闭vnts ..."
+	sed -Ei '/【VNT服务端】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
 	if [ ! -z "$scriptname" ] ; then
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')

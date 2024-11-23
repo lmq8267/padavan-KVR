@@ -103,6 +103,25 @@ update_vntcli() {
 	fi
 	exit 0
 }
+scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
+vnt_keep() {
+	logger -t "VNT客户端" "守护进程启动"
+	if [ -s /tmp/script/_opt_script_check ]; then
+	sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check
+	if [ -z "$vntcli_tunname" ] ; then
+		tunname="vnt-tun"
+	else
+		tunname="${vntcli_tunname}"
+	fi
+	cat >> "/tmp/script/_opt_script_check" <<-OSC
+	[ -z "\`pidof vnt-cli\`" ] && logger -t "进程守护" "VNT客户端 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check #【VNT客户端】
+	[ -z "\$(iptables -L -n -v | grep '$tunname')" ] && logger -t "进程守护" "vnt-cli 防火墙规则失效" && eval "$scriptfilepath start &" && sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check #【VNT客户端】
+	OSC
+
+	fi
+
+
+}
 
 vnt_rules() {
 	if [ -z "$vntcli_tunname" ] ; then
@@ -119,6 +138,7 @@ vnt_rules() {
 		 iptables -I INPUT -p tcp --dport $vnt_tcp_port -j ACCEPT
 		 ip6tables -I INPUT -p tcp --dport $vnt_tcp_port -j ACCEPT
 	fi
+	vnt_keep
 }
 
 start_vntcli() {
@@ -134,6 +154,7 @@ start_vntcli() {
   	[ ! -f "$VNTCLI" ] && exit 1
 	chmod +x $VNTCLI
 	[ $(($($VNTCLI -h | wc -l))) -lt 3 ] && logger -t "VNT客户端" "程序${VNTCLI}不完整，无法运行！" && exit 1
+	sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check
 	killall vnt-cli >/dev/null 2>&1
 	
 	if [ "$vntcli_log" = "1" ] ; then
@@ -296,6 +317,7 @@ EOF
 
 stop_vnt() {
 	logger -t "VNT客户端" "正在关闭vnt-cli..."
+	sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
 	if [ ! -z "$scriptname" ] ; then
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
