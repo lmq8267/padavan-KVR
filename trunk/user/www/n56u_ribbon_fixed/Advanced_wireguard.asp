@@ -66,6 +66,14 @@ function applyRule(){
 	document.form.submit();
 }
 
+function  button_restartwg(){
+    	var $j = jQuery.noConflict();
+    	$j.post('/apply.cgi',
+    	{
+        		'action_mode': ' Restartwg ',
+    	});
+}
+
 function done_validating(action){
 	refreshpage();
 }
