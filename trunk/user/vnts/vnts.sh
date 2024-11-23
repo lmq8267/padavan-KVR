@@ -22,15 +22,15 @@ github_proxys="$(nvram get github_proxy)"
 
 get_tag() {
 	curltest=`which curl`
-	logger -t "VNT服务端" "开始获取最新版本..."
+	logger -t "【VNT服务端】" "开始获取最新版本..."
     	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
-      		tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/lmq8267/vnts/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-	 	[ -z "$tag" ] && tag="$( wget -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+      		tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --max-redirect=0 --output-document=-  https://api.github.com/repos/lmq8267/vnts/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+	 	[ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
     	else
-      		tag="$( curl --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/vnts/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-       	[ -z "$tag" ] && tag="$( curl -L --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+      		tag="$( curl -k --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/vnts/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       	[ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/vnts/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
         fi
-	[ -z "$tag" ] && logger -t "VNT服务端" "无法获取最新版本" 
+	[ -z "$tag" ] && logger -t "【VNT服务端】" "无法获取最新版本" 
 	nvram set vnts_ver_n=$tag
 	if [ -f "$VNTS" ] ; then
 		chmod +x $VNTS
@@ -47,12 +47,12 @@ dowload_vnts() {
 	tag="$1"
 	bin_path=$(dirname "$VNTS")
 	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
-	logger -t "VNT服务端" "开始下载 https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl 到 $VNTS"
+	logger -t "【VNT服务端】" "开始下载 https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl 到 $VNTS"
 	for proxy in $github_proxys ; do
        curl -Lko "$VNTS" "${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl" || wget --no-check-certificate -O "$VNTS" "${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl"
 	if [ "$?" = 0 ] ; then
 		chmod +x $VNTS
-		logger -t "VNT服务端" "$VNTS 下载成功"
+		logger -t "【VNT服务端】" "$VNTS 下载成功"
 		vnts_ver=$($VNTS --version | awk -F 'version:' '{print $2}' | tr -d ' ' | tr -d '\n')
 		if [ -z "$vnts_ver" ] ; then
 			nvram set vnts_ver=""
@@ -61,28 +61,28 @@ dowload_vnts() {
 		fi
 		break
 	else
-		logger -t "VNT服务端" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl 上传到  $VNTS"
+		logger -t "【VNT服务端】" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl 上传到  $VNTS"
    	fi
 	done
 }
 
 update_vnts() {
 	get_tag
-	[ -z "$tag" ] && logger -t "VNT服务端" "无法获取最新版本" && exit 1
+	[ -z "$tag" ] && logger -t "【VNT服务端】" "无法获取最新版本" && exit 1
 	tag=$(echo $tag | tr -d 'v' | tr -d ' ' | tr -d '\n' )
 	if [ ! -z "$tag" ] && [ ! -z "$vnts_ver" ] ; then
 		if [ "$stag"x != "$vnts_ver"x ] ; then
-			logger -t "VNT服务端" "当前版本${vnts_ver} 最新版本${tag}"
+			logger -t "【VNT服务端】" "当前版本${vnts_ver} 最新版本${tag}"
 			dowload_vnts $tag
 		else
-			logger -t "VNT服务端" "当前已是最新版本 ${tag} 无需更新！"
+			logger -t "【VNT服务端】" "当前已是最新版本 ${tag} 无需更新！"
 		fi
 	fi
 	exit 0
 }
 scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 vnts_keep() {
-	logger -t "VNT服务端" "守护进程启动"
+	logger -t "【VNT服务端】" "守护进程启动"
 	if [ -s /tmp/script/_opt_script_check ]; then
 	sed -Ei '/【VNT服务端】|^$/d' /tmp/script/_opt_script_check
 	cat >> "/tmp/script/_opt_script_check" <<-OSC
@@ -97,10 +97,10 @@ vnts_keep() {
 
 start_vnts() {
 	[ "$vnts_enable" = "1" ] || exit 1
-	logger -t "VNT服务端" "正在启动vnts"
+	logger -t "【VNT服务端】" "正在启动vnts"
 	get_tag
  	if [ ! -f "$VNTS" ] ; then
-		logger -t "VNT服务端" "主程序${VNTS}不存在，开始在线下载..."
+		logger -t "【VNT服务端】" "主程序${VNTS}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
   		[ -z "$tag" ] && tag="1.2.13"
   		dowload_vnts $tag
@@ -174,11 +174,11 @@ EOF
 	[ "$vnts_log" = "1" ] || CMD="${CMD} -l /dev/null"
 	
 	vntscmd="cd ${path} ; ./vnts ${CMD} >/tmp/vnts.log 2>&1"
-	logger -t "VNT服务端" "运行${vntscmd}"
+	logger -t "【VNT服务端】" "运行${vntscmd}"
 	eval "$vntscmd" &
 	sleep 4
 	if [ ! -z "`pidof vnts`" ] ; then
-		logger -t "VNT服务端" "运行成功！"
+		logger -t "【VNT服务端】" "运行成功！"
 		if [ ! -z "$vnts_port" ] ; then
 			iptables -I INPUT -p tcp --dport $vnts_port -j ACCEPT
 			iptables -I INPUT -p udp --dport $vnts_port -j ACCEPT
@@ -194,14 +194,14 @@ EOF
 		vnts_keep
 		echo `date +%s` > /tmp/vnts_time
 	else
-		logger -t "VNT服务端" "运行失败！"
+		logger -t "【VNT服务端】" "运行失败！"
 	fi
 	exit 0
 }
 
 
 stop_vnts() {
-	logger -t "VNT服务端" "正在关闭vnts ..."
+	logger -t "【VNT服务端】" "正在关闭vnts ..."
 	sed -Ei '/【VNT服务端】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
 	if [ ! -z "$scriptname" ] ; then
@@ -221,7 +221,7 @@ stop_vnts() {
 		ip6tables -D INPUT -p tcp --dport $vnts_web_port -j ACCEPT 2>/dev/null
 		ip6tables -D INPUT -p udp --dport $vnts_web_port -j ACCEPT 2>/dev/null
 	fi
-	[ -z "`pidof vnts`" ] && logger -t "VNT服务端" "进程已关闭!"
+	[ -z "`pidof vnts`" ] && logger -t "【VNT服务端】" "进程已关闭!"
 }
 
 case $1 in
