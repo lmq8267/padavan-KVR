@@ -23,7 +23,10 @@ start_instance() {
 	if [ -n "$port" ]; then
 		args="$args -p$port"
 	fi
-	if [ ! -s "$config_path/identity.secret" ] || [ -z "$secret" ]; then
+ 	if [ -s "$config_path/identity.secret" ] ; then
+		secret="$(cat $config_path/identity.secret)"
+  	fi
+	if [ ! -s "$config_path/identity.secret" ] && [ ! -s "$config_path/identity.public" ] && [ -z "$secret" ]; then
 		logger -t "【zerotier】" "密匙为空,正在生成密匙,请稍后..."
 		sf="$config_path/identity.secret"
 		pf="$config_path/identity.public"
@@ -34,10 +37,13 @@ start_instance() {
 		nvram set zerotier_secret="$secret"
 		nvram commit
 	else
-		logger -t "【zerotier】" "找到密匙,正在写入文件,请稍后..."
-		echo "$secret" >$config_path/identity.secret
-		$PROGIDT getpublic $config_path/identity.secret >$config_path/identity.public
-		#rm -f $config_path/identity.public
+ 		if [ -s "$config_path/identity.secret" ] ; then
+   			secret="$(cat $config_path/identity.secret)"
+			logger -t "【zerotier】" "找到密匙,正在写入文件,请稍后..."
+			echo "$secret" >$config_path/identity.secret
+			$PROGIDT getpublic $config_path/identity.secret >$config_path/identity.public
+			#rm -f $config_path/identity.public
+  		fi
 	fi
 	logger -t "【zerotier】" "启动 $PROG $args $config_path"
 	$PROG $args $config_path >/dev/null 2>&1 &
