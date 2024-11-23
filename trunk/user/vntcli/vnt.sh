@@ -159,7 +159,7 @@ start_vntcli() {
 	
 	if [ "$vntcli_log" = "1" ] ; then
 		path=$(dirname "$VNTCLI")
-		log_path="${path}/log"
+		log_path="${path}"
 		if [ ! -f "${log_path}/log4rs.yaml" ] ; then
 			mkdir -p ${log_path}
 cat > "${log_path}/log4rs.yaml"<<EOF
