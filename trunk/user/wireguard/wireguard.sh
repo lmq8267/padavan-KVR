@@ -44,7 +44,7 @@ stop_wg() {
 	iptables -D INPUT -i ${tun_name} -j ACCEPT 2>/dev/null
 	iptables -D FORWARD -i ${tun_name} -j ACCEPT 2>/dev/null
 	iptables -t nat -D POSTROUTING -o ${tun_name} -j MASQUERADE 2>/dev/null
-	logger -t "【WIREGUARD】" "正在关闭wireguard"
+	logger -t "【WIREGUARD】" "已关闭wireguard"
 	}
 
 
