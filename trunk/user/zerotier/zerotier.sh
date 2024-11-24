@@ -26,25 +26,27 @@ start_instance() {
  	if [ -s "$config_path/identity.secret" ] ; then
 		secret="$(cat $config_path/identity.secret)"
   	fi
-	if [ ! -s "$config_path/identity.secret" ] && [ ! -s "$config_path/identity.public" ] && [ -z "$secret" ]; then
-		logger -t "【zerotier】" "密匙为空,正在生成密匙,请稍后..."
-		sf="$config_path/identity.secret"
-		pf="$config_path/identity.public"
-		$PROGIDT generate "$sf" "$pf"  >/dev/null
-		[ $? -ne 0 ] && return 1
-		secret="$(cat $sf)"
-		#rm "$sf"
-		nvram set zerotier_secret="$secret"
-		nvram commit
-	else
- 		if [ -s "$config_path/identity.secret" ] ; then
-   			secret="$(cat $config_path/identity.secret)"
-			logger -t "【zerotier】" "找到密匙,正在写入文件,请稍后..."
-			echo "$secret" >$config_path/identity.secret
-			$PROGIDT getpublic $config_path/identity.secret >$config_path/identity.public
-			#rm -f $config_path/identity.public
+  	if [ ! -s "$config_path/identity.secret" ] ; then
+  		if [ ! -z "$secret" ] ; then
+  			logger -t "【zerotier】" "${config_path}/identity.secret密匙文件为空,找到密匙,正在写入到文件,请稍后..."
+  			echo "$secret" >$config_path/identity.secret
+  		else
+  			logger -t "【zerotier】" "密匙为空,正在生成密匙和文件,请稍后..."
+  			sf="$config_path/identity.secret"
+  			pf="$config_path/identity.public"
+  			$PROGIDT generate "$sf" "$pf"  >/dev/null
+  			[ $? -ne 0 ] && return 1
+  			secret="$(cat $sf)"
+  			nvram set zerotier_secret="$secret"
+  			nvram commit
   		fi
-	fi
+  	
+  	fi
+  	if [ ! -s "$config_path/identity.public" ] ; then
+  		logger -t "【zerotier】" "${config_path}/identity.public公匙文件为空,正在生成公匙文件,请稍后..."
+  		$PROGIDT getpublic $config_path/identity.secret >$config_path/identity.public
+
+  	fi
 	logger -t "【zerotier】" "启动 $PROG $args $config_path"
 	$PROG $args $config_path >/dev/null 2>&1 &
 
