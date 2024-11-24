@@ -43,7 +43,7 @@ scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 
 get_tag() {
 	curltest=`which curl`
-	#logger -t "Alist" "开始获取最新版本..."
+	#logger -t "【Alist】" "开始获取最新版本..."
     	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
       		tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --output-document=-  https://api.github.com/repos/${repo}/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
 	 	[ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/${repo}/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
@@ -51,7 +51,7 @@ get_tag() {
       		tag="$( curl -k --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/${repo}/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
        	[ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/${repo}/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
         fi
-	[ -z "$tag" ] && logger -t "Alist" "无法获取最新版本"
+	[ -z "$tag" ] && logger -t "【Alist】" "无法获取最新版本"
 	nvram set alist_ver_n=$tag
 	if [ -f "$alist" ] ; then
 		[ ! -x "$alist" ] && chmod +x $alist
@@ -73,16 +73,16 @@ dowload_al() {
 	else
 		url="https://github.com/AlistGo/alist/releases/download/${tag}/alist-linux-musl-mipsle.tar.gz"
 	fi
-	logger -t "Alist" "开始下载 ${url} "
-	[ -z "$github_proxys" ] && logger -t "Alist" "加速镜像地址为空.."
+	logger -t "【Alist】" "开始下载 ${url} "
+	[ -z "$github_proxys" ] && logger -t "【Alist】" "加速镜像地址为空.."
 	for proxy in $github_proxys ; do
        curl -Lko "/tmp/alist.tar.gz" "${proxy}${url}" || wget --no-check-certificate -O "/tmp/alist.tar.gz" "${proxy}${url}"
 	if [ "$?" = 0 ] ; then
-		logger -t "Alist" "开始解压..."
+		logger -t "【Alist】" "开始解压..."
 		tar -xzf /tmp/alist.tar.gz -C /tmp/alist
 		chmod +x /tmp/alist/alist
 		if [ $(($(/tmp/alist/alist -h | wc -l))) -gt 3 ] ; then
-			logger -t "Alist" "解压成功"
+			logger -t "【Alist】" "解压成功"
 			cp -rf /tmp/alist/alist $alist
 			al_ver=$($alist version | grep -Ew "^Version" | awk '{print $2}')
 			if [ -z "$al_ver" ] ; then
@@ -93,11 +93,11 @@ dowload_al() {
 			rm -rf /tmp/alist.tar.gz
 			break
        	else
-	   		logger -t "Alist" "下载不完整，请手动下载 ${proxy}${url} 解压上传到  $PROG"
-			rm -f $PROG
+	   		logger -t "【Alist】" "下载不完整，请手动下载 ${proxy}${url} 解压上传到  $PROG"
+			#rm -f $PROG
 	  	fi
 	else
-		logger -t "Alist" "下载失败，请手动下载 ${proxy}${url} 解压上传到  $PROG"
+		logger -t "【Alist】" "下载失败，请手动下载 ${proxy}${url} 解压上传到  $PROG"
    	fi
 	done
 }
@@ -106,20 +106,20 @@ update_al() {
 	get_tag
 	bin_path=$(dirname "$alist")
 	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
-	[ -z "$tag" ] && logger -t "Alist" "无法获取最新版本" && exit 1
+	[ -z "$tag" ] && logger -t "【Alist】" "无法获取最新版本" && exit 1
 	if [ ! -z "$tag" ] && [ ! -z "$al_ver" ] ; then
 		if [ "$tag"x != "$al_ver"x ] ; then
-			logger -t "Alist" "当前版本${al_ver} 最新版本${tag}"
+			logger -t "【Alist】" "当前版本${al_ver} 最新版本${tag}"
 			dowload_al $tag
 		else
-			logger -t "Alist" "当前已是最新版本 ${tag} 无需更新！"
+			logger -t "【Alist】" "当前已是最新版本 ${tag} 无需更新！"
 		fi
 	fi
 	exit 0
 }
 
 al_keep() {
-	logger -t "Alist" "守护进程启动"
+	logger -t "【Alist】" "守护进程启动"
 	if [ -s /tmp/script/_opt_script_check ]; then
 	sed -Ei '/【Alist】|^$/d' /tmp/script/_opt_script_check
 	cat >> "/tmp/script/_opt_script_check" <<-OSC
@@ -300,7 +300,7 @@ set_json() {
 	fi
 
 	if [ "$(cat $json | tr -d ' ' | tr -d '\n')" != "$(cat $t_temp | tr -d ' ' | tr -d '\n')" ] ; then
-		logger -t "Alist" "参数变动，写入配置文件 $json "
+		logger -t "【Alist】" "参数变动，写入配置文件 $json "
 		echo -e "###旧配置：\n $(cat $json)\n" >>/tmp/alist.log
 		echo -e "###新配置：\n $(cat $t_temp)\n" >>/tmp/alist.log
 		cp -f $t_temp $json
@@ -309,12 +309,12 @@ set_json() {
 
 start_al() {
 	[ "$alist_enable" = "1" ] || exit 1
-	logger -t "Alist" "正在启动alist"
+	logger -t "【Alist】" "正在启动alist"
 	echo "正在启动alist" >/tmp/alist.log
 	sed -Ei '/【Alist】|^$/d' /tmp/script/_opt_script_check
 	get_tag
  	if [ ! -f "$alist" ] ; then
-		logger -t "Alist" "主程序${alist}不存在，开始在线下载..."
+		logger -t "【Alist】" "主程序${alist}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
   		
   		[ -z "$tag" ] && tag="v3.39.4"
@@ -323,9 +323,9 @@ start_al() {
   	[ ! -f "$alist" ] && exit 1
 	kill_al
 	[ ! -x "$alist" ] && chmod +x $alist
-	#[ $(($($alist -h | wc -l))) -lt 3 ] && logger -t "Alist" "程序${alist}不完整，无法运行！" && exit 1
+	#[ $(($($alist -h | wc -l))) -lt 3 ] && logger -t "【Alist】" "程序${alist}不完整，无法运行！" 
 	jq_test="$(which jq)"
-	[ -z "$jq_test" ] && logger -t "Alist" "缺少依赖程序 jq ，请下载 https://opt.cn2qq.com/opt-file/jq 后上传到/etc/storage/bin/jq 再运行." && exit 1
+	[ -z "$jq_test" ] && logger -t 【Alist】" "缺少依赖程序 jq ，请下载 https://opt.cn2qq.com/opt-file/jq 后上传到/etc/storage/bin/jq 再运行." && exit 1
 	if [ -z "$db_file" ] ; then
 		db_file="/etc/storage/alist/data.db"
 		nvram set alist_db_file="$db_file"
@@ -335,24 +335,24 @@ start_al() {
 	json="${db_path}/config.json"
 	if [ ! -s "$json" ]; then
   		rm -f $json
-  		logger -t "Alist" "$json 配置文件为空， 删除..."
+  		logger -t "【Alist】" "$json 配置文件为空， 删除..."
 	fi
 	"$alist" admin >/tmp/var/admin.account 2>&1
 	user=$(cat /tmp/var/admin.account | grep "username" | awk -F 'username:' '{print $2}' | tr -d " ")
     	pass=$(cat /tmp/var/admin.account | grep "password is" | awk -F 'password is:' '{print $2}' | tr -d " ")
-    	[ ! -z "$pass" ] && logger -t "Alist" "检测到首次安装，初始用户名： ${user}  初始密码： ${pass}  请登录后台及时修改"
+    	[ ! -z "$pass" ] && logger -t "【Alist】" "检测到首次安装，初始用户名： ${user}  初始密码： ${pass}  请登录后台及时修改"
     	[ ! -d /etc/storage/alist ] && mkdir -p /etc/storage/alist
     	set_json
 	cmd="${alist} server --data ${db_path}"
-	logger -t "Alist" "运行${cmd}"
+	logger -t "【Alist】" "运行${cmd}"
 	eval "$cmd >>/tmp/alist.log 2>&1" &
 	sleep 4
 	if [ ! -z "`pidof alist`" ] ; then
-		logger -t "Alist" "运行成功！"
+		logger -t "【Alist】" "运行成功！"
 		al_keep
 		
 	else
-		logger -t "Alist" "运行失败！"
+		logger -t "【Alist】" "运行失败！"
 	fi
 	exit 0
 }
@@ -360,12 +360,12 @@ kill_al() {
 	
 	rm -rf /tmp/alist.log
 	if [ ! -z "`pidof alist`" ]; then
-		#logger -t "Alist" "有进程 ${al_proces} 在运行，结束中..."
+		#logger -t "【Alist】" "有进程 ${al_proces} 在运行，结束中..."
 		killall alist >/dev/null 2>&1
 	fi
 }
 stop_al() {
-	logger -t "Alist" "正在关闭服务..."
+	logger -t "【Alist】" "正在关闭服务..."
 	sed -Ei '/【Alist】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
 	if [ ! -z "$scriptname" ] ; then
@@ -373,7 +373,7 @@ stop_al() {
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
 	fi
 	kill_al
-	[ -z "`pidof alist`" ] && logger -t "Alist" "alist关闭成功!"
+	[ -z "`pidof alist`" ] && logger -t "【Alist】" "alist关闭成功!"
 }
 
 case $1 in
@@ -392,13 +392,13 @@ update)
 	;;
 admin)
 	db_path=$(dirname "$db_file")
-	logger -t "Alist" "正在重置密码..."
+	logger -t "【Alist】" "正在重置密码..."
 	echo "正在重置密码..." >>/tmp/alist.log
 	$alist admin set admin --data ${db_path} >/tmp/var/admin.account 2>&1
 	user=$(cat /tmp/var/admin.account | grep "username" | awk -F 'username:' '{print $2}' | tr -d " " )
     	pass=$(cat /tmp/var/admin.account | grep "password" | awk -F 'password:' '{print $2}' | tr -d " ")
     	echo "新账号： ${user} 新密码： ${pass}" >>/tmp/alist.log
-    	logger -t "Alist" "新账号： ${user} 新密码： ${pass} "
+    	logger -t "【Alist】" "新账号： ${user} 新密码： ${pass} "
 	echo "新账号： ${user} 新密码： ${pass}"
 	;;
 *)
