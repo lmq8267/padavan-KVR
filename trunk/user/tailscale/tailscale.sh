@@ -24,7 +24,7 @@ scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 
 get_tag() {
 	curltest=`which curl`
-	logger -t "Tailscale" "开始获取最新版本..."
+	logger -t "【Tailscale】" "开始获取最新版本..."
     	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
       		tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --output-document=-  https://api.github.com/repos/lmq8267/tailscale/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
 	 	[ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/tailscale/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
@@ -32,7 +32,7 @@ get_tag() {
       		tag="$( curl -k --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/tailscale/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
        	[ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/tailscale/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
         fi
-	[ -z "$tag" ] && logger -t "Tailscale" "无法获取最新版本"
+	[ -z "$tag" ] && logger -t "【Tailscale】" "无法获取最新版本"
 	nvram set tailscale_ver_n=$tag
 	if [ -f "$tailscaled" ] ; then
 		chmod +x $tailscaled
@@ -49,12 +49,12 @@ dowload_ts() {
 	tag="$1"
 	bin_path=$(dirname "$tailscaled")
 	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
-	logger -t "Tailscale" "开始下载 https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full 到 $tailscaled"
+	logger -t "【Tailscale】" "开始下载 https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full 到 $tailscaled"
 	for proxy in $github_proxys ; do
        curl -Lko "$tailscaled" "${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full" || wget --no-check-certificate -O "$tailscaled" "${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full"
 	if [ "$?" = 0 ] ; then
 		chmod +x $tailscaled
-		logger -t "Tailscale" "$tailscaled 下载成功"
+		logger -t "【Tailscale】" "$tailscaled 下载成功"
 		ts_ver=$($tailscaled -version | sed -n 1p | awk -F '-' '{print $1}')
 		if [ -z "$ts_ver" ] ; then
 			nvram set tailscale_ver=""
@@ -63,20 +63,20 @@ dowload_ts() {
 		fi
 		break
 	else
-		logger -t "Tailscale" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full 上传到  $tailscaled"
+		logger -t "【Tailscale】" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full 上传到  $tailscaled"
    	fi
 	done
 }
 
 update_ts() {
 	get_tag
-	[ -z "$tag" ] && logger -t "Tailscale" "无法获取最新版本" && exit 1
+	[ -z "$tag" ] && logger -t "【Tailscale】" "无法获取最新版本" && exit 1
 	if [ ! -z "$tag" ] && [ ! -z "$ts_ver" ] ; then
 		if [ "$tag"x != "$ts_ver"x ] ; then
-			logger -t "Tailscale" "当前版本${ts_ver} 最新版本${tag}"
+			logger -t "【Tailscale】" "当前版本${ts_ver} 最新版本${tag}"
 			dowload_ts $tag
 		else
-			logger -t "Tailscale" "当前已是最新版本 ${tag} 无需更新！"
+			logger -t "【Tailscale】" "当前已是最新版本 ${tag} 无需更新！"
 		fi
 	fi
 	exit 0
@@ -98,8 +98,8 @@ get_info() {
 			[ ! -z "$user_name" ] && adminuser="绑定账户: $user_name "
 			[ ! -z "$ts_IP" ] && adminip=" 设备IP: $ts_IP "
 			[ ! -z "$device_id" ] && adminid=" 设备ID: $device_id "
-			logger -t "Tailscale" "设备名称: $device_name 设备IP: $ts_IP 设备ID: $device_id"
-			logger -t "Tailscale" "绑定账户: $user_name  账户ID： $user_id"
+			logger -t "【Tailscale】" "设备名称: $device_name 设备IP: $ts_IP 设备ID: $device_id"
+			logger -t "【Tailscale】" "绑定账户: $user_name  账户ID： $user_id"
 			nvram set tailscale_info="${adminuser}${adminip}${adminid}"
 		fi
 	fi
@@ -109,12 +109,12 @@ get_login() {
 	$tailscale status >/tmp/tailscale.status 2>&1
 	nvram set tailscale_login=""
 	if [ ! -z "$(cat /tmp/tailscale.status | grep  'Logged' | grep  'out')" ] ; then
-		logger -t "Tailscale" "初次安装或密钥文件为空，开始获取设备绑定地址..."
+		logger -t "【Tailscale】" "初次安装或密钥文件为空，开始获取设备绑定地址..."
 		login_url=$(cat /tmp/tailscale.status | awk -F 'Log in at: ' '{print $2}')
-		logger -t "Tailscale" "设备绑定地址: $login_url"
+		logger -t "【Tailscale】" "设备绑定地址: $login_url"
 		nvram set tailscale_login="$login_url"
-		logger -t "Tailscale" "绑定设备后请勿立即重启，防止密钥文件/etc/storage/tailscale/lib/tailscaled.state重启丢失"
-		[ -z "$login_url" ] && logger -t "Tailscale" "无法获取设备绑定地址，请打开SSH手动运行 $tailscale login 获取设备绑定地址"
+		logger -t "【Tailscale】" "绑定设备后请勿立即重启，防止密钥文件/etc/storage/tailscale/lib/tailscaled.state重启丢失"
+		[ -z "$login_url" ] && logger -t "【Tailscale】" "无法获取设备绑定地址，请打开SSH手动运行 $tailscale login 获取设备绑定地址"
 	else
 		get_info
 	fi
@@ -122,7 +122,7 @@ get_login() {
 }
 
 ts_keep() {
-	logger -t "Tailscale" "守护进程启动"
+	logger -t "【Tailscale】" "守护进程启动"
 	if [ -s /tmp/script/_opt_script_check ]; then
 	sed -Ei '/【Tailscaled】|^$/d' /tmp/script/_opt_script_check
 	cat >> "/tmp/script/_opt_script_check" <<-OSC
@@ -138,20 +138,20 @@ ts_keep() {
 start_ts() {
 	[ "$ts_enable" = "0" ] && exit 1
 	if [ "$ts_enable" = "3" ] ; then
-		logger -t "Tailscale" "正在清除配置文件/etc/storage/tailscale/* ..."
+		logger -t "【Tailscale】" "正在清除配置文件/etc/storage/tailscale/* ..."
 		kill_ts
 		rm -rf /etc/storage/tailscale/*
 		nvram set tailscale_enable=0
 		nvram set tailscale_login=""
 		nvram set tailscale_info=""
-		logger -t "Tailscale" "清除配置完成"
+		logger -t "【Tailscale】" "清除配置完成"
 		exit 0
 	fi 
 	logger -t "Tailscale" "正在启动tailscale"
 	sed -Ei '/【Tailscaled】|^$/d' /tmp/script/_opt_script_check
 	get_tag
  	if [ ! -f "$tailscaled" ] ; then
-		logger -t "Tailscale" "主程序${tailscaled}不存在，开始在线下载..."
+		logger -t "【Tailscale】" "主程序${tailscaled}不存在，开始在线下载..."
   		[ -z "$tag" ] && tag="1.76.6"
   		dowload_ts $tag
   	fi
@@ -163,20 +163,20 @@ start_ts() {
 	if [ ! -L "$tailscale" ] || [ "$(ls -l $tailscale | awk '{print $NF}')" != "$tailscaled" ] ; then
 		ln -sf "$tailscaled" "$tailscale"
 	fi
-	#[ $(($($tailscaled -h | wc -l))) -lt 3 ] && logger -t "Tailscaled" "程序${tailscaled}不完整，无法运行！" && exit 1
+	#[ $(($($tailscaled -h | wc -l))) -lt 3 ] && logger -t "【Tailscale】" "程序${tailscaled}不完整，无法运行！" 
 	$tailscaled --cleanup >/tmp/tailscale.log
 	tdCMD="$tailscaled --state=/etc/storage/tailscale/lib/tailscaled.state --socket=/var/run/tailscale/tailscaled.sock"
-	logger -t "Tailscale" "运行主程序 $tdCMD"
+	logger -t "【Tailscale】" "运行主程序 $tdCMD"
 	eval "$tdCMD >>/tmp/tailscale.log 2>&1" &
 	sleep 4
 	if [ ! -z "`pidof tailscaled`" ] ; then
-		logger -t "Tailscale" "主程序运行成功！"
+		logger -t "【Tailscale】" "主程序运行成功！"
 		iptables -C INPUT -i tailscale0 -j ACCEPT
 		if [ "$?" != 0 ] ; then
 			iptables -I INPUT -i tailscale0 -j ACCEPT
 		fi
 	else
-		logger -t "Tailscale" "运行主程序失败，请检查"
+		logger -t "【Tailscale】" "运行主程序失败，请检查"
 		exit 1
 	fi
 	CMD=""
@@ -205,18 +205,18 @@ start_ts() {
 			
 			CMD="${tailscale} ${t_CMD}"
 		else
-			logger -t "Tailscale" "自定义启动参数为空，设置为默认参数:  up"
+			logger -t "【Tailscale】" "自定义启动参数为空，设置为默认参数:  up"
 			CMD="${tailscale} up"
 			nvram set tailscale_cmd="up"
 		fi
 	fi
-	logger -t "Tailscale" "运行子程序 ${CMD}"
+	logger -t "【Tailscale】" "运行子程序 ${CMD}"
 	eval "$CMD >>/tmp/tailscale.log 2>&1" &
 	sleep 5
 	if [ ! -z "`pidof tailscale`" ] ; then
-		logger -t "Tailscale" "子程序运行成功！"
+		logger -t "【Tailscale】" "子程序运行成功！"
 	else
-		logger -t "Tailscale" "子程序运行失败！"
+		logger -t "【Tailscale】" "子程序运行失败！"
 	fi
 	ts_keep
 	exit 0
@@ -226,14 +226,14 @@ kill_ts() {
 	ts_process=$(pidof tailscaled)
 	rm -rf /tmp/tailscale.log
 	if [ ! -z "$ts_process" ] || [ ! -z "$tsd_process" ]; then
-		logger -t "Tailscale" "有进程在运行，结束中..."
+		logger -t "【Tailscale】" "有进程在运行，结束中..."
 		[ -f "$tailscaled" ] && $tailscaled --cleanup >/tmp/tailscale.log
 		killall tailscaled >/dev/null 2>&1
 		killall tailscale >/dev/null 2>&1
 	fi
 }
 stop_ts() {
-	logger -t "Tailscale" "正在关闭tailscale..."
+	logger -t "【Tailscale】" "正在关闭tailscale..."
 	sed -Ei '/【Tailscaled】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
 	if [ ! -z "$scriptname" ] ; then
@@ -241,7 +241,7 @@ stop_ts() {
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
 	fi
 	kill_ts
-	[ -z "`pidof tailscaled`" ] && logger -t "Tailscale" "tailscale关闭成功!"
+	[ -z "`pidof tailscaled`" ] && logger -t "【Tailscale】" "tailscale关闭成功!"
 }
 
 case $1 in
