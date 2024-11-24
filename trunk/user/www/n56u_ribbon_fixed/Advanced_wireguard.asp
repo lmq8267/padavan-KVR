@@ -59,7 +59,7 @@ function textarea_scripts_enabled(v){
 function applyRule(){
 	showLoading();
 	
-	document.form.action_mode.value = " Restartwg ";
+	document.form.action_mode.value = " Apply ";
 	document.form.current_page.value = "/Advanced_wireguard.asp";
 	document.form.next_page.value = "";
 	
@@ -185,7 +185,7 @@ function done_validating(action){
 										<tr>
 										<th style="border-top: 0 none;">接口IPV6</th>
 										<td style="border-top: 0 none;">
-											<input type="text" class="input" name="wireguard_localip" id="wireguard_localip6" style="width: 200px" value="<% nvram_get_x("","wireguard_localip6"); %>" />
+											<input type="text" class="input" name="wireguard_localip6" id="wireguard_localip6" style="width: 200px" value="<% nvram_get_x("","wireguard_localip6"); %>" />
 										&nbsp;<span style="color:#888;">（格式 fd69::1/64）</span>
 										</td>
 										</tr><td colspan="5"></td>
@@ -206,7 +206,7 @@ function done_validating(action){
 											<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('scripts.wireguard')"><span>点此编辑 /etc/storage/wg0.conf 配置文件</span></a>
 										<div id="scripts.wireguard" style="display:none;">
 											<textarea rows="18" wrap="off" spellcheck="false" maxlength="209715" class="span12" name="scripts.wg0.conf" style="font-family:'Courier New'; font-size:12px; height: 200px;""><% nvram_dump("scripts.wg0.conf",""); %></textarea>
-											<div>⚠️&nbsp;&nbsp;<span style="color: #ff8100;">注意：</span><span style="color:#888;">配置文件不支持Post脚本规则&nbsp;&nbsp;&nbsp;&nbsp;在线生成配置文件：<a href="https://www.wireguardconfig.com/" target="blank">点此</a></span></div>
+											<div>⚠️&nbsp;&nbsp;<span style="color: #ff8100;">注意：</span><span style="color:#888;">配置文件里不支持Post脚本规则和指定接口IP和DNS&nbsp;&nbsp;&nbsp;&nbsp;在线生成配置文件：<a href="https://www.wireguardconfig.com/" target="blank">点此</a></span></div>
 										</div>
 										</td>
 										</tr><td colspan="4"></td>
