@@ -40,7 +40,7 @@ fi
 
 get_tag() {
 	curltest=`which curl`
-	logger -t "VNT客户端" "开始获取最新版本..."
+	logger -t "【VNT客户端】" "开始获取最新版本..."
     	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
       		tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --output-document=-  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
 	 	[ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
@@ -48,7 +48,7 @@ get_tag() {
       		tag="$( curl -k --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
        	[ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/vnt-cli/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
         fi
-	[ -z "$tag" ] && logger -t "VNT客户端" "无法获取最新版本"  
+	[ -z "$tag" ] && logger -t "【VNT客户端】" "无法获取最新版本"  
 	nvram set vntcli_ver_n=$tag
 	if [ -f "$VNTCLI" ] ; then
 		chmod +x $VNTCLI
@@ -65,13 +65,13 @@ dowload_vntcli() {
 	tag="$1"
 	bin_path=$(dirname "$VNTCLI")
 	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
-	logger -t "VNT客户端" "开始下载 https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 到 $VNTCLI"
+	logger -t "【VNT客户端】" "开始下载 https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 到 $VNTCLI"
 	for proxy in $github_proxys ; do
        curl -Lko "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl" || wget --no-check-certificate -O "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl"
 	if [ "$?" = 0 ] ; then
 		chmod +x $VNTCLI
 		if [ $(($($VNTCLI -h | wc -l))) -gt 3 ] ; then
-			logger -t "VNT客户端" "$VNTCLI 下载成功"
+			logger -t "【VNT客户端】" "$VNTCLI 下载成功"
 			vntcli_ver=$($VNTCLI -h | grep 'version:' | awk -F 'version:' '{print $2}' | tr -d ' ' | tr -d '\n')
 			if [ -z "$vntcli_ver" ] ; then
 				nvram set vntcli_ver=""
@@ -80,32 +80,32 @@ dowload_vntcli() {
 			fi
 			break
        	else
-	   		logger -t "VNT客户端" "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 上传到  $VNTCLI"
-	   		rm -f $VNTCLI
+	   		logger -t "【VNT客户端】" "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 上传到  $VNTCLI"
+	   		#rm -f $VNTCLI
 	  	fi
 	else
-		logger -t "VNT客户端" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 上传到  $VNTCLI"
+		logger -t "【VNT客户端】" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 上传到  $VNTCLI"
    	fi
 	done
 }
 
 update_vntcli() {
 	get_tag
-	[ -z "$tag" ] && logger -t "VNT客户端" "无法获取最新版本" && exit 1
+	[ -z "$tag" ] && logger -t "【VNT客户端】" "无法获取最新版本" && exit 1
 	tag=$(echo $tag | tr -d 'v' | tr -d ' ' | tr -d '\n')
 	if [ ! -z "$tag" ] && [ ! -z "$vntcli_ver" ] ; then
 		if [ "$tag"x != "$vntcli_ver"x ] ; then
-			logger -t "VNT客户端" "当前版本${vntcli_ver} 最新版本${tag}"
+			logger -t "【VNT客户端】" "当前版本${vntcli_ver} 最新版本${tag}"
 			dowload_vntcli $tag
 		else
-			logger -t "VNT客户端" "当前已是最新版本 ${tag} 无需更新！"
+			logger -t "【VNT客户端】" "当前已是最新版本 ${tag} 无需更新！"
 		fi
 	fi
 	exit 0
 }
 scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 vnt_keep() {
-	logger -t "VNT客户端" "守护进程启动"
+	logger -t "【VNT客户端】" "守护进程启动"
 	if [ -s /tmp/script/_opt_script_check ]; then
 	sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check
 	if [ -z "$vntcli_tunname" ] ; then
@@ -143,7 +143,7 @@ vnt_rules() {
 
 start_vntcli() {
 	[ "$vntcli_enable" = "0" ] && exit 1
-	logger -t "VNT客户端" "正在启动vnt-cli"
+	logger -t "【VNT客户端】" "正在启动vnt-cli"
 	get_tag
  	if [ ! -f "$VNTCLI" ] ; then
 		logger -t "VNT客户端" "主程序${VNTCLI}不存在，开始在线下载..."
@@ -153,7 +153,7 @@ start_vntcli() {
   	fi
   	[ ! -f "$VNTCLI" ] && exit 1
 	chmod +x $VNTCLI
-	[ $(($($VNTCLI -h | wc -l))) -lt 3 ] && logger -t "VNT客户端" "程序${VNTCLI}不完整，无法运行！" && exit 1
+	[ $(($($VNTCLI -h | wc -l))) -lt 3 ] && logger -t "【VNT客户端】" "程序${VNTCLI}不完整，无法运行！" 
 	sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check
 	killall vnt-cli >/dev/null 2>&1
 	
@@ -204,7 +204,7 @@ EOF
 	CMD=""
 	if [ "$vntcli_enable" = "1" ] ; then
 	if [ -z "$vntcli_token" ] ; then
-		logger -t "VNT客户端" "Token为必填项，不能为空！程序退出！"
+		logger -t "【VNT客户端】" "Token为必填项，不能为空！程序退出！"
 		exit 1
 	fi
 	[ -z "$vntcli_token" ] || CMD="-k $vntcli_token"
@@ -293,22 +293,22 @@ EOF
 	fi
 	if [ "$vntcli_enable" = "2" ] ; then
 		if [ -z "$(grep '^token: ' /etc/storage/vnt.conf | awk -F 'token:' '{print $2}')" ] ; then
-			logger -t "VNT客户端" "Token为必填项，不能为空！程序退出！"
+			logger -t "【VNT客户端】" "Token为必填项，不能为空！程序退出！"
 			exit 1
 		fi
 		vntclicmd="cd $vntpath ; ./vnt-cli -f /etc/storage/vnt.conf >/tmp/vnt-cli.log 2>&1"
 	
 	fi
 	echo "$vntclicmd" >/tmp/vnt-cli.CMD 
-	logger -t "VNT客户端" "运行${vntclicmd}"
+	logger -t "【VNT客户端】" "运行${vntclicmd}"
 	eval "$vntclicmd" &
 	sleep 4
 	if [ ! -z "`pidof vnt-cli`" ] ; then
-		logger -t "VNT客户端" "运行成功！"
+		logger -t "【VNT客户端】" "运行成功！"
 		echo `date +%s` > /tmp/vntcli_time
 		vnt_rules
 	else
-		logger -t "VNT客户端" "运行失败！"
+		logger -t "【VNT客户端】" "运行失败！"
 	fi
 	
 	exit 0
@@ -316,7 +316,7 @@ EOF
 
 
 stop_vnt() {
-	logger -t "VNT客户端" "正在关闭vnt-cli..."
+	logger -t "【VNT客户端】" "正在关闭vnt-cli..."
 	sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
 	if [ ! -z "$scriptname" ] ; then
@@ -338,7 +338,7 @@ stop_vnt() {
 	iptables -D FORWARD -i ${tunname} -o ${tunname} -j ACCEPT 2>/dev/null
 	iptables -D FORWARD -i ${tunname} -j ACCEPT 2>/dev/null
 	iptables -t nat -D POSTROUTING -o ${tunname} -j MASQUERADE 2>/dev/null
-	[ ! -z "`pidof vnt-cli`" ] && logger -t "VNT客户端" "进程已关闭!"
+	[ ! -z "`pidof vnt-cli`" ] && logger -t "【VNT客户端】" "进程已关闭!"
 }
 
 vnt_error="错误：${VNTCLI} 未运行，请运行成功后执行此操作！"
