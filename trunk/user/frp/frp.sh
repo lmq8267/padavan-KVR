@@ -29,7 +29,7 @@ check_net()
 		return 1
 	else
 		return 2
-		logger -t "frp" "检测到互联网未能成功访问,稍后再尝试启动frp"
+		logger -t "【Frp】" "检测到互联网未能成功访问,稍后再尝试启动frp"
 	fi
 }
 
@@ -82,7 +82,7 @@ get_ver() {
 
 get_tag() {
 	curltest=`which curl`
-	logger -t "frp" "开始获取最新版本..."
+	logger -t "【Frp】" "开始获取最新版本..."
     	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
       		tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --output-document=-  https://api.github.com/repos/fatedier/frp/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
 	 	[ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/fatedier/frp/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
@@ -90,7 +90,7 @@ get_tag() {
       		tag="$( curl -k --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/fatedier/frp/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
        	[ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/fatedier/frp/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
         fi
-	[ -z "$tag" ] && logger -t "frp" "无法获取最新版本"
+	[ -z "$tag" ] && logger -t "【Frp】" "无法获取最新版本"
 	nvram set frp_ver_n=$tag
 	
 }
@@ -100,7 +100,7 @@ frp_dl ()
 	tag="$1"
 	newtag="$(echo "$tag" | tr -d 'v' | tr -d ' ')"
 	mkdir -p /tmp/frp
-	logger -t "frp" "开始下载 https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz"
+	logger -t "【Frp】" "开始下载 https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz"
 	for proxy in $github_proxys ; do
        curl -Lko "/tmp/frp_linux_mipsle.tar.gz" "${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz" || wget --no-check-certificate -O "/tmp/frp_linux_mipsle.tar.gz" "${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz"
 	if [ "$?" = 0 ] ; then
@@ -112,28 +112,28 @@ frp_dl ()
 		if [ "$frpc_enable" = "1" ] ; then
 			router_size="$(check_disk_size $frpc_path)"
 			if [ $(($(/tmp/frp_${newtag}_linux_mipsle/frpc -h | wc -l))) -gt 3 ] ; then
-				logger -t "frp" "frpc ${frpc_size}M 下载成功,${frpc_path}剩余可用${router_size}M安装到$frpc"
+				logger -t "【Frp】" "frpc ${frpc_size}M 下载成功,${frpc_path}剩余可用${router_size}M安装到$frpc"
 				cp "/tmp/frp_${newtag}_linux_mipsle/frpc" "$frpc"
 				break
        		else
-	   			logger -t "frp" "frpc 下载不完整，请手动下载 ${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz 解压上传到  $frpc"
+	   			logger -t "【Frp】" "frpc 下载不完整，请手动下载 ${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz 解压上传到  $frpc"
 	  		fi
 		fi
 		if [ "$frps_enable" = "1" ] ; then
 			router_size="$(check_disk_size $frps_path)"
 			if [ $(($(/tmp/frp_${newtag}_linux_mipsle/frps -h | wc -l))) -gt 3 ] ; then
-				logger -t "frp" "frps ${frps_size}M 下载成功,${frps_path}剩余可用${router_size}M 安装到$frps"
+				logger -t "【Frp】" "frps ${frps_size}M 下载成功,${frps_path}剩余可用${router_size}M 安装到$frps"
 				cp "/tmp/frp_${newtag}_linux_mipsle/frps" "$frps"
 				break
        		else
-	   			logger -t "frp" "frps 下载不完整，请手动下载 ${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz 解压上传到  $frps"
+	   			logger -t "【Frp】" "frps 下载不完整，请手动下载 ${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz 解压上传到  $frps"
 	  		fi
 		fi
 		
 		rm -rf /tmp/frp_${newtag}_linux_mipsle /tmp/frp_linux_mipsle.tar.gz
 		
 	else
-		logger -t "frp" "下载失败，请手动下载 ${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz 解压上传"
+		logger -t "【Frp】" "下载失败，请手动下载 ${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz 解压上传"
    	fi
 	done
       
@@ -141,7 +141,7 @@ frp_dl ()
 
 scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 frpc_keep() {
-	logger -t "frp" "frpc守护进程启动"
+	logger -t "【Frp】" "frpc守护进程启动"
 	if [ -s /tmp/script/_opt_script_check ]; then
 	sed -Ei '/【frpc】|^$/d' /tmp/script/_opt_script_check
 	cat >> "/tmp/script/_opt_script_check" <<-OSC
@@ -153,7 +153,7 @@ frpc_keep() {
 }
 
 frps_keep() {
-	logger -t "frp" "frps守护进程启动"
+	logger -t "【Frp】" "frps守护进程启动"
 	if [ -s /tmp/script/_opt_script_check ]; then
 	sed -Ei '/【frps】|^$/d' /tmp/script/_opt_script_check
 	cat >> "/tmp/script/_opt_script_check" <<-OSC
@@ -185,11 +185,11 @@ frp_start ()
   		if [ ! -z "$frp_tag" ] ; then
   			frp_dl $frp_tag
   		else
-  			[ -z "$tag" ] && logger -t "frp" "未获取到最新版本，暂用v0.61.0版本" && tag="v0.61.0"
+  			[ -z "$tag" ] && logger -t "【Frp】" "未获取到最新版本，暂用v0.61.0版本" && tag="v0.61.0"
   			frp_dl $tag
   		fi
   	fi
-  	[ ! -f "$frpc" ] && logger -t "frp" "没有$frpc 无法运行.." 
+  	[ ! -f "$frpc" ] && logger -t "【Frp】" "没有$frpc 无法运行.." 
   fi
   
   if [ "$frps_enable" = "1" ] ;then
@@ -207,17 +207,17 @@ frp_start ()
   		if [ ! -z "$frp_tag" ] ; then
   			frp_dl $frp_tag
   		else
-  			[ -z "$tag" ] && logger -t "frp" "未获取到最新版本，暂用v0.61.0版本" && tag="v0.61.0"
+  			[ -z "$tag" ] && logger -t "【Frp】" "未获取到最新版本，暂用v0.61.0版本" && tag="v0.61.0"
   			frp_dl $tag
   		fi
   	fi
-  	[ ! -f "$frps" ] && logger -t "frp" "没有$frps 无法运行.." 
+  	[ ! -f "$frps" ] && logger -t "【Frp】" "没有$frps 无法运行.." 
   fi
   get_ver
   /etc/storage/frp_script.sh
 	sleep 3
-	[ ! -z "`pidof frpc`" ] && logger -t "frp" "frpc启动成功" && frpc_keep
-	[ ! -z "`pidof frps`" ] && logger -t "frp" "frps启动成功" && frps_keep
+	[ ! -z "`pidof frpc`" ] && logger -t "【Frp】" "frpc启动成功" && frpc_keep
+	[ ! -z "`pidof frps`" ] && logger -t "【Frp】" "frps启动成功" && frps_keep
 }
       
 frp_close () 
@@ -233,7 +233,7 @@ frp_close ()
 		if [ ! -z "`pidof frpc`" ]; then
 			killall frpc
 			killall -9 frpc frp_script.sh
-			[ -z "`pidof frpc`" ] && logger -t "frp" "已停止 frpc"
+			[ -z "`pidof frpc`" ] && logger -t "【Frp】" "已停止 frpc"
 	    	fi
 	fi
 	if [ "$frps_enable" = "0" ]; then
@@ -241,7 +241,7 @@ frp_close ()
 		if [ ! -z "`pidof frps`" ]; then
 		killall frps
 		killall -9 frps frp_script.sh
-		[ -z "`pidof frps`" ] && logger -t "frp" "已停止 frps"
+		[ -z "`pidof frps`" ] && logger -t "【Frp】" "已停止 frps"
 	    fi
 	fi
 }
