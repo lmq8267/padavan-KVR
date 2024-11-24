@@ -433,5 +433,5 @@ jobs:
       uses: actions/upload-artifact@master
       if: always()
       with:
-        name: NEWIFI3
+        name: JDC-1
         path: /opt/images
