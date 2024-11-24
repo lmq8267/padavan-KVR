@@ -325,7 +325,7 @@ start_al() {
 	[ ! -x "$alist" ] && chmod +x $alist
 	#[ $(($($alist -h | wc -l))) -lt 3 ] && logger -t "【Alist】" "程序${alist}不完整，无法运行！" 
 	jq_test="$(which jq)"
-	[ -z "$jq_test" ] && logger -t 【Alist】" "缺少依赖程序 jq ，请下载 https://opt.cn2qq.com/opt-file/jq 后上传到/etc/storage/bin/jq 再运行." && exit 1
+	[ -z "$jq_test" ] && logger -t "【Alist】" "缺少依赖程序 jq ，请下载 https://opt.cn2qq.com/opt-file/jq 后上传到/etc/storage/bin/jq 再运行." && exit 1
 	if [ -z "$db_file" ] ; then
 		db_file="/etc/storage/alist/data.db"
 		nvram set alist_db_file="$db_file"
