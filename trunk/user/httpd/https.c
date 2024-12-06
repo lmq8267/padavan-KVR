@@ -215,14 +215,14 @@ int ssl_server_init(char* ca_file, char *crt_file, char *key_file, char *dhp_fil
 	BIGNUM *p, *g;
 
 	if (!crt_file || !f_exists(crt_file)) {
-		httpd_log("%s: Server certificate (%s) is not found!", SYSLOG_ID_SSL, crt_file);
-		httpd_log("Please manual build the certificate via \"%s\" script.", "https-cert.sh");
+		httpd_log("%s: 服务器证书 (%s) 未找到!", SYSLOG_ID_SSL, crt_file);
+		httpd_log("请运行 \"%s\" 脚本手动构建证书.", "https-cert.sh");
 		return -1;
 	}
 
 	if (!key_file || !f_exists(key_file)) {
-		httpd_log("%s: Server private key (%s) is not found!", SYSLOG_ID_SSL, key_file);
-		httpd_log("Please manual build the certificate via \"%s\" script.", "https-cert.sh");
+		httpd_log("%s: 服务器私钥 (%s) 未找到!", SYSLOG_ID_SSL, key_file);
+		httpd_log("请运行 \"%s\" 脚本手动创建证书.", "https-cert.sh");
 		return -1;
 	}
 
@@ -231,7 +231,7 @@ int ssl_server_init(char* ca_file, char *crt_file, char *key_file, char *dhp_fil
 
 	ssl_ctx = SSL_CTX_new(SSLv23_server_method());
 	if (!ssl_ctx) {
-		httpd_log("%s: Unable to create SSL context!", SYSLOG_ID_SSL);
+		httpd_log("%s: 无法初始化 SSL !", SYSLOG_ID_SSL);
 		return -1;
 	}
 
@@ -243,7 +243,7 @@ int ssl_server_init(char* ca_file, char *crt_file, char *key_file, char *dhp_fil
 
 	if (ssl_cipher_list && strlen(ssl_cipher_list) > 2) {
 		if (SSL_CTX_set_cipher_list(ssl_ctx, ssl_cipher_list) != 1) {
-			httpd_log("%s: Cannot set SSL cipher list (%s)!", SYSLOG_ID_SSL, ssl_cipher_list);
+			httpd_log("%s: 无法设置 SSL 加密套件列表 (%s)!", SYSLOG_ID_SSL, ssl_cipher_list);
 		} else {
 			SSL_CTX_set_options(ssl_ctx, SSL_OP_CIPHER_SERVER_PREFERENCE);
 		}
@@ -251,24 +251,24 @@ int ssl_server_init(char* ca_file, char *crt_file, char *key_file, char *dhp_fil
 
 	if (ca_file && f_exists(ca_file)) {
 		if (SSL_CTX_load_verify_locations(ssl_ctx, ca_file, NULL) != 1) {
-			httpd_log("%s: Cannot load CA certificate (%s)!", SYSLOG_ID_SSL, ca_file);
+			httpd_log("%s: 无法加载 CA 证书 (%s)!", SYSLOG_ID_SSL, ca_file);
 		}
 	}
 
 	if (SSL_CTX_use_certificate_file(ssl_ctx, crt_file, SSL_FILETYPE_PEM) != 1) {
-		httpd_log("%s: Cannot load server certificate (%s)!", SYSLOG_ID_SSL, crt_file);
+		httpd_log("%s: 无法加载服务器证书 (%s)!", SYSLOG_ID_SSL, crt_file);
 		ssl_server_uninit();
 		return 1;
 	}
 
 	if (SSL_CTX_use_PrivateKey_file(ssl_ctx, key_file, SSL_FILETYPE_PEM) != 1) {
-		httpd_log("%s: Cannot load server private key (%s)!", SYSLOG_ID_SSL, key_file);
+		httpd_log("%s: 无法加载服务器私钥 (%s)!", SYSLOG_ID_SSL, key_file);
 		ssl_server_uninit();
 		return 1;
 	}
 
 	if (SSL_CTX_check_private_key(ssl_ctx) != 1) {
-		httpd_log("%s: Private key does not match the certificate!", SYSLOG_ID_SSL);
+		httpd_log("%s: 私钥与证书不匹配!", SYSLOG_ID_SSL);
 		ssl_server_uninit();
 		return 1;
 	}
@@ -284,7 +284,7 @@ int ssl_server_init(char* ca_file, char *crt_file, char *key_file, char *dhp_fil
 				SSL_CTX_set_options(ssl_ctx, SSL_OP_SINGLE_DH_USE);
 				DH_free(dh);
 			} else {
-				httpd_log("%s: Cannot load DH parameters (%s)!", SYSLOG_ID_SSL, dhp_file);
+				httpd_log("%s: 无法加载 DH 参数 (%s)!", SYSLOG_ID_SSL, dhp_file);
 			}
 		}
 	} else {
