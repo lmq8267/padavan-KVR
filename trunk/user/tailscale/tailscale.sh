@@ -198,6 +198,7 @@ start_ts() {
 		[ -z "$ts_key" ] || ts_key="$(echo $ts_key | tr -d ' ')"
 		[ -z "$ts_key" ] || CMD="${CMD} --auth-key=${ts_key}"
 		[ -z "$t2_CMD" ] || CMD="${CMD} ${t2_CMD}"
+  		[ "$ts_reset" = "1" ] && CMD="${CMD} --reset"
 		CMD="${tailscale} ${CMD}"
 	fi
 	if [ "$ts_enable" = "2" ] ; then
