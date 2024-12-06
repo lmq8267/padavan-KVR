@@ -54,7 +54,7 @@ check_header_bz2(const char *buf, long *file_len)
 	if (memcmp(buf, bz2h_1, 3) == 0 && memcmp(buf+4, bz2h_2, 6) == 0)
 		return 0;
 
-	httpd_log("%s: Incorrect %s header!", "Storage restore", "BZ2");
+	httpd_log("%s: 不正确的 %s 头部!", "Storage restore", "BZ2");
 
 	return -1;
 }
@@ -74,7 +74,7 @@ check_header_nvram(const char *buf, long *file_len)
 		return 0;
 	}
 
-	httpd_log("%s: Incorrect %s header!", "NVRAM restore", "profile");
+	httpd_log("%s: 不正确的 %s 头部!", "NVRAM restore", "profile");
 
 	return -1;
 }
@@ -88,7 +88,7 @@ check_header_image(const char *buf, long *file_len)
 
 	/* check header magic */
 	if (ntohl(hdr->ih_magic) != IH_MAGIC) {
-		httpd_log("%s: Incorrect %s header!", "Firmware update", "image");
+		httpd_log("%s: 不正确的 %s 头部!", "Firmware update", "image");
 		return -1;
 	}
 
@@ -100,7 +100,7 @@ check_header_image(const char *buf, long *file_len)
 	pid_asus[pid_asus_len] = 0;
 
 	if (strcmp(pid_asus, BOARD_PID) != 0) {
-		httpd_log("%s: Incorrect image ProductID: %s! Expected is %s.", "Firmware update", pid_asus, BOARD_PID);
+		httpd_log("%s: 镜像的产品ID不正确: %s! 预期的ID是 %s.", "Firmware update", pid_asus, BOARD_PID);
 		return -2;
 	}
 
@@ -138,14 +138,14 @@ check_crc_image(const char *fw_image)
 	if ((unsigned int)sbuf.st_size < (sizeof(image_header_t) + (2 * 1024 * 1024)) || 
 	    (unsigned int)sbuf.st_size > get_mtd_size(FW_MTD_NAME)) {
 		ret = -1;
-		httpd_log("%s: Firmware image size is invalid!", "Firmware update");
+		httpd_log("%s: 固件镜像大小无效!", "Firmware update");
 		goto checkcrc_fail;
 	}
 
 	ptr = (unsigned char *)mmap(0, sbuf.st_size, PROT_READ, MAP_SHARED, ifd, 0);
 	if (ptr == (unsigned char *)MAP_FAILED) {
 		ret = -1;
-		httpd_log("%s: Unable to mmap firmware image!", "Firmware update");
+		httpd_log("%s: 无法映射固件镜像!", "Firmware update");
 		goto checkcrc_fail;
 	}
 
@@ -157,21 +157,21 @@ check_crc_image(const char *fw_image)
 
 	if (checksum != ntohl(hdr->ih_hcrc)) {
 		ret = -1;
-		httpd_log("%s: Firmware image %s has invalid CRC!", "Firmware update", "header");
+		httpd_log("%s: 固件镜像 %s 的 CRC 校验无效!", "Firmware update", "header");
 		goto checkcrc_fail;
 	}
 
 	datalen = ntohl(hdr->ih_size);
 	if (datalen > ((unsigned int)sbuf.st_size - sizeof(image_header_t))) {
 		ret = -1;
-		httpd_log("%s: Firmware image is corrupted! Please check free space in /tmp!", "Firmware update");
+		httpd_log("%s: 固件镜像已损坏！请检查 /tmp 目录的剩余空间!", "Firmware update");
 		goto checkcrc_fail;
 	}
 
 	checksum = crc32_sp(0, (const char *)(ptr + sizeof(image_header_t)), datalen);
 	if (checksum != ntohl(hdr->ih_dcrc)) {
 		ret = -1;
-		httpd_log("%s: Firmware image %s has invalid CRC!", "Firmware update", "body");
+		httpd_log("%s: 固件镜像 %s 的 CRC 校验无效!", "Firmware update", "body");
 		goto checkcrc_fail;
 	}
 
