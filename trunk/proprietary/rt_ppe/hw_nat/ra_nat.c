@@ -65,7 +65,7 @@
 struct timer_list hwnat_clear_entry_timer;
 static void hwnat_clear_entry(unsigned long data)
 {
-	printk("HW_NAT work normally\n");
+	//printk("HW_NAT work normally\n");
 	RegModifyBits(PPE_FOE_CFG, FWD_CPU_BUILD_ENTRY, 4, 2);
 	//del_timer_sync(&hwnat_clear_entry_timer);
 
@@ -2752,7 +2752,7 @@ void foe_clear_entry(struct neighbour *neigh)
 				    (entry->ipv4_hnapt.dmac_hi[0] != mac3) ||
 				    (entry->ipv4_hnapt.dmac_lo[1] != mac4) ||
 				    (entry->ipv4_hnapt.dmac_lo[0] != mac5)) {
-				    	printk("%s: state=%d\n",__func__,neigh->nud_state);
+				    	//printk("%s: state=%d\n",__func__,neigh->nud_state);
 				    	RegModifyBits(PPE_FOE_CFG, ONLY_FWD_CPU, 4, 2);
 				    	
 				  	entry->ipv4_hnapt.udib1.state = INVALID;
@@ -2760,9 +2760,9 @@ void foe_clear_entry(struct neighbour *neigh)
 					PpeSetCacheEbl();
 					mod_timer(&hwnat_clear_entry_timer, jiffies + 3 * HZ);
 				
-					printk("delete old entry: dip =%x\n", ntohl(dip));
+					//printk("delete old entry: dip =%x\n", ntohl(dip));
 							
-				    	printk("old mac= %x:%x:%x:%x:%x:%x, dip=%x\n", 
+				    	//printk("old mac= %x:%x:%x:%x:%x:%x, dip=%x\n", 
 				    		entry->ipv4_hnapt.dmac_hi[3],
 				    		entry->ipv4_hnapt.dmac_hi[2],
 				    		entry->ipv4_hnapt.dmac_hi[1],
@@ -2770,7 +2770,7 @@ void foe_clear_entry(struct neighbour *neigh)
 				    		entry->ipv4_hnapt.dmac_lo[1],
 				    		entry->ipv4_hnapt.dmac_lo[0],
 				    		ntohl(dip));
-				    	printk("new mac= %x:%x:%x:%x:%x:%x, dip=%x\n", mac0, mac1, mac2, mac3, mac4, mac5, ntohl(dip));
+				    	//printk("new mac= %x:%x:%x:%x:%x:%x, dip=%x\n", mac0, mac1, mac2, mac3, mac4, mac5, ntohl(dip));
 
 				}
 			}
