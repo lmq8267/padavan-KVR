@@ -1,8 +1,8 @@
 #!/bin/sh
 
 if [ ! -x /usr/bin/openssl ] && [ ! -x /opt/bin/openssl ]; then
-  echo "Unable to find the 'openssl' executable!" >&2
-  echo "Please install 'openssl-util' package from Entware." >&2
+  echo "无法找到 'openssl' 可执行文件！" >&2
+  echo "请从 Entware 安装 'openssl-util' 软件包。" >&2
   exit 1
 fi
 
@@ -20,22 +20,22 @@ ECPARAM=ecparam.pem
 func_help() {
   local BOLD="echo -ne \\033[1m"
   local NORM="echo -ne \\033[0m"
-  echo "Create self-signed certificate for HTTP SSL server." >&2
+  echo "为 HTTP SSL 服务器创建自签名证书。" >&2
   echo >&2
-  echo "`$BOLD`Usage:`$NORM`" >&2
+  echo "`$BOLD`使用方法:`$NORM`" >&2
   echo "    $0 -n `$BOLD`common_name`$NORM` [ -b `$BOLD`rsa_bits/ec_name`$NORM` ] [ -d `$BOLD`days_valid`$NORM` ] [ -p {DH} ]" >&2
   echo >&2
-  echo "`$BOLD`Example:`$NORM`" >&2
+  echo "`$BOLD`例如:`$NORM`" >&2
   echo "    $0 -n myname.no-ip.com -b 2048 -d 30" >&2
   echo >&2
-  echo "`$BOLD`Defaults:`$NORM`"
+  echo "`$BOLD`默认值:`$NORM`"
   echo "    rsa_bits=`$BOLD`$RSA_BITS`$NORM`, days_valid=`$BOLD`$CERT_DAYS`$NORM`" >&2
   echo >&2
   exit 1
 }
 
 echo_done() {
-  echo -e " *\033[60G [ done ]"
+  echo -e " *\033[60G [ 完成 ]"
 }
 
 echo_process() {
@@ -59,13 +59,13 @@ create_cert() {
   [ -z "$CN" ] && func_help
   if ! is_cn_valid $CN ; then
      echo >&2
-     echo "Warning: $CN is not a valid host name." >&2
+     echo "警告: $CN 不是一个有效的主机名" >&2
      echo >&2
   fi
 
   [ -d $DSTDIR ] || mkdir -m 755 -p $DSTDIR
   if ! cd $DSTDIR ; then
-    echo "Error: can't cd to $DSTDIR" >&2
+    echo "错误: 无法切换到 $DSTDIR" >&2
     return 1
   fi
 
@@ -91,21 +91,21 @@ EOF
     C_PARAM="ec:$ECPARAM"
   fi
 
-  echo_process "Creating CA"
+  echo_process "创建 CA (Certificate Authority)证书颁发机构"
   openssl req -nodes -x509 -days $CA_DAYS -newkey $C_PARAM \
             -outform PEM -out ca.crt -keyout ca.key \
             $DGST_ALG -subj "/CN=HTTPS CA" &>/dev/null
   chmod 600 ca.key
   echo_done
 
-  echo_process "Creating certificate request"
+  echo_process "创建证书请求"
   openssl req -nodes -days $CERT_DAYS -newkey $C_PARAM \
             -outform PEM -out server.csr -keyout server.key \
             $DGST_ALG -subj "/CN=$CN" &>/dev/null
   chmod 600 server.key
   echo_done
 
-  echo_process "Signing request"
+  echo_process "签名请求"
   openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial \
                -clrext -out server.crt $DGST_ALG -extfile $SSL_EXT_FILE \
                -days $CERT_DAYS -extensions server &>/dev/null
@@ -113,7 +113,7 @@ EOF
   echo_done
 
   if [ $DH_GEN -eq 1 ] ; then
-    echo_process "Creating DH Parameters (may take long time, be patient)"
+    echo_process "创建 DH 参数（可能需要很长时间，请耐心等待）"
     openssl dhparam -out dh1024.pem $DH_BITS &>/dev/null
     echo_done
   fi
