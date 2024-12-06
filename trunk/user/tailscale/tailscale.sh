@@ -188,7 +188,7 @@ start_ts() {
 		[ -z "$ts_routes" ] || CMD="${CMD} --advertise-routes=${ts_routes}"
 		[ "$ts_exit" = "1" ] && CMD="${CMD} --advertise-exit-node"
 		[ -z "$ts_exitip" ] || ts_exitip="$(echo $ts_exitip | tr -d ' ')"
-		[ -z "$ts_exitip" ] || CMD="${CMD} --exit-node=${ts_exitip}"
+		[ -z "$ts_exitip" ] || CMD="${CMD} --exit-node=${ts_exitip} --exit-node-allow-lan-access"
 		[ -z "$ts_server" ] || ts_server="$(echo $ts_server | tr -d ' ')"
 		[ -z "$ts_server" ] || CMD="${CMD} --login-server=${ts_server}"
 		[ "$ts_ssh" = "1" ] && CMD="${CMD} --ssh"
