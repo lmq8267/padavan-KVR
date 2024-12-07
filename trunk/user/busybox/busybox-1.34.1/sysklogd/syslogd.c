@@ -825,6 +825,7 @@ static void timestamp_and_log(int pri, char *msg, int len)
 {
 	char *timestamp = NULL;
 	time_t now;
+	struct tm *tm_info;
 
 	/* Jan 18 00:11:22 msg... */
 	/* 01234567890123456 */
@@ -844,16 +845,44 @@ static void timestamp_and_log(int pri, char *msg, int len)
 		struct timeval tv;
 		xgettimeofday(&tv);
 		now = tv.tv_sec;
-		timestamp = ctime(&now) + 4; /* skip day of week */
-		/* overwrite year by milliseconds, zero terminate */
-		sprintf(timestamp + 15, ".%03u", (unsigned)tv.tv_usec / 1000u);
+		tm_info = localtime(&now); 
+
+		char month[4], day[4];
+		const char *month_names[] = {"1月", "2月", "3月", "4月", "5月", "6月", 
+                                      "7月", "8月", "9月", "10月", "11月", "12月"};
+		const char *day_names[] = {"1日", "2日", "3日", "4日", "5日", "6日", "7日", "8日", "9日", 
+                                   "10日", "11日", "12日", "13日", "14日", "15日", "16日", "17日", 
+                                   "18日", "19日", "20日", "21日", "22日", "23日", "24日", "25日", 
+                                   "26日", "27日", "28日", "29日", "30日", "31日"};
+
+		sprintf(month, "%s", month_names[tm_info->tm_mon]);
+		sprintf(day, "%s", day_names[tm_info->tm_mday - 1]);
+
+		sprintf(G.printbuf, "%s %s %02d:%02d:%02d", month, day, tm_info->tm_hour, tm_info->tm_min, tm_info->tm_sec);
+
+		sprintf(G.printbuf + strlen(G.printbuf), ".%03u", (unsigned)tv.tv_usec / 1000u);
+		timestamp = G.printbuf;
 	} else {
 		timestamp[15] = '\0';
 	}
 #else
 	if (!timestamp) {
 		time(&now);
-		timestamp = ctime(&now) + 4; /* skip day of week */
+		tm_info = localtime(&now);
+		char month[4], day[4];
+		
+		const char *month_names[] = {"1月", "2月", "3月", "4月", "5月", "6月", 
+                                      "7月", "8月", "9月", "10月", "11月", "12月"};
+		const char *day_names[] = {"1日", "2日", "3日", "4日", "5日", "6日", "7日", "8日", "9日", 
+                                   "10日", "11日", "12日", "13日", "14日", "15日", "16日", "17日", 
+                                   "18日", "19日", "20日", "21日", "22日", "23日", "24日", "25日", 
+                                   "26日", "27日", "28日", "29日", "30日", "31日"};
+
+		sprintf(month, "%s", month_names[tm_info->tm_mon]);
+		sprintf(day, "%s", day_names[tm_info->tm_mday - 1]);
+
+		sprintf(G.printbuf, "%s %s %02d:%02d:%02d", month, day, tm_info->tm_hour, tm_info->tm_min, tm_info->tm_sec);
+		timestamp = G.printbuf;
 	}
 	timestamp[15] = '\0';
 #endif
