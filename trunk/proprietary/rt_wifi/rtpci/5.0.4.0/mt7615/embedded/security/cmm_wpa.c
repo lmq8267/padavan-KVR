@@ -4872,8 +4872,8 @@ VOID PeerPairMsg2Action(
 		return;
 	/* Prevent the Replayed Msg2 Attack */
 	if (pHandshake4Way->WpaState == AS_PTKINITDONE) {
-		MTWF_LOG(DBG_CAT_SEC, DBG_SUBCAT_ALL, DBG_LVL_ERROR,
-			("%s: reject the Replayed Msg2\n", __func__));
+		//MTWF_LOG(DBG_CAT_SEC, DBG_SUBCAT_ALL, DBG_LVL_ERROR,
+			//("%s: reject the Replayed Msg2\n", __func__));
 		return;
 	}
 
@@ -5138,8 +5138,8 @@ VOID PeerPairMsg4Action(
 
 	/* Prevent the Replayed Msg4 Attack */
 	if (pHandshake4Way->WpaState == AS_PTKINITDONE) {
-		MTWF_LOG(DBG_CAT_SEC, DBG_SUBCAT_ALL, DBG_LVL_ERROR,
-		("%s: reject the Replayed Msg4\n", __func__));
+		//MTWF_LOG(DBG_CAT_SEC, DBG_SUBCAT_ALL, DBG_LVL_ERROR,
+		//("%s: reject the Replayed Msg4\n", __func__));
 		return;
 	}
 
