@@ -395,9 +395,14 @@ auth_maxtries_exceeded(struct ssh *ssh)
 		perror("popen");
 		return;
 	}
-	fgets(buffer, sizeof(buffer) - 1, fp);
-	int wxsend_enable = atoi(buffer); 
-	fclose(fp);
+	if (fgets(buffer, sizeof(buffer) - 1, fp) == NULL) {
+        	perror("fgets");
+        	fclose(fp);
+        	return;
+    	}
+   	buffer[strcspn(buffer, "\n")] = '\0';
+    	int wxsend_enable = atoi(buffer);
+    	fclose(fp);
 
 	if (wxsend_enable == 1) {
 		char title[128] = "SSH登录";
@@ -416,9 +421,13 @@ auth_maxtries_exceeded(struct ssh *ssh)
 			perror("popen");
 			return;
 		}
-		fgets(buffer, sizeof(buffer) - 1, fp);
-		int wxsend_login = atoi(buffer); 
-		fclose(fp);
+		if (fgets(buffer, sizeof(buffer) - 1, fp) == NULL) {
+            		perror("fgets");
+            		fclose(fp);
+            		return;
+        	}
+        	int wxsend_login = atoi(buffer);
+        	fclose(fp);;
 
 		if (wxsend_login == 2 || wxsend_login == 3) {
 			char command[512];
