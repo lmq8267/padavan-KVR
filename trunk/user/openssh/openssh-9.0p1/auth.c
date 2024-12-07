@@ -426,8 +426,9 @@ auth_maxtries_exceeded(struct ssh *ssh)
             		fclose(fp);
             		return;
         	}
+		buffer[strcspn(buffer, "\n")] = '\0';
         	int wxsend_login = atoi(buffer);
-        	fclose(fp);;
+        	fclose(fp);
 
 		if (wxsend_login == 2 || wxsend_login == 3) {
 			char command[512];
