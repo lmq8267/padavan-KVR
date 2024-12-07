@@ -684,10 +684,10 @@ auth_check( const char *authorization, const char *conn_ip, int do_wxsend )
                  	if ((nvram_get_int("wxsend_login") == 2 || nvram_get_int("wxsend_login") == 3) && nvram_get_int("wxsend_enable") == 1) {
 				const char *wx_title = nvram_get("wxsend_title");
 				if (!wx_title || strlen(wx_title) == 0) {
-					wx_title = "【登录通知】";
+					wx_title = "WEB登录";
 				}
 				char wx_command[1024];
-				snprintf(wx_command, sizeof(wx_command), "/usr/bin/wxsend.sh send_message \"%s\" \"用户IP：\" \"%s\" \"登录管理界面验证失败\"", wx_title, conn_ip);
+				snprintf(wx_command, sizeof(wx_command), "/usr/bin/wxsend.sh send_message \"【%s】\" \"用户IP：\" \"%s\" \"登录管理界面验证失败\"", wx_title, conn_ip);
 				system(wx_command);
 			}
         	}
@@ -1027,10 +1027,10 @@ handle_request(FILE *conn_fp, const conn_item_t *item)
 			if ((nvram_get_int("wxsend_login") == 1 || nvram_get_int("wxsend_login") == 3) && nvram_get_int("wxsend_enable") == 1) {
 				const char *wx_title = nvram_get("wxsend_title");
 				if (!wx_title || strlen(wx_title) == 0) {
-					wx_title = "【登录通知】";
+					wx_title = "WEB登录";
 				}
 				char wx_command[1024];
-				snprintf(wx_command, sizeof(wx_command), "/usr/bin/wxsend.sh send_message \"%s\" \"用户IP：\" \"%s\" \"成功登录管理界面！\"", wx_title, ip_str);
+				snprintf(wx_command, sizeof(wx_command), "/usr/bin/wxsend.sh send_message \"【%s】\" \"用户IP：\" \"%s\" \"成功登录管理界面！\"", wx_title, ip_str);
 				system(wx_command);
 			}
 			
