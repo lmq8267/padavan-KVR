@@ -288,7 +288,7 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 	else if (partial)
 		authmsg = "Partial";
 	else
-		authmsg = authenticated ? "Accepted" : "Failed";
+		authmsg = authenticated ? "认证通过" : "认证失败";
 
 	if ((extra = format_method_key(authctxt)) == NULL) {
 		if (authctxt->auth_method_info != NULL)
@@ -299,12 +299,45 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 	    authmsg,
 	    method,
 	    submethod != NULL ? "/" : "", submethod == NULL ? "" : submethod,
-	    authctxt->valid ? "" : "invalid user ",
+	    authctxt->valid ? "" : "无效用户 ",
 	    authctxt->user,
 	    ssh_remote_ipaddr(ssh),
 	    ssh_remote_port(ssh),
 	    extra != NULL ? ": " : "",
 	    extra != NULL ? extra : "");
+
+	if (authenticated == 1) {
+		char buffer[128];
+		FILE *fp;
+
+		fp = popen("nvram get wxsend_enable", "r");
+		if (fp == NULL) {
+			perror("popen");
+			free(extra);
+			return;
+		}
+		fgets(buffer, sizeof(buffer) - 1, fp);
+		int wxsend_enable = atoi(buffer); 
+		fclose(fp);
+
+		if (wxsend_enable == 1) {
+			fp = popen("nvram get wxsend_login", "r");
+			if (fp == NULL) {
+				perror("popen");
+				free(extra);
+				return;
+			}
+			fgets(buffer, sizeof(buffer) - 1, fp);
+			int wxsend_login = atoi(buffer); 
+			fclose(fp);
+
+			if (wxsend_login == 1 || wxsend_login == 3) {
+				char command[512];
+				snprintf(command, sizeof(command), "/usr/bin/wxsend.sh send_message \"【SSH登录】\" \"%s\" \"成功登录！\"", ssh_remote_ipaddr(ssh));
+				system(command);
+			}
+		}
+	}
 
 	free(extra);
 
@@ -336,13 +369,42 @@ auth_maxtries_exceeded(struct ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 
-	error("maximum authentication attempts exceeded for "
+	error("超过最大认证尝试次数 for "
 	    "%s%.100s from %.200s port %d ssh2",
-	    authctxt->valid ? "" : "invalid user ",
+	    authctxt->valid ? "" : "无效用户 ",
 	    authctxt->user,
 	    ssh_remote_ipaddr(ssh),
 	    ssh_remote_port(ssh));
-	ssh_packet_disconnect(ssh, "Too many authentication failures");
+	ssh_packet_disconnect(ssh, "认证失败次数过多");
+	
+	char buffer[128];
+	FILE *fp;
+
+	fp = popen("nvram get wxsend_enable", "r");
+	if (fp == NULL) {
+		perror("popen");
+		return;
+	}
+	fgets(buffer, sizeof(buffer) - 1, fp);
+	int wxsend_enable = atoi(buffer); 
+	fclose(fp);
+
+	if (wxsend_enable == 1) {
+		fp = popen("nvram get wxsend_login", "r");
+		if (fp == NULL) {
+			perror("popen");
+			return;
+		}
+		fgets(buffer, sizeof(buffer) - 1, fp);
+		int wxsend_login = atoi(buffer); 
+		fclose(fp);
+
+		if (wxsend_login == 2 || wxsend_login == 3) {
+			char command[512];
+			snprintf(command, sizeof(command), "/usr/bin/wxsend.sh send_message \"【SSH登录】\" \"%s\" \"验证失败，失败次数过多！\"", ssh_remote_ipaddr(ssh));
+			system(command);
+		}
+	}
 	/* NOTREACHED */
 }
 
