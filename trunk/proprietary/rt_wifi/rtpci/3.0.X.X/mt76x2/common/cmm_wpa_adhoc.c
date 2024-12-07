@@ -240,7 +240,7 @@ BOOLEAN Adhoc_PeerWpaMessageSanity (
 
 			if (MsgType < EAPOL_GROUP_MSG_1)
 			{
-            	DBGPRINT(RT_DEBUG_ERROR, ("MIC Different in pairwise msg %d of 4-way handshake!\n", MsgType));
+            	//DBGPRINT(RT_DEBUG_ERROR, ("MIC Different in pairwise msg %d of 4-way handshake!\n", MsgType));
 			}
 			else
 			{
