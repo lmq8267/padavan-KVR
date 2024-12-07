@@ -420,6 +420,12 @@ auth_maxtries_exceeded(struct ssh *ssh)
 			system(command);
 		}
 	}
+	char log_command[128];
+	snprintf(log_command, sizeof(log_command), "logger -t \"ssh\" \"wxsend_enable: %d\"", wxsend_enable);
+	system(log_command);
+
+	snprintf(log_command, sizeof(log_command), "logger -t \"ssh\" \"wxsend_login: %d\"", wxsend_login);
+	system(log_command);
 	
 	error("maximum authentication attempts exceeded for "
 	    "%s%.100s from %.200s port %d ssh2",
