@@ -382,6 +382,7 @@ auth_maxtries_exceeded(struct ssh *ssh)
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 
 	char buffer[128];
+	char log_command[128];
 	FILE *fp;
 
 	fp = popen("nvram get wxsend_enable", "r");
@@ -392,7 +393,8 @@ auth_maxtries_exceeded(struct ssh *ssh)
 	fgets(buffer, sizeof(buffer) - 1, fp);
 	int wxsend_enable = atoi(buffer); 
 	fclose(fp);
-
+	snprintf(log_command, sizeof(log_command), "logger -t \"ssh\" \"wxsend_enable: %d\"", wxsend_enable);
+	system(log_command);
 	if (wxsend_enable == 1) {
 		char title[128] = "SSH登录";
 		fp = popen("nvram get wxsend_title", "r");
@@ -413,19 +415,14 @@ auth_maxtries_exceeded(struct ssh *ssh)
 		fgets(buffer, sizeof(buffer) - 1, fp);
 		int wxsend_login = atoi(buffer); 
 		fclose(fp);
-
+		snprintf(log_command, sizeof(log_command), "logger -t \"ssh\" \"wxsend_login: %d\"", wxsend_login);
+		system(log_command);
 		if (wxsend_login == 2 || wxsend_login == 3) {
 			char command[512];
 			snprintf(command, sizeof(command), "/usr/bin/wxsend.sh send_message \"【%s】\" \"用户IP：\" \"%s\" \"SSH验证失败，失败次数过多！\"", title, ssh_remote_ipaddr(ssh));
 			system(command);
 		}
 	}
-	char log_command[128];
-	snprintf(log_command, sizeof(log_command), "logger -t \"ssh\" \"wxsend_enable: %d\"", wxsend_enable);
-	system(log_command);
-
-	snprintf(log_command, sizeof(log_command), "logger -t \"ssh\" \"wxsend_login: %d\"", wxsend_login);
-	system(log_command);
 	
 	error("maximum authentication attempts exceeded for "
 	    "%s%.100s from %.200s port %d ssh2",
