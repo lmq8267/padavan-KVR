@@ -610,7 +610,7 @@ getpwnamallow(struct ssh *ssh, const char *user)
 	aix_restoreauthdb();
 #endif
 	if (pw == NULL) {
-		logit("Invalid user %.100s from %.100s port %d",
+		logit("无效用户 %.100s from %.100s port %d",
 		    user, ssh_remote_ipaddr(ssh), ssh_remote_port(ssh));
 #ifdef CUSTOM_FAILED_LOGIN
 		record_failed_login(ssh, user,
