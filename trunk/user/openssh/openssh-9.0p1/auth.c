@@ -288,7 +288,7 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 	else if (partial)
 		authmsg = "Partial";
 	else
-		authmsg = authenticated ? "认证通过" : "认证失败";
+		authmsg = authenticated ? "Accepted" : "Failed";
 
 	if ((extra = format_method_key(authctxt)) == NULL) {
 		if (authctxt->auth_method_info != NULL)
@@ -299,7 +299,7 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 	    authmsg,
 	    method,
 	    submethod != NULL ? "/" : "", submethod == NULL ? "" : submethod,
-	    authctxt->valid ? "" : "无效用户 ",
+	    authctxt->valid ? "" : "invalid user ",
 	    authctxt->user,
 	    ssh_remote_ipaddr(ssh),
 	    ssh_remote_port(ssh),
@@ -324,9 +324,10 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 		if (wxsend_enable == 1) {
 			char title[128] = "SSH登录";
 			fp = popen("nvram get wxsend_title", "r");
-				if (fp != NULL) {
-					fgets(buffer, sizeof(buffer) - 1, fp);
-					if (buffer[0] != '\0') {
+			if (fp != NULL) {
+				fgets(buffer, sizeof(buffer) - 1, fp);
+				if (buffer[0] != '\0') {
+					buffer[strcspn(buffer, "\n")] = '\0';
 					strncpy(title, buffer, sizeof(title) - 1); 
 					title[sizeof(title) - 1] = '\0'; 
 				}
@@ -380,14 +381,12 @@ auth_maxtries_exceeded(struct ssh *ssh)
 {
 	Authctxt *authctxt = (Authctxt *)ssh->authctxt;
 
-	error("超过最大认证尝试次数 for "
+	error("maximum authentication attempts exceeded for "
 	    "%s%.100s from %.200s port %d ssh2",
-	    authctxt->valid ? "" : "无效用户 ",
+	    authctxt->valid ? "" : "invalid user ",
 	    authctxt->user,
 	    ssh_remote_ipaddr(ssh),
 	    ssh_remote_port(ssh));
-	ssh_packet_disconnect(ssh, "认证失败次数过多");
-	
 	char buffer[128];
 	FILE *fp;
 
@@ -406,6 +405,7 @@ auth_maxtries_exceeded(struct ssh *ssh)
 		if (fp != NULL) {
 			fgets(buffer, sizeof(buffer) - 1, fp);
 			if (buffer[0] != '\0') {
+				buffer[strcspn(buffer, "\n")] = '\0';
 				strncpy(title, buffer, sizeof(title) - 1); 
 				title[sizeof(title) - 1] = '\0'; 
 			}
@@ -426,6 +426,8 @@ auth_maxtries_exceeded(struct ssh *ssh)
 			system(command);
 		}
 	}
+	
+	ssh_packet_disconnect(ssh, "Too many authentication failures");
 	/* NOTREACHED */
 }
 
