@@ -101,7 +101,7 @@ rules() {
 		iptables -t nat -I POSTROUTING -s $ip_segment -j MASQUERADE
 		zero_route "add"
 	fi
-	logger -t "【zerotier】" "zerotier-one ${zt_ver}启动成功! zerotier接口: $zt0 "
+	logger -t "【zerotier】" "zerotier-one ${zt_ver}启动成功! "
  	count=0
         while [ $count -lt 5 ]
         do
@@ -127,7 +127,7 @@ rules() {
 del_rules() {
 	zt0=$(ifconfig | grep zt | awk '{print $1}')
 	ip_segment=$(ip route | grep -E "dev\s+$zt0\s+proto\s+kernel"| awk '{print $1}')
-	logger -t "【zerotier】" "删除${zt0}防火墙规则中..."
+	#logger -t "【zerotier】" "删除${zt0}防火墙规则中..."
 	iptables -D INPUT -i $zt0 -j ACCEPT 2>/dev/null
 	iptables -D FORWARD -i $zt0 -o $zt0 -j ACCEPT 2>/dev/null
 	iptables -D FORWARD -i $zt0 -j ACCEPT 2>/dev/null
