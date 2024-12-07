@@ -2763,13 +2763,13 @@ void foe_clear_entry(struct neighbour *neigh)
 					//printk("delete old entry: dip =%x\n", ntohl(dip));
 							
 				    	//printk("old mac= %x:%x:%x:%x:%x:%x, dip=%x\n", 
-				    		entry->ipv4_hnapt.dmac_hi[3],
-				    		entry->ipv4_hnapt.dmac_hi[2],
-				    		entry->ipv4_hnapt.dmac_hi[1],
-				    		entry->ipv4_hnapt.dmac_hi[0],
-				    		entry->ipv4_hnapt.dmac_lo[1],
-				    		entry->ipv4_hnapt.dmac_lo[0],
-				    		ntohl(dip));
+				    		//entry->ipv4_hnapt.dmac_hi[3],
+				    		//entry->ipv4_hnapt.dmac_hi[2],
+				    		//entry->ipv4_hnapt.dmac_hi[1],
+				    		//entry->ipv4_hnapt.dmac_hi[0],
+				    		//entry->ipv4_hnapt.dmac_lo[1],
+				    		//entry->ipv4_hnapt.dmac_lo[0],
+				    		//ntohl(dip));
 				    	//printk("new mac= %x:%x:%x:%x:%x:%x, dip=%x\n", mac0, mac1, mac2, mac3, mac4, mac5, ntohl(dip));
 
 				}
