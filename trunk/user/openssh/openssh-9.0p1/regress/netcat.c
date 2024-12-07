@@ -1494,7 +1494,7 @@ socks_connect(const char *host, const char *port,
 
  again:
 	if (authretry++ > 3)
-		errx(1, "认证失败次数过多!");
+		errx(1, "Too many authentication failures!");
 
 	proxyfd = remote_connect(proxyhost, proxyport, proxyhints);
 
