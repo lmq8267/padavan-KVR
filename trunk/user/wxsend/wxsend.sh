@@ -367,7 +367,7 @@ fi
 
 case $1 in
 send_message)
-	send_message " " "$2" "$3" "$4" "$5" "$6" "$7" "$8"
+	send_message " " "$2" "$3" "$4" "$5" "$6" "$7" "$8" &
 	;;
 start)
 	wxsend_start
