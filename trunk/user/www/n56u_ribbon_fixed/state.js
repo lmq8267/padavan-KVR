@@ -1546,14 +1546,19 @@ function showClockLogArea(){
         JS_timeObj.setTime(systime_millsec);
         systime_millsec += 1000;
 
-        JS_timeObj2 = JS_timeObj.toString();
-        JS_timeObj2 = JS_timeObj2.substring(0,3) + ", " +
-        JS_timeObj2.substring(4,10) + "  " +
-        checkTime(JS_timeObj.getHours()) + ":" +
-        checkTime(JS_timeObj.getMinutes()) + ":" +
-        checkTime(JS_timeObj.getSeconds()) + "  " +
-        JS_timeObj.getFullYear() + " GMT" + timezone;
+        let year = JS_timeObj.getFullYear();
+        let month = checkTime(JS_timeObj.getMonth() + 1);
+        let date = checkTime(JS_timeObj.getDate());
+        let hours = checkTime(JS_timeObj.getHours());
+        let minutes = checkTime(JS_timeObj.getMinutes());
+        let seconds = checkTime(JS_timeObj.getSeconds());
+	const days = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+	let day = days[JS_timeObj.getDay()];
+	let timezoneInfo = `GMT${timezone}`;
+	    
+        JS_timeObj2 = `${year}年 ${month}月 ${date}日 ${day}  ${hours}:${minutes}:${seconds}  ${timezoneInfo}`;
     }
+	
     jQuery("#system_time_log_area").html(JS_timeObj2);
     setTimeout("showClockLogArea()", 1000);
 }
