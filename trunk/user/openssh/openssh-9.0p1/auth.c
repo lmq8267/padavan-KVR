@@ -308,6 +308,7 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 
 	if (authenticated == 1) {
 		char buffer[128];
+		
 		FILE *fp;
 
 		fp = popen("nvram get wxsend_enable", "r");
@@ -321,6 +322,16 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 		fclose(fp);
 
 		if (wxsend_enable == 1) {
+			char title[128] = "SSH登录";
+			fp = popen("nvram get wxsend_title", "r");
+				if (fp != NULL) {
+					fgets(buffer, sizeof(buffer) - 1, fp);
+					if (buffer[0] != '\0') {
+					strncpy(title, buffer, sizeof(title) - 1); 
+					title[sizeof(title) - 1] = '\0'; 
+				}
+				fclose(fp);
+			}
 			fp = popen("nvram get wxsend_login", "r");
 			if (fp == NULL) {
 				perror("popen");
@@ -333,7 +344,7 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 
 			if (wxsend_login == 1 || wxsend_login == 3) {
 				char command[512];
-				snprintf(command, sizeof(command), "/usr/bin/wxsend.sh send_message \"【SSH登录】\" \"%s\" \"成功登录！\"", ssh_remote_ipaddr(ssh));
+				snprintf(command, sizeof(command), "/usr/bin/wxsend.sh send_message \"【%s】\" \"用户IP：\" \"%s\" \"SSH登录验证成功！\"", title, ssh_remote_ipaddr(ssh));
 				system(command);
 			}
 		}
@@ -390,6 +401,16 @@ auth_maxtries_exceeded(struct ssh *ssh)
 	fclose(fp);
 
 	if (wxsend_enable == 1) {
+		char title[128] = "SSH登录";
+		fp = popen("nvram get wxsend_title", "r");
+		if (fp != NULL) {
+			fgets(buffer, sizeof(buffer) - 1, fp);
+			if (buffer[0] != '\0') {
+				strncpy(title, buffer, sizeof(title) - 1); 
+				title[sizeof(title) - 1] = '\0'; 
+			}
+			fclose(fp);
+		}
 		fp = popen("nvram get wxsend_login", "r");
 		if (fp == NULL) {
 			perror("popen");
@@ -401,7 +422,7 @@ auth_maxtries_exceeded(struct ssh *ssh)
 
 		if (wxsend_login == 2 || wxsend_login == 3) {
 			char command[512];
-			snprintf(command, sizeof(command), "/usr/bin/wxsend.sh send_message \"【SSH登录】\" \"%s\" \"验证失败，失败次数过多！\"", ssh_remote_ipaddr(ssh));
+			snprintf(command, sizeof(command), "/usr/bin/wxsend.sh send_message \"【%s】\" \"用户IP：\" \"%s\" \"SSH验证失败，失败次数过多！\"", title, ssh_remote_ipaddr(ssh));
 			system(command);
 		}
 	}
