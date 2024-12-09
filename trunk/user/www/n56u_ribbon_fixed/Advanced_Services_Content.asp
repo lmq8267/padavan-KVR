@@ -511,11 +511,11 @@ function on_ttyd_link(){
 
                                     <table width="100%" id="tbl_ttyd" cellpadding="4" cellspacing="0" class="table" style="display:none;">
                                         <tr>
-                                            <th colspan="2" style="background-color: rgba ( 171 , 168 , 167 , 0.2 );"><#Adm_Svc_ttyd_setup#></th>
+                                            <th colspan="3" style="background-color: rgba ( 171 , 168 , 167 , 0.2 );"><#Adm_Svc_ttyd_setup#></th>
                                         </tr>
                                         <tr id="div_ttyd">
                                             <th width="50%"><#Adm_Svc_ttyd_enable#></th>
-                                            <td colspan="2">
+                                            <td colspan="3">
                                                 <div class="main_itoggle">
                                                     <div id="ttyd_enable_on_of">
                                                         <input type="checkbox" id="ttyd_enable_fake" <% nvram_match_x("", "ttyd_enable", "1", "value=1 checked"); %><% nvram_match_x("", "ttyd_enable", "0", "value=0"); %>>
@@ -531,10 +531,8 @@ function on_ttyd_link(){
                                             <td>
                                                 <input type="text" maxlength="6" class="input" size="15" name="ttyd_port" style="width: 145px" value="<% nvram_get_x("","ttyd_port"); %>" />
                                             </td>
-                                        </tr>
-                                        <tr id="ttyd_webui">
-                                            <td>
-                                                <a href="javascript:on_ttyd_link();" id="web_ttyd_link">ttyd Web Shell</a>
+					    <td id="ttyd_webui">
+                                                <input class="btn btn-success" style="" type="button" value="打开TTYD" onclick="on_ttyd_link()" />
                                             </td>
                                         </tr>
                                     </table>
