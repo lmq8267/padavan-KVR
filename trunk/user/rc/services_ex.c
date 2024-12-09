@@ -626,7 +626,8 @@ void
 start_wins(void)
 {
 	FILE *fp;
-
+	char *samba_options;
+	
 	if (nvram_match("wins_enable", "0"))
 		return;
 
@@ -635,8 +636,13 @@ start_wins(void)
 	fp = write_smb_conf_header();
 	if (fp)
 		fclose(fp);
-
-	eval("/sbin/nmbd", "-D", "-s", "/etc/smb.conf");
+	
+	samba_options = nvram_safe_get("st_samba_options");
+	if (strlen(samba_options) > 0) {
+        	eval("/sbin/nmbd", samba_options);
+	} else {
+        	eval("/sbin/nmbd", "-D", "-s", "/etc/smb.conf");
+	}
 }
 
 void
@@ -653,7 +659,13 @@ restart_nmbd(void)
 #if defined(APP_SMBD)
 	if (pids("smbd")) {
 		write_smb_conf();
-		eval("/sbin/nmbd", "-D", "-s", "/etc/smb.conf");
+		char *samba_options;
+        	samba_options = nvram_safe_get("st_samba_options");
+		if (strlen(samba_options) > 0) {
+			eval("/sbin/nmbd", samba_options);
+        	} else {
+            		eval("/sbin/nmbd", "-D", "-s", "/etc/smb.conf");
+        	}
 		doSystem("killall %s %s", "-SIGHUP", "smbd");
 	} else
 #endif
