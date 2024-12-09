@@ -1369,6 +1369,8 @@
 	struct variable variables_LUCKY[] = {
 			{"lucky_enable", "", NULL, EVM_RESTART_LUCKY},
 			{"lucky_cmd", "", NULL, EVM_RESTART_LUCKY},
+			{"lucky_bin", "", NULL, EVM_RESTART_LUCKY},
+			{"lucky_daji", "", NULL, EVM_RESTART_LUCKY},
 			{"scripts.lucky.conf", "File", NULL, EVM_RESTART_LUCKY},
 			{0,0,0,0}
 	};
