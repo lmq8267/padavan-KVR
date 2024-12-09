@@ -176,8 +176,7 @@ function submitInternet(v){
                                     <div class="alert alert-info" style="margin: 10px;">
                                         <#FW_desc1#>
                                         <ol>
-                                            <li><#FW_desc2#></li>
-                                            <li><#FW_desc3#></li>
+                                            <li>下载当前固件作者发布的最新版本的固件，不同作者的固件请在 breed 里升级刷机！</li>
                                             <li><#FW_desc4#></li>
                                             <li><#FW_desc5#></li>
                                             <li><#FW_desc6#></li>
@@ -212,7 +211,9 @@ function submitInternet(v){
                                         <strong><#FW_note#></strong>
                                         <ol>
                                             <li><#FW_n1#></li>
-                                            <li><#FW_n2#></li>
+                                            <li>在 breed 里刷机也不会清空原有的配置，升级不同作者的固件，请进行双清！</li>
+                                            <li>当前页面仅针对同一个作者的固件进行升级，请勿上传其他固件，以免造成砖机！</li>
+                                            <li>更换不同作者的固件强烈建议在 breed 里进行刷机！</li>
                                         </ol>
                                     </div>
 
