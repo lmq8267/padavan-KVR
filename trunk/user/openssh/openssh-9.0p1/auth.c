@@ -333,17 +333,17 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 				}
 				fclose(fp);
 			}
-			fp = popen("nvram get wxsend_login", "r");
+			fp = popen("nvram get wxsend_ssh", "r");
 			if (fp == NULL) {
 				perror("popen");
 				free(extra);
 				return;
 			}
 			fgets(buffer, sizeof(buffer) - 1, fp);
-			int wxsend_login = atoi(buffer); 
+			int wxsend_ssh = atoi(buffer); 
 			fclose(fp);
 
-			if (wxsend_login == 1 || wxsend_login == 3) {
+			if (wxsend_ssh == 1 || wxsend_ssh == 3) {
 				char command[512];
 				snprintf(command, sizeof(command), "/usr/bin/wxsend.sh send_message \"【%s】\" \"用户IP：\" \"%s\" \"SSH登录验证成功！\"", title, ssh_remote_ipaddr(ssh));
 				system(command);
@@ -377,7 +377,7 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 				}
 				fclose(fp);
 			}
-			fp = popen("nvram get wxsend_login", "r");
+			fp = popen("nvram get wxsend_ssh", "r");
 			if (fp == NULL) {
 				perror("popen");
 				free(extra);
@@ -387,7 +387,7 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 			int wxsend_login = atoi(buffer); 
 			fclose(fp);
 
-			if (wxsend_login == 2 || wxsend_login == 3) {
+			if (wxsend_ssh == 2 || wxsend_ssh == 3) {
 				char command[512];
 				snprintf(command, sizeof(command), "/usr/bin/wxsend.sh send_message \"【%s】\" \"用户IP：\" \"%s\" \"SSH登录验证失败！\"", title, ssh_remote_ipaddr(ssh));
 				system(command);
