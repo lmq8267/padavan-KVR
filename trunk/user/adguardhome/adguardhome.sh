@@ -68,7 +68,7 @@ auth_pass: admin
 language: zh-cn
 dns:
   bind_host: 0.0.0.0
-  port: 5353
+  port: 5335
   ratelimit: 0
   upstream_dns:
   - tcp://1.0.0.1
