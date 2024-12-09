@@ -256,6 +256,7 @@ function change_smb_enabled(){
 	showhide_div('row_smb_mode', v);
 	showhide_div('row_smb_lmb', v);
 	showhide_div('row_smb_fp', v);
+	showhide_div('row_smb_options', v);
 }
 
 function on_change_ftp_mode(enable){
@@ -533,6 +534,13 @@ function done_validating(action){
                                                 </select>
                                             </td>
                                         </tr>
+		<tr id="row_smb_options">
+                      <th>samba 启动选项(options):
+                      </th>
+                      <td>
+                      <input type="text" maxlength="255" size="32" name="st_samba_options" class="input" placeholder="-D -s /etc/smb.conf" value="<% nvram_get_x("", "st_samba_options"); %>" onKeyPress="return is_string(this,event);"/>
+                      </td>
+                   </tr>
                                     </table>
 
                                     <table id="tbl_ftpd" width="100%" cellpadding="4" cellspacing="0" class="table" style="display:none;">
