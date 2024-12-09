@@ -384,7 +384,7 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 				return;
 			}
 			fgets(buffer, sizeof(buffer) - 1, fp);
-			int wxsend_login = atoi(buffer); 
+			int wxsend_ssh = atoi(buffer); 
 			fclose(fp);
 
 			if (wxsend_ssh == 2 || wxsend_ssh == 3) {
