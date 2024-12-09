@@ -43,13 +43,6 @@ for dir in $dirs ; do
     if [ -f "$dir/lucky" ] ; then
         PROG="$dir/lucky"
 	nvram set lucky_bin="$PROG"
-        [ ! -x "$PROG" ] && chmod +x $PROG
-        lk_ver=$($PROG -info | awk -F'"Version":"' '{print $2}' | awk -F'"' '{print $1}')
-	if [ -z "$lk_ver" ] ; then
-		nvram set lucky_ver=""
-	else
-		nvram set lucky_ver=$lk_ver
-	fi
         break
     fi
 done
