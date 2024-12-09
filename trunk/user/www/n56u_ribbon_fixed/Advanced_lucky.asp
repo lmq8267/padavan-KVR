@@ -435,6 +435,7 @@ function Internetfalse(){
 	<div id="wnd_lucky_cfg">
 	<div class="alert alert-info" style="margin: 10px;">
 	lucky是一款软硬路由公网神器,集成了多种工具，ipv6/ipv4 端口转发,反向代理,DDNS,WOL,ipv4 stun内网穿透,cron,acme,阿里云盘,ftp,webdav,filebrowser<br>
+	<br><div>当前版本:【<span style="color: #FFFF00;"><% nvram_get_x("", "lucky_ver"); %></span>】&nbsp;&nbsp;最新版本:【<span style="color: #FD0187;"><% nvram_get_x("", "lucky_ver_n"); %></span>】 </div>
 	</div>
 	<table width="100%" cellpadding="4" cellspacing="0" class="table">
 	<tr>
