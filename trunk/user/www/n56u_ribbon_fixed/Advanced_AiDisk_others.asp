@@ -504,7 +504,7 @@ function done_validating(action){
                                                 <#StorageShare#>
                                             </th>
                                             <td>
-                                                <select name="st_samba_mode" class="input" style="width: 300px;">
+                                                <select name="st_samba_mode" class="input" style="width: 220px;">
                                                     <option value="1" <% nvram_match_x("", "st_samba_mode", "1", "selected"); %>><#StorageShare1#></option>
                                                     <option value="3" <% nvram_match_x("", "st_samba_mode", "3", "selected"); %>><#StorageShare5#></option>
                                                     <option value="4" <% nvram_match_x("", "st_samba_mode", "4", "selected"); %>><#StorageShare2#></option>
