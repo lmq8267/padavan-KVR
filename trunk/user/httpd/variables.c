@@ -318,6 +318,7 @@
 #if defined(APP_SMBD) || defined(APP_NMBD)
 			{"st_samba_lmb", "", NULL, EVM_RESTART_NMBD},
 			{"st_samba_workgroup", "", NULL, EVM_RESTART_NMBD},
+			{"st_samba_options", "", NULL, EVM_RESTART_NMBD},
 #endif
 #if defined(APP_SMBD) || defined(APP_FTPD)
 			{"st_max_user", "", NULL, EVM_RESTART_FTPD|EVM_RESTART_SMBD},
