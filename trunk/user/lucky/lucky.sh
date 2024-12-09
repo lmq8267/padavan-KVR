@@ -131,13 +131,19 @@ lucky_start () {
      [ -z "$tag" ] && tag="v2.14.0" && logg "未获取到最新版本，暂用$tag"
      lucky_dl $tag
   fi
-
+[ ! -x "$PROG" ] && chmod +x $PROG
+lk_ver=$($PROG -info | awk -F'"Version":"' '{print $2}' | awk -F'"' '{print $1}')
+if [ -z "$lk_ver" ] ; then
+	nvram set lucky_ver=""
+else
+	nvram set lucky_ver=$lk_ver
+fi
 cmd="${PROG} -cd ${lucky_cmd}"
 logg "运行${cmd}"
 eval "$cmd >/tmp/lucky.log 2>&1" &
 sleep 6
 if [ ! -z "`pidof lucky`" ] ; then
-  logg "lucky启动成功" 
+  logg "lucky ${lk_ver}启动成功" 
   get_web
   lk_keep
 fi
