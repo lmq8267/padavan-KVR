@@ -43,6 +43,7 @@ for dir in $dirs ; do
     if [ -f "$dir/lucky" ] ; then
         PROG="$dir/lucky"
 	nvram set lucky_bin="$PROG"
+ 	[ ! -x "$PROG" ] && chmod +x $PROG
         break
     fi
 done
