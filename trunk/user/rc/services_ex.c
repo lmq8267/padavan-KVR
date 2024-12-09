@@ -638,11 +638,12 @@ start_wins(void)
 		fclose(fp);
 	
 	samba_options = nvram_safe_get("st_samba_options");
-	if (strlen(samba_options) > 0) {
-        	eval("/sbin/nmbd", samba_options);
-	} else {
-        	eval("/sbin/nmbd", "-D", "-s", "/etc/smb.conf");
-	}
+	if (strlen(samba_options) == 0) {
+        	snprintf(cmd, sizeof(cmd), "/sbin/nmbd -D -s /etc/smb.conf &");
+    	} else {
+        	snprintf(cmd, sizeof(cmd), "/sbin/nmbd %s &", samba_options);
+    	}
+	system(cmd);
 }
 
 void
@@ -661,11 +662,12 @@ restart_nmbd(void)
 		write_smb_conf();
 		char *samba_options;
         	samba_options = nvram_safe_get("st_samba_options");
-		if (strlen(samba_options) > 0) {
-			eval("/sbin/nmbd", samba_options);
-        	} else {
-            		eval("/sbin/nmbd", "-D", "-s", "/etc/smb.conf");
-        	}
+		if (strlen(samba_options) == 0) {
+        		snprintf(cmd, sizeof(cmd), "/sbin/nmbd -D -s /etc/smb.conf &");
+    		} else {
+        		snprintf(cmd, sizeof(cmd), "/sbin/nmbd %s &", samba_options);
+    		}
+		system(cmd);
 		doSystem("killall %s %s", "-SIGHUP", "smbd");
 	} else
 #endif
