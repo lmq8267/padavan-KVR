@@ -468,6 +468,23 @@ function Internetfalse(){
 	</td>
 	</tr><td colspan="4"></td>
 	<tr>
+	<th width="30%" style="border-top: 0 none;">程序路径</th>
+	<td style="border-top: 0 none;" colspan="3">
+	<div class="input-append">
+	<input name="lucky_bin" type="text" class="input" id="lucky_bin" placeholder="/tmp/lucky" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","lucky_bin"); %>" size="32" maxlength="128" />
+	</div><br><span style="color:#888;">自定义程序的存放路径，填写完整的路径和程序名称</span>
+	</td>
+	</tr><td colspan="4"></td>
+	<tr>
+	<th width="30%" style="border-top: 0 none;">程序选择</th>
+	<td style="border-top: 0 none;">
+	<select name="lucky_daji" class="input" style="width: 220px;">
+	<option value="0" <% nvram_match_x("","lucky_daji", "0","selected"); %>>lucky</option>
+	<option value="1" <% nvram_match_x("","lucky_daji", "1","selected"); %>>lucky.万吉</option>
+	</select><br><span style="color:#888;">用于在线下载指定程序，万吉比lucky多了FileBrowser模块以及CorazaWAF模块</span>
+	</td>
+	</tr><td colspan="4"></td>
+	<tr>
 	<th width="30%" style="border-top: 0 none;">管理界面:</th>
 	<td style="border-top: 0 none;"><a href="<% nvram_get_x("", "lucky_login"); %>"><% nvram_get_x("", "lucky_login"); %></a>
 	</td>
