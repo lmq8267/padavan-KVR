@@ -556,26 +556,29 @@ void run_samba(void)
 	}
 
 	config_smb_fastpath(0);
+	char cmd2[512];
 	samba_options = nvram_safe_get("st_samba_options");
 	
 	if (has_nmbd) {
         	doSystem("killall %s %s", "-SIGHUP", "nmbd");
     	} else {
-        	if (strlen(samba_options) > 0) {
-            		eval("/sbin/nmbd", samba_options);
-        	} else {
-            		eval("/sbin/nmbd", "-D", "-s", "/etc/smb.conf");
-        	}
+        	if (strlen(samba_options) == 0) {
+        		snprintf(cmd2, sizeof(cmd2), "/sbin/nmbd -D -s /etc/smb.conf &");
+    		} else {
+        		snprintf(cmd2, sizeof(cmd2), "/sbin/nmbd %s &", samba_options);
+    		}
+		system(cmd2);
    	 }
 
 	if (has_smbd) {
         	doSystem("killall %s %s", "-SIGHUP", "smbd");
     	} else {
-        	if (strlen(samba_options) > 0) {
-            		eval("/sbin/smbd", samba_options);
-        	} else {
-            		eval("/sbin/smbd", "-D", "-s", "/etc/smb.conf");
-        	}
+        	if (strlen(samba_options) == 0) {
+        		snprintf(cmd2, sizeof(cmd2), "/sbin/smbd -D -s /etc/smb.conf &");
+    		} else {
+        		snprintf(cmd2, sizeof(cmd2), "/sbin/smbd %s &", samba_options);
+    		}
+		system(cmd2);
     	}
 
 #if defined (APP_SMBD36)
