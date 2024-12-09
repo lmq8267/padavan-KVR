@@ -265,6 +265,7 @@ function safePost(){
 		'action_mode': ' LuckyResetsafe ',
 		'current_page': 'Advanced_lucky.asp',
 		'next_page': 'Advanced_lucky.asp',
+		'LuckyCmd': $j('#LuckyCmd').val()
 	},
         dataType: "json", 
         success: function(response) {
