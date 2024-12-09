@@ -569,7 +569,7 @@ function done_validating(action){
                                                 <#StorageShare#>
                                             </th>
                                             <td>
-                                                <select name="st_ftp_mode" class="input" style="width: 300px;" onchange="on_change_ftp_mode(1);">
+                                                <select name="st_ftp_mode" class="input" style="width: 220px;" onchange="on_change_ftp_mode(1);">
                                                     <option value="1" <% nvram_match_x("", "st_ftp_mode", "1", "selected"); %>><#StorageShare1#></option>
                                                     <option value="3" <% nvram_match_x("", "st_ftp_mode", "3", "selected"); %>><#StorageShare3#></option>
                                                     <option value="2" <% nvram_match_x("", "st_ftp_mode", "2", "selected"); %>><#StorageShare2#></option>
