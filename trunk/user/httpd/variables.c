@@ -1468,6 +1468,7 @@
 			{"wxsend_notify_3", "", NULL, EVM_RESTART_WXSEND},
 			{"wxsend_notify_4", "", NULL, EVM_RESTART_WXSEND},
 			{"wxsend_login", "", NULL, EVM_RESTART_WXSEND},
+			{"wxsend_ssh", "", NULL, EVM_RESTART_WXSEND},
 			{"scripts.wxsend_script.sh", "File", NULL, EVM_RESTART_WXSEND},
 			{0,0,0,0}
 	};
