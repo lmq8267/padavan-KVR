@@ -626,6 +626,7 @@ void
 start_wins(void)
 {
 	FILE *fp;
+	char cmd[512];
 	char *samba_options;
 	
 	if (nvram_match("wins_enable", "0"))
@@ -660,6 +661,7 @@ restart_nmbd(void)
 #if defined(APP_SMBD)
 	if (pids("smbd")) {
 		write_smb_conf();
+		char cmd[512];
 		char *samba_options;
         	samba_options = nvram_safe_get("st_samba_options");
 		if (strlen(samba_options) == 0) {
