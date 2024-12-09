@@ -12,6 +12,7 @@ download_test:
 		cd $(SRC_NAME) ; \
 		git submodule update --init --recursive ; \
 		patch -p1 -i ../msd_lite.diff ; \
+		sed -i '/if (0 == (req->flags & HTTP_SRV_RD_F_HOST_IS_LOCAL)) {/,+3d' src/msd_lite.c; \
 		cd src/liblcb ; \
 		patch -p1 -i ../../../liblcb_msd_lite.diff ; \
 		cd ../../; \
