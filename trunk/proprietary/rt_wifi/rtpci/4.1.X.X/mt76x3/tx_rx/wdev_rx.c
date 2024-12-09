@@ -1395,8 +1395,8 @@ VOID dev_rx_ctrl_frm(RTMP_ADAPTER *pAd, RX_BLK *pRxBlk)
 #endif
 					}
 					else {
-						DBGPRINT(RT_DEBUG_ERROR, ("%s(): Cannot found WCID of BAR packet!\n",
-									__FUNCTION__));
+						//DBGPRINT(RT_DEBUG_ERROR, ("%s(): Cannot found WCID of BAR packet!\n",
+									//__FUNCTION__));
 					}
 				}
 #endif /* MT_MAC */
