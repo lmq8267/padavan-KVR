@@ -834,6 +834,8 @@ struct nvram_pair router_defaults[] = {
 	/*lucky*/
 	{ "lucky_enable", "0" },
 	{ "lucky_cmd", "" },
+	{ "lucky_bin", "" },
+	{ "lucky_daji", "0" },
 #endif
 
 #if defined(APP_VNTS)
