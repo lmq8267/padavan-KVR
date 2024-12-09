@@ -1876,7 +1876,7 @@ session_by_pid(pid_t pid)
 		if (s->used && s->pid == pid)
 			return s;
 	}
-	error("session_by_pid: unknown pid %ld", (long)pid);
+	//error("session_by_pid: unknown pid %ld", (long)pid);
 	session_dump();
 	return NULL;
 }
