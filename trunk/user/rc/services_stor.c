@@ -528,6 +528,7 @@ void run_samba(void)
 	int sh_num, has_nmbd, has_smbd, i;
 	char tmpuser[40], tmp2[40];
 	char cmd[256];
+	char *samba_options;
 
 	if (nvram_match("enable_samba", "0") || nvram_match("st_samba_mode", "0"))
 		return;
@@ -555,16 +556,27 @@ void run_samba(void)
 	}
 
 	config_smb_fastpath(0);
+	samba_options = nvram_safe_get("st_samba_options");
+	
+	if (has_nmbd) {
+        	doSystem("killall %s %s", "-SIGHUP", "nmbd");
+    	} else {
+        	if (strlen(samba_options) > 0) {
+            		eval("/sbin/nmbd", samba_options);
+        	} else {
+            		eval("/sbin/nmbd", "-D", "-s", "/etc/smb.conf");
+        	}
+   	 }
 
-	if (has_nmbd)
-		doSystem("killall %s %s", "-SIGHUP", "nmbd");
-	else
-		eval("/sbin/nmbd", "-D", "-s", "/etc/smb.conf");
-
-	if (has_smbd)
-		doSystem("killall %s %s", "-SIGHUP", "smbd");
-	else
-		eval("/sbin/smbd", "-D", "-s", "/etc/smb.conf");
+	if (has_smbd) {
+        	doSystem("killall %s %s", "-SIGHUP", "smbd");
+    	} else {
+        	if (strlen(samba_options) > 0) {
+            		eval("/sbin/smbd", samba_options);
+        	} else {
+            		eval("/sbin/smbd", "-D", "-s", "/etc/smb.conf");
+        	}
+    	}
 
 #if defined (APP_SMBD36)
 	if (pids("wsdd2"))
