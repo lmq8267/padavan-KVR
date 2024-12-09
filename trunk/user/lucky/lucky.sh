@@ -176,7 +176,7 @@ resetuser)
 	[ -z "$newuser" ] && newuser="666"
 	status="$(${PROG} -setconf -key AdminAccount -value ${newuser} -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
-		logg "用户名已修改为 ${newuser} 重新启动程序才能登录."
+		logg "用户名已修改为 ${newuser} 请重新启动程序."
 	else
 		logg "$status"
 	fi
@@ -187,7 +187,7 @@ resetpass)
 	[ -z "$newpass" ] && newpass="666"
 	status="$(${PROG} -setconf -key AdminPassword -value ${newpass} -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
-		logg "密码已修改为 ${newpass} 重新启动程序才能登录."
+		logg "密码已修改为 ${newpass} 请重新启动程序."
 	else
 		logg "$status"
 	fi
@@ -198,7 +198,7 @@ resetport)
 	[ -z "$newport" ] && newport="16601"
 	status="$(${PROG} -setconf -key AdminWebListenPort -value ${newport} -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
-		logg "http访问端口已修改为 ${newport} "
+		logg "http访问端口已修改为 ${newport} 请重新启动程序."
 	else
 		logg "$status"
 	fi
@@ -209,7 +209,7 @@ resetsafe)
 	newsafe="$2"
 	status="$(${PROG} -setconf -key SetSafeURL -value ${newsafe} -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
-		logg "安全入口已修改为 ${newsafe} "
+		logg "安全入口已修改为 ${newsafe} 请重新启动程序."
 	else
 		logg "$status"
 	fi
@@ -219,7 +219,7 @@ internettrue)
 	[ -z "$PROG" ] && find_bin
 	status="$(${PROG} -setconf -key AllowInternetaccess -value true -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
-		logg "已启用外网访问！"
+		logg "已启用外网访问！请重新启动程序."
 	else
 		logg "$status"
 	fi
@@ -228,7 +228,7 @@ internetfalse)
 	[ -z "$PROG" ] && find_bin
 	status="$(${PROG} -setconf -key AllowInternetaccess -value false -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
-		logg "已禁用外网访问！"
+		logg "已禁用外网访问！请重新启动程序."
 	else
 		logg "$status"
 	fi
