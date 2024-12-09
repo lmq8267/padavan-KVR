@@ -3,7 +3,9 @@
 scriptname=$(basename $0)
 scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 lucky_enable=`nvram get lucky_enable`
+lucky_daji=`nvram get lucky_daji`
 lucky_cmd=`nvram get lucky_cmd`
+PROG=`nvram get lucky_bin`
 [ -z "$lucky_cmd" ] && lucky_cmd="/etc/storage/lucky"
 [ -z "$lucky_enable" ] && lucky_enable=0 && nvram set lucky_enable=0
 github_proxys="$(nvram get github_proxy)"
@@ -40,6 +42,7 @@ PROG=""
 for dir in $dirs ; do
     if [ -f "$dir/lucky" ] ; then
         PROG="$dir/lucky"
+	nvram set lucky_bin="$PROG"
         [ ! -x "$PROG" ] && chmod +x $PROG
         lk_ver=$($PROG -info | awk -F'"Version":"' '{print $2}' | awk -F'"' '{print $1}')
 	if [ -z "$lk_ver" ] ; then
@@ -50,15 +53,22 @@ for dir in $dirs ; do
         break
     fi
 done
-[ -z "$PROG" ] && PROG="/tmp/lucky"
+[ -z "$PROG" ] && PROG="/tmp/lucky" && nvram set lucky_bin="$PROG"
 }
 
 lucky_dl() {
 	tag="$1"
 	new_tag="$(echo $tag | tr -d 'v' | tr -d ' ')"
-	logg "开始下载 https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
+ 	if [ "$lucky_daji" = "1" ] ; then
+ 		lk_url="https://6.66666.host:66/release/${tag}/${new_tag}_万吉/lucky_${new_tag}_Linux_mipsle_softfloat_wanji.tar.gz"
+   		lk_url2="https://6.666666.host:66/release/${tag}/${new_tag}_万吉/lucky_${new_tag}_Linux_mipsle_softfloat_wanji.tar.gz"
+   	else
+    		lk_url="https://6.66666.host:66/release/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
+      		lk_url2="https://6.66666.host:66/release/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
+  	fi
+	logg "开始下载 ${lk_url}"
 	for proxy in $github_proxys ; do
-       curl -Lkso "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz" || wget --no-check-certificate -q -O "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
+       curl -Lko "/tmp/lucky.tar.gz" "${lk_url}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url}" || curl -Lko "/tmp/lucky.tar.gz" "${lk_url2}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url2}" || curl -Lko "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
 	if [ "$?" = 0 ] ; then
 		tar -xzf /tmp/lucky.tar.gz -C /tmp/var
 		
@@ -75,10 +85,10 @@ lucky_dl() {
 			rm -rf /tmp/lucky.tar.gz /tmp/var/lucky
 			break
        	else
-	   		logg "下载不完整，请手动下载 ${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz 解压上传到  $PROG"
+	   		logg "下载不完整，请手动下载 ${lk_url} 解压上传到  $PROG"
 	  	fi
 	else
-		logg "下载失败，请手动下载 ${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz 解压上传到  $PROG"
+		logg "下载失败，请手动下载 ${lk_url} 解压上传到  $PROG"
    	fi
 	done
 }
@@ -113,12 +123,12 @@ lucky_start () {
   killall lucky >/dev/null 2>&1
   killall -9 lucky >/dev/null 2>&1
   LUCKY_CONF="/etc/storage/lucky.conf"
-  find_bin 
+  [ -z "$PROG" ] && find_bin 
   get_tag
   [ ! -d /etc/storage/lucky ] && mkdir -p /etc/storage/lucky
   if [ ! -f "$PROG" ] ; then
      logg "未找到程序$PROG ，开始在线下载..."
-     [ -z "$tag" ] && tag="v2.13.4" && logg "未获取到最新版本，暂用$tag"
+     [ -z "$tag" ] && tag="v2.14.0" && logg "未获取到最新版本，暂用$tag"
      lucky_dl $tag
   fi
 
@@ -161,7 +171,7 @@ stop)
 	lucky_close
 	;;
 resetuser)
-	find_bin
+	[ -z "$PROG" ] && find_bin
 	newuser="$2"
 	[ -z "$newuser" ] && newuser="666"
 	status="$(${PROG} -setconf -key AdminAccount -value ${newuser} -cd ${lucky_cmd})"
@@ -172,7 +182,7 @@ resetuser)
 	fi
 	;;
 resetpass)
-	find_bin
+	[ -z "$PROG" ] && find_bin
 	newpass="$2"
 	[ -z "$newpass" ] && newpass="666"
 	status="$(${PROG} -setconf -key AdminPassword -value ${newpass} -cd ${lucky_cmd})"
@@ -183,7 +193,7 @@ resetpass)
 	fi
 	;;
 resetport)
-	find_bin
+	[ -z "$PROG" ] && find_bin
 	newport="$2"
 	[ -z "$newport" ] && newport="16601"
 	status="$(${PROG} -setconf -key AdminWebListenPort -value ${newport} -cd ${lucky_cmd})"
@@ -195,7 +205,7 @@ resetport)
 	get_web
 	;;
 resetsafe)
-	find_bin
+	[ -z "$PROG" ] && find_bin
 	newsafe="$2"
 	status="$(${PROG} -setconf -key SetSafeURL -value ${newsafe} -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
@@ -206,7 +216,7 @@ resetsafe)
 	get_web
 	;;
 internettrue)
-	find_bin
+	[ -z "$PROG" ] && find_bin
 	status="$(${PROG} -setconf -key AllowInternetaccess -value true -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
 		logg "已启用外网访问！"
@@ -215,7 +225,7 @@ internettrue)
 	fi
 	;;
 internetfalse)
-	find_bin
+	[ -z "$PROG" ] && find_bin
 	status="$(${PROG} -setconf -key AllowInternetaccess -value false -cd ${lucky_cmd})"
 	if [ "$status" = "SetConfigure success" ] ; then
 		logg "已禁用外网访问！"
