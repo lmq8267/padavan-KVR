@@ -1,20 +1,20 @@
 #
 # Makefile for Linux CIFS VFS client 
 #
-obj-$(CONFIG_CIFS) += cifs.o
+obj-y += cifs.o
 
 cifs-y := cifsfs.o cifssmb.o cifs_debug.o connect.o dir.o file.o inode.o \
 	  link.o misc.o netmisc.o smbencrypt.o transport.o asn1.o \
 	  cifs_unicode.o nterr.o xattr.o cifsencrypt.o \
 	  readdir.o ioctl.o sess.o export.o smb1ops.o winucase.o
 
-cifs-$(CONFIG_CIFS) += cifsacl.o
+cifs-y += cifsacl.o
 
-cifs-$(CONFIG_CIFS) += cifs_spnego.o
+cifs-y += cifs_spnego.o
 
-cifs-$(CONFIG_CIFS) += dns_resolve.o cifs_dfs_ref.o
+cifs-y += dns_resolve.o cifs_dfs_ref.o
 
-cifs-$(CONFIG_CIFS) += fscache.o cache.o
+cifs-y += fscache.o cache.o
 
-cifs-$(CONFIG_CIFS) += smb2ops.o smb2maperror.o smb2transport.o \
+cifs-y += smb2ops.o smb2maperror.o smb2transport.o \
 			    smb2misc.o smb2pdu.o smb2inode.o smb2file.o
