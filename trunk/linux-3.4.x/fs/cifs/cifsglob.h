@@ -304,9 +304,9 @@ struct TCP_Server_Info {
 	char	*smallbuf;	/* pointer to current "small" buffer */
 	char	*bigbuf;	/* pointer to current "big" buffer */
 	unsigned int total_read; /* total amount of data read in this pass */
-#ifdef CONFIG_CIFS_FSCACHE
+//#ifdef CONFIG_CIFS_FSCACHE
 	struct fscache_cookie   *fscache; /* client index cache cookie */
-#endif
+//#endif
 #ifdef CONFIG_CIFS_STATS2
 	atomic_t in_send; /* requests trying to send */
 	atomic_t num_waiters;   /* blocked waiting to get in sendrecv */
@@ -631,9 +631,9 @@ struct cifsInodeInfo {
 	u64  server_eof;		/* current file size on server -- protected by i_lock */
 	u64  uniqueid;			/* server inode number */
 	u64  createtime;		/* creation time on server */
-#ifdef CONFIG_CIFS_FSCACHE
+//#ifdef CONFIG_CIFS_FSCACHE
 	struct fscache_cookie *fscache;
-#endif
+//#endif
 	struct inode vfs_inode;
 };
 
