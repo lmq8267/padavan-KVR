@@ -492,10 +492,10 @@ struct cifs_tcon {
 	bool local_lease:1; /* check leases (only) on local system not remote */
 	bool broken_posix_open; /* e.g. Samba server versions < 3.3.2, 3.2.9 */
 	bool need_reconnect:1; /* connection reset, tid now invalid */
-#ifdef CONFIG_CIFS_FSCACHE
+//#ifdef CONFIG_CIFS_FSCACHE
 	u64 resource_id;		/* server resource id */
 	struct fscache_cookie *fscache;	/* cookie for share */
-#endif
+//#endif
 	/* BB add field for back pointer to sb struct(s)? */
 };
 
