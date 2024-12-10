@@ -12,6 +12,6 @@ cifs-y += cifsacl.o
 
 cifs-y += cifs_spnego.o
 
-cifs-y += dns_resolve.o cifs_dfs_ref.o
+cifs-$(CONFIG_CIFS_DFS_UPCALL) += dns_resolve.o cifs_dfs_ref.o
 
 cifs-y += fscache.o cache.o
