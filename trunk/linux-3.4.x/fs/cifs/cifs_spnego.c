@@ -31,18 +31,19 @@
 
 /* create a new cifs key */
 static int
-cifs_spnego_key_instantiate(struct key *key, struct key_preparsed_payload *prep)
+cifs_spnego_key_instantiate(struct key *key, const void *data, size_t datalen)
 {
 	char *payload;
 	int ret;
 
 	ret = -ENOMEM;
-	payload = kmemdup(prep->data, prep->datalen, GFP_KERNEL);
+	payload = kmalloc(datalen, GFP_KERNEL);
 	if (!payload)
 		goto error;
 
 	/* attach the data */
-	key->payload.data[0] = payload;
+	memcpy(payload, data, datalen);
+	key->payload.data = payload;
 	ret = 0;
 
 error:
@@ -52,7 +53,7 @@ error:
 static void
 cifs_spnego_key_destroy(struct key *key)
 {
-	kfree(key->payload.data[0]);
+	kfree(key->payload.data);
 }
 
 
@@ -62,6 +63,7 @@ cifs_spnego_key_destroy(struct key *key)
 struct key_type cifs_spnego_key_type = {
 	.name		= "cifs.spnego",
 	.instantiate	= cifs_spnego_key_instantiate,
+	.match		= user_match,
 	.destroy	= cifs_spnego_key_destroy,
 	.describe	= user_describe,
 };
@@ -143,18 +145,14 @@ cifs_get_spnego_key(struct cifs_ses *sesInfo)
 		sprintf(dp, ";sec=krb5");
 	else if (server->sec_mskerberos)
 		sprintf(dp, ";sec=mskrb5");
-	else {
-		cifs_dbg(VFS, "unknown or missing server auth type, use krb5\n");
-		sprintf(dp, ";sec=krb5");
-	}
+	else
+		goto out;
 
 	dp = description + strlen(description);
-	sprintf(dp, ";uid=0x%x",
-		from_kuid_munged(&init_user_ns, sesInfo->linux_uid));
+	sprintf(dp, ";uid=0x%x", sesInfo->linux_uid);
 
 	dp = description + strlen(description);
-	sprintf(dp, ";creduid=0x%x",
-		from_kuid_munged(&init_user_ns, sesInfo->cred_uid));
+	sprintf(dp, ";creduid=0x%x", sesInfo->cred_uid);
 
 	if (sesInfo->user_name) {
 		dp = description + strlen(description);
@@ -164,12 +162,12 @@ cifs_get_spnego_key(struct cifs_ses *sesInfo)
 	dp = description + strlen(description);
 	sprintf(dp, ";pid=0x%x", current->pid);
 
-	cifs_dbg(FYI, "key description = %s\n", description);
+	cFYI(1, "key description = %s", description);
 	spnego_key = request_key(&cifs_spnego_key_type, description, "");
 
 #ifdef CONFIG_CIFS_DEBUG2
 	if (cifsFYI && !IS_ERR(spnego_key)) {
-		struct cifs_spnego_msg *msg = spnego_key->payload.data[0];
+		struct cifs_spnego_msg *msg = spnego_key->payload.data;
 		cifs_dump_mem("SPNEGO reply blob:", msg->data, min(1024U,
 				msg->secblob_len + msg->sesskey_len));
 	}
