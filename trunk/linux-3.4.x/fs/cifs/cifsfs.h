@@ -104,11 +104,11 @@ extern int cifs_readdir(struct file *file, void *direntry, filldir_t filldir);
 extern const struct dentry_operations cifs_dentry_ops;
 extern const struct dentry_operations cifs_ci_dentry_ops;
 
-#ifdef CONFIG_CIFS_DFS_UPCALL
+//#ifdef CONFIG_CIFS_DFS_UPCALL
 extern struct vfsmount *cifs_dfs_d_automount(struct path *path);
-#else
-#define cifs_dfs_d_automount NULL
-#endif
+//#else
+//#define cifs_dfs_d_automount NULL
+//#endif
 
 /* Functions related to symlinks */
 extern void *cifs_follow_link(struct dentry *direntry, struct nameidata *nd);
