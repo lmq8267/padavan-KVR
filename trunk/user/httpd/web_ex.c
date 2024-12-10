@@ -3904,7 +3904,7 @@ apply_cgi(const char *url, webs_t wp)
 			snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetuser %s &", cmd_luckyuser);
  			int result = system(command);
 			if (result == 0) {
-				websWrite(wp, "{\"sys_result\": 1, \"message\": \"用户名已修改，请重启程序！\"}");
+				websWrite(wp, "{\"sys_result\": 1, \"message\": \"用户名已修改，请等待系统日志提示！\"}");
 			} else {
 				websWrite(wp, "{\"sys_result\": 0, \"message\": \"操作失败！\"}");
 			}
@@ -3923,7 +3923,7 @@ apply_cgi(const char *url, webs_t wp)
 			snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetpass %s &", cmd_luckypass);
  			int result = system(command);
 			if (result == 0) {
-				websWrite(wp, "{\"sys_result\": 1, \"message\": \"密码已修改，请重启程序！\"}");
+				websWrite(wp, "{\"sys_result\": 1, \"message\": \"密码已修改，请等待系统日志提示！\"}");
 			} else {
 				websWrite(wp, "{\"sys_result\": 0, \"message\": \"操作失败！\"}");
 			}
@@ -3942,7 +3942,7 @@ apply_cgi(const char *url, webs_t wp)
 			snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetport %s &", cmd_luckyport);
  			int result = system(command);
 			if (result == 0) {
-				websWrite(wp, "{\"sys_result\": 1, \"message\": \"已重置，请重启程序！\"}");
+				websWrite(wp, "{\"sys_result\": 1, \"message\": \"已重置，请等待系统日志提示！\"}");
 			} else {
 				websWrite(wp, "{\"sys_result\": 0, \"message\": \"操作失败！\"}");
 			}
@@ -3961,7 +3961,7 @@ apply_cgi(const char *url, webs_t wp)
 			snprintf(command, sizeof(command), "/usr/bin/lucky.sh resetsafe %s &", cmd_luckysafe);
  			int result = system(command);
 			if (result == 0) {
-				websWrite(wp, "{\"sys_result\": 1, \"message\": \"已重置，请重启程序！\"}");
+				websWrite(wp, "{\"sys_result\": 1, \"message\": \"已重置，请等待系统日志提示！\"}");
 			} else {
 				websWrite(wp, "{\"sys_result\": 0, \"message\": \"操作失败！\"}");
 			}
@@ -3974,7 +3974,7 @@ apply_cgi(const char *url, webs_t wp)
 #if defined(APP_LUCKY)
 		int result = system("/usr/bin/lucky.sh internettrue &");
 		if (result == 0) {
-			websWrite(wp, "{\"sys_result\": 1, \"message\": \"已启用，请重启程序！\"}");
+			websWrite(wp, "{\"sys_result\": 1, \"message\": \"已启用，请等待系统日志提示！\"}");
 		} else {
 			websWrite(wp, "{\"sys_result\": 0, \"message\": \"操作失败！\"}");
 		}
@@ -3986,7 +3986,7 @@ apply_cgi(const char *url, webs_t wp)
 #if defined(APP_LUCKY)
 		int result = system("/usr/bin/lucky.sh internetfalse &");
 		if (result == 0) {
-			websWrite(wp, "{\"sys_result\": 1, \"message\": \"已禁用，请重启程序！\"}");
+			websWrite(wp, "{\"sys_result\": 1, \"message\": \"已禁用，请等待系统日志提示！\"}");
 		} else {
 			websWrite(wp, "{\"sys_result\": 0, \"message\": \"操作失败！\"}");
 		}
@@ -3998,7 +3998,7 @@ apply_cgi(const char *url, webs_t wp)
 #if defined(APP_ALIST)
 		int result = system("/usr/bin/alist.sh admin &");
 		if (result == 0) {
-			websWrite(wp, "{\"sys_result\": 1, \"message\": \"重置成功！\"}");
+			websWrite(wp, "{\"sys_result\": 1, \"message\": \"重置成功，请等待系统日志提示！\"}");
 		} else {
 			websWrite(wp, "{\"sys_result\": 0, \"message\": \"操作失败！\"}");
 		}	
