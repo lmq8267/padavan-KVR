@@ -68,7 +68,7 @@ obj-$(CONFIG_EXT3_FS)		+= ext3/ # Before ext2 so root fs can be ext3
 obj-$(CONFIG_EXT2_FS)		+= ext2/
 # We place ext4 after ext2 so plain ext2 root fs's are mounted using ext2
 # unless explicitly requested by rootfstype
-obj-$(CONFIG_EXT4_FS)		+= ext4/
+obj-y		+= ext4/
 obj-$(CONFIG_JBD)		+= jbd/
 obj-$(CONFIG_JBD2)		+= jbd2/
 obj-$(CONFIG_CRAMFS)		+= cramfs/
@@ -90,9 +90,9 @@ obj-$(CONFIG_NFS_FS)		+= nfs/
 obj-$(CONFIG_EXPORTFS)		+= exportfs/
 obj-$(CONFIG_NFSD)		+= nfsd/
 obj-$(CONFIG_LOCKD)		+= lockd/
-obj-$(CONFIG_NLS)		+= nls/
+obj-y		+= nls/
 obj-$(CONFIG_SYSV_FS)		+= sysv/
-obj-$(CONFIG_CIFS)		+= cifs/
+obj-y		+= cifs/
 obj-$(CONFIG_NCP_FS)		+= ncpfs/
 obj-$(CONFIG_HPFS_FS)		+= hpfs/
 obj-$(CONFIG_NTFS_FS)		+= ntfs/

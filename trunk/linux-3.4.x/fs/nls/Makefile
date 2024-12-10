@@ -2,9 +2,9 @@
 # Makefile for native language support
 #
 
-obj-$(CONFIG_NLS)		+= nls_base.o
+obj-y		+= nls_base.o
 
-obj-$(CONFIG_NLS)	+= nls_cp437.o
+obj-y	+= nls_cp437.o
 obj-$(CONFIG_NLS_CODEPAGE_737)	+= nls_cp737.o
 obj-$(CONFIG_NLS_CODEPAGE_775)	+= nls_cp775.o
 obj-$(CONFIG_NLS_CODEPAGE_850)	+= nls_cp850.o
@@ -26,7 +26,7 @@ obj-$(CONFIG_NLS_CODEPAGE_949)	+= nls_cp949.o
 obj-$(CONFIG_NLS_CODEPAGE_950)	+= nls_cp950.o
 obj-$(CONFIG_NLS_CODEPAGE_1250) += nls_cp1250.o
 obj-$(CONFIG_NLS_CODEPAGE_1251)	+= nls_cp1251.o
-obj-$(CONFIG_NLS)		+= nls_ascii.o
+obj-y		+= nls_ascii.o
 obj-$(CONFIG_NLS_ISO8859_1)	+= nls_iso8859-1.o
 obj-$(CONFIG_NLS_ISO8859_2)	+= nls_iso8859-2.o
 obj-$(CONFIG_NLS_ISO8859_3)	+= nls_iso8859-3.o
@@ -41,4 +41,4 @@ obj-$(CONFIG_NLS_ISO8859_14)	+= nls_iso8859-14.o
 obj-$(CONFIG_NLS_ISO8859_15)	+= nls_iso8859-15.o
 obj-$(CONFIG_NLS_KOI8_R)	+= nls_koi8-r.o
 obj-$(CONFIG_NLS_KOI8_U)	+= nls_koi8-u.o nls_koi8-ru.o
-obj-$(CONFIG_NLS)		+= nls_utf8.o
+obj-y		+= nls_utf8.o
