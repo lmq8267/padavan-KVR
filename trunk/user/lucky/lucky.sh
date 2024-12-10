@@ -208,7 +208,6 @@ resetport)
 	else
 		logg "$status"
 	fi
-	get_web
 	;;
 resetsafe)
 	[ -z "$PROG" ] && find_bin
@@ -219,7 +218,6 @@ resetsafe)
 	else
 		logg "$status"
 	fi
-	get_web
 	;;
 internettrue)
 	[ -z "$PROG" ] && find_bin
