@@ -25,8 +25,6 @@
 #include <linux/slab.h>
 #include <linux/string.h>
 #include <linux/keyctl.h>
-#include <linux/key.h>
-#include <linux/spinlock.h>
 #include <linux/key-type.h>
 #include <keys/user-type.h>
 #include "cifspdu.h"
