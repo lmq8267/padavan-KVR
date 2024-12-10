@@ -10,7 +10,7 @@ cifs-y := cifsfs.o cifssmb.o cifs_debug.o connect.o dir.o file.o inode.o \
 
 cifs-$(CONFIG_CIFS_ACL) += cifsacl.o
 
-cifs-y += cifs_spnego.o
+cifs-$(CONFIG_CIFS_UPCALL) += cifs_spnego.o
 
 cifs-y += dns_resolve.o cifs_dfs_ref.o
 
