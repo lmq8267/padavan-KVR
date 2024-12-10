@@ -293,7 +293,7 @@ sync && echo 3 > /proc/sys/vm/drop_caches
 #modprobe cifs CIFSMaxBufSize=64512
 #mkdir -p /media/cifs
 #umount /media/cifs ; umount -l /media/cifs
-#busybox mount -t cifs //192.168.2.6/nas /media/cifs -o username=user,password=pass,dynperm,nounix,noserverino,file_mode=0777,dir_mode=0777
+#busybox mount -t cifs //192.168.2.6/nas /media/cifs -o username=user,password=pass,dynperm,sec=ntlmssp,nounix,noserverino,file_mode=0777,dir_mode=0777
 
 
 #**************github下载加速******************
