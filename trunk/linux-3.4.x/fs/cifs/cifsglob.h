@@ -29,6 +29,9 @@
 #include <crypto/internal/hash.h>
 #include <linux/scatterlist.h>
 #include "cifs_mount.h"
+#include <linux/types.h>
+#include <linux/cred.h>
+#include <linux/fs.h>
 #ifdef CONFIG_CIFS_SMB2
 #include "smb2pdu.h"
 #endif
