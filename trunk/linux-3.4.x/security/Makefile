@@ -2,12 +2,12 @@
 # Makefile for the kernel security code
 #
 
-obj-y			+= keys/
-subdir-y	+= selinux
-subdir-y		+= smack
-subdir-y        += tomoyo
-subdir-y	+= apparmor
-subdir-y		+= yama
+obj-$(CONFIG_KEYS)			+= keys/
+subdir-$(CONFIG_SECURITY_SELINUX)	+= selinux
+subdir-$(CONFIG_SECURITY_SMACK)		+= smack
+subdir-$(CONFIG_SECURITY_TOMOYO)        += tomoyo
+subdir-$(CONFIG_SECURITY_APPARMOR)	+= apparmor
+subdir-$(CONFIG_SECURITY_YAMA)		+= yama
 
 # always enable default capabilities
 obj-y					+= commoncap.o
@@ -26,5 +26,5 @@ obj-$(CONFIG_SECURITY_YAMA)		+= yama/built-in.o
 obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
 
 # Object integrity file lists
-subdir-y		+= integrity
-obj-y			+= integrity/built-in.o
+subdir-$(CONFIG_INTEGRITY)		+= integrity
+obj-$(CONFIG_INTEGRITY)			+= integrity/built-in.o
