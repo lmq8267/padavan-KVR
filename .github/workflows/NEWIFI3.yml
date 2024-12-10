@@ -56,14 +56,14 @@ jobs:
         ###############################################################################################
         ## 添加cifs模块 没有USB也可以挂载远程smb共享文件夹
         sed -i '/CONFIG_KEYS/d' configs/boards/${TNAME}/kernel-3.4.x.config
-        sed -i '/CONFIG_DNS_RESOLVER/d' configs/boards/${TNAME}/kernel-3.4.x.config
+        #sed -i '/CONFIG_DNS_RESOLVER/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CONFIG_ECRYPT_FS/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CONFIG_ENCRYPTED_KEYS/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CONFIG_KEYS_DEBUG_PROC_KEYS/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CONFIG_CIFS/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CONFIG_CIFS_ACL/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CONFIG_CIFS_UPCALL/d' configs/boards/${TNAME}/kernel-3.4.x.config
-        sed -i '/CONFIG_CIFS_DFS_UPCALL/d' configs/boards/${TNAME}/kernel-3.4.x.config
+        #sed -i '/CONFIG_CIFS_DFS_UPCALL/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CONFIG_CIFS_FSCACHE/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CONFIG_FSCACHE/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CONFIG_FSCACHE_STATS/d' configs/boards/${TNAME}/kernel-3.4.x.config
@@ -73,14 +73,14 @@ jobs:
         sed -i '/CONFIG_CACHEFILES/d' configs/boards/${TNAME}/kernel-3.4.x.config
         
         echo "CONFIG_KEYS=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
-        echo "CONFIG_DNS_RESOLVER=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
+        #echo "CONFIG_DNS_RESOLVER=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CONFIG_ECRYPT_FS=n" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CONFIG_ENCRYPTED_KEYS=n" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CONFIG_KEYS_DEBUG_PROC_KEYS=n" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CONFIG_CIFS=m" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CONFIG_CIFS_ACL=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CONFIG_CIFS_UPCALL=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
-        echo "CONFIG_CIFS_DFS_UPCALL=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
+        #echo "CONFIG_CIFS_DFS_UPCALL=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CONFIG_CIFS_FSCACHE=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CONFIG_FSCACHE=m" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CONFIG_FSCACHE_STATS=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
