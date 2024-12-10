@@ -23,7 +23,7 @@
 #define _CIFSFS_H
 
 #include <linux/hash.h>
-
+#include <linux/fs.h>
 #define ROOT_I 2
 
 /*

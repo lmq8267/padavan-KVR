@@ -16,6 +16,8 @@
  *
  */
 #include <linux/rbtree.h>
+#include <linux/types.h>
+#include <linux/cred.h>
 
 #ifndef _CIFS_FS_SB_H
 #define _CIFS_FS_SB_H
