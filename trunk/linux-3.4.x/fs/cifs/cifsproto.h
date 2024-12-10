@@ -174,7 +174,7 @@ extern void cifs_umount(struct cifs_sb_info *);
 #if IS_ENABLED(CONFIG_CIFS_DFS_UPCALL)
 extern void cifs_dfs_release_automount_timer(void);
 #else /* ! IS_ENABLED(CONFIG_CIFS_DFS_UPCALL) */
-#define cifs_dfs_release_automount_timer()	do { } while (0)
+#define cifs_dfs_release_automount_timer(...)	do { } while (0)
 #endif /* ! IS_ENABLED(CONFIG_CIFS_DFS_UPCALL) */
 
 void cifs_proc_init(void);

@@ -1060,7 +1060,7 @@ GLOBAL_EXTERN unsigned int cifs_min_rcv;    /* min size of big ntwrk buf pool */
 GLOBAL_EXTERN unsigned int cifs_min_small;  /* min size of small buf pool */
 GLOBAL_EXTERN unsigned int cifs_max_pending; /* MAX requests at once to server*/
 
-//#ifdef CONFIG_CIFS_ACL
+#ifdef CONFIG_CIFS_ACL
 GLOBAL_EXTERN struct rb_root uidtree;
 GLOBAL_EXTERN struct rb_root gidtree;
 GLOBAL_EXTERN spinlock_t siduidlock;
@@ -1069,6 +1069,7 @@ GLOBAL_EXTERN struct rb_root siduidtree;
 GLOBAL_EXTERN struct rb_root sidgidtree;
 GLOBAL_EXTERN spinlock_t uidsidlock;
 GLOBAL_EXTERN spinlock_t gidsidlock;
+#endif /* CONFIG_CIFS_ACL */
 
 void cifs_oplock_break(struct work_struct *work);
 
