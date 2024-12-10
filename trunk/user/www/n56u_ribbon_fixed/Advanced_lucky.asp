@@ -466,7 +466,7 @@ function Internetfalse(){
 	<td style="border-top: 0 none;" colspan="3">
 	<div class="input-append">
 	<input name="lucky_cmd" type="text" class="input" id="lucky_cmd" placeholder="/etc/storage/lucky" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","lucky_cmd"); %>" size="32" maxlength="128" />
-	</div>
+	</div><br><span style="color:#888;">⚠️来自官方的友好提醒：<br>经常在软件后台备份配置文件，防止升级或意外丢失配置！</span>
 	</td>
 	</tr><td colspan="4"></td>
 	<tr>
@@ -484,6 +484,14 @@ function Internetfalse(){
 	<option value="0" <% nvram_match_x("","lucky_daji", "0","selected"); %>>lucky</option>
 	<option value="1" <% nvram_match_x("","lucky_daji", "1","selected"); %>>lucky.万吉</option>
 	</select><br><span style="color:#888;">用于在线下载指定程序，万吉比lucky多了FileBrowser模块以及CorazaWAF模块</span>
+	</td>
+	</tr><td colspan="4"></td>
+	<tr>
+	<th width="30%" style="border-top: 0 none;">指定版本</th>
+	<td style="border-top: 0 none;" colspan="3">
+	<div class="input-append">
+	<input name="lucky_tag" type="text" class="input" id="lucky_tag" placeholder="v2.14.0" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","lucky_tag"); %>" size="32" maxlength="128" />
+	</div><br><span style="color:#888;">用于在线下载时指定lucky版本，防止不同版本配置文件不兼容。</span>
 	</td>
 	</tr><td colspan="4"></td>
 	<tr>
