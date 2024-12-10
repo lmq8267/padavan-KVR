@@ -417,7 +417,7 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_SOCAT=y" >> .config
 
         ## SRELAY代理
-        echo "CONFIG_FIRMWARE_INCLUDE_SRELAY=y" >> .config
+        echo "CONFIG_FIRMWARE_INCLUDE_SRELAY=n" >> .config
 
         ## MENTOHUST校园认证 已删除 /trunk/user/httpd/common.h
         echo "CONFIG_FIRMWARE_INCLUDE_MENTOHUST=n" >> .config
@@ -450,7 +450,7 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_NETCAT=y" >> .config #nc工具
         echo "CONFIG_FIRMWARE_INCLUDE_MSD_LITE=y" >> .config #MSD_LITE工具
         
-        
+        # 已删除 /trunk/user/httpd/common.h
         #echo "CONFIG_FIRMWARE_INCLUDE_FIREFLY=n" >> .config #FIREFLY
         #echo "CONFIG_FIRMWARE_INCLUDE_NVPPROXY=n" >> .config #NVPPROXY 已删除 /trunk/user/httpd/common.h
         ##科学上网## 已删除 /trunk/user/httpd/common.h
