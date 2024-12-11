@@ -6,10 +6,6 @@ THIS_SCRIPT="sysinfo"
 MOTD_DISABLE=""
 
 SHOW_IP_PATTERN="^[ewr].*|^br.*|^lt.*|^umts.*"
-
-DATA_STORAGE=/userdisk/data
-MEDIA_STORAGE=/userdisk/snail
-
 # don't edit below here
 display() {
     # $1=name $2=value $3=red_limit $4=minimal_show_limit $5=unit $6=after $7=acs/desc
