@@ -56,39 +56,39 @@ jobs:
         sed -i 's/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=y/g' .config
         ###############################################################################################
         ## 添加cifs模块 没有USB也可以挂载远程smb共享文件夹
-        sed -i '/CONFIG_KEYS/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        sed -i '/CONFIG_DNS_RESOLVER/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        sed -i '/CONFIG_ECRYPT_FS/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        sed -i '/CONFIG_ENCRYPTED_KEYS/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        sed -i '/CONFIG_KEYS_DEBUG_PROC_KEYS/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         sed -i '/CONFIG_CIFS/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         sed -i '/CONFIG_CIFS_ACL/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         sed -i '/CONFIG_CIFS_UPCALL/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         sed -i '/CONFIG_CIFS_DFS_UPCALL/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         sed -i '/CONFIG_CIFS_FSCACHE/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        sed -i '/CONFIG_FSCACHE/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        sed -i '/CONFIG_FSCACHE_STATS/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        sed -i '/CONFIG_FSCACHE_HISTOGRAM/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        sed -i '/CONFIG_FSCACHE_DEBUG/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        sed -i '/CONFIG_FSCACHE_OBJECT_LIST/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        sed -i '/CONFIG_CACHEFILES/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        sed -i '/CONFIG_KEYS/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        sed -i '/CONFIG_ECRYPT_FS/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        sed -i '/CONFIG_ENCRYPTED_KEYS/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        sed -i '/CONFIG_KEYS_DEBUG_PROC_KEYS/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        sed -i '/CONFIG_DNS_RESOLVER/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        sed -i '/CONFIG_CRYPTO_MD4/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        sed -i '/CONFIG_CRYPTO_MD5/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        sed -i '/CONFIG_CRYPTO_HMAC/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        sed -i '/CONFIG_CRYPTO_ARC4/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        sed -i '/CONFIG_CRYPTO_ECB/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        sed -i '/CONFIG_CRYPTO_DES/d' configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         
+        echo "CONFIG_CIFS=m" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         echo "CONFIG_KEYS=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        echo "CONFIG_DNS_RESOLVER=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         echo "CONFIG_ECRYPT_FS=n" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         echo "CONFIG_ENCRYPTED_KEYS=n" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         echo "CONFIG_KEYS_DEBUG_PROC_KEYS=n" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        echo "CONFIG_CIFS=m" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         echo "CONFIG_CIFS_ACL=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         echo "CONFIG_CIFS_UPCALL=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         echo "CONFIG_CIFS_DFS_UPCALL=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        echo "CONFIG_CIFS_FSCACHE=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        echo "CONFIG_FSCACHE=m" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        echo "CONFIG_FSCACHE_STATS=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        echo "CONFIG_FSCACHE_HISTOGRAM=n" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        echo "CONFIG_FSCACHE_DEBUG=n" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        echo "CONFIG_FSCACHE_OBJECT_LIST=n" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
-        echo "CONFIG_CACHEFILES=n" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        echo "# CONFIG_CIFS_FSCACHE is not set" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        echo "CONFIG_DNS_RESOLVER=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        echo "CONFIG_CRYPTO_MD4=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        echo "CONFIG_CRYPTO_MD5=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        echo "CONFIG_CRYPTO_HMAC=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        echo "CONFIG_CRYPTO_ARC4=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        echo "CONFIG_CRYPTO_ECB=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
+        echo "CONFIG_CRYPTO_DES=y" >> configs/boards/${TNAME}/kernel-3.4.x-5.0.config
         ################################################################################################
         ###  清除默认配置###
         sed -i '/CONFIG_FIRMWARE_ENABLE_IPV6/d' .config
