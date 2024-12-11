@@ -284,6 +284,7 @@ sync && echo 3 > /proc/sys/vm/drop_caches
 #ipset add gfwlist 8.8.4.4
 
 # SMB资源挂载(局域网共享映射，无USB也能挂载储存空间)
+# https://www.right.com.cn/forum/thread-8304720-1-1.html
 # 说明：最下面的【192.168.2.6】为共享服务器的IP，【nas】为共享文件夹名称 
 # 说明：username=、password=填账号密码
 # 说明：没有密码则只填 username=everyone
@@ -293,7 +294,7 @@ sync && echo 3 > /proc/sys/vm/drop_caches
 #modprobe cifs CIFSMaxBufSize=64512
 #mkdir -p /media/cifs
 #umount /media/cifs ; umount -l /media/cifs
-#mount -t cifs //192.168.2.6/nas /media/cifs -o username=user,password=pass,dynperm,nounix,noserverino,file_mode=0777,dir_mode=0777
+#mount -t cifs //192.168.2.6/nas /media/cifs -o username=user,password=pass,dynperm,sec=ntlmssp,nounix,noserverino,file_mode=0777,dir_mode=0777
 
 
 #**************github下载加速******************
