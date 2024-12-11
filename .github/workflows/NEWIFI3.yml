@@ -55,8 +55,8 @@ jobs:
         sed -i 's/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=y/g' .config
         ###############################################################################################
         ## 添加cifs模块 没有USB也可以挂载远程smb共享文件夹
-        sed -i 's/obj-\$(CONFIG_CIFS) += cifs.o/obj-m += cifs.o/' ./linux-3.4.x/fs/cifs/Makefile 
-        cat ./linux-3.4.x/fs/cifs/Makefile
+        sed -i 's/obj-\$(CONFIG_CIFS) += cifs.o/obj-m += cifs.o/' ./linux-3.4.x/fs/cifs/Makefile
+        sed -i 's/#define cifs_dfs_d_automount NULL/extern struct vfsmount *cifs_dfs_d_automount(struct path *path);/' ./linux-3.4.x/fs/cifs/cifsfs.h
         sed -i '/CONFIG_CIFS/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CONFIG_CIFS_ACL/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CONFIG_CIFS_UPCALL/d' configs/boards/${TNAME}/kernel-3.4.x.config
