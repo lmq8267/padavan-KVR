@@ -382,7 +382,7 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_SOCAT=y" >> .config
 
         ## SRELAY代理
-        echo "CONFIG_FIRMWARE_INCLUDE_SRELAY=n" >> .config
+        echo "CONFIG_FIRMWARE_INCLUDE_SRELAY=y" >> .config
 
         ## MENTOHUST校园认证 已删除 /trunk/user/httpd/common.h
         echo "CONFIG_FIRMWARE_INCLUDE_MENTOHUST=n" >> .config
