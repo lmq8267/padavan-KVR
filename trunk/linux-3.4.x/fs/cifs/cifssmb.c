@@ -3732,7 +3732,7 @@ GetExtAttrOut:
 
 #endif /* CONFIG_POSIX */
 
-//#ifdef CONFIG_CIFS_ACL
+#ifdef CONFIG_CIFS_ACL
 /*
  * Initialize NT TRANSACT SMB into small smb request buffer.  This assumes that
  * all NT TRANSACTS that we init here have total parm and data under about 400
@@ -3977,7 +3977,7 @@ setCifsAclRetry:
 	return (rc);
 }
 
-//#endif /* CONFIG_CIFS_ACL */
+#endif /* CONFIG_CIFS_ACL */
 
 /* Legacy Query Path Information call for lookup to old servers such
    as Win9x/WinME */

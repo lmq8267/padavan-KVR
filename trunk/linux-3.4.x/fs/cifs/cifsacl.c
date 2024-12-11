@@ -24,7 +24,6 @@
 #include <linux/fs.h>
 #include <linux/slab.h>
 #include <linux/string.h>
-#include <linux/key.h>
 #include <linux/keyctl.h>
 #include <linux/key-type.h>
 #include <keys/user-type.h>
