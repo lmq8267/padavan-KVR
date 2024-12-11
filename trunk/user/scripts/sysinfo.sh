@@ -94,7 +94,7 @@ swap_usage=$( (echo "$swap_info" | awk '/Swap/ { printf("%3.0f", $3/$2*100) }' 2
 swap_total=$(echo "$swap_info" | awk '{print $(2)}')
 get_cpu_usage
 echo ""
-display "CPU 已用" "$cpu_usage" "70" "0" " %" 
+display "CPU 负载" "$cpu_usage" "70" "0" " %" 
 printf "运行时间:  \x1B[92m%s\x1B[0m\t\t" " $time"
 echo "" # fixed newline
 
