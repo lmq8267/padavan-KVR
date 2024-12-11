@@ -101,7 +101,7 @@ caddy_close() {
 	if [ ! -z "`pidof caddy_filebrowser`" ]; then
 	        killall caddy_filebrowser
 		killall -9 caddy_filebrowser
-                rm -rf "$caddy_dir/caddy/caddy_filebrowser"
+                #rm -rf "$caddy_dir/caddy/caddy_filebrowser"
 		[ -z "`pidof caddy_filebrowser`" ] && logger -t "【caddy】" "已关闭文件管理服务."
 	fi
 
