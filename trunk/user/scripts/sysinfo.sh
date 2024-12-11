@@ -61,19 +61,19 @@ storage_info
 critical_load=$(( 1 + $(grep -c processor /proc/cpuinfo) / 2 ))
 
 uptime_str=$(uptime)
-uptime_info=$(echo "$uptime_str" | sed -n 's/.*up \([^,]*\),.*/\1/p')
+uptime_info=$(echo "$uptime_str" | sed -n 's/.*up \(.*\) load average:.*/\1/p')
 days=0
 hours=0
 minutes=0
 
 if echo "$uptime_info" | grep -q "day"; then
     days=$(echo "$uptime_info" | sed -n 's/\([0-9]*\) day.*/\1/p')
-    uptime_info=$(echo "$uptime_info" | sed 's/[0-9]* day[s]* //')
+    uptime_info=$(echo "$uptime_info" | sed 's/^[0-9]* day[s]*, //')
 fi
 
 if echo "$uptime_info" | grep -q ":"; then
     hours=$(echo "$uptime_info" | cut -d':' -f1 | tr -d ' ')
-    minutes=$(echo "$uptime_info" | cut -d':' -f2 | tr -d ' ')
+    minutes=$(echo "$uptime_info" | cut -d':' -f2 | tr -d ' '| tr -d ',')
 elif echo "$uptime_info" | grep -q "min"; then
     minutes=$(echo "$uptime_info" | sed -n 's/\([0-9]*\) min.*/\1/p')
 fi
