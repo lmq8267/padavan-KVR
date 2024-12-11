@@ -64,6 +64,7 @@ jobs:
         sed -i '/CONFIG_ECRYPT_FS/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CONFIG_ENCRYPTED_KEYS/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CONFIG_KEYS_DEBUG_PROC_KEYS/d' configs/boards/${TNAME}/kernel-3.4.x.config
+        sed -i '/CONFIG_DNS_RESOLVER/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CRYPTO_MD4/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CRYPTO_MD5/d' configs/boards/${TNAME}/kernel-3.4.x.config
         sed -i '/CRYPTO_HMAC/d' configs/boards/${TNAME}/kernel-3.4.x.config
@@ -77,8 +78,9 @@ jobs:
         echo "CONFIG_KEYS_DEBUG_PROC_KEYS=n" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CONFIG_CIFS_ACL=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CONFIG_CIFS_UPCALL=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
-        echo "# CONFIG_CIFS_DFS_UPCALL is not set" >> configs/boards/${TNAME}/kernel-3.4.x.config
+        echo "CONFIG_CIFS_DFS_UPCALL=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "# CONFIG_CIFS_FSCACHE is not set" >> configs/boards/${TNAME}/kernel-3.4.x.config
+        echo "CONFIG_DNS_RESOLVER=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CRYPTO_MD4=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CRYPTO_MD5=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
         echo "CRYPTO_HMAC=y" >> configs/boards/${TNAME}/kernel-3.4.x.config
