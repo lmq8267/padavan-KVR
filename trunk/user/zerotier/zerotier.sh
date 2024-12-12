@@ -228,7 +228,7 @@ dowload_zero() {
         length=`expr $length + 512000`
 	length=`expr $length / 1048576`
  	zt_size0="$(check_disk_size $PROG)"
- 	[ ! -z "$length" ] && logger -t "【zerotier】" "程序大小 ${PROG}M， 程序路径可用空间 ${zt_size0}M "
+ 	[ ! -z "$length" ] && logger -t "【zerotier】" "程序大小 ${length}M， 程序路径可用空间 ${zt_size0}M "
 	curl -Lko "$PROG" "${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one" || wget --no-check-certificate -O "$PROG" "${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one" || curl -Lkso "$PROG" "https://fastly.jsdelivr.net/gh/lmq8267/ZeroTierOne@master/install/${tag}/zerotier-one" || wget --no-check-certificate -q -O "$PROG" "https://fastly.jsdelivr.net/gh/lmq8267/ZeroTierOne@master/install/${tag}/zerotier-one"
 	if [ "$?" = 0 ] ; then
 		chmod +x $PROG
@@ -270,7 +270,6 @@ start_zero() {
 	[ "$zt_enable" = "1" ] || exit 1
 	logger -t "【zerotier】" "正在启动zerotier"
 	sed -Ei '/【zerotier】|^$/d' /tmp/script/_opt_script_check
-	get_zttag
  	if [ -z "$PROG" ] ; then
   		etc_size=`check_disk_size /etc/storage`
       		if [ "$etc_size" -gt 1 ] ; then
@@ -279,6 +278,7 @@ start_zero() {
      			PROG=/tmp/var/zerotier-one
 		fi
  	fi
+  	get_zttag
   	zt_dir="$(dirname $PROG)"
    	PROGCLI="${zt_dir}/zerotier-cli"
 	PROGIDT="${zt_dir}/zerotier-idtool"
