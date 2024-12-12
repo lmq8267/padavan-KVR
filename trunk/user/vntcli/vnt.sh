@@ -184,7 +184,6 @@ vnt_rules() {
 start_vntcli() {
 	[ "$vntcli_enable" = "0" ] && exit 1
 	logger -t "【VNT客户端】" "正在启动vnt-cli"
- 	[ -z "$VNTCLI" ] && VNTCLI=/tmp/var/vnt-cli && nvram set vntcli_bin=$VNTCLI
   	if [ -z "$VNTCLI" ] ; then
   		etc_size=`check_disk_size /etc/storage`
       		if [ "$etc_size" -gt 1 ] ; then
