@@ -99,7 +99,7 @@ fi
 if [ -s "$PROG" ] ; then
      chmod a+x $PROG
      uuver=$($PROG -v | awk -F 'version:' '{print $2}' | tr -d ' \n')
-     [ -z "$uuver" ] && rm -rf /tmp/uu && logg "下载的程序${PROG}不完整或不匹配mipesl架构，脚本退出" && exit 1
+     [ -z "$uuver" ] && rm -rf /tmp/uu && logg "下载的程序${PROG}不完整或不匹配mipesl架构" 
 fi
 logg "运行uuplugin-$uuver"
 $PROG $UU_CONF >/dev/null 2>&1 &
