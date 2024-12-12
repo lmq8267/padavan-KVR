@@ -45,6 +45,10 @@ if [ ! -s "$PROG" ] || [ ! -s "$UU_CONF" ] ; then
     plugin_url=$(echo "$UU_url" | cut  -d ',' -f 1)
     plugin_md5=$(echo "$UU_url" | cut  -d ',' -f 2)
     logg "下载$plugin_url 到/tmp/uu.tar.gz"
+    length=$(wget --no-check-certificate -T 5 -t 3 "$plugin_url" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
+    length=`expr $length + 512000`
+    length=`expr $length / 1048576`
+    [ ! -z "$length" ] && logg "uu.tar.gz压缩包大小 ${length}M"
     curl -L -s -k "$plugin_url" -o /tmp/uu.tar.gz >/dev/null 2>&1 || wget -q --no-check-certificate "$plugin_url" -O /tmp/uu.tar.gz >/dev/null 2>&1 || curl -s -k "$plugin_url" -o /tmp/uu.tar.gz >/dev/null 2>&1 
     download_md5=$(md5sum /tmp/uu.tar.gz | awk '{print $1}')
     if [ "$download_md5" != "$plugin_md5" ];then
