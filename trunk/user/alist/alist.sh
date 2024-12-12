@@ -40,6 +40,42 @@ user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 github_proxys="$(nvram get github_proxy)"
 [ -z "$github_proxys" ] && github_proxys=" "
 scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
+alist_renum=`nvram get alist_renum`
+
+alist_restart () {
+relock="/var/lock/alist_restart.lock"
+if [ "$1" = "o" ] ; then
+	nvram set alist_renum="0"
+	[ -f $relock ] && rm -f $relock
+	return 0
+fi
+if [ "$1" = "x" ] ; then
+	alist_renum=${alist_renum:-"0"}
+	alist_renum=`expr $alist_renum + 1`
+	nvram set alist_renum="$alist_renum"
+	if [ "$alist_renum" -gt "3" ] ; then
+		I=19
+		echo $I > $relock
+		logger -t "【Alist】" "多次尝试启动失败，等待【"`cat $relock`"分钟】后自动尝试重新启动"
+		while [ $I -gt 0 ]; do
+			I=$(($I - 1))
+			echo $I > $relock
+			sleep 60
+			[ "$(nvram get alist_renum)" = "0" ] && break
+   			#[ "$(nvram get alist_enable)" = "0" ] && exit 0
+			[ $I -lt 0 ] && break
+		done
+		nvram set alist_renum="1"
+	fi
+	[ -f $relock ] && rm -f $relock
+fi
+scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
+start_alist
+}
 
 get_tag() {
 	curltest=`which curl`
