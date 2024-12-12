@@ -206,6 +206,7 @@ start_adg() {
   logger -t "【AdGuardHome】" "正在启动..."
   sed -Ei '/【AdGuardHome】|^$/d' /tmp/script/_opt_script_check
   find_bin
+  [ ! -x "$SVC_PATH" ] && chmod +x $SVC_PATH
   [[ "$($SVC_PATH -h 2>&1 | wc -l)" -lt 3 ]] && rm $SVC_PATH
   if [ ! -f "$SVC_PATH" ] || [[ "$($SVC_PATH -h 2>&1 | wc -l)" -lt 3 ]] ; then
   dl_adg
