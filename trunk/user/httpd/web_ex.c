@@ -2308,7 +2308,7 @@ static int smartdns_status_hook(int eid, webs_t wp, int argc, char **argv)
 #if defined (APP_CADDY)
 static int caddy_status_hook(int eid, webs_t wp, int argc, char **argv)
 {
-	int caddy_status_code = pids("caddy_filebrowser");
+	int caddy_status_code = pids("caddy_filebrowser") || pids("caddy");
 	websWrite(wp, "function caddy_status() { return %d;}\n", caddy_status_code);
 	return 0;
 }
