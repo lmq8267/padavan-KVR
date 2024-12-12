@@ -21,6 +21,42 @@ t_CMD="$(nvram get tailscale_cmd)"
 t2_CMD="$(nvram get tailscale_cmd2)"
 scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 [ ! -d /etc/storage/tailscale ] && mkdir -p /etc/storage/tailscale
+tailscale_renum=`nvram get tailscale_renum`
+
+ts_restart () {
+relock="/var/lock/tailscale_restart.lock"
+if [ "$1" = "o" ] ; then
+	nvram set tailscale_renum="0"
+	[ -f $relock ] && rm -f $relock
+	return 0
+fi
+if [ "$1" = "x" ] ; then
+	tailscale_renum=${tailscale_renum:-"0"}
+	tailscale_renum=`expr $tailscale_renum + 1`
+	nvram set tailscale_renum="$tailscale_renum"
+	if [ "$tailscale_renum" -gt "3" ] ; then
+		I=19
+		echo $I > $relock
+		logger -t "【Tailscale】" "多次尝试启动失败，等待【"`cat $relock`"分钟】后自动尝试重新启动"
+		while [ $I -gt 0 ]; do
+			I=$(($I - 1))
+			echo $I > $relock
+			sleep 60
+			[ "$(nvram get tailscale_renum)" = "0" ] && break
+   			#[ "$(nvram get tailscale_enable)" = "0" ] && exit 0
+			[ $I -lt 0 ] && break
+		done
+		nvram set tailscale_renum="1"
+	fi
+	[ -f $relock ] && rm -f $relock
+fi
+scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
+start_ts
+}
 
 get_tag() {
 	curltest=`which curl`
@@ -51,17 +87,27 @@ dowload_ts() {
 	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
 	logger -t "【Tailscale】" "开始下载 https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full 到 $tailscaled"
 	for proxy in $github_proxys ; do
-       curl -Lko "$tailscaled" "${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full" || wget --no-check-certificate -O "$tailscaled" "${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full"
+ 	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
+ 	length=`expr $length + 512000`
+	length=`expr $length / 1048576`
+ 	tailscaled_size0="$(check_disk_size $tailscaled)"
+ 	[ ! -z "$length" ] && logger -t "【Tailscale】" "程序大小 ${length}M， 程序路径可用空间 ${tailscaled_size0}M "
+        curl -Lko "$tailscaled" "${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full" || wget --no-check-certificate -O "$tailscaled" "${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full"
 	if [ "$?" = 0 ] ; then
 		chmod +x $tailscaled
-		logger -t "【Tailscale】" "$tailscaled 下载成功"
-		ts_ver=$($tailscaled -version | sed -n 1p | awk -F '-' '{print $1}')
-		if [ -z "$ts_ver" ] ; then
-			nvram set tailscale_ver=""
-		else
-			nvram set tailscale_ver=$ts_ver
-		fi
-		break
+  		if [[ "$($tailscaled -h 2>&1 | wc -l)" -gt 3 ]] ; then
+			logger -t "【Tailscale】" "$tailscaled 下载成功"
+			ts_ver=$($tailscaled -version | sed -n 1p | awk -F '-' '{print $1}')
+			if [ -z "$ts_ver" ] ; then
+				nvram set tailscale_ver=""
+			else
+				nvram set tailscale_ver=$ts_ver
+			fi
+			break
+       		else
+	   		logger -t "【Tailscale】" "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full 上传到  $tailscaled"
+	   		rm -f $tailscaled
+	  	fi
 	else
 		logger -t "【Tailscale】" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/tailscale/releases/download/${tag}/tailscaled_full 上传到  $tailscaled"
    	fi
@@ -150,12 +196,15 @@ start_ts() {
 	logger -t "Tailscale" "正在启动tailscale"
 	sed -Ei '/【Tailscaled】|^$/d' /tmp/script/_opt_script_check
 	get_tag
+ 	if [ -f "$tailscaled" ] ; then
+		[ ! -x "$tailscaled" ] && chmod +x $tailscaled
+  		[[ "$($tailscaled -h 2>&1 | wc -l)" -lt 2 ]] && logger -t "【Tailscale】" "程序${tailscaled}不完整！" && rm -rf $tailscaled
+  	fi
  	if [ ! -f "$tailscaled" ] ; then
 		logger -t "【Tailscale】" "主程序${tailscaled}不存在，开始在线下载..."
-  		[ -z "$tag" ] && tag="1.76.6"
+  		[ -z "$tag" ] && tag="1.78.1"
   		dowload_ts $tag
   	fi
-  	[ ! -f "$tailscaled" ] && exit 1
 	kill_ts
 	[ ! -x "$tailscaled" ] && chmod +x $tailscaled
 	path=$(dirname "$tailscaled")
@@ -170,14 +219,19 @@ start_ts() {
 	eval "$tdCMD >>/tmp/tailscale.log 2>&1" &
 	sleep 4
 	if [ ! -z "`pidof tailscaled`" ] ; then
+ 		mem=$(cat /proc/$(pidof tailscaled)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+   		tdcpu="$(top -b -n1 | grep -E "$(pidof tailscaled)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /tailscaled/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【Tailscale】" "主程序运行成功！"
+  		logger -t "【Tailscale】" "主程序:内存占用 ${mem} CPU占用 ${tdcpu}"
+  		ts_restart o
 		iptables -C INPUT -i tailscale0 -j ACCEPT
 		if [ "$?" != 0 ] ; then
 			iptables -I INPUT -i tailscale0 -j ACCEPT
 		fi
 	else
-		logger -t "【Tailscale】" "运行主程序失败，请检查"
-		exit 1
+		logger -t "【Tailscale】" "运行主程序失败, 注意检查${tailscaled}是否下载完整,10 秒后自动尝试重新启动
+  		sleep 10
+		ts_restart x
 	fi
 	CMD=""
 	if [ "$ts_enable" = "1" ] ; then
@@ -215,9 +269,15 @@ start_ts() {
 	eval "$CMD >>/tmp/tailscale.log 2>&1" &
 	sleep 5
 	if [ ! -z "`pidof tailscale`" ] ; then
+ 		mem=$(cat /proc/$(pidof tailscale)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+   		tscpu="$(top -b -n1 | grep -E "$(pidof tailscale)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /tailscale/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【Tailscale】" "子程序运行成功！"
+  		logger -t "【Tailscale】" "子程序:内存占用 ${mem} CPU占用 ${tscpu}"
+    		ts_restart o
 	else
-		logger -t "【Tailscale】" "子程序运行失败！"
+		logger -t "【Tailscale】" "子程序运行失败, 注意检查${VNTCLI}是否下载完整,10 秒后自动尝试重新启动"
+  		sleep 10
+  		ts_restart x
 	fi
 	ts_keep
 	exit 0
