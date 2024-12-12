@@ -140,21 +140,25 @@ github_proxys="$(nvram get github_proxy)"
 
 dl_wyy() {
 	if [ ! -f "/usr/bin/UnblockNeteaseMusic" ]; then
-		logger -t "音乐解锁" "没有主程序，开始下载程序"
+		logger -t "【音乐解锁】" "没有主程序，开始下载程序"
 		
 		for proxy in $github_proxys ; do
-		curl -L -k -s -o "/tmp/UnblockNeteaseMusic" --connect-timeout 10 --retry 3 "${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/unblockmusic/UnblockNeteaseMusic" || wget --no-check-certificate -q -O "/tmp/UnblockNeteaseMusic" "${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/unblockmusic/UnblockNeteaseMusic"
+  		length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/unblockmusic/UnblockNeteaseMusic" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
+ 		length=`expr $length + 512000`
+		length=`expr $length / 1048576`
+ 		[ ! -z "$length" ] && logger -t "【音乐解锁】" "程序大小 ${length}M"
+		curl -L -k -o "/tmp/UnblockNeteaseMusic" --connect-timeout 10 --retry 3 "${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/unblockmusic/UnblockNeteaseMusic" || wget --no-check-certificate -O "/tmp/UnblockNeteaseMusic" "${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/unblockmusic/UnblockNeteaseMusic"
 		if [ "$?" = 0 ] ; then
 			chmod +x /tmp/UnblockNeteaseMusic
 			if [ $(($(/tmp/UnblockNeteaseMusic -h | wc -l))) -gt 3 ] ; then
-				logger -t "音乐解锁" "/tmp/UnblockNeteaseMusic 下载成功"
+				logger -t "【音乐解锁】" "/tmp/UnblockNeteaseMusic 下载成功"
 				break
-       		else
-	   			logger -t "音乐解锁" "下载不完整，删除...请手动下载 ${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/unblockmusic/UnblockNeteaseMusic 上传到  /tmp/UnblockNeteaseMusic"
+       			else
+	   			logger -t "【音乐解锁】" "下载不完整，删除...请手动下载 ${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/unblockmusic/UnblockNeteaseMusic 上传到  /tmp/UnblockNeteaseMusic"
 				rm -f /tmp/UnblockNeteaseMusic
 	  		fi
 		else
-			logger -t "音乐解锁" "下载失败${proxy}https://github.com/lmq8267/padavan-KVR/raw/refs/heads/main/trunk/user/unblockmusic/UnblockNeteaseMusic"
+			logger -t "【音乐解锁】" "下载失败${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/unblockmusic/UnblockNeteaseMusic"
    		fi
 		
 		done
@@ -162,7 +166,42 @@ dl_wyy() {
 
 
 }
+wyy_renum=`nvram get wyy_renum`
 
+wyy_restart () {
+relock="/var/lock/wyy_restart.lock"
+if [ "$1" = "o" ] ; then
+	nvram set wyy_renum="0"
+	[ -f $relock ] && rm -f $relock
+	return 0
+fi
+if [ "$1" = "x" ] ; then
+	wyy_renum=${wyy_renum:-"0"}
+	wyy_renum=`expr $wyy_renum + 1`
+	nvram set wyy_renum="$wyy_renum"
+	if [ "$wyy_renum" -gt "3" ] ; then
+		I=19
+		echo $I > $relock
+		logger -t "【音乐解锁】" "多次尝试启动失败，等待【"`cat $relock`"分钟】后自动尝试重新启动"
+		while [ $I -gt 0 ]; do
+			I=$(($I - 1))
+			echo $I > $relock
+			sleep 60
+			[ "$(nvram get wyy_renum)" = "0" ] && break
+   			#[ "$(nvram get wyy_enable)" = "0" ] && exit 0
+			[ $I -lt 0 ] && break
+		done
+		nvram set wyy_renum="1"
+	fi
+	[ -f $relock ] && rm -f $relock
+fi
+scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
+wyy_start
+}
 wyy_start()
 {
 	[ $ENABLE -eq "0" ] && exit 0
@@ -186,13 +225,21 @@ wyy_start()
     	dl_wyy
     fi 
     $UnblockNeteaseMusic $ENABLE_FLAC -p 5200 -sp 5201 -m 0 -c /etc_ro/UnblockNeteaseMusicGo/server.crt -k /etc_ro/UnblockNeteaseMusicGo/server.key -m 0 -e >/dev/null 2>&1 &
-    logger -t "音乐解锁" "启动 Golang Version (http:5200, https:5201)"    
+    logger -t "【音乐解锁】" "启动 Golang Version (http:5200, https:5201)"    
   else
     kill -9 $(busybox ps -w | grep 'sleep 60m' | grep -v grep | awk '{print $1}') >/dev/null 2>&1
     /usr/bin/UnblockNeteaseMusicCloud >/dev/null 2>&1 &
-     logger -t "音乐解锁" "启动 Cloud Version - Server: $cloudip (http:$cloudhttp, https:$cloudhttps)"
+     logger -t "【音乐解锁】" "启动 Cloud Version - Server: $cloudip (http:$cloudhttp, https:$cloudhttps)"
 	fi
-		
+sleep 4
+  if [ ! -z "`pidof UnblockNeteaseMusic`" ] || [ ! -z "`pidof UnblockNeteaseMusicCloud`" ] ; then
+	logger -t "【音乐解锁】" "运行成功！"
+  	wyy_restart o
+else
+	logger -t "【音乐解锁】" "运行失败, 注意检查${UnblockNeteaseMusic}是否下载完整,10 秒后自动尝试重新启动"
+  	sleep 10
+  	wyy_restart x
+fi	
 	set_firewall
 	
   if [ "$APPTYPE" != "cloud" ]; then
@@ -211,7 +258,7 @@ wyy_close()
 	kill -9 $(busybox ps -w | grep logcheck.sh | grep -v grep | awk '{print $1}') >/dev/null 2>&1
 	
 	del_rule
-	logger -t "音乐解锁" "已关闭"
+	logger -t "【音乐解锁】" "已关闭"
 }
 
 case $1 in
