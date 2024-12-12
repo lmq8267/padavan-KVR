@@ -90,7 +90,6 @@ if [ ! -s "$PROG" ] || [ ! -s "$UU_CONF" ] ; then
     if [ "$download_md5" != "$plugin_md5" ];then
             logg "下载的/tmp/uu.tar.gz不完整！脚本退出运行"
             rm -rf /tmp/uu.tar.gz
-            exit 1
           else
             logg "下载完成，开始解压到$PROG"
             tar zxf /tmp/uu.tar.gz -C /tmp/uu
