@@ -279,7 +279,7 @@ if [ "$frps_enable" = "1" ] && [ ! -z "`pidof frps`" ] ; then
    scpu="$(top -b -n1 | grep -E "$(pidof frps)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /frps/) break; else cpu=i}} END {print $cpu}')"
    logger -t "【Frp】" "frps启动成功" 
    logger -t "【Frp】" "内存占用 ${mem} CPU占用 ${scpu}"
-   frpc_keep 
+   frps_keep 
    frp_restart o
 fi
 if [ "$frpc_enable" = "1" ] && [ ! -z "`pidof frpc`" ] ; then
@@ -287,7 +287,7 @@ if [ "$frpc_enable" = "1" ] && [ ! -z "`pidof frpc`" ] ; then
    ccpu="$(top -b -n1 | grep -E "$(pidof frpc)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /frpc/) break; else cpu=i}} END {print $cpu}')"
    logger -t "【Frp】" "frpc启动成功" 
    logger -t "【Frp】" "内存占用 ${mem} CPU占用 ${ccpu}" 
-   frps_keep 
+   frpc_keep 
    frp_restart o
 fi
 
