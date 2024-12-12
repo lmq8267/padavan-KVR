@@ -150,7 +150,7 @@ dl_wyy() {
 		curl -L -k -o "/tmp/UnblockNeteaseMusic" --connect-timeout 10 --retry 3 "${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/unblockmusic/UnblockNeteaseMusic" || wget --no-check-certificate -O "/tmp/UnblockNeteaseMusic" "${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/unblockmusic/UnblockNeteaseMusic"
 		if [ "$?" = 0 ] ; then
 			chmod +x /tmp/UnblockNeteaseMusic
-			if [ $(($(/tmp/UnblockNeteaseMusic -h | wc -l))) -gt 3 ] ; then
+			if [ "$(($(/tmp/UnblockNeteaseMusic -h 2>&1 | wc -l)))" -gt 3 ] ; then
 				logger -t "【音乐解锁】" "/tmp/UnblockNeteaseMusic 下载成功"
 				break
        			else
@@ -217,7 +217,7 @@ wyy_start()
     find_bin
     if [ -f "$UnblockNeteaseMusic" ] ; then
        [ ! -x "$UnblockNeteaseMusic" ] && chmod +x $UnblockNeteaseMusic
-       if [ $(($($UnblockNeteaseMusic -h | wc -l))) -lt 3 ] ; then
+       if [[ "$($UnblockNeteaseMusic -h 2>&1 | wc -l)" -lt 3 ]] ; then
          rm -f $UnblockNeteaseMusic
        fi
     fi
