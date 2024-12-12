@@ -234,7 +234,10 @@ EOF
 	eval "$vntscmd" &
 	sleep 4
 	if [ ! -z "`pidof vnts`" ] ; then
+ 		mem=$(cat /proc/$(pidof vnts)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+   		cpui="$(top -b -n1 | grep -E "$(pidof vnts)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /vnts/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【VNT服务端】" "运行成功！"
+  		logger -t "【VNT服务端】" "内存占用 ${mem} CPU占用 ${cpui}"
   		vnts_restart o
 		if [ ! -z "$vnts_port" ] ; then
 			iptables -I INPUT -p tcp --dport $vnts_port -j ACCEPT
@@ -251,7 +254,7 @@ EOF
 		vnts_keep
 		echo `date +%s` > /tmp/vnts_time
 	else
-		logger -t "【VNT服务端】" "运行失败, 注意检查${PROG}是否下载完整,10 秒后自动尝试重新启动"
+		logger -t "【VNT服务端】" "运行失败, 注意检查${VNTS}是否下载完整,10 秒后自动尝试重新启动"
   		sleep 10
   		vnts_restart x
 	fi
