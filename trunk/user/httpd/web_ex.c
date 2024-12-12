@@ -3886,6 +3886,13 @@ apply_cgi(const char *url, webs_t wp)
 		websRedirect(wp, current_url);
 		return 0;
 	}
+	else if (!strcmp(value, " Restartcaddy "))
+	{
+#if defined(APP_CADDY)
+		system("/usr/bin/caddy.sh start &");
+#endif
+		return 0;
+	}
 	else if (!strcmp(value, " Restartlucky "))
 	{
 #if defined(APP_LUCKY)
