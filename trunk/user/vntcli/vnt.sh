@@ -26,7 +26,6 @@ vntcli_comp="$(nvram get vntcli_comp)"
 vntcli_relay="$(nvram get vntcli_relay)"
 vntcli_wan="$(nvram get vntcli_wan)"
 
-[ -z "$VNTCLI" ] && VNTCLI=/tmp/var/vnt-cli && nvram set vntcli_bin=$VNTCLI
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
 github_proxys="$(nvram get github_proxy)"
 [ -z "$github_proxys" ] && github_proxys=" "
@@ -37,6 +36,42 @@ if [ ! -z "$vntcli_port" ] ; then
 		vnt_tcp_port="$vntcli_port"
 	fi
 fi
+vntcli_renum=`nvram get vntcli_renum`
+
+vntcli_restart () {
+relock="/var/lock/vntcli_restart.lock"
+if [ "$1" = "o" ] ; then
+	nvram set vntcli_renum="0"
+	[ -f $relock ] && rm -f $relock
+	return 0
+fi
+if [ "$1" = "x" ] ; then
+	vntcli_renum=${vntcli_renum:-"0"}
+	vntcli_renum=`expr $vntcli_renum + 1`
+	nvram set vntcli_renum="$vntcli_renum"
+	if [ "$vntcli_renum" -gt "3" ] ; then
+		I=19
+		echo $I > $relock
+		logger -t "【VNT客户端】" "多次尝试启动失败，等待【"`cat $relock`"分钟】后自动尝试重新启动"
+		while [ $I -gt 0 ]; do
+			I=$(($I - 1))
+			echo $I > $relock
+			sleep 60
+			[ "$(nvram get vntcli_renum)" = "0" ] && break
+   			#[ "$(nvram get vntcli_enable)" = "0" ] && exit 0
+			[ $I -lt 0 ] && break
+		done
+		nvram set vntcli_renum="1"
+	fi
+	[ -f $relock ] && rm -f $relock
+fi
+scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
+start_vntcli
+}
 
 get_tag() {
 	curltest=`which curl`
@@ -67,7 +102,12 @@ dowload_vntcli() {
 	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
 	logger -t "【VNT客户端】" "开始下载 https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 到 $VNTCLI"
 	for proxy in $github_proxys ; do
-       curl -Lko "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl" || wget --no-check-certificate -O "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl"
+ 	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
+ 	length=`expr $length + 512000`
+	length=`expr $length / 1048576`
+ 	vntcli_size0="$(check_disk_size $VNTCLI)"
+ 	[ ! -z "$length" ] && logger -t "【VNT客户端】" "程序大小 ${length}M， 程序路径可用空间 ${vntcli_size0}M "
+        curl -Lko "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl" || wget --no-check-certificate -O "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl"
 	if [ "$?" = 0 ] ; then
 		chmod +x $VNTCLI
 		if [ $(($($VNTCLI -h | wc -l))) -gt 3 ] ; then
@@ -79,9 +119,9 @@ dowload_vntcli() {
 				nvram set vntcli_ver="v${vntcli_ver}"
 			fi
 			break
-       	else
+       		else
 	   		logger -t "【VNT客户端】" "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 上传到  $VNTCLI"
-	   		#rm -f $VNTCLI
+	   		rm -f $VNTCLI
 	  	fi
 	else
 		logger -t "【VNT客户端】" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl 上传到  $VNTCLI"
@@ -144,16 +184,27 @@ vnt_rules() {
 start_vntcli() {
 	[ "$vntcli_enable" = "0" ] && exit 1
 	logger -t "【VNT客户端】" "正在启动vnt-cli"
+ 	[ -z "$VNTCLI" ] && VNTCLI=/tmp/var/vnt-cli && nvram set vntcli_bin=$VNTCLI
+  	if [ -z "$VNTCLI" ] ; then
+  		etc_size=`check_disk_size /etc/storage`
+      		if [ "$etc_size" -gt 1 ] ; then
+			VNTCLI=/etc/storage/bin/vnt-cli
+   		else
+     			VNTCLI=/tmp/var/vnt-cli
+		fi
+  		nvram set vntcli_bin=$VNTS
+    	fi
 	get_tag
+ 	if [ -f "$VNTCLI" ] ; then
+		[ ! -x "$VNTCLI" ] && chmod +x $VNTCLI
+  		[[ "$($VNTCLI -h 2>&1 | wc -l)" -lt 3 ]] && logger -t "【VNT客户端】" "程序${VNTCLI}不完整！" && rm -rf $VNTCLI
+  	fi
  	if [ ! -f "$VNTCLI" ] ; then
 		logger -t "VNT客户端" "主程序${VNTCLI}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
   		[ -z "$tag" ] && tag="1.2.15"
   		dowload_vntcli $tag
   	fi
-  	[ ! -f "$VNTCLI" ] && exit 1
-	chmod +x $VNTCLI
-	[ $(($($VNTCLI -h | wc -l))) -lt 3 ] && logger -t "【VNT客户端】" "程序${VNTCLI}不完整，无法运行！" 
 	sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check
 	killall vnt-cli >/dev/null 2>&1
 	
@@ -304,11 +355,16 @@ EOF
 	eval "$vntclicmd" &
 	sleep 4
 	if [ ! -z "`pidof vnt-cli`" ] ; then
+ 		mem=$(cat /proc/$(pidof vnt-cli)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
 		logger -t "【VNT客户端】" "运行成功！"
+  		[ ! -z "$mem" ] && logger -t "【VNT客户端】" "占用内存 $mem"
+  		vntcli_restart o
 		echo `date +%s` > /tmp/vntcli_time
 		vnt_rules
 	else
-		logger -t "【VNT客户端】" "运行失败！"
+		logger -t "【VNT客户端】" "运行失败, 注意检查${VNTCLI}是否下载完整,10 秒后自动尝试重新启动"
+  		sleep 10
+  		vntcli_restart x
 	fi
 	
 	exit 0
