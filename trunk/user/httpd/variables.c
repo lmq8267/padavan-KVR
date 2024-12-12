@@ -1072,6 +1072,11 @@
 			{"caddy_wip6", "", NULL, EVM_RESTART_CADDY},
 			{"caddy_wname", "", NULL, EVM_RESTART_CADDY},
 			{"caddy_wpassword", "", NULL, EVM_RESTART_CADDY},
+			{"caddy_dwan", "", NULL, EVM_RESTART_CADDY},
+			{"caddy_dwip6", "", NULL, EVM_RESTART_CADDY},
+			{"caddy_Fname", "", NULL, EVM_RESTART_CADDY},
+			{"caddy_Fpassword", "", NULL, EVM_RESTART_CADDY},
+			{"caddy_webdav", "", NULL, EVM_RESTART_CADDY},
 			{"scripts.caddy_script.sh", "File", NULL, EVM_RESTART_CADDY},
 			{0,0,0,0}
 	};
