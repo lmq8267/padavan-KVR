@@ -7,6 +7,42 @@ github_proxys="$(nvram get github_proxy)"
 [ -z "$github_proxys" ] && github_proxys=" "
 CMD="$(nvram get cloudflared_cmd)"
 scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
+cloudflared_renum=`nvram get cloudflared_renum`
+
+cf_restart () {
+relock="/var/lock/cloudflared_restart.lock"
+if [ "$1" = "o" ] ; then
+	nvram set cloudflared_renum="0"
+	[ -f $relock ] && rm -f $relock
+	return 0
+fi
+if [ "$1" = "x" ] ; then
+	cloudflared_renum=${cloudflared_renum:-"0"}
+	cloudflared_renum=`expr $cloudflared_renum + 1`
+	nvram set cloudflared_renum="$cloudflared_renum"
+	if [ "$cloudflared_renum" -gt "3" ] ; then
+		I=19
+		echo $I > $relock
+		logger -t "【cloudflared】" "多次尝试启动失败，等待【"`cat $relock`"分钟】后自动尝试重新启动"
+		while [ $I -gt 0 ]; do
+			I=$(($I - 1))
+			echo $I > $relock
+			sleep 60
+			[ "$(nvram get cloudflared_renum)" = "0" ] && break
+   			#[ "$(nvram get cloudflared_enable)" = "0" ] && exit 0
+			[ $I -lt 0 ] && break
+		done
+		nvram set cloudflared_renum="1"
+	fi
+	[ -f $relock ] && rm -f $relock
+fi
+scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
+start_cf
+}
 
 get_cftag() {
 	curltest=`which curl`
@@ -37,10 +73,15 @@ dowload_cf() {
 	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
 	logger -t "【cloudflared】" "开始下载 https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared 到 $PROG"
 	for proxy in $github_proxys ; do
-       curl -Lko "$PROG" "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared" || wget --no-check-certificate -O "$PROG" "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared"
+ 	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
+ 	length=`expr $length + 512000`
+	length=`expr $length / 1048576`
+ 	cf_size0="$(check_disk_size $PROG)"
+ 	[ ! -z "$length" ] && logger -t "【cloudflared】" "程序大小 ${length}M， 程序路径可用空间 ${cf_size0}M "
+        curl -Lko "$PROG" "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared" || wget --no-check-certificate -O "$PROG" "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared"
 	if [ "$?" = 0 ] ; then
 		chmod +x $PROG
-		if [ $(($($PROG -h | wc -l))) -gt 3 ] ; then
+		if [[ "$($PROG -h 2>&1 | wc -l)" -gt 3 ]] ; then
 			logger -t "【cloudflared】" "$PROG 下载成功"
 			cf_ver=$($PROG --version |  awk '{print $3}' | sed -n '1p')
 			if [ -z "$cf_ver" ] ; then
@@ -49,9 +90,9 @@ dowload_cf() {
 				nvram set cloudflared_ver=$cf_ver
 			fi
 			break
-       	else
+       		else
 	   		logger -t "【cloudflared】" "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared 上传到  $PROG"
-			#rm -f $PROG
+			rm -f $PROG
 	  	fi
 	else
 		logger -t "【cloudflared】" "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared 上传到  $PROG"
@@ -91,6 +132,10 @@ start_cf() {
 	[ "$cf_enable" = "1" ] || exit 1
 	logger -t "【cloudflared】" "正在启动cloudflared"
 	sed -Ei '/【cloudflared】|^$/d' /tmp/script/_opt_script_check
+ 	if [ -f "$PROG" ] ; then
+		[ ! -x "$PROG" ] && chmod +x $PROG
+  		[[ "$($PROG -h 2>&1 | wc -l)" -lt 2 ]] && logger -t "【cloudflared】" "程序${PROG}不完整！" && rm -rf $PROG
+  	fi
 	get_cftag
  	if [ ! -f "$PROG" ] ; then
 		logger -t "【cloudflared】" "主程序${PROG}不存在，开始在线下载..."
@@ -98,19 +143,23 @@ start_cf() {
   		[ -z "$tag" ] && tag="2024.11.0"
   		dowload_cf $tag
   	fi
-  	[ ! -f "$PROG" ] && exit 1
 	kill_cf
-	chmod +x $PROG
-	#[ $(($($PROG -h | wc -l))) -lt 3 ] && logger -t "【cloudflared】" "程序${PROG}不完整，无法运行！" 
+	[ ! -x "$PROG" ] && chmod +x $PROG
 	cmd="${PROG} ${CMD}"
 	logger -t "【cloudflared】" "运行${cmd}"
 	eval "$cmd" &
 	sleep 4
 	if [ ! -z "`pidof cloudflared`" ] ; then
+ 		mem=$(cat /proc/$(pidof cloudflared)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+   		cpui="$(top -b -n1 | grep -E "$(pidof cloudflared)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /cloudflared/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【cloudflared】" "运行成功！"
+  		logger -t "【cloudflared】" "内存占用 ${mem} CPU占用 ${cpui}"
+    		cf_restart o
 		cf_keep
 	else
-		logger -t "【cloudflared】" "运行失败！"
+		logger -t "【cloudflared】" "运行失败, 注意检查${PROG}是否下载完整,10 秒后自动尝试重新启动"
+  		sleep 10
+    		cf_restart x
 	fi
 	exit 0
 }
