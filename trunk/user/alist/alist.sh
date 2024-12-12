@@ -74,7 +74,7 @@ if [ ! -z "$scriptname" ] ; then
 	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
 	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
 fi
-start_alist
+start_al
 }
 
 get_tag() {
@@ -112,28 +112,33 @@ dowload_al() {
 	logger -t "【Alist】" "开始下载 ${url} "
 	[ -z "$github_proxys" ] && logger -t "【Alist】" "加速镜像地址为空.."
 	for proxy in $github_proxys ; do
-       curl -Lko "/tmp/alist.tar.gz" "${proxy}${url}" || wget --no-check-certificate -O "/tmp/alist.tar.gz" "${proxy}${url}"
+ 	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}${url}" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
+ 	length=`expr $length + 512000`
+	length=`expr $length / 1048576`
+ 	alist_size0="$(check_disk_size $VNTCLI)"
+ 	[ ! -z "$length" ] && logger -t "【VNT客户端】" "程序大小 ${length}M， 程序路径可用空间 ${alist}M "
+        curl -Lko "/tmp/alist.tar.gz" "${proxy}${url}" || wget --no-check-certificate -O "/tmp/alist.tar.gz" "${proxy}${url}"
 	if [ "$?" = 0 ] ; then
 		logger -t "【Alist】" "开始解压..."
-		tar -xzf /tmp/alist.tar.gz -C /tmp/alist
-		chmod +x /tmp/alist/alist
-		if [ $(($(/tmp/alist/alist -h | wc -l))) -gt 3 ] ; then
+		tar -xzf /tmp/alist.tar.gz -C /tmp/var
+		chmod +x /tmp/var/alist
+		if [ "$(($(/tmp/var/alist -h 2>&1 | wc -l)))" -gt 3 ]  ; then
 			logger -t "【Alist】" "解压成功"
-			cp -rf /tmp/alist/alist $alist
+			cp -rf /tmp/var/alist $alist
 			al_ver=$($alist version | grep -Ew "^Version" | awk '{print $2}')
 			if [ -z "$al_ver" ] ; then
 				nvram set alist_ver=""
 			else
 				nvram set alist_ver=$al_ver
 			fi
-			rm -rf /tmp/alist.tar.gz
+			rm -rf /tmp/alist.tar.gz /tmp/var/alist
 			break
-       	else
-	   		logger -t "【Alist】" "下载不完整，请手动下载 ${proxy}${url} 解压上传到  $PROG"
-			#rm -f $PROG
+       		else
+	   		logger -t "【Alist】" "下载不完整，请手动下载 ${proxy}${url} 解压上传到  $alist"
+			rm -rf /tmp/alist.tar.gz /tmp/var/alist
 	  	fi
 	else
-		logger -t "【Alist】" "下载失败，请手动下载 ${proxy}${url} 解压上传到  $PROG"
+		logger -t "【Alist】" "下载失败，请手动下载 ${proxy}${url} 解压上传到  $alist"
    	fi
 	done
 }
@@ -349,6 +354,10 @@ start_al() {
 	echo "正在启动alist" >/tmp/alist.log
 	sed -Ei '/【Alist】|^$/d' /tmp/script/_opt_script_check
 	get_tag
+ 	if [ -f "$alist" ] ; then
+		[ ! -x "$alist" ] && chmod +x $alist
+  		[[ "$($alist -h 2>&1 | wc -l)" -lt 2 ]] && logger -t "【Alist】" "程序${alist}不完整！" && rm -rf $alist
+  	fi
  	if [ ! -f "$alist" ] ; then
 		logger -t "【Alist】" "主程序${alist}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
@@ -356,10 +365,8 @@ start_al() {
   		[ -z "$tag" ] && tag="v3.39.4"
   		dowload_al $tag
   	fi
-  	[ ! -f "$alist" ] && exit 1
 	kill_al
-	[ ! -x "$alist" ] && chmod +x $alist
-	#[ $(($($alist -h | wc -l))) -lt 3 ] && logger -t "【Alist】" "程序${alist}不完整，无法运行！" 
+	[ ! -x "$alist" ] && chmod +x $alist 
 	jq_test="$(which jq)"
 	[ -z "$jq_test" ] && logger -t "【Alist】" "缺少依赖程序 jq ，请下载 https://opt.cn2qq.com/opt-file/jq 后上传到/etc/storage/bin/jq 再运行." && exit 1
 	if [ -z "$db_file" ] ; then
@@ -384,11 +391,17 @@ start_al() {
 	eval "$cmd >>/tmp/alist.log 2>&1" &
 	sleep 4
 	if [ ! -z "`pidof alist`" ] ; then
+ 		mem=$(cat /proc/$(pidof alist)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+   		cpui="$(top -b -n1 | grep -E "$(pidof alist)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /alist/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【Alist】" "运行成功！"
+ 	 	logger -t "【Alist】" "内存占用 ${mem} CPU占用 ${cpui}"
+  		alist_restart o
 		al_keep
 		
 	else
-		logger -t "【Alist】" "运行失败！"
+		logger -t "【Alist】" "运行失败, 注意检查${alist}是否下载完整,10 秒后自动尝试重新启动"
+  		sleep 10
+    		alist_restart x
 	fi
 	exit 0
 }
