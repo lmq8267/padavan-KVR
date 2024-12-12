@@ -23,6 +23,42 @@ uu_keep() {
 	fi
 
 }
+uu_renum=`nvram get uu_renum`
+
+uu_restart () {
+relock="/var/lock/uu_restart.lock"
+if [ "$1" = "o" ] ; then
+	nvram set uu_renum="0"
+	[ -f $relock ] && rm -f $relock
+	return 0
+fi
+if [ "$1" = "x" ] ; then
+	uu_renum=${uu_renum:-"0"}
+	uu_renum=`expr $uu_renum + 1`
+	nvram set uu_renum="$uu_renum"
+	if [ "$uu_renum" -gt "3" ] ; then
+		I=19
+		echo $I > $relock
+		logg "多次尝试启动失败，等待【"`cat $relock`"分钟】后自动尝试重新启动"
+		while [ $I -gt 0 ]; do
+			I=$(($I - 1))
+			echo $I > $relock
+			sleep 60
+			[ "$(nvram get uu_renum)" = "0" ] && break
+   			#[ "$(nvram get uu_enable)" = "0" ] && exit 0
+			[ $I -lt 0 ] && break
+		done
+		nvram set uu_renum="1"
+	fi
+	[ -f $relock ] && rm -f $relock
+fi
+scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
+uu_start
+}
 
 uu_start () {
   [ "$uu_enable" != "1" ] && exit 1
@@ -70,12 +106,16 @@ logg "运行uuplugin-$uuver"
 $PROG $UU_CONF >/dev/null 2>&1 &
 sleep 6
 if [ ! -z "`pidof uuplugin`" ] ; then
+  mem=$(cat /proc/$(pidof uuplugin)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+  cpui="$(top -b -n1 | grep -E "$(pidof uuplugin)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /uuplugin/) break; else cpu=i}} END {print $cpu}')"
   logg "设备SN：$SN"
   logg "uuplugin-$uuver 启动成功" 
+  uu_restart o
+  logg "内存占用 ${mem} CPU占用 ${cpui}"
   uu_keep
   nvram set uu_admin="https://router.uu.163.com/asus/pc/login?gwSn=${SN}&type=asuswrt-merlin&redirect=acce"
 fi
-[ -z "`pidof uuplugin`" ] && logg "uuplugin启动失败!" 
+[ -z "`pidof uuplugin`" ] && logg "启动失败, 注意检查${PROG}是否下载完整,10 秒后自动尝试重新启动" && sleep 10 && uu_restart x
 
 }
 
