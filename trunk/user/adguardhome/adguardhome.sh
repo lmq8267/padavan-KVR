@@ -218,7 +218,6 @@ start_adg() {
   logger -t "【AdGuardHome】" "运行 $SVC_PATH"
   [ ! -x "$SVC_PATH" ] && chmod +x $SVC_PATH
   eval "$SVC_PATH -c $adg_file -w /tmp/AdGuardHome -v" &
-  adg_keep
   sleep 4
   	if [ ! -z "`pidof AdGuardHome`" ] ; then
  		mem=$(cat /proc/$(pidof AdGuardHome)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
@@ -233,7 +232,9 @@ start_adg() {
   		sleep 10
   		adg_restart x
 	fi
+ adg_keep
   fi
+  
 }
 
 stop_adg() {
