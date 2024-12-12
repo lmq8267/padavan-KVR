@@ -134,7 +134,13 @@ rules() {
 		iptables -t nat -I POSTROUTING -s $ip_segment -j MASQUERADE
 		zero_route "add"
 	fi
-	[ ! -z "`pidof zerotier-one`" ] && logger -t "【zerotier】" "zerotier-one ${zt_ver}启动成功! " && zt_restart o
+	if [ ! -z "`pidof zerotier-one`" ] ; then
+ 		mem=$(cat /proc/$(pidof zerotier-one)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+   		cpui="$(top -b -n1 | grep -E "$(pidof zerotier-one)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /zerotier-one/) break; else cpu=i}} END {print $cpu}')"
+ 		logger -t "【zerotier】" "zerotier-one ${zt_ver}启动成功! "
+   		logger -t "【zerotier】" "内存占用 ${mem} CPU占用 ${cpui}"
+   		zt_restart o
+   	fi
  	[ -z "`pidof zerotier-one`" ] && logger -t "【zerotier】" "启动失败, 注意检查${PROG}是否下载完整,10 秒后自动尝试重新启动" && sleep 10 && zt_restart x
  	count=0
         while [ $count -lt 5 ]
@@ -284,7 +290,7 @@ start_zero() {
 	PROGIDT="${zt_dir}/zerotier-idtool"
  	if [ -f "$PROG" ] ; then
 		[ ! -x "$PROG" ] && chmod +x $PROG
-  		[[ "$($PROG -h 2>&1 | wc -l)" -lt 3 ]] && rm -rf $PROG
+  		[[ "$($PROG -h 2>&1 | wc -l)" -lt 3 ]] && logger -t "【zerotier】" "主程序${PROG}不完整！" && rm -rf $PROG
   	fi
  	if [ ! -f "$PROG" ] ; then
 		logger -t "【zerotier】" "主程序${PROG}不存在，开始在线下载..."
