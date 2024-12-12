@@ -33,29 +33,71 @@ check_net()
 	fi
 }
 
+frp_renum=`nvram get frp_renum`
+
+frp_restart () {
+relock="/var/lock/frp_restart.lock"
+if [ "$1" = "o" ] ; then
+	nvram set frp_renum="0"
+	[ -f $relock ] && rm -f $relock
+	return 0
+fi
+if [ "$1" = "x" ] ; then
+	frp_renum=${frp_renum:-"0"}
+	frp_renum=`expr $frp_renum + 1`
+	nvram set frp_renum="$frp_renum"
+	if [ "$frp_renum" -gt "3" ] ; then
+		I=19
+		echo $I > $relock
+		logger -t "【Frp】" "多次尝试启动失败，等待【"`cat $relock`"分钟】后自动尝试重新启动"
+		while [ $I -gt 0 ]; do
+			I=$(($I - 1))
+			echo $I > $relock
+			sleep 60
+			[ "$(nvram get frp_renum)" = "0" ] && break
+   			#[ "$(nvram get frps_enable)" = "0" ] && [ "$(nvram get frpc_enable)" = "0" ] && exit 0
+			[ $I -lt 0 ] && break
+		done
+		nvram set frp_renum="1"
+	fi
+	[ -f $relock ] && rm -f $relock
+fi
+scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
+frp_start
+}
+
 find_bin() {
+frpc=`nvram get frpc_bin`
+frps=`nvram get frps_bin`
+ 	
 dirs="/etc/storage/bin
 /tmp/frp
 /usr/bin"
 
-frpc=""
-for dir in $dirs ; do
+if [ -z "$frpc" ] ; then
+  for dir in $dirs ; do
     if [ -f "$dir/frpc" ] ; then
         frpc="$dir/frpc"
         [ ! -x "$frpc" ] && chmod +x $frpc
         break
     fi
-done
-[ -z "$frpc" ] && frpc="/tmp/frp/frpc"
-frps=""
-for dir in $dirs ; do
+  done
+  [ -z "$frpc" ] && frpc="/tmp/frp/frpc"
+fi
+if [ -z "$frps" ] ; then
+  for dir in $dirs ; do
     if [ -f "$dir/frps" ] ; then
         frps="$dir/frps"
         [ ! -x "$frps" ] && chmod +x $frps
         break
     fi
-done
-[ -z "$frps" ] && frps="/tmp/frp/frps"
+  done
+  [ -z "$frps" ] && frps="/tmp/frp/frps"
+fi
 }
 
 get_ver() {
@@ -102,7 +144,12 @@ frp_dl ()
 	mkdir -p /tmp/frp
 	logger -t "【Frp】" "开始下载 https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz"
 	for proxy in $github_proxys ; do
-       curl -Lko "/tmp/frp_linux_mipsle.tar.gz" "${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz" || wget --no-check-certificate -O "/tmp/frp_linux_mipsle.tar.gz" "${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz"
+ 	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
+ 	length=`expr $length + 512000`
+	length=`expr $length / 1048576`
+ 	frp_size0="$(check_disk_size $frpc)"
+ 	[ ! -z "$length" ] && logger -t "【Frp】" "frp_linux_mipsle.tar.gz压缩包大小 ${length}M， 程序路径可用空间 ${frp_size0}M "
+        curl -Lko "/tmp/frp_linux_mipsle.tar.gz" "${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz" || wget --no-check-certificate -O "/tmp/frp_linux_mipsle.tar.gz" "${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz"
 	if [ "$?" = 0 ] ; then
 		tar -xz -C /tmp -f /tmp/frp_linux_mipsle.tar.gz
 		frpc_size="$(du -k /tmp/frp_${newtag}_linux_mipsle/frpc | awk '{print int($1 / 1024)}')"
@@ -111,21 +158,21 @@ frp_dl ()
 		frps_path=$(dirname "$frps")
 		if [ "$frpc_enable" = "1" ] ; then
 			router_size="$(check_disk_size $frpc_path)"
-			if [ $(($(/tmp/frp_${newtag}_linux_mipsle/frpc -h | wc -l))) -gt 3 ] ; then
+			if [ "$(($(/tmp/frp_${newtag}_linux_mipsle/frpc -h 2>&1 | wc -l)))" -gt 3 ] ; then
 				logger -t "【Frp】" "frpc ${frpc_size}M 下载成功,${frpc_path}剩余可用${router_size}M安装到$frpc"
 				cp "/tmp/frp_${newtag}_linux_mipsle/frpc" "$frpc"
 				break
-       		else
+       			else
 	   			logger -t "【Frp】" "frpc 下载不完整，请手动下载 ${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz 解压上传到  $frpc"
 	  		fi
 		fi
 		if [ "$frps_enable" = "1" ] ; then
 			router_size="$(check_disk_size $frps_path)"
-			if [ $(($(/tmp/frp_${newtag}_linux_mipsle/frps -h | wc -l))) -gt 3 ] ; then
+			if [ "$(($(/tmp/frp_${newtag}_linux_mipsle/frps -h 2>&1 | wc -l)))" -gt 3 ] ; then
 				logger -t "【Frp】" "frps ${frps_size}M 下载成功,${frps_path}剩余可用${router_size}M 安装到$frps"
 				cp "/tmp/frp_${newtag}_linux_mipsle/frps" "$frps"
 				break
-       		else
+       			else
 	   			logger -t "【Frp】" "frps 下载不完整，请手动下载 ${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz 解压上传到  $frps"
 	  		fi
 		fi
@@ -214,10 +261,34 @@ frp_start ()
   	[ ! -f "$frps" ] && logger -t "【Frp】" "没有$frps 无法运行.." 
   fi
   get_ver
-  /etc/storage/frp_script.sh
-	sleep 3
-	[ ! -z "`pidof frpc`" ] && logger -t "【Frp】" "frpc启动成功" && frpc_keep
-	[ ! -z "`pidof frps`" ] && logger -t "【Frp】" "frps启动成功" && frps_keep
+  eval /etc/storage/frp_script.sh &
+ if [ "$frps_enable" = "1" ] ; then
+	sleep 4
+	[ -z "`pidof frps`" ] && logger -t "【Frp】" "frps启动失败, 注意检查端口是否有冲突,程序是否下载完整,10 秒后自动尝试重新启动" && sleep 10 && frp_restart x
+	[ ! -z "`pidof frps`" ] && logger -t "【Frp】" "请手动配置【外网 WAN - 端口转发 - 启用手动端口映射】来开启WAN访问"
+fi
+if [ "$frpc_enable" = "1" ] ; then
+	[ "$frps_enable" = "1" ] && sleep 64
+	sleep 4
+	[ -z "`pidof frpc`" ] && logger -t "【Frp】" "frpc启动失败, 注意检查端口是否有冲突,程序是否下载完整,10 秒后自动尝试重新启动" && sleep 10 && frp_restart x
+fi
+if [ "$frps_enable" = "1" ] && [ ! -z "`pidof frps`" ] ; then
+   mem=$(cat /proc/$(pidof frps)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+   scpu="$(top -b -n1 | grep -E "$(pidof frps)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /frps/) break; else cpu=i}} END {print $cpu}')"
+   logger -t "【Frp】" "frps启动成功" 
+   logger -t "【Frp】" "内存占用 ${mem} CPU占用 ${scpu}"
+   frpc_keep 
+   frp_restart o
+fi
+if [ "$frpc_enable" = "1" ] && [ ! -z "`pidof frpc`" ] ; then
+   mem=$(cat /proc/$(pidof frpc)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+   ccpu="$(top -b -n1 | grep -E "$(pidof frpc)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /frpc/) break; else cpu=i}} END {print $cpu}')"
+   logger -t "【Frp】" "frpc启动成功" 
+   logger -t "【Frp】" "内存占用 ${mem} CPU占用 ${ccpu}" 
+   frps_keep 
+   frp_restart o
+fi
+
 }
       
 frp_close () 
