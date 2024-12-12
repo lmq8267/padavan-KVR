@@ -224,7 +224,7 @@ dowload_zero() {
 	tag="$1"
 	logger -t "【zerotier】" "开始下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 到 $PROG"
 	for proxy in $github_proxys ; do
- 	length=$(wget  -T 5 -t 3 "${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
+ 	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
         length=`expr $length + 512000`
 	length=`expr $length / 1048576`
  	zt_size0="$(check_disk_size $PROG)"
