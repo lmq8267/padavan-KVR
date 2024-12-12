@@ -192,7 +192,7 @@ start_vntcli() {
    		else
      			VNTCLI=/tmp/var/vnt-cli
 		fi
-  		nvram set vntcli_bin=$VNTS
+  		nvram set vntcli_bin=$VNTCLI
     	fi
 	get_tag
  	if [ -f "$VNTCLI" ] ; then
@@ -356,8 +356,9 @@ EOF
 	sleep 4
 	if [ ! -z "`pidof vnt-cli`" ] ; then
  		mem=$(cat /proc/$(pidof vnt-cli)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+   		vntcpu="$(top -b -n1 | grep -E "$(pidof vnt-cli)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /vnt-cli/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【VNT客户端】" "运行成功！"
-  		[ ! -z "$mem" ] && logger -t "【VNT客户端】" "占用内存 $mem"
+  		logger -t "【VNT客户端】" "内存占用 ${mem} CPU占用 ${vntcpu}"
   		vntcli_restart o
 		echo `date +%s` > /tmp/vntcli_time
 		vnt_rules
