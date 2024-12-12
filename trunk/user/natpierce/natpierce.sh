@@ -19,6 +19,42 @@ logg() {
   echo "$(date +'%Y-%m-%d %H:%M:%S'): $1" >>/tmp/natpierce.log
   logger -t "【皎月连】" "$1"
 }
+natpierce_renum=`nvram get natpierce_renum`
+
+jyl_restart () {
+relock="/var/lock/natpierce_restart.lock"
+if [ "$1" = "o" ] ; then
+	nvram set natpierce_renum="0"
+	[ -f $relock ] && rm -f $relock
+	return 0
+fi
+if [ "$1" = "x" ] ; then
+	natpierce_renum=${natpierce_renum:-"0"}
+	natpierce_renum=`expr $natpierce_renum + 1`
+	nvram setnatpierce_renum="$natpierce_renum"
+	if [ "$natpierce_renum" -gt "3" ] ; then
+		I=19
+		echo $I > $relock
+		logg "多次尝试启动失败，等待【"`cat $relock`"分钟】后自动尝试重新启动"
+		while [ $I -gt 0 ]; do
+			I=$(($I - 1))
+			echo $I > $relock
+			sleep 60
+			[ "$(nvram get natpierce_renum)" = "0" ] && break
+   			#[ "$(nvram get natpierce_enable)" = "0" ] && exit 0
+			[ $I -lt 0 ] && break
+		done
+		nvram set natpierce_renum="1"
+	fi
+	[ -f $relock ] && rm -f $relock
+fi
+scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
+jyl_start
+}
 
 jyl_keep() {
 	logg "守护进程启动"
@@ -57,7 +93,6 @@ jyl_start () {
   [ ! -x "$natpierce" ] && chmod +x "$natpierce"
   if [ ! -f "$natpierce" ] ; then
   	logg "下载失败 无法启动请检查"
-  	exit 1
   fi
   CMD=""
   [ -z "$natpierce_port" ] || CMD="-p $natpierce_port"
@@ -89,7 +124,11 @@ jyl_start () {
   	else
   		web_port="$natpierce_port"
   	fi
+   	mem=$(cat /proc/$(pidof natpierce)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+   	cpui="$(top -b -n1 | grep -E "$(pidof natpierce)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /natpierce/) break; else cpu=i}} END {print $cpu}')"
   	logg "启动成功" 
+   	logg "内存占用 ${mem} CPU占用 ${cpui}"
+   	jyl_restart o
   	nvram set natpierce_login="http://${lan_ip}:${web_port}"
   	iptables -I INPUT -i natpierce -j ACCEPT
 	iptables -I FORWARD -i natpierce -o natpierce -j ACCEPT
@@ -97,7 +136,7 @@ jyl_start () {
 	iptables -t nat -I POSTROUTING -o natpierce -j MASQUERADE
   	jyl_keep
   fi
-  [ -z "`pidof natpierce`" ] && logg "启动失败!" 
+  [ -z "`pidof natpierce`" ] && logg "启动失败,10 秒后自动尝试重新启动" && sleep 10 && jyl_restart x
   exit 0
 }
 
