@@ -179,7 +179,7 @@ function button_restartwxsend() {
 	</td>
 	</tr>
 	<tr>
-	<th colspan="4" style="background-color: rgba ( 171 , 168 , 167 , 0.2 );" >测试号信息</th>
+	<th colspan="4" style="background-color: #756c78;" >测试号信息</th>
 	</tr>
 	<tr>
 	<th style="border-top: 0 none;">appID:</th>
@@ -225,7 +225,7 @@ function button_restartwxsend() {
 	</td>
 	</tr>
 	<tr>
-	<th colspan="4" style="background-color: rgba ( 171 , 168 , 167 , 0.2 );" >在线发送（每日调用上限：100000次）</th>
+	<th colspan="4" style="background-color: #756c78;" >在线发送（每日调用上限：100000次）</th>
 	</tr>
 	<tr>
 	<th style="border: 0 none;">消息内容:</th>
@@ -239,7 +239,7 @@ function button_restartwxsend() {
 	</td>
 	</tr>
 	<tr>
-	<th colspan="4" style="background-color: rgba ( 171 , 168 , 167 , 0.2 );" >通知提醒</th>
+	<th colspan="4" style="background-color: #756c78;" >通知提醒</th>
 	</tr>
 	<tr>
 	<th style="border: 0 none;" width="30%">互联网 IP 变动:</th>
