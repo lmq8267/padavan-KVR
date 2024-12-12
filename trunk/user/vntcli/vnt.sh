@@ -110,7 +110,7 @@ dowload_vntcli() {
         curl -Lko "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl" || wget --no-check-certificate -O "$VNTCLI" "${proxy}https://github.com/lmq8267/vnt-cli/releases/download/${tag}/vnt-cli_mipsel-unknown-linux-musl"
 	if [ "$?" = 0 ] ; then
 		chmod +x $VNTCLI
-		if [ $(($($VNTCLI -h | wc -l))) -gt 3 ] ; then
+		if [[ "$($VNTCLI -h 2>&1 | wc -l)" -gt 3 ]] ; then
 			logger -t "【VNT客户端】" "$VNTCLI 下载成功"
 			vntcli_ver=$($VNTCLI -h | grep 'version:' | awk -F 'version:' '{print $2}' | tr -d ' ' | tr -d '\n')
 			if [ -z "$vntcli_ver" ] ; then
@@ -197,7 +197,7 @@ start_vntcli() {
 	get_tag
  	if [ -f "$VNTCLI" ] ; then
 		[ ! -x "$VNTCLI" ] && chmod +x $VNTCLI
-  		[[ "$($VNTCLI -h 2>&1 | wc -l)" -lt 3 ]] && logger -t "【VNT客户端】" "程序${VNTCLI}不完整！" && rm -rf $VNTCLI
+  		[[ "$($VNTCLI -h 2>&1 | wc -l)" -lt 2 ]] && logger -t "【VNT客户端】" "程序${VNTCLI}不完整！" && rm -rf $VNTCLI
   	fi
  	if [ ! -f "$VNTCLI" ] ; then
 		logger -t "VNT客户端" "主程序${VNTCLI}不存在，开始在线下载..."
