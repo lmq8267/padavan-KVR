@@ -807,13 +807,18 @@ struct nvram_pair router_defaults[] = {
 	{ "caddy_enable", "0" },
 	{ "caddy_file", "0" },
 	{ "caddy_wan", "0" },
-	{ "caddy_storage", "-1" },
-	{ "caddy_dir", "/tmp" },
-	{ "caddyf_wan_port", "19998" },
-	{ "caddyw_wan_port", "19999" },
+	{ "caddy_storage", "/media" },
+	{ "caddy_dir", "/tmp/var/caddy_filebrowser" },
+	{ "caddyf_wan_port", "12101" },
+	{ "caddyw_wan_port", "12102" },
 	{ "caddy_wip6", "0" },
 	{ "caddy_wname", "admin" },
 	{ "caddy_wpassword", "admin" },
+	{ "caddy_dwan", "0" },
+	{ "caddy_dwip6", "0" },
+	{ "caddy_Fname", "admin" },
+	{ "caddy_Fpassword", "admin" },
+	{ "caddy_webdav", "/media" },
 #endif
 
 #if defined(APP_FRP)
