@@ -91,7 +91,7 @@ dowload_vnts() {
         curl -Lko "$VNTS" "${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl" || wget --no-check-certificate -O "$VNTS" "${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl"
 	if [ "$?" = 0 ] ; then
 		chmod +x $VNTS
-  		if [ $(($($VNTS -h | wc -l))) -gt 3 ] ; then
+  		if [[ "$($VNTS -h 2>&1 | wc -l)" -gt 3 ]] ; then
 			logger -t "【VNT服务端】" "$VNTS 下载成功"
 			vnts_ver=$($VNTS --version | awk -F 'version:' '{print $2}' | tr -d ' ' | tr -d '\n')
 			if [ -z "$vnts_ver" ] ; then
