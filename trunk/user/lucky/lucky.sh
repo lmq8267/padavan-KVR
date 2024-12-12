@@ -17,6 +17,42 @@ logg  () {
   echo "$(date +'%Y-%m-%d %H:%M:%S')：$1" >>/tmp/lucky.log
   logger -t "【lucky】" "$1"
 }
+lucky_renum=`nvram get lucky_renum`
+
+lucky_restart () {
+relock="/var/lock/lucky_restart.lock"
+if [ "$1" = "o" ] ; then
+	nvram set lucky_renum="0"
+	[ -f $relock ] && rm -f $relock
+	return 0
+fi
+if [ "$1" = "x" ] ; then
+	lucky_renum=${lucky_renum:-"0"}
+	lucky_renum=`expr $lucky_renum + 1`
+	nvram set lucky_renum="$lucky_renum"
+	if [ "$lucky_renum" -gt "3" ] ; then
+		I=19
+		echo $I > $relock
+		logg "多次尝试启动失败，等待【"`cat $relock`"分钟】后自动尝试重新启动"
+		while [ $I -gt 0 ]; do
+			I=$(($I - 1))
+			echo $I > $relock
+			sleep 60
+			[ "$(nvram get lucky_renum)" = "0" ] && break
+   			#[ "$(nvram get lucky_enable)" = "0" ] && exit 0
+			[ $I -lt 0 ] && break
+		done
+		nvram set lucky_renum="1"
+	fi
+	[ -f $relock ] && rm -f $relock
+fi
+scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
+lucky_start
+}
 
 get_tag() {
 	curltest=`which curl`
@@ -63,23 +99,33 @@ lucky_dl() {
   	fi
 	logg "开始下载 ${lk_url}"
 	for proxy in $github_proxys ; do
-       curl -Lko "/tmp/lucky.tar.gz" "${lk_url}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url}" || curl -Lko "/tmp/lucky.tar.gz" "${lk_url2}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url2}" || curl -Lko "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
+ 	length=$(wget --no-check-certificate -T 5 -t 3 "${lk_url}" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
+ 	length=`expr $length + 512000`
+	length=`expr $length / 1048576`
+ 	lucky_size0="$(check_disk_size $PROG)"
+ 	[ ! -z "$length" ] && logg "程序大小 ${length}M， 程序路径可用空间 ${lucky_size0}M "
+        curl -Lko "/tmp/lucky.tar.gz" "${lk_url}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url}" || curl -Lko "/tmp/lucky.tar.gz" "${lk_url2}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url2}" || curl -Lko "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
 	if [ "$?" = 0 ] ; then
 		tar -xzf /tmp/lucky.tar.gz -C /tmp/var
 		
 		if [ $? -eq 0 ]; then
 			chmod +x /tmp/var/lucky
-			logg "下载成功"
-			lk_ver=$(/tmp/var/lucky -info | awk -F'"Version":"' '{print $2}' | awk -F'"' '{print $1}')
-			if [ -z "$lk_ver" ] ; then
-				nvram set lucky_ver=""
-			else
-				nvram set lucky_ver=$lk_ver
-			fi
-			cp -f /tmp/var/lucky $PROG
-			rm -rf /tmp/lucky.tar.gz /tmp/var/lucky
-			break
-       	else
+   			if [ "$(($(/tmp/var/lucky -h 2>&1 | wc -l)))" -gt 3 ] ; then
+				logg "下载成功"
+				lk_ver=$(/tmp/var/lucky -info | awk -F'"Version":"' '{print $2}' | awk -F'"' '{print $1}')
+				if [ -z "$lk_ver" ] ; then
+					nvram set lucky_ver=""
+				else
+					nvram set lucky_ver=$lk_ver
+				fi
+				cp -f /tmp/var/lucky $PROG
+				rm -rf /tmp/lucky.tar.gz /tmp/var/lucky
+				break
+       			else
+	   			logg "下载不完整，请手动下载 ${lk_url} 解压上传到  $PROG"
+	   			rm -f /tmp/var/lucky /tmp/lucky.tar.gz
+	  		fi
+       		else
 	   		logg "下载不完整，请手动下载 ${lk_url} 解压上传到  $PROG"
 	  	fi
 	else
@@ -121,6 +167,10 @@ lucky_start () {
   [ -z "$PROG" ] && find_bin 
   get_tag
   [ ! -d /etc/storage/lucky ] && mkdir -p /etc/storage/lucky
+  if [ -f "$PROG" ] ; then
+	[ ! -x "$PROG" ] && chmod +x $PROG
+  	[[ "$($PROG -h 2>&1 | wc -l)" -lt 2 ]] && logg "程序${PROG}不完整！" && rm -rf $PROG
+  fi
   if [ ! -f "$PROG" ] ; then
      logg "未找到程序$PROG ，开始在线下载..."
      if [ -z "$lucky_tag" ] ; then
@@ -143,11 +193,15 @@ logg "运行${cmd}"
 eval "$cmd >/tmp/lucky.log 2>&1" &
 sleep 6
 if [ ! -z "`pidof lucky`" ] ; then
+  mem=$(cat /proc/$(pidof lucky)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+  cpui="$(top -b -n1 | grep -E "$(pidof lucky)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /lucky/) break; else cpu=i}} END {print $cpu}')"
   logg "lucky ${lk_ver}启动成功" 
+  logg "内存占用 ${mem} CPU占用 ${cpui}"
+  lucky_restart o
   get_web
   lk_keep
 fi
-[ -z "`pidof lucky`" ] && logg "lucky启动失败!" 
+[ -z "`pidof lucky`" ] && logg "lucky启动失败, 注意检查${PROG}是否下载完整,10 秒后自动尝试重新启动" && sleep 10 && lucky_restart x
 exit 0
 }
 
