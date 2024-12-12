@@ -115,27 +115,26 @@ dowload_al() {
  	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}${url}" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
  	length=`expr $length + 512000`
 	length=`expr $length / 1048576`
- 	alist_size0="$(check_disk_size $VNTCLI)"
- 	[ ! -z "$length" ] && logger -t "【VNT客户端】" "程序大小 ${length}M， 程序路径可用空间 ${alist}M "
+ 	alist_size0="$(check_disk_size $alist)"
+ 	[ ! -z "$length" ] && logger -t "【Alist】" "程序大小 ${length}M， 程序路径可用空间 ${alist}M "
         curl -Lko "/tmp/alist.tar.gz" "${proxy}${url}" || wget --no-check-certificate -O "/tmp/alist.tar.gz" "${proxy}${url}"
 	if [ "$?" = 0 ] ; then
 		logger -t "【Alist】" "开始解压..."
-		tar -xzf /tmp/alist.tar.gz -C /tmp/var
-		chmod +x /tmp/var/alist
-		if [ "$(($(/tmp/var/alist -h 2>&1 | wc -l)))" -gt 3 ]  ; then
+		tar -xzf /tmp/alist.tar.gz -C $bin_path
+		chmod +x $alist
+		if [[ "$($alist -h 2>&1 | wc -l)" -gt 3 ]]  ; then
 			logger -t "【Alist】" "解压成功"
-			cp -rf /tmp/var/alist $alist
 			al_ver=$($alist version | grep -Ew "^Version" | awk '{print $2}')
 			if [ -z "$al_ver" ] ; then
 				nvram set alist_ver=""
 			else
 				nvram set alist_ver=$al_ver
 			fi
-			rm -rf /tmp/alist.tar.gz /tmp/var/alist
+			rm -rf /tmp/alist.tar.gz
 			break
        		else
 	   		logger -t "【Alist】" "下载不完整，请手动下载 ${proxy}${url} 解压上传到  $alist"
-			rm -rf /tmp/alist.tar.gz /tmp/var/alist
+			rm -rf /tmp/alist.tar.gz 
 	  	fi
 	else
 		logger -t "【Alist】" "下载失败，请手动下载 ${proxy}${url} 解压上传到  $alist"
