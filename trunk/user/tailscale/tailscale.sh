@@ -229,7 +229,7 @@ start_ts() {
 			iptables -I INPUT -i tailscale0 -j ACCEPT
 		fi
 	else
-		logger -t "【Tailscale】" "运行主程序失败, 注意检查${tailscaled}是否下载完整,10 秒后自动尝试重新启动
+		logger -t "【Tailscale】" "运行主程序失败, 注意检查${tailscaled}是否下载完整,10 秒后自动尝试重新启动"
   		sleep 10
 		ts_restart x
 	fi
