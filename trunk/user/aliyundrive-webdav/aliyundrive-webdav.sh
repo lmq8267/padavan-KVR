@@ -70,6 +70,7 @@ dl_ald() {
         [ -z "$tag" ] && tag="v2.3.3"
 	if [ ! -z "$tag" ] ; then
 		logger -t "【阿里云盘】" "下载 $tag 下载较慢，耐心等待"
+  		ali_path=$(dirname "$aliyun")
  		for proxy in $github_proxys ; do
    		length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
  		length=`expr $length + 512000`
@@ -78,16 +79,15 @@ dl_ald() {
  		[ ! -z "$length" ] && logger -t "【阿里云盘】" "压缩包大小 ${length}M， 程序路径可用空间 ${ald_size0}M "
        		curl -Lko "/tmp/aliyundrive/aliyundrive.tar.gz" "${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz" || wget --no-check-certificate -O "/tmp/aliyundrive/aliyundrive.tar.gz" "${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz"
 			if [ "$?" = 0 ] ; then
-				tar -xzvf /tmp/aliyundrive/aliyundrive.tar.gz -C /tmp/var
+				tar -xzvf /tmp/aliyundrive/aliyundrive.tar.gz -C $ali_path
 				rm -rf /tmp/aliyundrive/aliyundrive.tar.gz
-				chmod +x /tmp/var/aliyundrive-webdav
-				if [ "$(($(/tmp/var/aliyundrive-webdav -h 2>&1 | wc -l)))" -gt 3 ] ; then
+				chmod +x $aliyun
+				if [[ "$($aliyun -h 2>&1 | wc -l)" -gt 3 ]] ; then
 					logger -t "【阿里云盘】" "/tmp/var/aliyundrive-webdav 下载成功"
-     					cp -rf /tmp/var/aliyundrive-webdav $aliyun
 					break
        				else
 	   				logger -t "【阿里云盘】" "下载不完整，请手动下载 ${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz 上传到  $aliyun"
-					rm -f /tmp/var/aliyundrive-webdav
+					#rm -f /tmp/var/aliyundrive-webdav
 	  			fi
 			else
 				logger -t "【阿里云盘】" "下载失败，请手动下载 ${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz 解压上传到  $aliyun"
@@ -116,6 +116,7 @@ start_ald() {
    mkdir -p /tmp/aliyundrive
    find_bin
    [ ! -x "$aliyun" ] && chmod +x $aliyun
+   [[ "$($aliyun -h 2>&1 | wc -l)" -lt 2 ]] && rm $aliyun
    if [ ! -f "$aliyun" ] || [[ "$($aliyun -h 2>&1 | wc -l)" -lt 2 ]] ; then
   	dl_ald
    fi
