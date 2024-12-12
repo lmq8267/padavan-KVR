@@ -154,7 +154,7 @@ start_vnts() {
 	get_tag
  	if [ -f "$VNTS" ] ; then
 		[ ! -x "$VNTS" ] && chmod +x $VNTS
-  		[[ "$($VNTS -h 2>&1 | wc -l)" -lt 3 ]] && rm -rf $VNTS
+  		[[ "$($VNTS -h 2>&1 | wc -l)" -lt 3 ]] && logger -t "【VNT服务端】" "程序${VNTS}不完整！" && rm -rf $VNTS
   	fi
  	if [ ! -f "$VNTS" ] ; then
 		logger -t "【VNT服务端】" "主程序${VNTS}不存在，开始在线下载..."
