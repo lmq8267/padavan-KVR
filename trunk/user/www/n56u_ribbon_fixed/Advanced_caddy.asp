@@ -206,6 +206,13 @@ function on_caddyw_wan_port(){
 	//alert(porturl);
 	window.open(porturl,'alist');
 }
+function button_restartcaddy(){
+    	var $j = jQuery.noConflict();
+    	$j.post('/apply.cgi',
+    	{
+        		'action_mode': ' Restartcaddy ',
+    	});
+}
 </script>
 </head>
 
@@ -307,7 +314,7 @@ function on_caddyw_wan_port(){
           <th width="30%">程序路径</th>
           <td colspan="2">
           <div class="input-append">
-	<input name="caddy_dir" type="text" class="input" id="caddy_dir" placeholder="/tmp/caddy_filebrowser" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","caddy_dir"); %>" size="32" maxlength="128" />
+	<input name="caddy_dir" type="text" class="input" id="caddy_dir" placeholder="/tmp/var/caddy_filebrowser" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","caddy_dir"); %>" size="32" maxlength="128" />
 	</div><br><span style="color:#888;">自定义程序的存放路径，填写完整的路径和程序名称</span>
          </td>
          </tr>
