@@ -238,7 +238,7 @@ dowload_zero() {
 	curl -Lko "$PROG" "${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one" || wget --no-check-certificate -O "$PROG" "${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one" || curl -Lkso "$PROG" "https://fastly.jsdelivr.net/gh/lmq8267/ZeroTierOne@master/install/${tag}/zerotier-one" || wget --no-check-certificate -q -O "$PROG" "https://fastly.jsdelivr.net/gh/lmq8267/ZeroTierOne@master/install/${tag}/zerotier-one"
 	if [ "$?" = 0 ] ; then
 		chmod +x $PROG
-		if [ $(($($PROG -h | wc -l))) -gt 3 ] ; then
+		if [[ "$($PROG -h 2>&1 | wc -l)" -gt 2 ]] ; then
 			logger -t "【zerotier】" "$PROG 下载成功"
 			zt_ver=$($PROG -version | sed -n '1p')
 			if [ -z "$zt_ver" ] ; then 
@@ -290,7 +290,7 @@ start_zero() {
 	PROGIDT="${zt_dir}/zerotier-idtool"
  	if [ -f "$PROG" ] ; then
 		[ ! -x "$PROG" ] && chmod +x $PROG
-  		[[ "$($PROG -h 2>&1 | wc -l)" -lt 3 ]] && logger -t "【zerotier】" "主程序${PROG}不完整！" && rm -rf $PROG
+  		[[ "$($PROG -h 2>&1 | wc -l)" -lt 2 ]] && logger -t "【zerotier】" "主程序${PROG}不完整！" && rm -rf $PROG
   	fi
  	if [ ! -f "$PROG" ] ; then
 		logger -t "【zerotier】" "主程序${PROG}不存在，开始在线下载..."
