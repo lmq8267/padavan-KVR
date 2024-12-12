@@ -86,11 +86,11 @@ dl_ald() {
      					cp -rf /tmp/var/aliyundrive-webdav $aliyun
 					break
        				else
-	   				logger -t "【阿里云盘】" "下载不完整，请手动下载 ${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz 上传到  /tmp/var/aliyundrive-webdav 或 /etc/storage/bin/aliyundrive-webdav"
+	   				logger -t "【阿里云盘】" "下载不完整，请手动下载 ${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz 上传到  $aliyun"
 					rm -f /tmp/var/aliyundrive-webdav
 	  			fi
 			else
-				logger -t "【阿里云盘】" "下载失败，请手动下载 ${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz 解压上传到  /tmp/var/aliyundrive-webdav 或 /etc/storage/bin/aliyundrive-webdav"
+				logger -t "【阿里云盘】" "下载失败，请手动下载 ${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz 解压上传到  $aliyun"
    			fi
 		done
 	fi
