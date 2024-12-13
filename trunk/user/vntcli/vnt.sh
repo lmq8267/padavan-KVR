@@ -179,11 +179,6 @@ vnt_rules() {
 start_vntcli() {
 	[ "$vntcli_enable" = "0" ] && exit 1
 	logger -t "【VNT客户端】" "正在启动vnt-cli"
- 	scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
   	if [ -z "$VNTCLI" ] ; then
   		etc_size=`check_disk_size /etc/storage`
       		if [ "$etc_size" -gt 1 ] ; then
@@ -375,10 +370,6 @@ stop_vnt() {
 	logger -t "【VNT客户端】" "正在关闭vnt-cli..."
 	sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
 	$VNTCLI --stop >>/tmp/vnt-cli.log
 	if [ -z "$vntcli_tunname" ] ; then
 		tunname="vnt-tun"
@@ -395,6 +386,10 @@ stop_vnt() {
 	iptables -D FORWARD -i ${tunname} -j ACCEPT 2>/dev/null
 	iptables -t nat -D POSTROUTING -o ${tunname} -j MASQUERADE 2>/dev/null
 	[ ! -z "`pidof vnt-cli`" ] && logger -t "【VNT客户端】" "进程已关闭!"
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 }
 
 vnt_error="错误：${VNTCLI} 未运行，请运行成功后执行此操作！"
