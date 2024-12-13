@@ -48,11 +48,6 @@ if [ "$1" = "x" ] ; then
 	fi
 	[ -f $relock ] && rm -f $relock
 fi
-scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
 jyl_start
 }
 
@@ -71,11 +66,18 @@ jyl_keep() {
 jyl_start () {
   [ "$natpierce_enable" != "1" ] && exit 1
   logg "开始启动"
+  scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
   sed -Ei '/【皎月连】|^$/d' /tmp/script/_opt_script_check
   [ -z "`pidof natpierce`" ] || kill -9 $(pidof natpierce) >/dev/null 2>&1
   path=$(dirname "$natpierce")
   if [ ! -f "$natpierce" ] ; then
   	logg "未找到 $natpierce 开始在线下载 $jyl_url"
+   	bin_path=$(dirname "$natpierce")
+	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
   	curl -Lko "/tmp/natpierce.tar.gz" "$jyl_url" || wget --no-check-certificate -O "/tmp/natpierce.tar.gz" "$jyl_url"
   	if [ "$?" = 0 ] ; then
   		router_size="$(check_disk_size $path)"
@@ -127,7 +129,7 @@ jyl_start () {
    	mem=$(cat /proc/$(pidof natpierce)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
    	cpui="$(top -b -n1 | grep -E "$(pidof natpierce)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /natpierce/) break; else cpu=i}} END {print $cpu}')"
   	logg "启动成功" 
-   	logg "内存占用 ${mem} CPU占用 ${cpui}"
+   	logg "内存占用 ${mem} CPU占用 ${cpui}%"
    	jyl_restart o
   	nvram set natpierce_login="http://${lan_ip}:${web_port}"
   	iptables -I INPUT -i natpierce -j ACCEPT
