@@ -157,11 +157,6 @@ get_web() {
 lucky_start () {
   [ "$lucky_enable" != "1" ] && exit 1
   logg "开始启动"
-  scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
   sed -Ei '/【lucky】|^$/d' /tmp/script/_opt_script_check
   killall lucky >/dev/null 2>&1
   killall -9 lucky >/dev/null 2>&1
@@ -211,15 +206,15 @@ lucky_close () {
 logg "关闭lucky..."
 scriptname=$(basename $0)
 sed -Ei '/【lucky】|^$/d' /tmp/script/_opt_script_check
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
   killall lucky >/dev/null 2>&1
   killall -9 lucky >/dev/null 2>&1
   rm -rf /tmp/lucky.log
   sleep 4
   [ -z "`pidof lucky`" ] && logg "进程已关闭!" && nvram set lucky_login=""
+  if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
 }
 
 case $1 in
