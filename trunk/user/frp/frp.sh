@@ -62,11 +62,6 @@ if [ "$1" = "x" ] ; then
 	fi
 	[ -f $relock ] && rm -f $relock
 fi
-scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
 frp_start
 }
 
@@ -144,6 +139,10 @@ frp_dl ()
 	tag="$1"
 	newtag="$(echo "$tag" | tr -d 'v' | tr -d ' ')"
 	mkdir -p /tmp/frp
+ 	frpc_path=$(dirname "$frpc")
+	[ ! -d "$frpc_path" ] && mkdir -p "$frpc_path"
+ 	frps_path=$(dirname "$frps")
+	[ ! -d "$frps_path" ] && mkdir -p "$frps_path"
 	logger -t "【Frp】" "开始下载 https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz"
 	for proxy in $github_proxys ; do
  	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/fatedier/frp/releases/download/${tag}/frp_${newtag}_linux_mipsle.tar.gz" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
@@ -195,6 +194,7 @@ frpc_keep() {
 	sed -Ei '/【frpc】|^$/d' /tmp/script/_opt_script_check
 	cat >> "/tmp/script/_opt_script_check" <<-OSC
 	[ -z "\`pidof frpc\`" ] && logger -t "进程守护" "frpc 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【frpc】|^$/d' /tmp/script/_opt_script_check #【frpc】
+ 	[ -s /tmp/frpc.log ] && [ "\$(stat -c %s /tmp/frpc.log)" -gt 681984 ] && echo "" > /tmp/frpc.log & #【frpc】
 	OSC
 
 	fi
@@ -207,6 +207,7 @@ frps_keep() {
 	sed -Ei '/【frps】|^$/d' /tmp/script/_opt_script_check
 	cat >> "/tmp/script/_opt_script_check" <<-OSC
 	[ -z "\`pidof frps\`" ] && logger -t "进程守护" "frps 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【frps】|^$/d' /tmp/script/_opt_script_check #【frps】
+ 	[ -s /tmp/frps.log ] && [ "\$(stat -c %s /tmp/frps.log)" -gt 681984 ] && echo "" > /tmp/frps.log & #【frps】
 	OSC
 
 	fi
@@ -215,6 +216,11 @@ frps_keep() {
 
 frp_start () 
 {
+scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
   [ ! -z "$frp_tag" ] && frp_tag="$(echo $frp_tag | tr -d ' ')"
   get_tag
   get_ver
@@ -278,7 +284,7 @@ if [ "$frps_enable" = "1" ] && [ ! -z "`pidof frps`" ] ; then
    mem=$(cat /proc/$(pidof frps)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
    scpu="$(top -b -n1 | grep -E "$(pidof frps)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /frps/) break; else cpu=i}} END {print $cpu}')"
    logger -t "【Frp】" "frps启动成功" 
-   logger -t "【Frp】" "内存占用 ${mem} CPU占用 ${scpu}"
+   logger -t "【Frp】" "内存占用 ${mem} CPU占用 ${scpu}%"
    frps_keep 
    frp_restart o
 fi
@@ -286,7 +292,7 @@ if [ "$frpc_enable" = "1" ] && [ ! -z "`pidof frpc`" ] ; then
    mem=$(cat /proc/$(pidof frpc)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
    ccpu="$(top -b -n1 | grep -E "$(pidof frpc)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /frpc/) break; else cpu=i}} END {print $cpu}')"
    logger -t "【Frp】" "frpc启动成功" 
-   logger -t "【Frp】" "内存占用 ${mem} CPU占用 ${ccpu}" 
+   logger -t "【Frp】" "内存占用 ${mem} CPU占用 ${ccpu}%" 
    frpc_keep 
    frp_restart o
 fi
