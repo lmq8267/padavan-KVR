@@ -89,9 +89,9 @@ fi
 mem_info=$(LC_ALL=C free -w 2>/dev/null | grep "^Mem" || LC_ALL=C free | grep "^Mem")
 memory_usage=$(echo "$mem_info" | awk '{printf("%.0f",(($2-($4+$6))/$2) * 100)}')
 memory_total=$(echo "$mem_info" | awk '{printf("%d",$2/1024)}')
-swap_info=$(LC_ALL=C free -m | grep "^Swap")
-swap_usage=$( (echo "$swap_info" | awk '/Swap/ { printf("%3.0f", $3/$2*100) }' 2>/dev/null || echo 0) | tr -c -d '[:digit:]')
-swap_total=$(echo "$swap_info" | awk '{print $(2)}')
+#swap_info=$(LC_ALL=C free -m | grep "^Swap")
+#swap_usage=$( (echo "$swap_info" | awk '/Swap/ { printf("%3.0f", $3/$2*100) }' 2>/dev/null || echo 0) | tr -c -d '[:digit:]')
+#swap_total=$(echo "$swap_info" | awk '{print $(2)}')
 get_cpu_usage
 echo ""
 display "CPU 负载" "$cpu_usage" "70" "0" " %" 
@@ -100,7 +100,7 @@ echo "" # fixed newline
 
 display "内存已用" "$memory_usage" "70" "0" " %" " of ${memory_total}MB"
 
-printf "IP  地址:  \x1B[92m%s\x1B[0m" "$(nvram get lan_ipaddr)"
+printf "IP  地址:  \x1B[92m%s\x1B[0m" "WAN:$(nvram get wan_ipaddr)  LAN:$(nvram get lan_ipaddr)"
 echo ""
 
 display "闪存已用" "$root_usage" "90" "1" " %" " of $root_total"
