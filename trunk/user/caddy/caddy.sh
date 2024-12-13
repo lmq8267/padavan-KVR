@@ -147,6 +147,7 @@ caddy_start() {
    		fi
 	fi
  	killall $(basename $caddy_dir) >/dev/null 2>&1
+  	logger -t "【caddy】" "运行配置脚本 /etc/storage/caddy_script.sh "
 	/etc/storage/caddy_script.sh
 			if [ "$caddy_file" = "0" ] || [ "$caddy_file" = "2" ] || [ "$caddy_file" = "3" ] || [ "$caddy_file" = "5" ] ; then
 				fport=$(iptables -t filter -L INPUT -v -n --line-numbers | grep dpt:$caddyf_wan_port | cut -d " " -f 1 | sort -nr | wc -l)
