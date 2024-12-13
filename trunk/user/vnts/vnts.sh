@@ -137,11 +137,6 @@ vnts_keep() {
 start_vnts() {
 	[ "$vnts_enable" = "1" ] || exit 1
 	logger -t "【VNT服务端】" "正在启动vnts"
- 	scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
  	if [ -z "$VNTS" ] ; then
   		etc_size=`check_disk_size /etc/storage`
       		if [ "$etc_size" -gt 1 ] ; then
@@ -266,10 +261,6 @@ stop_vnts() {
 	logger -t "【VNT服务端】" "正在关闭vnts ..."
 	sed -Ei '/【VNT服务端】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
 	killall -9 vnts >/dev/null 2>&1
 	if [ ! -z "$vnts_port" ] ; then
 		iptables -D INPUT -p tcp --dport $vnts_port -j ACCEPT 2>/dev/null
@@ -284,6 +275,10 @@ stop_vnts() {
 		ip6tables -D INPUT -p udp --dport $vnts_web_port -j ACCEPT 2>/dev/null
 	fi
 	[ -z "`pidof vnts`" ] && logger -t "【VNT服务端】" "进程已关闭!"
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 }
 
 case $1 in
