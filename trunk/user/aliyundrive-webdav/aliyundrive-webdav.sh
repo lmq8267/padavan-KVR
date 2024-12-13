@@ -71,7 +71,7 @@ dl_ald() {
    		length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
  		length=`expr $length + 512000`
 		length=`expr $length / 1048576`
- 		ald_size0="$(check_disk_size $aliyun)"
+ 		ald_size0="$(check_disk_size $ali_path)"
  		[ ! -z "$length" ] && logger -t "【阿里云盘】" "压缩包大小 ${length}M， 程序路径可用空间 ${ald_size0}M "
        		curl -Lko "/tmp/aliyundrive/aliyundrive.tar.gz" "${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz" || wget --no-check-certificate -O "/tmp/aliyundrive/aliyundrive.tar.gz" "${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz"
 			if [ "$?" = 0 ] ; then
