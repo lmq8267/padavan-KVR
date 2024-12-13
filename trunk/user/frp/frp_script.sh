@@ -58,10 +58,10 @@ frpc_enable=${frpc_enable:-"0"}
 frps_enable=`nvram get frps_enable`
 frps_enable=${frps_enable:-"0"}
 if [ "$frps_enable" = "1" ] ; then
-    frps -c /tmp/frp/myfrps.toml 2>&1 &
+    frps -c /tmp/frp/myfrps.toml >/tmp/frps.log 2>&1 &
 fi
 if [ "$frpc_enable" = "1" ] ; then
     [ "$frps_enable" = "1" ] && sleep 30
-    frpc -c /tmp/frp/myfrpc.toml 2>&1 | logger -t frpc &
+    frpc -c /tmp/frp/myfrpc.toml >/tmp/frpc.log 2>&1 &
 fi
  
