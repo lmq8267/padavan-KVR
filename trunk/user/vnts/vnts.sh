@@ -81,7 +81,7 @@ dowload_vnts() {
  	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
  	length=`expr $length + 512000`
 	length=`expr $length / 1048576`
- 	vnts_size0="$(check_disk_size $VNTS)"
+ 	vnts_size0="$(check_disk_size $bin_path)"
  	[ ! -z "$length" ] && logger -t "【VNT服务端】" "程序大小 ${length}M， 程序路径可用空间 ${vnts_size0}M "
         curl -Lko "$VNTS" "${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl" || wget --no-check-certificate -O "$VNTS" "${proxy}https://github.com/lmq8267/vnts/releases/download/${tag}/vnts_mipsel-unknown-linux-musl"
 	if [ "$?" = 0 ] ; then
