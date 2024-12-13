@@ -66,7 +66,7 @@ cat /tmp/cw /tmp/cf > $caddyfile
 rm -f /tmp/cw
 rm -f /tmp/cf
 
-$caddy -conf $caddyfile &
+$caddy -conf $caddyfile >/tmp/caddy.log 2>&1 &
 
 fi
 
@@ -137,7 +137,7 @@ $caddy validate --config $caddyfile --adapter caddyfile 2>&1 | while IFS= read -
 done
 
 #启动
-$caddy run --config $caddyfile --adapter caddyfile &
+$caddy run --config $caddyfile --adapter caddyfile >/tmp/caddy.log 2>&1 &
 
 fi
 
