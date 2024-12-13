@@ -448,6 +448,14 @@ function button_restartcaddy(){
 	</div>
 	</td>
 	</tr>
+	<tr>
+	<td colspan="4" style="border-top: 0 none;">
+	<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('caddylog')"><span>查看caddy日志 /tmp/caddy.log</span></a>
+	<div id="caddylog" style="display: none;">
+	<textarea rows="21" class="span12" style="height:219px; font-family:'Courier New', Courier, mono; font-size:13px;" readonly="readonly" wrap="off" id="textarea"><% nvram_dump("caddy.log",""); %></textarea>
+	</div>
+	</td>
+	</tr>
 										
 
 	<tr>
