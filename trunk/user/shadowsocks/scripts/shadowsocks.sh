@@ -553,11 +553,6 @@ EOF
 # ================================= 启动 SS ===============================
 ssp_start() { 
     ss_enable=`nvram get ss_enable`
-    scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
 if rules; then
 		if start_redir_tcp; then
 		start_redir_udp
@@ -583,10 +578,6 @@ ssp_close() {
 	rm -rf /tmp/cdn
 	/usr/bin/ss-rules -f
 	scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
 	kill -9 $(ps | grep ssr-switch | grep -v grep | awk '{print $1}') >/dev/null 2>&1
 	kill -9 $(ps | grep ssr-monitor | grep -v grep | awk '{print $1}') >/dev/null 2>&1
 	kill_process
@@ -600,6 +591,10 @@ ssp_close() {
 	fi
 	clear_iptable
 	/sbin/restart_dhcpd
+ 	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 }
 
 
