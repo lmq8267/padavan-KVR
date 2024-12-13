@@ -69,11 +69,6 @@ if [ "$1" = "x" ] ; then
 	fi
 	[ -f $relock ] && rm -f $relock
 fi
-scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
 start_al
 }
 
@@ -350,6 +345,11 @@ set_json() {
 start_al() {
 	[ "$alist_enable" = "1" ] || exit 1
 	logger -t "【Alist】" "正在启动alist"
+ 	scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
 	echo "正在启动alist" >/tmp/alist.log
 	sed -Ei '/【Alist】|^$/d' /tmp/script/_opt_script_check
 	get_tag
@@ -393,7 +393,7 @@ start_al() {
  		mem=$(cat /proc/$(pidof alist)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
    		cpui="$(top -b -n1 | grep -E "$(pidof alist)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /alist/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【Alist】" "运行成功！"
- 	 	logger -t "【Alist】" "内存占用 ${mem} CPU占用 ${cpui}"
+ 	 	logger -t "【Alist】" "内存占用 ${mem} CPU占用 ${cpui}%"
   		alist_restart o
 		al_keep
 		
