@@ -126,11 +126,6 @@ start_cf() {
 	cf_enable=$(nvram get cloudflared_enable)
 	[ "$cf_enable" = "1" ] || exit 1
 	logger -t "【cloudflared】" "正在启动cloudflared"
- 	scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
 	sed -Ei '/【cloudflared】|^$/d' /tmp/script/_opt_script_check
  	if [ -f "$PROG" ] ; then
 		[ ! -x "$PROG" ] && chmod +x $PROG
@@ -175,12 +170,12 @@ stop_cf() {
 	logger -t "【cloudflared】" "正在关闭cloudflared..."
 	sed -Ei '/【cloudflared】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
+	kill_cf
+	[ -z "`pidof cloudflared`" ] && logger -t "【cloudflared】" "cloudflared关闭成功!"
+ 	if [ ! -z "$scriptname" ] ; then
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
 	fi
-	kill_cf
-	[ -z "`pidof cloudflared`" ] && logger -t "【cloudflared】" "cloudflared关闭成功!"
 }
 
 case $1 in
