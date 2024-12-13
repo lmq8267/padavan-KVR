@@ -345,11 +345,6 @@ set_json() {
 start_al() {
 	[ "$alist_enable" = "1" ] || exit 1
 	logger -t "【Alist】" "正在启动alist"
- 	scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
 	echo "正在启动alist" >/tmp/alist.log
 	sed -Ei '/【Alist】|^$/d' /tmp/script/_opt_script_check
 	get_tag
@@ -416,12 +411,12 @@ stop_al() {
 	logger -t "【Alist】" "正在关闭服务..."
 	sed -Ei '/【Alist】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
+	kill_al
+	[ -z "`pidof alist`" ] && logger -t "【Alist】" "alist关闭成功!"
 	if [ ! -z "$scriptname" ] ; then
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
 	fi
-	kill_al
-	[ -z "`pidof alist`" ] && logger -t "【Alist】" "alist关闭成功!"
 }
 
 case $1 in
