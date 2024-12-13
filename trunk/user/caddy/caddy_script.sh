@@ -30,7 +30,7 @@ rm -f $caddyfile
 
 #旧版caddy_filebrowser配置
 if [ "$caddy_mode" = "0" ] || [ "$caddy_mode" = "1" ] || [ "$caddy_mode" = "2" ] ; then
-#配置webdav
+#配置browser文件服务器
 if [ "$caddy_mode" = "0" ] || [ "$caddy_mode" = "2" ] ; then
 cat <<-EOF >/tmp/cf
 :$caddyf_wan_port {
@@ -43,7 +43,7 @@ cat <<-EOF >/tmp/cf
 }
 EOF
 fi
-#配置browser文件服务器
+#配置webdav
 if [ "$caddy_mode" = "1" ] || [ "$caddy_mode" = "2" ] ; then
 cat <<-EOF >/tmp/cw
 :$caddyw_wan_port {
