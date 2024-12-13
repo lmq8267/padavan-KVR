@@ -216,11 +216,6 @@ frps_keep() {
 
 frp_start () 
 {
-scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
   [ ! -z "$frp_tag" ] && frp_tag="$(echo $frp_tag | tr -d ' ')"
   get_tag
   get_ver
@@ -302,11 +297,6 @@ fi
 frp_close () 
 {
 	scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
-
 	if [ "$frpc_enable" = "0" ]; then
 		sed -Ei '/【frpc】|^$/d' /tmp/script/_opt_script_check
 		if [ ! -z "`pidof frpc`" ]; then
@@ -322,6 +312,10 @@ frp_close ()
 		killall -9 frps frp_script.sh
 		[ -z "`pidof frps`" ] && logger -t "【Frp】" "已停止 frps"
 	    fi
+	fi
+ 	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
 	fi
 }
 
