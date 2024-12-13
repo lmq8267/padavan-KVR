@@ -41,7 +41,7 @@ if [ "$1" = "x" ] ; then
 	fi
 	[ -f $relock ] && rm -f $relock
 fi
-start_caddy
+caddy_start
 }
 
 caddy_dl() {
@@ -174,7 +174,19 @@ caddy_start() {
 					ip6tables -t filter -I INPUT -p tcp --dport $caddyw_wan_port -j ACCEPT
 				fi
 			fi
-	if [ ! -z "`pidof caddy_filebrowser`" ] && logger -t "【caddy】" "文件管理服务已启动" && caddy_keep
+   	sleep 4
+	if [ ! -z "`pidof caddy_filebrowser`" ] || [ ! -z "`pidof caddy`" ] ; then
+ 		mem=$(cat /proc/$(pidof `basename $caddy_dir`)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+   		cpui="$(top -b -n1 | grep -E "$(pidof `basename $caddy_dir`)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /'"$(basename $caddy_dir)"'/) break; else cpu=i}} END {print $cpu}')"
+		logger -t "【caddy】" "文件管理服务已启动" 
+  		logger -t "【caddy】" "内存占用 ${mem} CPU占用 ${cpui}%"
+   		caddy_restart o
+   		caddy_keep
+   	else
+		logger -t "【caddy】" "运行失败, 注意检查${caddy_dir}是否下载完整,10 秒后自动尝试重新启动"
+  		sleep 10
+  		caddy_restart x
+    	fi
 	
 }
 
