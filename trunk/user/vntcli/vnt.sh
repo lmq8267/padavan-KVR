@@ -184,6 +184,11 @@ vnt_rules() {
 start_vntcli() {
 	[ "$vntcli_enable" = "0" ] && exit 1
 	logger -t "【VNT客户端】" "正在启动vnt-cli"
+ 	scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
   	if [ -z "$VNTCLI" ] ; then
   		etc_size=`check_disk_size /etc/storage`
       		if [ "$etc_size" -gt 1 ] ; then
@@ -357,7 +362,7 @@ EOF
  		mem=$(cat /proc/$(pidof vnt-cli)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
    		vntcpu="$(top -b -n1 | grep -E "$(pidof vnt-cli)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /vnt-cli/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【VNT客户端】" "运行成功！"
-  		logger -t "【VNT客户端】" "内存占用 ${mem} CPU占用 ${vntcpu}"
+  		logger -t "【VNT客户端】" "内存占用 ${mem} CPU占用 ${vntcpu}%"
   		vntcli_restart o
 		echo `date +%s` > /tmp/vntcli_time
 		vnt_rules
