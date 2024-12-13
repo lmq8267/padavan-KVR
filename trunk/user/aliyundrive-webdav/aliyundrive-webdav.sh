@@ -108,11 +108,6 @@ ald_keep() {
 
 start_ald() {
    logger -t "【阿里云盘】" "正在启动..."
-scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
    sed -Ei '/【阿里云盘】|^$/d' /tmp/script/_opt_script_check
    mkdir -p /tmp/aliyundrive
    find_bin
@@ -181,16 +176,15 @@ kill_ald() {
         rm -rf /tmp/aliyundrive
         sed -Ei '/【阿里云盘】|^$/d' /tmp/script/_opt_script_check
         scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
-	
 	if [ ! -z "`pidof aliyundrive-webdav`" ]; then
 		logger -t "【阿里云盘】" "关闭进程..."
 		killall aliyundrive-webdav >/dev/null 2>&1
 		kill -9 "$aliyundrive_process" >/dev/null 2>&1
                
+	fi
+ 	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
 	fi
 }
 
