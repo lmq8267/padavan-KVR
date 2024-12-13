@@ -1,7 +1,5 @@
 #!/bin/sh
-#20200426 chongshengB
-#20210410 xumng123
-#20240831 fightround
+
 PROG="$(nvram get zerotier_bin)"
 config_path="/etc/storage/zerotier-one"
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
@@ -138,7 +136,7 @@ rules() {
  		mem=$(cat /proc/$(pidof zerotier-one)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
    		cpui="$(top -b -n1 | grep -E "$(pidof zerotier-one)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /zerotier-one/) break; else cpu=i}} END {print $cpu}')"
  		logger -t "【zerotier】" "zerotier-one ${zt_ver}启动成功! "
-   		logger -t "【zerotier】" "内存占用 ${mem} CPU占用 ${cpui}"
+   		logger -t "【zerotier】" "内存占用 ${mem} CPU占用 ${cpui}%"
    		zt_restart o
    	fi
  	[ -z "`pidof zerotier-one`" ] && logger -t "【zerotier】" "启动失败, 注意检查${PROG}是否下载完整,10 秒后自动尝试重新启动" && sleep 10 && zt_restart x
@@ -229,6 +227,8 @@ get_zttag() {
 dowload_zero() {
 	tag="$1"
 	logger -t "【zerotier】" "开始下载 https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one 到 $PROG"
+ 	bin_path=$(dirname "$PROG")
+	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
 	for proxy in $github_proxys ; do
  	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/lmq8267/ZeroTierOne/releases/download/${tag}/zerotier-one" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
         length=`expr $length + 512000`
@@ -275,6 +275,11 @@ start_zero() {
 	zt_enable=$(nvram get zerotier_enable)
 	[ "$zt_enable" = "1" ] || exit 1
 	logger -t "【zerotier】" "正在启动zerotier"
+ 	scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 	sed -Ei '/【zerotier】|^$/d' /tmp/script/_opt_script_check
  	if [ -z "$PROG" ] ; then
   		etc_size=`check_disk_size /etc/storage`
