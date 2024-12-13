@@ -50,11 +50,6 @@ if [ "$1" = "x" ] ; then
 	fi
 	[ -f $relock ] && rm -f $relock
 fi
-scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
 start_ts
 }
 
@@ -194,6 +189,11 @@ start_ts() {
 		exit 0
 	fi 
 	logger -t "Tailscale" "正在启动tailscale"
+ 	scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 	sed -Ei '/【Tailscaled】|^$/d' /tmp/script/_opt_script_check
 	get_tag
  	if [ -f "$tailscaled" ] ; then
@@ -222,7 +222,7 @@ start_ts() {
  		mem=$(cat /proc/$(pidof tailscaled)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
    		tdcpu="$(top -b -n1 | grep -E "$(pidof tailscaled)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /tailscaled/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【Tailscale】" "主程序运行成功！"
-  		logger -t "【Tailscale】" "主程序:内存占用 ${mem} CPU占用 ${tdcpu}"
+  		logger -t "【Tailscale】" "主程序:内存占用 ${mem} CPU占用 ${tdcpu}%"
   		ts_restart o
 		iptables -C INPUT -i tailscale0 -j ACCEPT
 		if [ "$?" != 0 ] ; then
@@ -272,7 +272,7 @@ start_ts() {
  		mem=$(cat /proc/$(pidof tailscale)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
    		tscpu="$(top -b -n1 | grep -E "$(pidof tailscale)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /tailscale/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【Tailscale】" "子程序运行成功！"
-  		logger -t "【Tailscale】" "子程序:内存占用 ${mem} CPU占用 ${tscpu}"
+  		logger -t "【Tailscale】" "子程序:内存占用 ${mem} CPU占用 ${tscpu}%"
     		ts_restart o
 	else
 		logger -t "【Tailscale】" "子程序运行失败, 注意检查${VNTCLI}是否下载完整,10 秒后自动尝试重新启动"
