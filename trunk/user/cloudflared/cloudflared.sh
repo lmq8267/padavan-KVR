@@ -36,11 +36,6 @@ if [ "$1" = "x" ] ; then
 	fi
 	[ -f $relock ] && rm -f $relock
 fi
-scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
 start_cf
 }
 
@@ -131,6 +126,11 @@ start_cf() {
 	cf_enable=$(nvram get cloudflared_enable)
 	[ "$cf_enable" = "1" ] || exit 1
 	logger -t "【cloudflared】" "正在启动cloudflared"
+ 	scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 	sed -Ei '/【cloudflared】|^$/d' /tmp/script/_opt_script_check
  	if [ -f "$PROG" ] ; then
 		[ ! -x "$PROG" ] && chmod +x $PROG
@@ -153,7 +153,7 @@ start_cf() {
  		mem=$(cat /proc/$(pidof cloudflared)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
    		cpui="$(top -b -n1 | grep -E "$(pidof cloudflared)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /cloudflared/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【cloudflared】" "运行成功！"
-  		logger -t "【cloudflared】" "内存占用 ${mem} CPU占用 ${cpui}"
+  		logger -t "【cloudflared】" "内存占用 ${mem} CPU占用 ${cpui}%"
     		cf_restart o
 		cf_keep
 	else
