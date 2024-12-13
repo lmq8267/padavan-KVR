@@ -99,7 +99,7 @@ lucky_dl() {
  	length=$(wget --no-check-certificate -T 5 -t 3 "${lk_url}" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
  	length=`expr $length + 512000`
 	length=`expr $length / 1048576`
- 	lucky_size0="$(check_disk_size $PROG)"
+ 	lucky_size0="$(check_disk_size $bin_path)"
  	[ ! -z "$length" ] && logg "程序大小 ${length}M， 程序路径可用空间 ${lucky_size0}M "
         curl -Lko "/tmp/lucky.tar.gz" "${lk_url}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url}" || curl -Lko "/tmp/lucky.tar.gz" "${lk_url2}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url2}" || curl -Lko "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
 	if [ "$?" = 0 ] ; then
