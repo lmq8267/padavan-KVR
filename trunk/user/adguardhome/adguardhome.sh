@@ -200,11 +200,6 @@ start_adg() {
   mkdir -p /tmp/AdGuardHome
   mkdir -p /etc/storage/AdGuardHome
   logger -t "【AdGuardHome】" "正在启动..."
-  scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
   sed -Ei '/【AdGuardHome】|^$/d' /tmp/script/_opt_script_check
   find_bin
   [ ! -x "$SVC_PATH" ] && chmod +x $SVC_PATH
@@ -242,16 +237,16 @@ fi
 stop_adg() {
 scriptname=$(basename $0)
 sed -Ei '/【AdGuardHome】|^$/d' /tmp/script/_opt_script_check
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
 rm -rf /tmp/AdGuardHome
 killall -9 AdGuardHome
 killall AdGuardHome
 del_dns
 clear_iptable
 logger -t "【AdGuardHome】" "关闭AdGuardHome"
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
 }
 
 case $1 in
