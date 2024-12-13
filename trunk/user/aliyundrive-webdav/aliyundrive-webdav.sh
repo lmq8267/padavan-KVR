@@ -32,11 +32,6 @@ if [ "$1" = "x" ] ; then
 	fi
 	[ -f $relock ] && rm -f $relock
 fi
-scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
 start_ald
 }
 
@@ -71,6 +66,7 @@ dl_ald() {
 	if [ ! -z "$tag" ] ; then
 		logger -t "【阿里云盘】" "下载 $tag 下载较慢，耐心等待"
   		ali_path=$(dirname "$aliyun")
+		[ ! -d "$ali_path" ] && mkdir -p "$ali_path"
  		for proxy in $github_proxys ; do
    		length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/messense/aliyundrive-webdav/releases/download/${tag}/aliyundrive-webdav-${tag}.mipsel-unknown-linux-musl.tar.gz" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
  		length=`expr $length + 512000`
@@ -112,6 +108,11 @@ ald_keep() {
 
 start_ald() {
    logger -t "【阿里云盘】" "正在启动..."
+scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
    sed -Ei '/【阿里云盘】|^$/d' /tmp/script/_opt_script_check
    mkdir -p /tmp/aliyundrive
    find_bin
@@ -162,7 +163,7 @@ start_ald() {
       	mem=$(cat /proc/$(pidof aliyundrive-webdav)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
    	cpui="$(top -b -n1 | grep -E "$(pidof aliyundrive-webdav)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /aliyundrive-webdav/) break; else cpu=i}} END {print $cpu}')"
 	logger -t "【阿里云盘】" "启动成功" 
-        logger -t "【阿里云盘】" "内存占用 ${mem} CPU占用 ${vntcpui}"
+        logger -t "【阿里云盘】" "内存占用 ${mem} CPU占用 ${vntcpui}%"
 	ald_restart o
         ald_keep
       else
