@@ -52,17 +52,17 @@ if [ "$1" = "x" ] ; then
 	fi
 	[ -f $relock ] && rm -f $relock
 fi
-scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
 uu_start
 }
 
 uu_start () {
   [ "$uu_enable" != "1" ] && exit 1
   logg "开始启动"
+  scriptname=$(basename $0)
+  if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+  fi
   sed -Ei '/【网易UU游戏加速器】|^$/d' /tmp/script/_opt_script_check
   killall uuplugin >/dev/null 2>&1
   killall -9 uuplugin >/dev/null 2>&1
