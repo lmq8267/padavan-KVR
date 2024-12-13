@@ -66,11 +66,6 @@ jyl_keep() {
 jyl_start () {
   [ "$natpierce_enable" != "1" ] && exit 1
   logg "开始启动"
-  scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
   sed -Ei '/【皎月连】|^$/d' /tmp/script/_opt_script_check
   [ -z "`pidof natpierce`" ] || kill -9 $(pidof natpierce) >/dev/null 2>&1
   path=$(dirname "$natpierce")
@@ -146,10 +141,6 @@ jyl_close () {
   logg "关闭皎月连..."
   sed -Ei '/【皎月连】|^$/d' /tmp/script/_opt_script_check
   scriptname=$(basename $0)
-  if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-  fi
   [ -z "`pidof natpierce`" ] || kill -9 $(pidof natpierce) >/dev/null 2>&1
   iptables -D INPUT -i natpierce -j ACCEPT 2>/dev/null
   iptables -D FORWARD -i natpierce -o natpierce -j ACCEPT 2>/dev/null
@@ -157,6 +148,10 @@ jyl_close () {
   iptables -t nat -D POSTROUTING -o natpierce -j MASQUERADE 2>/dev/null
   sleep 4
   [ -z "`pidof natpierce`" ] && logg "进程已关闭!" && nvram set natpierce_login=""
+  if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+  fi
 }
 
 case $1 in
