@@ -79,7 +79,7 @@ if [ ! -z "$caddy_fname" ] && [ ! -z "$caddy_fpassword" ] ; then
 	      filebasicauth="basicauth {
 $caddy_fname $filepassword
 }"
-	fi
+fi
 cat <<-EOF >/tmp/cf
 
 :$caddy_browser_port {
@@ -102,6 +102,7 @@ if [ ! -z "$caddy_wname" ] && [ ! -z "$caddy_wpassword" ] ; then
 	      davbasicauth="basicauth {
 $caddy_wname $davpassword
 }"
+fi
 cat <<-EOF >/tmp/cw
 
 :$caddyw_wan_port {
