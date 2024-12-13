@@ -46,11 +46,6 @@ if [ "$1" = "x" ] ; then
 	fi
 	[ -f $relock ] && rm -f $relock
 fi
-scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
 lucky_start
 }
 
@@ -98,6 +93,8 @@ lucky_dl() {
       		lk_url2="https://6.666666.host:66/release/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
   	fi
 	logg "开始下载 ${lk_url}"
+ 	bin_path=$(dirname "$PROG")
+	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
 	for proxy in $github_proxys ; do
  	length=$(wget --no-check-certificate -T 5 -t 3 "${lk_url}" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
  	length=`expr $length + 512000`
@@ -160,6 +157,11 @@ get_web() {
 lucky_start () {
   [ "$lucky_enable" != "1" ] && exit 1
   logg "开始启动"
+  scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
   sed -Ei '/【lucky】|^$/d' /tmp/script/_opt_script_check
   killall lucky >/dev/null 2>&1
   killall -9 lucky >/dev/null 2>&1
@@ -196,7 +198,7 @@ if [ ! -z "`pidof lucky`" ] ; then
   mem=$(cat /proc/$(pidof lucky)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
   cpui="$(top -b -n1 | grep -E "$(pidof lucky)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /lucky/) break; else cpu=i}} END {print $cpu}')"
   logg "lucky ${lk_ver}启动成功" 
-  logg "内存占用 ${mem} CPU占用 ${cpui}"
+  logg "内存占用 ${mem} CPU占用 ${cpui}%"
   lucky_restart o
   get_web
   lk_keep
