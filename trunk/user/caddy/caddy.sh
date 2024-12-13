@@ -127,11 +127,6 @@ caddy_keep() {
 }
 
 caddy_start() {
-	scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
 	if [ "$caddy_enable" = "1" ] ;then
 	       logger -t "【caddy】" "正在启动..."
 	       sed -Ei '/【caddy】|^$/d' /tmp/script/_opt_script_check
@@ -194,10 +189,6 @@ caddy_start() {
 caddy_close() {
 	scriptname=$(basename $0)
 	sed -Ei '/【caddy】|^$/d' /tmp/script/_opt_script_check
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
 	[ ! -z "$caddyf_wan_port" ] && iptables -t filter -D INPUT -p tcp --dport $caddyf_wan_port -j ACCEPT >/dev/null 2>&1
 	[ ! -z "$caddyw_wan_port" ] && iptables -t filter -D INPUT -p tcp --dport $caddyw_wan_port -j ACCEPT >/dev/null 2>&1
 	[ ! -z "$caddyw_wan_port" ] && ip6tables -t filter -D INPUT -p tcp --dport $caddyw_wan_port -j ACCEPT >/dev/null 2>&1
@@ -210,7 +201,10 @@ caddy_close() {
                 #rm -rf "$caddy_dir/caddy/caddy_filebrowser"
 		[ -z "`pidof caddy_filebrowser`" ] && [ -z "`pidof caddy`" ] && logger -t "【caddy】" "已关闭文件管理服务."
 	fi
-
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 }
 
 case $1 in
