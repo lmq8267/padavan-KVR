@@ -53,7 +53,7 @@ caddy_dl() {
   		length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/caddy/caddy_filebrowser" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
  		length=`expr $length + 512000`
 		length=`expr $length / 1048576`
- 		caddy_size0="$(check_disk_size $caddy_dir)"
+ 		caddy_size0="$(check_disk_size $bin_path)"
  		[ ! -z "$length" ] && logger -t "【caddy】" "程序大小 ${length}M， 程序路径可用空间 ${caddy_size0}M "
 		curl -L -k -o "$caddy_dir" --connect-timeout 10 --retry 3 "${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/caddy/caddy_filebrowser" || wget --no-check-certificate -O "$caddy_dir" "${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/caddy/caddy_filebrowser"
 		if [ "$?" = 0 ] ; then
