@@ -65,7 +65,7 @@ webdav /disk {
 }
 EOF
 fi
-logger -t "【caddy】" "生成配置文件${caddyfile}..."
+logger -t "【caddy】" "生成配置文件${caddyfile}"
 cat /tmp/cw /tmp/cf > $caddyfile
 rm -f /tmp/cw
 rm -f /tmp/cf
