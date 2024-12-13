@@ -553,6 +553,11 @@ EOF
 # ================================= 启动 SS ===============================
 ssp_start() { 
     ss_enable=`nvram get ss_enable`
+    scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 if rules; then
 		if start_redir_tcp; then
 		start_redir_udp
@@ -710,7 +715,7 @@ ressp() {
 
 case $1 in
 start)
-	ssp_start
+	ssp_start &
 	;;
 stop)
 	killall -q -9 ssr-switch
@@ -718,11 +723,11 @@ stop)
 	;;
 restart)
 	ssp_close
-	ssp_start
+	ssp_start &
 	;;
 reserver)
 	ssp_close
-	ressp
+	ressp &
 	;;
 *)
 	echo "check"
