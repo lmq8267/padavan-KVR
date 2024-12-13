@@ -189,11 +189,6 @@ start_ts() {
 		exit 0
 	fi 
 	logger -t "Tailscale" "正在启动tailscale"
- 	scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
 	sed -Ei '/【Tailscaled】|^$/d' /tmp/script/_opt_script_check
 	get_tag
  	if [ -f "$tailscaled" ] ; then
@@ -297,12 +292,12 @@ stop_ts() {
 	logger -t "【Tailscale】" "正在关闭tailscale..."
 	sed -Ei '/【Tailscaled】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
+	kill_ts
+	[ -z "`pidof tailscaled`" ] && logger -t "【Tailscale】" "tailscale关闭成功!"
+ 	if [ ! -z "$scriptname" ] ; then
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
 	fi
-	kill_ts
-	[ -z "`pidof tailscaled`" ] && logger -t "【Tailscale】" "tailscale关闭成功!"
 }
 
 case $1 in
