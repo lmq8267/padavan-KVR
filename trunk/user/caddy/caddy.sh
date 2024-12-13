@@ -41,11 +41,6 @@ if [ "$1" = "x" ] ; then
 	fi
 	[ -f $relock ] && rm -f $relock
 fi
-scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
 start_caddy
 }
 
@@ -131,9 +126,16 @@ caddy_keep() {
 }
 
 caddy_start() {
+	scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 	if [ "$caddy_enable" = "1" ] ;then
 	       logger -t "【caddy】" "正在启动..."
 	       sed -Ei '/【caddy】|^$/d' /tmp/script/_opt_script_check
+	else
+ 		exit 1
 	fi
 	[ -z "$caddy_dir" ] && caddy_dir=/tmp/var/caddy_filebrowser
  	if [ -f "$caddy_dir" ] ; then
@@ -148,31 +150,31 @@ caddy_start() {
 			caddy_dl2
    		fi
 	fi
- 	killall $(basename $caddy_dir)
+ 	killall $(basename $caddy_dir) >/dev/null 2>&1
 	/etc/storage/caddy_script.sh
-	if [ "$caddy_wan" = "1" ] ; then
-			if [ "$caddy_file" = "0" ] || [ "$caddy_file" = "2" ]; then
+			if [ "$caddy_file" = "0" ] || [ "$caddy_file" = "2" ] || [ "$caddy_file" = "3" ] || [ "$caddy_file" = "5" ] ; then
 				fport=$(iptables -t filter -L INPUT -v -n --line-numbers | grep dpt:$caddyf_wan_port | cut -d " " -f 1 | sort -nr | wc -l)
-				if [ "$fport" = 0 ] ; then
-					logger -t "【caddy】" "WAN放行 $caddyf_wan_port tcp端口"
+				if [ "$fport" = 0 ] && [ "$caddy_wan" = "1" ] ; then
+					logger -t "【caddy】" "WAN放行文件服务器 $caddyf_wan_port IPV4-tcp端口"
 					iptables -t filter -I INPUT -p tcp --dport $caddyf_wan_port -j ACCEPT
-					if [ "$caddy_wip6" = 1 ]; then
-						ip6tables -t filter -I INPUT -p tcp --dport $caddyf_wan_port -j ACCEPT
-					fi
+				fi
+    				if [ "$fport" = 0 ] && [ "$caddy_wip6" = "1" ] ; then
+					logger -t "【caddy】" "WAN放行文件服务器 $caddyf_wan_port IPV6-tcp端口"
+					ip6tables -t filter -I INPUT -p tcp --dport $caddyf_wan_port -j ACCEPT
 				fi
 			fi
-			if [ "$caddy_file" = "1" ] || [ "$caddy_file" = "2" ]; then
+			if [ "$caddy_file" = "1" ] || [ "$caddy_file" = "2" ] || [ "$caddy_file" = "4" ] || [ "$caddy_file" = "5" ] ; then
 				wport=$(iptables -t filter -L INPUT -v -n --line-numbers | grep dpt:$caddyw_wan_port | cut -d " " -f 1 | sort -nr | wc -l)
-				if [ "$wport" = 0 ] ; then
-					logger -t "【caddy】" "WAN放行 $caddyw_wan_port tcp端口"
+				if [ "$wport" = 0 ] && [ "`nvram get caddy_dwan`" = "1" ] ; then
+					logger -t "【caddy】" "WAN放行WebDav $caddyw_wan_port IPV4-tcp端口"
 					iptables -t filter -I INPUT -p tcp --dport $caddyw_wan_port -j ACCEPT
-					if [ "$caddy_wip6" = 1 ]; then
-						ip6tables -t filter -I INPUT -p tcp --dport $caddyw_wan_port -j ACCEPT
-					fi
+				fi
+    				if [ "$wport" = 0 ] && [ "`nvram get caddy_dwip6`" = "1" ] ; then
+					logger -t "【caddy】" "WAN放行WebDav $caddyw_wan_port IPV6-tcp端口"
+					ip6tables -t filter -I INPUT -p tcp --dport $caddyw_wan_port -j ACCEPT
 				fi
 			fi
-	fi
-	[ ! -z "`pidof caddy_filebrowser`" ] && logger -t "【caddy】" "文件管理服务已启动" && caddy_keep
+	if [ ! -z "`pidof caddy_filebrowser`" ] && logger -t "【caddy】" "文件管理服务已启动" && caddy_keep
 	
 }
 
@@ -185,15 +187,13 @@ caddy_close() {
 	fi
 	[ ! -z "$caddyf_wan_port" ] && iptables -t filter -D INPUT -p tcp --dport $caddyf_wan_port -j ACCEPT >/dev/null 2>&1
 	[ ! -z "$caddyw_wan_port" ] && iptables -t filter -D INPUT -p tcp --dport $caddyw_wan_port -j ACCEPT >/dev/null 2>&1
-	if [ "$wipv6" = 1 ]; then
-		[ ! -z "$caddyw_wan_port" ] && ip6tables -t filter -D INPUT -p tcp --dport $caddyw_wan_port -j ACCEPT >/dev/null 2>&1
-		[ ! -z "$caddyf_wan_port" ] && ip6tables -t filter -D INPUT -p tcp --dport $caddyf_wan_port -j ACCEPT >/dev/null 2>&1
-	fi
+	[ ! -z "$caddyw_wan_port" ] && ip6tables -t filter -D INPUT -p tcp --dport $caddyw_wan_port -j ACCEPT >/dev/null 2>&1
+	[ ! -z "$caddyf_wan_port" ] && ip6tables -t filter -D INPUT -p tcp --dport $caddyf_wan_port -j ACCEPT >/dev/null 2>&1
 	if [ ! -z "`pidof caddy_filebrowser`" ] || [ ! -z "`pidof caddy`" ] ; then
-	        killall caddy_filebrowser
-		killall -9 caddy_filebrowser
-  		killall caddy
-		killall -9 caddy
+	        killall caddy_filebrowser >/dev/null 2>&1
+		killall -9 caddy_filebrowser >/dev/null 2>&1
+  		killall caddy >/dev/null 2>&1
+		killall -9 caddy >/dev/null 2>&1
                 #rm -rf "$caddy_dir/caddy/caddy_filebrowser"
 		[ -z "`pidof caddy_filebrowser`" ] && [ -z "`pidof caddy`" ] && logger -t "【caddy】" "已关闭文件管理服务."
 	fi
