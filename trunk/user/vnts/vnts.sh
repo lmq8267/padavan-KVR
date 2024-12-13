@@ -142,6 +142,11 @@ vnts_keep() {
 start_vnts() {
 	[ "$vnts_enable" = "1" ] || exit 1
 	logger -t "【VNT服务端】" "正在启动vnts"
+ 	scriptname=$(basename $0)
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
  	if [ -z "$VNTS" ] ; then
   		etc_size=`check_disk_size /etc/storage`
       		if [ "$etc_size" -gt 1 ] ; then
@@ -237,7 +242,7 @@ EOF
  		mem=$(cat /proc/$(pidof vnts)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
    		cpui="$(top -b -n1 | grep -E "$(pidof vnts)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /vnts/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【VNT服务端】" "运行成功！"
-  		logger -t "【VNT服务端】" "内存占用 ${mem} CPU占用 ${cpui}"
+  		logger -t "【VNT服务端】" "内存占用 ${mem} CPU占用 ${cpui}%"
   		vnts_restart o
 		if [ ! -z "$vnts_port" ] ; then
 			iptables -I INPUT -p tcp --dport $vnts_port -j ACCEPT
