@@ -119,6 +119,7 @@ caddy_keep() {
 	sed -Ei '/【caddy】|^$/d' /tmp/script/_opt_script_check
 	cat >> "/tmp/script/_opt_script_check" <<-OSC
 	[ -z "\`pidof $binname\`" ] && logger -t "进程守护" "caddy 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【caddy】|^$/d' /tmp/script/_opt_script_check #【caddy】
+ 	[ -s /tmp/caddy.log ] && [ "\$(stat -c %s /tmp/caddy.log)" -gt 681984 ] && echo "" > /tmp/caddy.log & #【caddy】
 	OSC
 
 	fi
