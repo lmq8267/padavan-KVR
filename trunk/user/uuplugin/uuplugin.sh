@@ -110,7 +110,7 @@ if [ ! -z "`pidof uuplugin`" ] ; then
   logg "设备SN：$SN"
   logg "uuplugin-$uuver 启动成功" 
   uu_restart o
-  logg "内存占用 ${mem} CPU占用 ${cpui}"
+  logg "内存占用 ${mem} CPU占用 ${cpui}%"
   uu_keep
   nvram set uu_admin="https://router.uu.163.com/asus/pc/login?gwSn=${SN}&type=asuswrt-merlin&redirect=acce"
 fi
