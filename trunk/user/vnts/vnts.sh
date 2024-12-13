@@ -47,11 +47,6 @@ if [ "$1" = "x" ] ; then
 	fi
 	[ -f $relock ] && rm -f $relock
 fi
-scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
 start_vnts
 }
 get_tag() {
