@@ -270,11 +270,6 @@ start_zero() {
 	zt_enable=$(nvram get zerotier_enable)
 	[ "$zt_enable" = "1" ] || exit 1
 	logger -t "【zerotier】" "正在启动zerotier"
- 	scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
 	sed -Ei '/【zerotier】|^$/d' /tmp/script/_opt_script_check
  	if [ -z "$PROG" ] ; then
   		etc_size=`check_disk_size /etc/storage`
@@ -322,15 +317,15 @@ stop_zero() {
     	logger -t "【zerotier】" "正在关闭zerotier..."
     	sed -Ei '/【zerotier】|^$/d' /tmp/script/_opt_script_check
 	scriptname=$(basename $0)
-	if [ ! -z "$scriptname" ] ; then
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-	fi
 	del_rules
 	zero_route "del"
 	kill_z
 	#rm -rf $config_path
 	logger -t "【zerotier】" "zerotier关闭成功!"
+	if [ ! -z "$scriptname" ] ; then
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+	fi
 }
 
 case $1 in
