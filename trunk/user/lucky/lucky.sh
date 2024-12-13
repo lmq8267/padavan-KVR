@@ -116,11 +116,11 @@ lucky_dl() {
 					nvram set lucky_ver=$lk_ver
 				fi
 				cp -f /tmp/var/lucky $PROG
-				rm -rf /tmp/lucky.tar.gz /tmp/var/lucky
+				rm -rf /tmp/lucky.tar.gz
 				break
        			else
 	   			logg "下载不完整，请手动下载 ${lk_url} 解压上传到  $PROG"
-	   			rm -f /tmp/var/lucky /tmp/lucky.tar.gz
+	   			rm -f /tmp/lucky.tar.gz
 	  		fi
        		else
 	   		logg "下载不完整，请手动下载 ${lk_url} 解压上传到  $PROG"
