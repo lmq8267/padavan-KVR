@@ -71,7 +71,7 @@ dowload_cf() {
  	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
  	length=`expr $length + 512000`
 	length=`expr $length / 1048576`
- 	cf_size0="$(check_disk_size $PROG)"
+ 	cf_size0="$(check_disk_size $bin_path)"
  	[ ! -z "$length" ] && logger -t "【cloudflared】" "程序大小 ${length}M， 程序路径可用空间 ${cf_size0}M "
         curl -Lko "$PROG" "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared" || wget --no-check-certificate -O "$PROG" "${proxy}https://github.com/lmq8267/cloudflared/releases/download/${tag}/cloudflared"
 	if [ "$?" = 0 ] ; then
