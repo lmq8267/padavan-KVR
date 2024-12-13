@@ -110,11 +110,6 @@ if [ "$1" = "x" ] ; then
 	fi
 	[ -f $relock ] && rm -f $relock
 fi
-scriptname=$(basename $0)
-if [ ! -z "$scriptname" ] ; then
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
-	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
-fi
 start_adg
 }
 
@@ -161,6 +156,7 @@ dl_adg() {
 		logger -t "【AdGuardHome】" "找不到 $SVC_PATH ，下载 AdGuardHome 程序"
 		get_tag
   		adg_path=$(dirname "$SVC_PATH")
+    		[ ! -d "$adg_path" ] && mkdir -p "$adg_path"
 		logger -t "【AdGuardHome】" "下载${tag}版本 下载较慢，耐心等待"
 		for proxy in $github_proxys ; do
   			length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/AdguardTeam/AdGuardHome/releases/download/${tag}/AdGuardHome_linux_mipsle_softfloat.tar.gz" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
@@ -204,6 +200,11 @@ start_adg() {
   mkdir -p /tmp/AdGuardHome
   mkdir -p /etc/storage/AdGuardHome
   logger -t "【AdGuardHome】" "正在启动..."
+  scriptname=$(basename $0)
+if [ ! -z "$scriptname" ] ; then
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
+	eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill -9 "$1";";}')
+fi
   sed -Ei '/【AdGuardHome】|^$/d' /tmp/script/_opt_script_check
   find_bin
   [ ! -x "$SVC_PATH" ] && chmod +x $SVC_PATH
@@ -224,7 +225,7 @@ start_adg() {
  		mem=$(cat /proc/$(pidof AdGuardHome)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
    		cpui="$(top -b -n1 | grep -E "$(pidof AdGuardHome)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /AdGuardHome/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【AdGuardHome】" "运行成功！"
-  		logger -t "【AdGuardHome】" "内存占用 ${mem} CPU占用 ${cpui}"
+  		logger -t "【AdGuardHome】" "内存占用 ${mem} CPU占用 ${cpui}%"
   		adg_restart o
 		echo `date +%s` > /tmp/vntcli_time
 		vnt_rules
