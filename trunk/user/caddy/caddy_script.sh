@@ -25,12 +25,14 @@ caddy_wname=`nvram get caddy_wname`
 caddy_wpassword=`nvram get caddy_wpassword`
 
 #生成的配置文件路径
-caddyfile="/tmp/caddy/Caddyfile"
-rm -f $caddyfile
+caddyfile="/tmp/Caddyfile"
+file_path=$(dirname "$caddyfile")
+[ ! -d "$file_path" ] && mkdir -p "$file_path"
 
 #旧版caddy_filebrowser配置
 if [ "$caddy_mode" = "0" ] || [ "$caddy_mode" = "1" ] || [ "$caddy_mode" = "2" ] ; then
 #配置browser文件服务器
+logger -t "【caddy】" "创建caddy_filebrowser的browser文件服务器配置..."
 if [ "$caddy_mode" = "0" ] || [ "$caddy_mode" = "2" ] ; then
 cat <<-EOF >/tmp/cf
 :$caddyf_wan_port {
@@ -45,6 +47,7 @@ EOF
 fi
 #配置webdav
 if [ "$caddy_mode" = "1" ] || [ "$caddy_mode" = "2" ] ; then
+logger -t "【caddy】" "创建caddy_filebrowser的WebDav配置..."
 cat <<-EOF >/tmp/cw
 :$caddyw_wan_port {
 root $caddy_webdav_path
@@ -62,10 +65,11 @@ webdav /disk {
 }
 EOF
 fi
+logger -t "【caddy】" "生成配置文件${caddyfile}..."
 cat /tmp/cw /tmp/cf > $caddyfile
 rm -f /tmp/cw
 rm -f /tmp/cf
-
+logger -t "【caddy】" "运行${caddy} -conf ${caddyfile}"
 $caddy -conf $caddyfile >/tmp/caddy.log 2>&1 &
 
 fi
@@ -74,6 +78,7 @@ fi
 if [ "$caddy_mode" = "3" ] || [ "$caddy_mode" = "4" ] || [ "$caddy_mode" = "5" ] ; then
 #配置browser文件服务器
 if [ "$caddy_mode" = "3" ] || [ "$caddy_mode" = "5" ] ; then
+logger -t "【caddy】" "创建caddy的browser文件服务器配置..."
 if [ ! -z "$caddy_fname" ] && [ ! -z "$caddy_fpassword" ] ; then
 	      filepassword="$($caddy hash-password --plaintext $caddy_fpassword)"
 	      filebasicauth="basicauth {
@@ -96,6 +101,7 @@ EOF
 fi
 #配置webdav
 if [ "$caddy_mode" = "4" ] || [ "$caddy_mode" = "5" ] ; then
+logger -t "【caddy】" "创建caddy的WebDav配置..."
 orderweb="order webdav before file_server # 启动 webdav 模块"
 if [ ! -z "$caddy_wname" ] && [ ! -z "$caddy_wpassword" ] ; then
 	      davpassword="$($caddy hash-password --plaintext $caddy_wpassword)"
@@ -125,6 +131,7 @@ admin off # 关闭 API 端口
 }
 
 EOF
+logger -t "【caddy】" "生成配置文件${caddyfile}..."
 cat /tmp/fw /tmp/cw /tmp/cf > $caddyfile
 rm -f /tmp/fw
 rm -f /tmp/cw
@@ -132,11 +139,13 @@ rm -f /tmp/cf
 #整理配置文件
 $caddy fmt --overwrite $caddyfile
 #判断配置文件是否正确，通过系统日志查看 错误会提示哪里有问题
+logger -t "【caddy】" "检测配置文件格式是否正确..."
 $caddy validate --config $caddyfile --adapter caddyfile 2>&1 | while IFS= read -r line; do
     logger -t "【caddy】" "$line"
 done
 
 #启动
+logger -t "【caddy】" "运行${caddy} run --config ${caddyfile} --adapter caddyfile"
 $caddy run --config $caddyfile --adapter caddyfile >/tmp/caddy.log 2>&1 &
 
 fi
