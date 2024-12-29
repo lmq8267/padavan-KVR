@@ -160,8 +160,8 @@ start_vnts() {
   	chmod +x $VNTS
   	sed -Ei '/【VNT服务端】|^$/d' /tmp/script/_opt_script_check
 	killall -9 vnts >/dev/null 2>&1
+ 	path=$(dirname "$VNTS")
 	if [ "$vnts_log" = "1" ] ; then
-		path=$(dirname "$VNTS")
 		log_path="${path}/log"
 		if [ ! -f "${log_path}/log4rs.yaml" ] ; then
 			mkdir -p ${log_path}
