@@ -92,9 +92,6 @@ $filebasicauth
  root * $caddy_browser_path
  file_server browse
  
-header {
-                Content-Type "charset=utf-8"
-        }
 }
 
 EOF
