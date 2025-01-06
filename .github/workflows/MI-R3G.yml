@@ -445,5 +445,8 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         body: |
            > ### 编译时间：${{ env.build_time }}
+
+           `型号.config` 是集成的插件模板
+           
         tag_name: ${{ env.tag }}
         files: /opt/images/*
