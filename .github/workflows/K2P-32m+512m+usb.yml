@@ -452,4 +452,3 @@ jobs:
            
         tag_name: ${{ env.tag }}
         files: /opt/images/*
-M
