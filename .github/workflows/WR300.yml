@@ -7,6 +7,8 @@ on:
 #设置仓库的读写权限
 permissions:
   contents: write
+env:
+  TZ: Asia/Shanghai
 jobs:
   build:
     runs-on: ubuntu-20.04
