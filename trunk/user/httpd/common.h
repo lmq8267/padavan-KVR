@@ -80,6 +80,7 @@ typedef u_int8_t u8;
 #define EVM_RESTART_FTPD			(1ULL << 35)
 #define EVM_RESTART_NMBD			(1ULL << 36)
 #define EVM_RESTART_SMBD			(1ULL << 37)
+//如果你要修改的话 请注意后面的序号，每个插件对应的序号不能相同  不能超过63 你可以删掉不需要的 把序号给你需要的插件
 		//#define EVM_RESTART_NFSD			(1ULL << 38)
 
 		//Minidlna UPnP 媒体服务器
