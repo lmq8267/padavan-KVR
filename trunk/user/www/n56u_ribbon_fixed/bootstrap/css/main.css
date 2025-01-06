@@ -1,5 +1,7 @@
 body{
-    background: url("../img/bg/wood.jpg") repeat scroll center top transparent;
+    /* background: url("../img/bg/wood.jpg") repeat scroll center top transparent; */
+    background: url("../img/bg/wood.jpg") no-repeat scroll center top transparent;
+    background-size: cover;  /* 使背景图像覆盖整个页面，保持其比例，避免出现拼接 */
     background-color: #282828;
     overflow-y: scroll;
     z-index:-1;
