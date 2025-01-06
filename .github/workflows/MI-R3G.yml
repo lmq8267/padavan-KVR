@@ -430,7 +430,7 @@ jobs:
         sudo ./clear_tree
         sudo ./build_firmware_modify $TNAME 0
         sudo mv -f images/*.trx /opt/images/
-        cp -f .config /opt/images/${TNAME}_集成插件模板.config
+        cp -f .config /opt/images/${TNAME}.config
         echo "build_time=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
         echo "tag=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
     - name : Upload packages
