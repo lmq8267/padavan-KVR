@@ -4,12 +4,12 @@ name: 京东云一代JDC-1
 on: 
   workflow_dispatch:
 
-
+#设置仓库的读写权限
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-20.04
-    if: github.event.repository.owner.id == github.event.sender.id
-
     steps:
     - name: Checkout
       uses: actions/checkout@master
@@ -22,7 +22,6 @@ jobs:
         cpio git python-docutils gettext automake autopoint texinfo build-essential help2man \
         pkg-config zlib1g-dev libgmp3-dev libmpc-dev libmpfr-dev libncurses5-dev libltdl-dev wget
     - name: Install UPX
-      if: ${{ matrix.OS != 'macos-latest' }}
       uses: crazy-max/ghaction-upx@v3
       with:
         version: latest
@@ -48,7 +47,7 @@ jobs:
       run: |
         cd /opt/rt-n56u/trunk
         if [ ! -f configs/templates/$TNAME.config ] ; then
-        echo "configs/templates/$TNAME.config not found "
+        echo "没有找到 configs/templates/$TNAME.config "
         exit 1
         fi
         cp -f configs/templates/$TNAME.config .config
@@ -429,9 +428,21 @@ jobs:
         sudo ./clear_tree
         sudo ./build_firmware_modify $TNAME 0
         sudo mv -f images/*.trx /opt/images/
+        cp -f .config /opt/images/${TNAME}_集成插件模板.config
+        echo "build_time=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
+        echo "tag=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
     - name : Upload packages
       uses: actions/upload-artifact@master
-      if: always()
       with:
         name: JDC-1
         path: /opt/images
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        body: |
+           > ### 编译时间：${{ env.build_time }}
+
+        tag_name: ${{ env.tag }}
+        files: /opt/images/*
