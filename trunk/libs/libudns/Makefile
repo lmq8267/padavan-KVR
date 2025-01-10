@@ -1,5 +1,5 @@
 SRC_NAME=udns-0.4
-SRC_URL=http://www.corpit.ru/mjt/udns/udns-0.4.tar.gz
+SRC_URL=http://www.corpit.ru/mjt/udns/$(SRC_NAME).tar.gz
 
 all: download_test extract_test config_test
 	$(MAKE) -C $(SRC_NAME)

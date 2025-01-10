@@ -1,5 +1,5 @@
 SRC_NAME=libev-4.33
-SRC_URL=http://dist.schmorp.de/libev/libev-4.33.tar.gz
+SRC_URL=http://dist.schmorp.de/libev/$(SRC_NAME).tar.gz
 
 all: download_test extract_test config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
