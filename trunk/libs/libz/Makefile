@@ -1,4 +1,4 @@
-SRC_NAME=zlib-1.3
+SRC_NAME=zlib-1.3.1
 SRC_URL=http://www.zlib.net/$(SRC_NAME).tar.gz
 
 all: download_test extract_test config_test

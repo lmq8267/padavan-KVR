@@ -1,5 +1,5 @@
 SRC_NAME=pcre-8.45
-SRC_URL=https://ftp.pcre.org/pub/pcre/$(SRC_NAME).zip
+SRC_URL=https://sourceforge.net/projects/pcre/files/pcre/8.45/$(SRC_NAME).zip
 
 all: download_test extract_test config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
