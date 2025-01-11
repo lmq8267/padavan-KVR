@@ -1,5 +1,5 @@
 SRC_NAME=confuse-3.3
-SRC_URL=https://github.com/libconfuse/libconfuse/releases/download/v3.3/confuse-3.3.tar.xz
+SRC_URL=https://github.com/libconfuse/libconfuse/releases/download/v3.3/$(SRC_NAME).tar.xz
 
 all: download_test extract_test config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)

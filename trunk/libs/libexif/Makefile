@@ -1,17 +1,17 @@
 SRC_NAME=libexif-0.6.24
-SRC_URL=https://github.com/libexif/libexif/releases/download/v0.6.23/$(SRC_NAME).tar.bz2
+SRC_URL=https://github.com/libexif/libexif/releases/download/v0.6.24/$(SRC_NAME).tar.bz2
 
 all: download_test extract_test config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)
 
 download_test:
-	( if [ ! -f $(SRC_NAME).tar.xz ]; then \
-		wget -t5 --timeout=20 --no-check-certificate -O $(SRC_NAME).tar.xz $(SRC_URL); \
+	( if [ ! -f $(SRC_NAME).tar.bz2 ]; then \
+		wget -t5 --timeout=20 --no-check-certificate -O $(SRC_NAME).tar.bz2 $(SRC_URL); \
 	fi )
 
 extract_test:
 	( if [ ! -d $(SRC_NAME) ]; then \
-		tar xJf $(SRC_NAME).tar.xz ; \
+		tar jxf $(SRC_NAME).tar.bz2; \
 		patch -d $(SRC_NAME) -p1 -i ../no_doc_test.patch ; \
 	fi )
 
