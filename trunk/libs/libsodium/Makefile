@@ -1,4 +1,4 @@
-SRC_NAME=libsodium-1.0.18
+SRC_NAME=libsodium-1.0.20
 SRC_URL=https://download.libsodium.org/libsodium/releases/$(SRC_NAME).tar.gz
 
 all: download_test extract_test config_test
