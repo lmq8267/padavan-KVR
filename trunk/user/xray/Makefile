@@ -20,7 +20,7 @@ build_extract:
 	fi )
 
 build:
-	( sed -i "s/go 1.21.4/go 1.23.0/g" $(THISDIR)/xray-core/Xray-core-$(XRAY_VERSION)/go.mod; \
+	( sed -i "s/go 1.21.4/go 1.23.4/g" $(THISDIR)/xray-core/Xray-core-$(XRAY_VERSION)/go.mod; \
 	cd $(THISDIR)/$(XRAY_DIR); \
 	GOOS=linux GOARCH=mipsle CGO_ENABLED=0 GOMIPS=softfloat go build -o $(THISDIR)/bin/xray -trimpath -ldflags "-s -w -buildid="; \
 	upx --lzma --best $(THISDIR)/bin/xray; \
