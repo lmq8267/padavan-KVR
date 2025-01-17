@@ -670,6 +670,7 @@ struct nvram_pair router_defaults[] = {
 	/* ttyd related */
 	{ "ttyd_enable", "0" },
 	{ "ttyd_port", "7681" },
+	{ "ttyd_cmd", "-i br0 login" },
 #endif
 
 #if defined (APP_NAPT66)
