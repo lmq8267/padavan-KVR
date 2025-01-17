@@ -231,6 +231,7 @@
 #if defined (APP_TTYD)
 			{"ttyd_enable", "", NULL, EVM_RESTART_TTYD},
 			{"ttyd_port", "", NULL, EVM_RESTART_TTYD},
+			{"ttyd_cmd", "", NULL, EVM_RESTART_TTYD},
 #endif
 #if defined (APP_VLMCSD)
 			{"vlmcsd_enable", "", NULL, EVM_RESTART_VLMCSD},
