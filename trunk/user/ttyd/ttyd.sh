@@ -7,7 +7,7 @@ ttyd_cmd="$(nvram get ttyd_cmd)"
 
 func_start(){
 	logger -t "【TTYD】" "运行ttyd：start-stop-daemon -S -b -x ttyd -- -p ${port} ${ttyd_cmd}"
-	start-stop-daemon -S -b -x ttyd -- -p "$port" "$ttyd_cmd"
+	start-stop-daemon -S -b -x ttyd -- -p "$port" $ttyd_cmd
 }
 
 func_stop(){
