@@ -255,6 +255,7 @@ function change_ttyd_enabled(){
 	var v = document.form.ttyd_enable[0].checked;
 	showhide_div('ttyd_webui', v);
 	showhide_div('ttyd_port', v);
+	showhide_div('ttyd_cmd', v);
 }
 
 function on_ttyd_link(){
@@ -533,6 +534,12 @@ function on_ttyd_link(){
                                             </td>
 					    <td id="ttyd_webui">
                                                 <input class="btn btn-success" style="" type="button" value="打开TTYD" onclick="on_ttyd_link()" />
+                                            </td>
+                                        </tr>
+					<tr id="ttyd_cmd"> <th width="50%">额外启动参数</th>
+                                            <td colspan="2">
+                                                <input type="text" maxlength="128" class="input" size="15" placeholder="-i br0 -6 login" name="ttyd_cmd" style="width: 145px" value="<% nvram_get_x("","ttyd_cmd"); %>" />
+						&nbsp;<span style="color:#888;">默认额外参数[-i br0 login]</span><br>&nbsp;<span style="color:#888;">终端输入 [ttyd -h] 查看帮助</span>
                                             </td>
                                         </tr>
                                     </table>
