@@ -4029,7 +4029,7 @@ apply_cgi(const char *url, webs_t wp)
 	else if (!strcmp(value, " Restartzerotier "))
 	{
 #if defined(APP_ZEROTIER)
-		system("/usr/bin/zerotier.sh restart &");
+		system("/usr/bin/zerotier.sh start &");
 #endif
 		return 0;
 	}
