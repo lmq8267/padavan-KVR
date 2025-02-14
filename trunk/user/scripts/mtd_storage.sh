@@ -277,7 +277,7 @@ sync && echo 3 > /proc/sys/vm/drop_caches
 #iwpriv rai0 set AssocReqRssiThres=-80
 
 # Mount SATA disk
-mdev -s
+#mdev -s
 
 #wing <HOST:443> <PASS>
 #wing 192.168.1.9:1080
