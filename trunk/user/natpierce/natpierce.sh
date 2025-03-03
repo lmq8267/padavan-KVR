@@ -57,6 +57,7 @@ jyl_keep() {
 	sed -Ei '/【皎月连】|^$/d' /tmp/script/_opt_script_check
 	cat >> "/tmp/script/_opt_script_check" <<-OSC
 	[ -z "\`pidof natpierce\`" ] && logger -t "进程守护" "皎月连 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【皎月连】|^$/d' /tmp/script/_opt_script_check #【皎月连】
+ 	[ -z "\$(iptables -L -n -v | grep 'natpierce')" ] && logger -t "进程守护" "皎月连 防火墙规则失效" && eval "$scriptfilepath start &" && sed -Ei '/【皎月连】|^$/d' /tmp/script/_opt_script_check #【皎月连】
 	OSC
 
 	fi
