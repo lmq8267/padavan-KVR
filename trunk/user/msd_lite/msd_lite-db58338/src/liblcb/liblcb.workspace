@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Workspace Name="liblcb" Database="" Version="10.0.0">
+  <Project Name="lib" Path="lib.project" Active="No"/>
+  <VirtualDirectory Name="test">
+    <Project Name="test-base64" Path="tests/base64/test-base64.project" Active="No"/>
+    <Project Name="test-ecdsa" Path="tests/ecdsa/test-ecdsa.project" Active="No"/>
+    <Project Name="test-threadpool" Path="tests/threadpool/test-threadpool.project" Active="Yes"/>
+    <Project Name="test-hash" Path="tests/hash/test-hash.project" Active="No"/>
+  </VirtualDirectory>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug">
+      <Environment/>
+      <Project Name="lib" ConfigName="Debug"/>
+      <Project Name="test-threadpool" ConfigName="Debug"/>
+      <Project Name="test-ecdsa" ConfigName="Debug"/>
+      <Project Name="test-base64" ConfigName="Debug"/>
+      <Project Name="test-hash" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Release">
+      <Environment/>
+      <Project Name="lib" ConfigName="Debug"/>
+      <Project Name="test-threadpool" ConfigName="Debug"/>
+      <Project Name="test-ecdsa" ConfigName="Release"/>
+      <Project Name="test-base64" ConfigName="Release"/>
+      <Project Name="test-hash" ConfigName="Release"/>
+    </WorkspaceConfiguration>
+    <WorkspaceConfiguration Name="Debug-ASAN">
+      <Environment/>
+      <Project Name="lib" ConfigName="Debug"/>
+      <Project Name="test-base64" ConfigName="Debug"/>
+      <Project Name="test-ecdsa" ConfigName="Debug"/>
+      <Project Name="test-hash" ConfigName="Debug"/>
+      <Project Name="test-threadpool" ConfigName="Debug-ASAN"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="test-threadpool" Version="11000" InternalType="">
+  <Description/>
+  <Dependencies/>
+  <VirtualDirectory Name="threadpool">
+    <File Name="main.c"/>
+    <File Name="../../src/threadpool/threadpool.c"/>
+    <File Name="../../src/threadpool/threadpool_msg_sys.c"/>
+  </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Settings Type="Executable">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="-DHAVE_STRLCPY;-DHAVE_PIPE2;-DHAVE_REALLOCARRAY;-DHAVE_ACCEPT4;-DHAVE_MEMRCHR;-DHAVE_MEMMEM;-DHAVE_REALLOCARRAY;-DHAVE_EXPLICIT_BZERO;-DHAVE_MEMSET_S;-DHAVE_KQUEUEX;-DHAVE_TIMINGSAFE_BCMP;-Wimplicit-fallthrough" Assembler="">
+        <IncludePath Value="../../include"/>
+      </Compiler>
+      <Linker Options="">
+        <Library Value="pthread"/>
+        <Library Value="cunit"/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="clang system" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g -Wall" C_Options="-g -Wall -Weverything;-Wwrite-strings;-Wsign-compare;-Wpointer-arith;-Wnested-externs;-Wmissing-prototypes;-Wmissing-declarations;-Winline;-Wmain;-Wformat-security;-Wformat;-Wchar-subscripts;-Wcast-align;-g -DDEBUG;-W;-Wall;-Wno-gnu-zero-variadic-macro-arguments;-Wno-variadic-macros;-Wno-padded;-Wno-packed;-Wno-unused-macros;-Wno-format-nonliteral;-Wno-cast-qual;-Wno-reserved-id-macro;-Wno-date-time;-Wno-unused-local-typedef;-Wno-documentation-unknown-command;-Wno-thread-safety-analysis;-Wimplicit-fallthrough;-Wno-unsafe-buffer-usage;-Wno-switch-default" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0"/>
+      <Linker Options="-O0" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="$(ConfigurationName)" Command="$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Debug-ASAN" CompilerType="clang system" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g -Wall" C_Options="-Wwrite-strings;-Wsign-compare;-Wpointer-arith;-Wnested-externs;-Wmissing-prototypes;-Wmain;-Winline;-Wmissing-declarations;-Wformat-security;-Wformat;-Wchar-subscripts;-Wcast-align;-ftrapv;-g -DDEBUG;-D_FORTIFY_SOURCE=2;-fwrapv;-fstack-protector-all;-W;-Wall;-g -Wall -Weverything;-Wno-gnu-zero-variadic-macro-arguments;-Wno-variadic-macros;-Wno-padded;-Wno-packed;-Wno-unused-macros;-Wno-format-nonliteral;-Wno-cast-qual;-Wno-reserved-id-macro;-Wno-date-time;-Wno-unused-local-typedef;-Wno-documentation-unknown-command;-Wno-thread-safety-analysis;-Wimplicit-fallthrough;-Wno-unsafe-buffer-usage;-Wno-switch-default;-fsanitize=address;-fsanitize-recover=address" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0"/>
+      <Linker Options="-fsanitize=address;-fsanitize-recover=address" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="$(ConfigurationName)" Command="$(OutputFile)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="lib" Version="11000" InternalType="">
+  <VirtualDirectory Name="tests">
+    <File Name="tests/CMakeLists.txt"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="workflows">
+    <File Name=".github/workflows/build-ubuntu-latest.yml"/>
+    <File Name=".github/workflows/build-macos-latest.yml"/>
+  </VirtualDirectory>
+  <Plugins>
+    <Plugin Name="CppCheck"/>
+  </Plugins>
+  <VirtualDirectory Name="src">
+    <VirtualDirectory Name="net">
+      <File Name="src/net/socket_options.c"/>
+      <File Name="src/net/socket.c"/>
+      <File Name="src/net/socket_address.c"/>
+      <File Name="src/net/utils.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="utils">
+      <File Name="src/utils/data_cache.c"/>
+      <File Name="src/utils/info.c"/>
+      <File Name="src/utils/ring_buffer.c"/>
+      <File Name="src/utils/bt_encode.c"/>
+      <File Name="src/utils/xml.c"/>
+      <File Name="src/utils/cmd_line_daemon.c"/>
+      <File Name="src/utils/sys_res_limits_xml.c"/>
+      <File Name="src/utils/ini.c"/>
+      <File Name="src/utils/sys.c"/>
+      <File Name="src/utils/buf_str.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="proto">
+      <File Name="src/proto/http.c"/>
+      <File Name="src/proto/bt_tracker.c"/>
+      <File Name="src/proto/dns_resolv.c"/>
+      <File Name="src/proto/http_server.c"/>
+      <File Name="src/proto/sap_rcvr.c"/>
+      <File Name="src/proto/upnp_ssdp.c"/>
+      <File Name="src/proto/radius_client.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="threadpool">
+      <File Name="src/threadpool/threadpool.c"/>
+      <File Name="src/threadpool/threadpool_msg_sys.c"/>
+      <File Name="src/threadpool/threadpool_task.c"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="al"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="include">
+    <VirtualDirectory Name="crypto">
+      <VirtualDirectory Name="dsa">
+        <File Name="include/crypto/dsa/ecdsa.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="cipher">
+        <File Name="include/crypto/cipher/chacha.h"/>
+        <File Name="include/crypto/cipher/gost28147.h"/>
+      </VirtualDirectory>
+      <VirtualDirectory Name="hash">
+        <File Name="include/crypto/hash/gost3411-2012.h"/>
+        <File Name="include/crypto/hash/md5.h"/>
+        <File Name="include/crypto/hash/sha1.h"/>
+        <File Name="include/crypto/hash/sha2.h"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
+    <VirtualDirectory Name="net">
+      <File Name="include/net/socket_options.h"/>
+      <File Name="include/net/host_address.h"/>
+      <File Name="include/net/utils.h"/>
+      <File Name="include/net/socket.h"/>
+      <File Name="include/net/socket_address.h"/>
+      <File Name="include/net/hostname_list.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="proto">
+      <File Name="include/proto/http_server_auth.h"/>
+      <File Name="include/proto/proxy_protocol.h"/>
+      <File Name="include/proto/dhcpv4.h"/>
+      <File Name="include/proto/http_client.h"/>
+      <File Name="include/proto/dns_resolv.h"/>
+      <File Name="include/proto/dns.h"/>
+      <File Name="include/proto/mpeg2ts.h"/>
+      <File Name="include/proto/rtp.h"/>
+      <File Name="include/proto/sap.h"/>
+      <File Name="include/proto/sdp.h"/>
+      <File Name="include/proto/bt_tracker.h"/>
+      <File Name="include/proto/http.h"/>
+      <File Name="include/proto/radius.h"/>
+      <File Name="include/proto/http_server.h"/>
+      <File Name="include/proto/sap_rcvr.h"/>
+      <File Name="include/proto/upnp_ssdp.h"/>
+      <File Name="include/proto/radius_client.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="threadpool">
+      <File Name="include/threadpool/threadpool.h"/>
+      <File Name="include/threadpool/threadpool_msg_sys.h"/>
+      <File Name="include/threadpool/threadpool_task.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="math">
+      <File Name="include/math/big_num.h"/>
+      <File Name="include/math/crc32.h"/>
+      <File Name="include/math/elliptic_curve.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="utils">
+      <File Name="include/utils/mem_utils.h"/>
+      <File Name="include/utils/asn1.h"/>
+      <File Name="include/utils/base64.h"/>
+      <File Name="include/utils/bt_encode.h"/>
+      <File Name="include/utils/hw.h"/>
+      <File Name="include/utils/macro.h"/>
+      <File Name="include/utils/data_cache.h"/>
+      <File Name="include/utils/hash_bucket.h"/>
+      <File Name="include/utils/info.h"/>
+      <File Name="include/utils/io_buf.h"/>
+      <File Name="include/utils/num2str.h"/>
+      <File Name="include/utils/str2num.h"/>
+      <File Name="include/utils/strh2num.h"/>
+      <File Name="include/utils/reass_helper.h"/>
+      <File Name="include/utils/ring_buffer.h"/>
+      <File Name="include/utils/utf8.h"/>
+      <File Name="include/utils/xml.h"/>
+      <File Name="include/utils/cmd_line_daemon.h"/>
+      <File Name="include/utils/sys_res_limits_xml.h"/>
+      <File Name="include/utils/ini.h"/>
+      <File Name="include/utils/sys.h"/>
+      <File Name="include/utils/buf_str.h"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="al">
+      <File Name="include/al/os.h"/>
+      <File Name="include/al/hw.h"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <Description/>
+  <Dependencies/>
+  <VirtualDirectory Name="root">
+    <File Name=".editorconfig"/>
+    <File Name="readme.md"/>
+    <File Name="CMakeLists.txt"/>
+  </VirtualDirectory>
+  <Dependencies Name="Debug"/>
+  <Settings Type="Static Library">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="-DHAVE_STRLCPY;-DHAVE_PIPE2;-DHAVE_ACCEPT4;-DHAVE_REALLOCARRAY;-DHAVE_ACCEPT4;-DHAVE_MEMRCHR;-DHAVE_MEMMEM;-DHAVE_REALLOCARRAY;-DHAVE_MEMSET_S;-DHAVE_EXPLICIT_BZERO;-DHAVE_KQUEUEX;-DHAVE_TIMINGSAFE_BCMP;-Wimplicit-fallthrough" Assembler="">
+        <IncludePath Value="./include"/>
+      </Compiler>
+      <Linker Options="">
+        <Library Value="pthread"/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="clang system" DebuggerType="GNU gdb debugger" Type="Static Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="" C_Options="-Weverything;-g -DDEBUG;-pedantic;-W;-Wall;-g -Wall;-Wno-reserved-id-macro;-Wno-variadic-macros;-Wno-gnu-zero-variadic-macro-arguments;-Wno-unused-macros;-Wno-padded;-Wno-packed;-Wno-date-time;-Wno-unsafe-buffer-usage;-Wno-switch-default" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0"/>
+      <Linker Options="-O0" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="./Debug" PauseExecWhenProcTerminates="no" IsGUIProgram="no" IsEnabled="yes"/>
+      <BuildSystem Name="Default"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="" IsExtended="no">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="no">
+        <RebuildCommand/>
+        <CleanCommand/>
+        <BuildCommand/>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName/>
+        <WorkingDirectory/>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no" EnableCpp14="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+</CodeLite_Project>
