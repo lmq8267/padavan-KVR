@@ -41,5 +41,6 @@ clean:
 romfs:
 	cp $(SRC_NAME)/tcpdump .
 	$(STRIP) tcpdump
+	upx --lzma --best tcpdump
 	$(ROMFSINST) /usr/sbin/tcpdump
 

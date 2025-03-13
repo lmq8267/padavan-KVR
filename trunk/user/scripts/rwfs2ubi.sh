@@ -53,9 +53,9 @@ if [ $? = 0 ]; then
 	echo -e "创建 UBI 卷完成！\n\n"
 	logger -t "rwfs2ubi.sh" "创建 UBI 卷完成！"
 	nvram set mtd_rwfs_mount=1 && nvram commit
-	echo "请重启您的路由器，以便自动挂载 RWFS 分区到 '/media/mtd_rwfs'。"
-	echo "如果您希望将 RWFS 自动挂载到 /opt，请在 '/media/mtd_rwfs' 中创建 'opt' 目录，然后重启路由器。"
-	echo "如果您想在 /opt 中设置 Entware，请运行 'nvram set optw_enable=2 && nvram commit'，然后运行 'opt-start.sh' 以下载 Entware 安装程序。"
+	echo "请重启您的路由器，以便自动挂载 RWFS 分区到 /media/mtd_rwfs"
+	echo "如果您希望将 RWFS 自动挂载到 /opt，请在 /media/mtd_rwfs 中创建 opt 目录，然后重启路由器。"
+	echo "如果您想在 /opt 中设置 Entware，请运行 nvram set optw_enable=2 && nvram commit 然后运行 opt-start.sh 以下载 Entware 安装程序。"
 else
 	echo "创建 UBI 卷失败！" >&2
 	logger -t "rwfs2ubi.sh" "创建 UBI 卷失败！"

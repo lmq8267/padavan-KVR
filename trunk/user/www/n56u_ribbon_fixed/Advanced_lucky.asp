@@ -490,7 +490,7 @@ function Internetfalse(){
 	<th width="30%" style="border-top: 0 none;">指定版本</th>
 	<td style="border-top: 0 none;" colspan="3">
 	<div class="input-append">
-	<input name="lucky_tag" type="text" class="input" id="lucky_tag" placeholder="v2.14.0" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","lucky_tag"); %>" size="32" maxlength="128" />
+	<input name="lucky_tag" type="text" class="input" id="lucky_tag" placeholder="<% nvram_get_x("","lucky_ver_n"); %>" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","lucky_tag"); %>" size="32" maxlength="128" />
 	</div><br><span style="color:#888;">用于在线下载时指定lucky版本，防止不同版本配置文件不兼容。</span>
 	</td>
 	</tr><td colspan="4"></td>

@@ -39,4 +39,5 @@ clean:
 	rm -f config_done
 
 romfs:
+	$(STRIP) $(THISDIR)/$(SRC_NAME)/socat
 	$(ROMFSINST) -p +x $(THISDIR)/$(SRC_NAME)/socat /usr/bin/socat

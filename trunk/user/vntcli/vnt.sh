@@ -196,7 +196,7 @@ start_vntcli() {
  	if [ ! -f "$VNTCLI" ] ; then
 		logger -t "VNT客户端" "主程序${VNTCLI}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
-  		[ -z "$tag" ] && tag="1.2.15"
+  		[ -z "$tag" ] && tag="v1.2.16"
   		dowload_vntcli $tag
   	fi
 	sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check
