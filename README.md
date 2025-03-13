@@ -13,7 +13,7 @@ fork于fightroad的仓库 https://github.com/fightroad/Padavan-KVR.git
 默认纯净没有添加插件，[在线云编译修改插件](.github/workflows/NEWIFI3.yml) [自定义增减插件](trunk/configs/templates/NEWIFI3.config)，
 我删掉了其他机型的[插件配置文件](trunk/configs/templates)，从[vb1980/Padavan-KVR](https://github.com/vb1980/Padavan-KVR/tree/main/trunk/configs/templates)复制过来吧
 
-[修改自己想要的背景](/trunk/user/www/n56u_ribbon_fixed/bootstrap/img/bg/wood.jpg) 替换wood.jpg文件就行
+修改自己想要的背景图：刷机之后在`/etc/storage/`新建`bg`文件夹 ，里面放一个`wood.jpg`照片就行。 **`/etc/storage/bg/wood.jpg`**
 
 [修改自己想要的LOGO](/trunk/user/www/n56u_ribbon_fixed/bootstrap/img/asus_logo.png) 替换asus_logo.png文件就行(像素尺寸要求150×70）
 
