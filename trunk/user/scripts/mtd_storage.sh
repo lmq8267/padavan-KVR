@@ -294,9 +294,7 @@ https://ghproxy.net/
 "
 #*************github下载加速******************
 #**************替换背景图片******************
-#上传图片命名为wood.jpg到/etc/storage/bg/目录里
-#路径必须为:/etc/storage/bg/wood.jpg 去掉下方代码前面的# 表示启用更换背景
-#mount --bind /etc/storage/bg /www/bootstrap/img/bg
+#上传图片命名为wood.jpg到/etc/storage/bg/目录里即可，刷新浏览器缓存
 #**************替换背景图片*******************
 
 EOF
