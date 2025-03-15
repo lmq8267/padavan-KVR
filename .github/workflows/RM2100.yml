@@ -38,11 +38,11 @@ jobs:
         sh dl_toolchain.sh
         mkdir -p /opt/images/
         
-        ##### 修改内存空间和 storage空间10m
-        #sed -i 's/0x200000/0xa00000/g' /opt/rt-n56u/trunk/configs/boards/MI-R3G/kernel-3.4.x.config
-        #sed -i 's/size_etc="6M"/size_etc="10M"/g' /opt/rt-n56u/trunk/user/scripts/dev_init.sh
+        ##### 修改内存空间和 storage空间13m
+        sed -i 's/SIZ=0x0400000/SIZ=0x0d00000/g' /opt/rt-n56u/trunk/configs/boards/RM2100/kernel-3.4.x-5.0.config
+        sed -i 's/size_etc="6M"/size_etc="13M"/g' /opt/rt-n56u/trunk/user/scripts/dev_init.sh
         #sed -i 's/size_tmp="24M"/size_tmp="60M"/g' /opt/rt-n56u/trunk/user/scripts/dev_init.sh
-        #sed -i 's/mtd_part_size=65536/mtd_part_size=10485760/g' /opt/rt-n56u/trunk/user/scripts/mtd_storage.sh
+        sed -i 's/mtd_part_size=65536/mtd_part_size=13631488/g' /opt/rt-n56u/trunk/user/scripts/mtd_storage.sh
     - name: Build Firmware
       env:
         TNAME: RM2100
