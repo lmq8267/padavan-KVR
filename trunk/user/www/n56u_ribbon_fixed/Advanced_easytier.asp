@@ -422,7 +422,7 @@ function button_et_status() {
 	<table width="100%" cellpadding="4" cellspacing="0" class="table">
 <div class="alert alert-info" style="margin: 10px;">
 	自建WEB服务器，需要自行下载easytier-web程序和静态html文件上传并指定路径。<br>
-<br><div>WEB控制台:【<a href="<% nvram_get_x("", "easytier_api"); %>"><% nvram_get_x("", "easytier_api"); %></a>】 </div>
+<br><div>WEB控制台:【<a href="<% nvram_get_x("", "easytier_api"); %>" target="_blank"><% nvram_get_x("", "easytier_api"); %></a>】 </div>
 	</div>
 	<table id="web_table" width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
 	<tr>
