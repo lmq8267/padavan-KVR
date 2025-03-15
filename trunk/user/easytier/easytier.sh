@@ -268,7 +268,11 @@ start_web() {
   		nvram set easytier_api="http://${lan_ip}/file/et.html"
   	fi
 	webCMD=""
-	[ -z "$et_web_db" ] || webCMD="-d $et_web_db" 
+	if [ ! -z "$et_web_db" ] ; then 
+ 		wdb_path=$(dirname "$et_web_db")
+   		mkdir -p $wdb_path
+ 		webCMD="-d $et_web_db" 
+   	fi
 	[ -z "$et_web_port" ] || webCMD="${webCMD} -c $et_web_port" 
 	[ -z "$et_web_protocol" ] || webCMD="${webCMD} -p $et_web_protocol" 
 	[ -z "$et_web_api" ] || webCMD="${webCMD} -a $et_web_api" 
