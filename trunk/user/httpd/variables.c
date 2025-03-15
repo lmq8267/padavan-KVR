@@ -1467,7 +1467,7 @@
 			{"easytier_enable", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_config_server", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_bin", "", NULL, EVM_RESTART_EASYTIER},
-			{"easytier_log", "File", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_log", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_bin", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_ports", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_tunname", "", NULL, EVM_RESTART_EASYTIER},
