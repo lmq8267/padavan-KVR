@@ -266,6 +266,7 @@ start_web() {
   		cp -rf "$et_web_html" /tmp/file/et.html
   		lan_ip=`nvram get lan_ipaddr`
   		nvram set easytier_api="http://${lan_ip}/file/et.html"
+    		logg "Web控制台：http://${lan_ip}/file/et.html"
   	fi
 	webCMD=""
 	if [ ! -z "$et_web_db" ] ; then 
@@ -348,6 +349,7 @@ cmdfile="/tmp/easytier_cmd.log"
 peer() {
 	if [ ! -z "$et_process" ] ; then
 		cd $etpath
+  		[ ! -x "${etpath}/easytier-cli" ] && chmod +x ${etpath}/easytier-cli
 		./easytier-cli peer >$cmdfile 2>&1
 	else
 		echo "$et_error" >$cmdfile 2>&1
@@ -358,6 +360,7 @@ peer() {
 connector() {
 	if [ ! -z "$et_process" ] ; then
 		cd $etpath
+  		[ ! -x "${etpath}/easytier-cli" ] && chmod +x ${etpath}/easytier-cli
 		./easytier-cli connector >$cmdfile 2>&1
 	else
 		echo "$et_error" >$cmdfile 2>&1
@@ -368,6 +371,7 @@ connector() {
 stun() {
 	if [ ! -z "$et_process" ] ; then
 		cd $etpath
+  		[ ! -x "${etpath}/easytier-cli" ] && chmod +x ${etpath}/easytier-cli
 		./easytier-cli stun >$cmdfile 2>&1
 	else
 		echo "$et_error" >$cmdfile 2>&1
@@ -378,6 +382,7 @@ stun() {
 route() {
 	if [ ! -z "$et_process" ] ; then
 		cd $etpath
+  		[ ! -x "${etpath}/easytier-cli" ] && chmod +x ${etpath}/easytier-cli
 		./easytier-cli route >$cmdfile 2>&1
 	else
 		echo "$et_error" >$cmdfile 2>&1
@@ -388,6 +393,7 @@ route() {
 peer_center() {
 	if [ ! -z "$et_process" ] ; then
 		cd $etpath
+  		[ ! -x "${etpath}/easytier-cli" ] && chmod +x ${etpath}/easytier-cli
 		./easytier-cli peer-center >$cmdfile 2>&1
 	else
 		echo "$et_error" >$cmdfile 2>&1
@@ -398,6 +404,7 @@ peer_center() {
 vpn_portal() {
 	if [ ! -z "$et_process" ] ; then
 		cd $etpath
+  		[ ! -x "${etpath}/easytier-cli" ] && chmod +x ${etpath}/easytier-cli
 		./easytier-cli vpn-portal >$cmdfile 2>&1
 	else
 		echo "$et_error" >$cmdfile 2>&1
@@ -408,6 +415,7 @@ vpn_portal() {
 node() {
 	if [ ! -z "$et_process" ] ; then
 		cd $etpath
+  		[ ! -x "${etpath}/easytier-cli" ] && chmod +x ${etpath}/easytier-cli
 		./easytier-cli node >$cmdfile 2>&1
 	else
 		echo "$et_error" >$cmdfile 2>&1
@@ -418,6 +426,7 @@ node() {
 proxy() {
 	if [ ! -z "$et_process" ] ; then
 		cd $etpath
+  		[ ! -x "${etpath}/easytier-cli" ] && chmod +x ${etpath}/easytier-cli
 		./easytier-cli proxy >$cmdfile 2>&1
 	else
 		echo "$et_error" >$cmdfile 2>&1
