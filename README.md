@@ -2,6 +2,8 @@
 
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Flmq8267%2Fpadavan-KVR&count_bg=%2395C10D&title_bg=%23555555&icon=github.svg&icon_color=%238DC409&title=%E8%AE%BF%E9%97%AE%E6%95%B0&edge_flat=false)](https://hits.seeyoufarm.com)
 
+![image](https://github.com/user-attachments/assets/5496dceb-0b01-423d-894a-7795889cece4)
+
 fork于fightroad的仓库 https://github.com/fightroad/Padavan-KVR.git 
 
 最终好像也是vb1980  https://github.com/vb1980/Padavan-KVR.git
