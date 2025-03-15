@@ -278,6 +278,9 @@ endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_CLOUDFLARE),y)
 	rm -f $(INSTALLDIR)/www/Advanced_cloudflare.asp
 endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_EASYTIER),y)
+	rm -f $(INSTALLDIR)/www/Advanced_easytier.asp
+endif
 
 clean:
 	@echo "Clean www romfs"

@@ -1462,6 +1462,28 @@
 	};
 #endif
 
+#if defined(APP_EASYTIER)
+	struct variable variables_EASYTIER[] = {
+			{"easytier_enable", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_config_server", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_bin", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_log", "File", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_bin", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_ports", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_tunname", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_web_enable", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_web_db", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_web_port", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_web_protocol", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_web_api", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_web_log", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_web_html", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_web_bin", "", NULL, EVM_RESTART_EASYTIER},
+			{"scripts.easytier.toml", "File", NULL, EVM_RESTART_EASYTIER},
+			{0,0,0,0}
+	};
+#endif
+
 #if defined(APP_WXSEND)
 	struct variable variables_WXSEND[] = {
 			{"wxsend_enable", "", NULL, EVM_RESTART_WXSEND},
@@ -1511,6 +1533,7 @@
 			{"w_tailscale", "", NULL, FALSE},
 			{"w_alist", "", NULL, FALSE},
 			{"w_cloudflare", "", NULL, FALSE},
+			{"w_easytier", "", NULL, FALSE},
 	};
 
 	struct variable variables_WLANConfig11b[] = {
@@ -1685,6 +1708,9 @@
 #if defined(APP_ALIST)
 		{"ALIST",		variables_ALIST},
 #endif
+#if defined(APP_EASYTIER)
+		{"EASYTIER",		variables_EASYTIER},
+#endif
 #if defined(APP_WXSEND)
 		{"WXSEND",		variables_WXSEND},
 #endif
@@ -1846,6 +1872,9 @@
 #endif
 #if defined(APP_ALIST)
 		{EVM_RESTART_ALIST,		EVT_RESTART_ALIST,		RCN_RESTART_ALIST,	0},
+#endif
+#if defined(APP_EASYTIER)
+		{EVM_RESTART_EASYTIER,		EVT_RESTART_EASYTIER,		RCN_RESTART_EASYTIER,	0},
 #endif
 #if defined(APP_WXSEND)
 		{EVM_RESTART_WXSEND,		EVT_RESTART_WXSEND,		RCN_RESTART_WXSEND,	0},

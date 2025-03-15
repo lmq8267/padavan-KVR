@@ -582,6 +582,11 @@ void stop_frp(void);
 void start_frp(void);
 void restart_frp(void);
 #endif
+#if defined(APP_EASYTIER)
+void stop_easytier(void);
+void start_easytier(void);
+void restart_easytier(void);
+#endif
 #if defined(APP_VNTS)
 void stop_vnts(void);
 void start_vnts(void);

@@ -473,7 +473,7 @@ function button_vntcli_status() {
 	<tr>
 	<th width="30%" style="border-top: 0 none;">启用vnt-cli</th>
 	<td style="border-top: 0 none;">
-	<select name="vntcli_enable" class="input" onChange="change_vntcli_enable();" style="width: 185px;">
+	<select name="vntcli_enable" class="input" onChange="change_vntcli_enable();" style="width: 218px;">
 	<option value="0" <% nvram_match_x("","vntcli_enable", "0","selected"); %>>【关闭】</option>
 	<option value="1" <% nvram_match_x("","vntcli_enable", "1","selected"); %>>【开启】</option>
 	<option value="2" <% nvram_match_x("","vntcli_enable", "2","selected"); %>>【开启】配置文件</option>
@@ -497,7 +497,7 @@ function button_vntcli_status() {
 	<tr id="vntcli_token_tr">
 	<th width="30%" style="border-top: 0 none;">Token</th>
 	<td style="border-top: 0 none;">
-	<input type="password" maxlength="63" class="input" size="15" id="vntcli_token" name="vntcli_token" style="width: 175px;" value="<% nvram_get_x("","vntcli_token"); %>" onKeyPress="return is_string(this,event);" />
+	<input type="password" maxlength="63" class="input" size="15" id="vntcli_token" name="vntcli_token" style="width: 180px;" value="<% nvram_get_x("","vntcli_token"); %>" onKeyPress="return is_string(this,event);" />
 	<button style="margin-left: -5px;" class="btn" type="button" onclick="passwordShowHide('vntcli_token')"><i class="icon-eye-close"></i></button>&nbsp;<span style="color:#888;">必填项</span>
 	</td>
 	</tr><tr id="vntcli_token_td"><td colspan="3"></td></tr>
@@ -523,7 +523,7 @@ function button_vntcli_status() {
 	<tr id="vntcli_model_tr">
 	<th width="30%" style="border-top: 0 none;">加密方式</th>
 	<td style="border-top: 0 none;">
-	<select name="vntcli_model" class="input" onChange="change_vntcli_model();" style="width: 185px;">
+	<select name="vntcli_model" class="input" onChange="change_vntcli_model();" style="width: 218px;">
 	<option value="0" <% nvram_match_x("","vntcli_model", "0","selected"); %>>不加密</option>
 	<option value="1" <% nvram_match_x("","vntcli_model", "1","selected"); %>>xor</option>
 	<option value="2" <% nvram_match_x("","vntcli_model", "2","selected"); %>>aes_ecb</option>
@@ -538,7 +538,7 @@ function button_vntcli_status() {
 	<tr id="vntcli_key_tr">
 	<th width="30%" style="border-top: 0 none;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;密码</th>
 	<td style="border-top: 0 none;">
-	<input type="password" maxlength="256" class="input" size="15" id="vntcli_key" name="vntcli_key" style="width: 175px;" value="<% nvram_get_x("","vntcli_key"); %>" onKeyPress="return is_string(this,event);" />
+	<input type="password" maxlength="256" class="input" size="15" id="vntcli_key" name="vntcli_key" style="width: 180px;" value="<% nvram_get_x("","vntcli_key"); %>" onKeyPress="return is_string(this,event);" />
 	<button style="margin-left: -5px;" class="btn" type="button" onclick="passwordShowHide('vntcli_key')"><i class="icon-eye-close"></i></button><br>&nbsp;<span style="color:#888;">不要使用 <span style="color: yellow;">;</span> 符号</span>
 	</td>
 	</tr><tr id="vntcli_log_td"><td colspan="3"></td></tr>
@@ -718,7 +718,7 @@ function button_vntcli_status() {
 	<tr>
 	<th width="30%" style="border-top: 0 none;">打洞模式</th>
 	<td style="border-top: 0 none;">
-	<select name="vntcli_punch" class="input" style="width: 185px;">
+	<select name="vntcli_punch" class="input" style="width: 218px;">
 	<option value="0" <% nvram_match_x("","vntcli_punch", "0","selected"); %>>自动选择</option>
 	<option value="ipv4" <% nvram_match_x("","vntcli_punch", "ipv4","selected"); %>>仅IPV4-TCP/UDP</option>
 	<option value="ipv4-tcp" <% nvram_match_x("","vntcli_punch", "ipv4-tcp","selected"); %>>仅IPV4-TCP</option>
@@ -732,7 +732,7 @@ function button_vntcli_status() {
 	<tr>
 	<th width="30%" style="border-top: 0 none;">启用压缩</th>
 	<td style="border-top: 0 none;">
-	<select name="vntcli_comp" class="input" style="width: 185px;">
+	<select name="vntcli_comp" class="input" style="width: 218px;">
 	<option value="0" <% nvram_match_x("","vntcli_comp", "0","selected"); %>>不使用</option>
 	<option value="lz4" <% nvram_match_x("","vntcli_comp", "lz4","selected"); %>>启用lz4压缩</option>
 	<option value="zstd" <% nvram_match_x("","vntcli_comp", "zstd","selected"); %>>启用zstd压缩</option>
@@ -742,7 +742,7 @@ function button_vntcli_status() {
 	<tr>
 	<th width="30%" style="border-top: 0 none;">传输模式</th>
 	<td style="border-top: 0 none;">
-	<select name="vntcli_relay" class="input" style="width: 185px;">
+	<select name="vntcli_relay" class="input" style="width: 218px;">
 	<option value="0" <% nvram_match_x("","vntcli_relay", "0","selected"); %>>自动选择</option>
 	<option value="relay" <% nvram_match_x("","vntcli_relay", "relay","selected"); %>>仅中继转发</option>
 	<option value="p2p" <% nvram_match_x("","vntcli_relay", "p2p","selected"); %>>仅P2P直连</option>
@@ -752,7 +752,7 @@ function button_vntcli_status() {
 	<tr>
 	<th style="border: 0 none;">程序路径</th>
 	<td style="border: 0 none;">
-	<textarea maxlength="1024"class="input" name="vntcli_bin" id="vntcli_bin" placeholder="/etc/storage/bin/vnt-cli" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","vntcli_bin"); %></textarea>
+	<textarea maxlength="1024" class="input" name="vntcli_bin" id="vntcli_bin" placeholder="/etc/storage/bin/vnt-cli" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","vntcli_bin"); %></textarea>
 	</div><br><span style="color:#888;">自定义程序的存放路径，填写完整的路径和程序名称</span>
 	</tr>
 	</table>

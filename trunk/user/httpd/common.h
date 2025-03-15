@@ -43,7 +43,7 @@ typedef u_int32_t u32;
 typedef u_int16_t u16;
 typedef u_int8_t u8;
 
-#define EVM_RESTART_FIREWALL		(1ULL <<  0)
+#define EVM_RESTART_FIREWALL			(1ULL <<  0)
 #define EVM_RESTART_DHCPD			(1ULL <<  1)
 #define EVM_RESTART_RADV			(1ULL <<  2)
 #define EVM_RESTART_DDNS			(1ULL <<  3)
@@ -51,7 +51,7 @@ typedef u_int8_t u8;
 #define EVM_RESTART_TIME			(1ULL <<  5)
 #define EVM_RESTART_NTPC			(1ULL <<  6)
 #define EVM_RESTART_SYSLOG			(1ULL <<  7)
-#define EVM_RESTART_NETFILTER		(1ULL <<  8)
+#define EVM_RESTART_NETFILTER			(1ULL <<  8)
 #define EVM_REAPPLY_VPNSVR			(1ULL <<  9)
 #define EVM_RESTART_VPNSVR			(1ULL << 10)
 #define EVM_RESTART_VPNCLI			(1ULL << 11)
@@ -59,8 +59,8 @@ typedef u_int8_t u8;
 #define EVM_RESTART_WIFI5			(1ULL << 13)
 #define EVM_RESTART_SWITCH_CFG		(1ULL << 14)
 #define EVM_RESTART_SWITCH_VLAN		(1ULL << 15)
-#define EVM_RESTART_LAN				(1ULL << 17)
-#define EVM_RESTART_WAN				(1ULL << 18)
+#define EVM_RESTART_LAN			(1ULL << 17)
+#define EVM_RESTART_WAN			(1ULL << 18)
 #define EVM_RESTART_IPV6			(1ULL << 19)
 #define EVM_RESTART_HTTPD			(1ULL << 20)
 #define EVM_RESTART_TELNETD			(1ULL << 21)
@@ -72,7 +72,7 @@ typedef u_int8_t u8;
 #define EVM_RESTART_CROND			(1ULL << 27)
 #define EVM_RESTART_SYSCTL			(1ULL << 28)
 #define EVM_RESTART_TWEAKS			(1ULL << 29)
-#define EVM_RESTART_WDG				(1ULL << 30)
+#define EVM_RESTART_WDG			(1ULL << 30)
 #define EVM_RESTART_DI				(1ULL << 31)
 #define EVM_RESTART_SPOOLER			(1ULL << 32)
 #define EVM_RESTART_MODEM			(1ULL << 33)
@@ -81,45 +81,43 @@ typedef u_int8_t u8;
 #define EVM_RESTART_NMBD			(1ULL << 36)
 #define EVM_RESTART_SMBD			(1ULL << 37)
 //如果你要修改的话 请注意后面的序号，每个插件对应的序号不能相同  不能超过63 你可以删掉不需要的 把序号给你需要的插件
-		//#define EVM_RESTART_NFSD			(1ULL << 38)
-
-		//Minidlna UPnP 媒体服务器
-		#define EVM_RESTART_DMS				(1ULL << 39)
+//#define EVM_RESTART_NFSD			(1ULL << 38)
+#define EVM_RESTART_EASYTIER			(1ULL << 38)
+#define EVM_RESTART_DMS			(1ULL << 39) //Minidlna UPnP 媒体服务器
 #define EVM_RESTART_ITUNES			(1ULL << 40)
-			//#define EVM_RESTART_TRMD			(1ULL << 41) //#TRANSMISSION
+//#define EVM_RESTART_TRMD			(1ULL << 41) //#TRANSMISSION
+#define EVM_RESTART_CLOUDFLARE		(1ULL << 41)
 #define EVM_RESTART_ARIA			(1ULL << 42)
-            //#define EVM_RESTART_SCUT			(1ULL << 43)
+//#define EVM_RESTART_SCUT			(1ULL << 43)
 #define EVM_RESTART_TTYD			(1ULL << 43)
-		//#define EVM_RESTART_VLMCSD			(1ULL << 44)
-            //#define EVM_RESTART_DNSFORWARDER	(1ULL << 47)
-            //#define EVM_RESTART_SHADOWSOCKS		(1ULL << 48)
-            //#define EVM_RESTART_SS_TUNNEL		(1ULL << 49)
-            //#define EVM_RESTART_MENTOHUST		(1ULL << 50)
-            //#define EVM_RESTART_ADBYBY			(1ULL << 51)
+//#define EVM_RESTART_VLMCSD			(1ULL << 44)
+#define EVM_RESTART_ALIST			(1ULL << 44)
 #define EVM_RESTART_ALIDDNS			(1ULL << 45)
-#define EVM_RESTART_SMARTDNS	    (1ULL << 46)
+#define EVM_RESTART_SMARTDNS	    		(1ULL << 46)
 #define EVM_RESTART_FRP	    		(1ULL << 47)
-            //#define EVM_RESTART_KOOLPROXY		(1ULL << 55)
+//#define EVM_RESTART_DNSFORWARDER		(1ULL << 47)
+//#define EVM_RESTART_SHADOWSOCKS		(1ULL << 48)
 #define EVM_RESTART_CADDY			(1ULL << 48)
+//#define EVM_RESTART_SS_TUNNEL		(1ULL << 49)
 #define EVM_RESTART_ADGUARDHOME		(1ULL << 49)
-#define EVM_RESTART_WYY				(1ULL << 50)
-#define EVM_RESTART_ZEROTIER		(1ULL << 51)
-            //#define EVM_RESTART_NVPPROXY		(1ULL << 60)
-		//#define EVM_RESTART_DDNSTO	    	(1ULL << 52)
-#define EVM_RESTART_WIREGUARD		(1ULL << 52)
-#define EVM_RESTART_ALDRIVER		(1ULL << 53)
-#define EVM_RESTART_UUPLUGIN		(1ULL << 54)
-#define EVM_RESTART_LUCKY		(1ULL << 55)
-#define EVM_RESTART_WXSEND		(1ULL << 56)
+//#define EVM_RESTART_MENTOHUST		(1ULL << 50)
+#define EVM_RESTART_WYY			(1ULL << 50)
+//#define EVM_RESTART_ADBYBY			(1ULL << 51)
+#define EVM_RESTART_ZEROTIER			(1ULL << 51)
+//#define EVM_RESTART_DDNSTO	    		(1ULL << 52)
+#define EVM_RESTART_WIREGUARD			(1ULL << 52)
+#define EVM_RESTART_ALDRIVER			(1ULL << 53)
+#define EVM_RESTART_UUPLUGIN			(1ULL << 54)
+//#define EVM_RESTART_KOOLPROXY		(1ULL << 55)
+#define EVM_RESTART_LUCKY			(1ULL << 55)
+#define EVM_RESTART_WXSEND			(1ULL << 56)
 #define EVM_RESTART_CLOUDFLARED		(1ULL << 57)
-#define EVM_RESTART_VNTS		(1ULL << 58)
-#define EVM_RESTART_VNTCLI		(1ULL << 59)
-#define EVM_RESTART_NATPIERCE		(1ULL << 60)
-#define EVM_RESTART_TAILSCALE		(1ULL << 61)
-#define EVM_RESTART_ALIST		(1ULL << 62)
-#define EVM_RESTART_REBOOT			(1ULL << 44)
-#define EVM_RESTART_CLOUDFLARE			(1ULL << 41)
-//#define EVM_RESTART_APP			(1ULL << 38)
+#define EVM_RESTART_VNTS			(1ULL << 58)
+#define EVM_RESTART_VNTCLI			(1ULL << 59)
+//#define EVM_RESTART_NVPPROXY		(1ULL << 60)
+#define EVM_RESTART_NATPIERCE			(1ULL << 60)
+#define EVM_RESTART_TAILSCALE			(1ULL << 61)
+#define EVM_RESTART_REBOOT			(1ULL << 62)
 #define EVM_BLOCK_UNSAFE			(1ULL << 63) /* special case */
 
 
@@ -200,6 +198,7 @@ typedef u_int8_t u8;
 #define EVT_RESTART_TAILSCALE	    	2
 #define EVT_RESTART_CLOUDFLARE	    	2
 #define EVT_RESTART_ALIST	    	2
+#define EVT_RESTART_EASYTIER	    	2
 #define EVT_RESTART_REBOOT			40
 
 struct variable

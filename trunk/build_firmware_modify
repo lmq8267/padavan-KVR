@@ -67,6 +67,7 @@ echo "CONFIG_FIRMWARE_INCLUDE_VNTS=n" >> .config #vnt服务器
 echo "CONFIG_FIRMWARE_INCLUDE_VNTCLI=n" >> .config #vnt客户端
 echo "CONFIG_FIRMWARE_INCLUDE_NATPIERCE=n" >> .config #皎月连一键内网穿透
 echo "CONFIG_FIRMWARE_INCLUDE_TAILSCALE=n" >> .config #tailscale
+echo "CONFIG_FIRMWARE_INCLUDE_EASYTIER=n" >> .config
 ##内网穿透服务##
 
 echo "CONFIG_FIRMWARE_INCLUDE_UUPLUGIN=n" >> .config

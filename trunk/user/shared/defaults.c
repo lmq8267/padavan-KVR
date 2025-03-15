@@ -543,6 +543,7 @@ struct nvram_pair router_defaults[] = {
 	{ "w_tailscale", "1" },
 	{ "w_alist", "1" },
 	{ "w_cloudflare", "1" },
+	{ "w_easytier", "1" },
 
 	{ "ip6_service", "" },
 	{ "ip6_ppe_on", "0" },
@@ -844,6 +845,24 @@ struct nvram_pair router_defaults[] = {
 	{ "lucky_bin", "" },
 	{ "lucky_tag", "" },
 	{ "lucky_daji", "0" },
+#endif
+
+#if defined(APP_EASYTIER)
+	/*easytier*/
+	{ "easytier_enable", "0" },
+	{ "easytier_config_server", "" },
+	{ "easytier_bin", "/tmp/var/easytier-core" },
+	{ "easytier_log", "0" },
+	{ "easytier_ports", "11010" },
+	{ "easytier_tunname", "tun0" },
+	{ "easytier_web_enable", "0" },
+	{ "easytier_web_db", "/etc/storage/easytier/et.db" },
+	{ "easytier_web_port", "22020" },
+	{ "easytier_web_protocol", "" },
+	{ "easytier_web_api", "11211" },
+	{ "easytier_web_log", "2" },
+	{ "easytier_web_html", "" },
+	{ "easytier_web_bin", "/tmp/var/easytier-web" },
 #endif
 
 #if defined(APP_VNTS)

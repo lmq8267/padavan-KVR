@@ -1420,6 +1420,12 @@ handle_notifications(void)
 			restart_tailscale();
 		}
 #endif
+#if defined(APP_EASYTIER)
+		else if (strcmp(entry->d_name, RCN_RESTART_EASYTIER) == 0)
+		{
+			restart_easytier();
+		}
+#endif
 #if defined(APP_CLOUDFLARED)
 		else if (strcmp(entry->d_name, RCN_RESTART_CLOUDFLARED) == 0)
 		{

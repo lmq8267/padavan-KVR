@@ -549,6 +549,21 @@ void restart_vnts(void){
 }
 #endif
 
+#if defined(APP_EASYTIER)
+void stop_easytier(void){
+	eval("/usr/bin/easytier.sh","stop");
+}
+
+void start_easytier(void){
+	eval("/usr/bin/easytier.sh","start");
+}
+
+void restart_easytier(void){
+	stop_easytier();
+	start_easytier();
+}
+#endif
+
 #if defined(APP_NATPIERCE)
 void stop_natpierce(void){
 	eval("/usr/bin/natpierce.sh","stop");
@@ -1074,6 +1089,9 @@ stop_services(int stopall)
 #endif
 #if defined(APP_VNTS)
 	stop_vnts();
+#endif
+#if defined(APP_EASYTIER)
+	stop_easytier();
 #endif
 #if defined(APP_NATPIERCE)
 	stop_natpierce();

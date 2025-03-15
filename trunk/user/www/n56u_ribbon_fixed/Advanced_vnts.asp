@@ -327,7 +327,7 @@ function button_vnts_web(){
 	<tr>
 	<th style="border: 0 none;">程序路径</th>
 	<td style="border: 0 none;">
-	<textarea maxlength="1024"class="input" name="vnts_bin" id="vnts_bin" placeholder="/etc/storage/bin/vnts" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","vnts_bin"); %></textarea>
+	<textarea maxlength="1024" class="input" name="vnts_bin" id="vnts_bin" placeholder="/etc/storage/bin/vnts" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","vnts_bin"); %></textarea>
 	</div><br><span style="color:#888;">自定义程序的存放路径，填写完整的路径和程序名称</span>
 	</tr><td colspan="3"></td>
 	<tr id="vnts_log_tr" >
