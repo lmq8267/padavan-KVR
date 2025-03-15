@@ -257,7 +257,6 @@ start_web() {
   	fi
  	if [ ! -f "$et_web_bin" ] ; then
 		logg "程序${et_web_bin}不存在，请下载后重试，程序退出！"
-  		[ -z "$tag" ] && tag="v2.2.2"
   		return 1
   	fi
 	sed -Ei '/【EasyTier_web】|^$/d' /tmp/script/_opt_script_check
@@ -267,6 +266,13 @@ start_web() {
   		lan_ip=`nvram get lan_ipaddr`
   		nvram set easytier_api="http://${lan_ip}/file/et.html"
     		logg "Web控制台：http://${lan_ip}/file/et.html"
+      	else
+       		curl -Lko /tmp/file/et.html https://easytier.cn/web
+	 	if [ "$?" = 0 ] ; then
+	 		lan_ip=`nvram get lan_ipaddr`
+  			nvram set easytier_api="http://${lan_ip}/file/et.html"
+    			logg "Web控制台：http://${lan_ip}/file/et.html"
+       		fi
   	fi
 	webCMD=""
 	if [ ! -z "$et_web_db" ] ; then 
