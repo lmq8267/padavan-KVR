@@ -496,7 +496,7 @@ function Internetfalse(){
 	</tr><td colspan="4"></td>
 	<tr>
 	<th width="30%" style="border-top: 0 none;">管理界面:</th>
-	<td style="border-top: 0 none;"><a href="<% nvram_get_x("", "lucky_login"); %>"><% nvram_get_x("", "lucky_login"); %></a>
+	<td style="border-top: 0 none;"><a href="<% nvram_get_x("", "lucky_login"); %>" target="_blank"><% nvram_get_x("", "lucky_login"); %></a>
 	</td>
 	</tr>	<td></td><td></td><td></td>
 	<!-- <tr>
