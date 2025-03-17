@@ -54,6 +54,11 @@ configure:
 	--pid-path=/var/run/nginx.pid \
 	--error-log-path=/tmp/nginx/error.log \
 	--http-log-path=/tmp/nginx/access.log \
+	--http-client-body-temp-path=/tmp/nginx/body \
+	--http-proxy-temp-path=/tmp/nginx/proxy \
+	--http-fastcgi-temp-path=/tmp/nginx/fastcgi \
+	--http-scgi-temp-path=/tmp/nginx/scgi \
+	--http-uwsgi-temp-path=/tmp/nginx/uwsgi \
 	--with-http_realip_module \
 	--with-http_sub_module \
 	--with-http_auth_request_module \
