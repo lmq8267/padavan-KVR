@@ -210,7 +210,7 @@ start_core() {
   	fi
  	if [ ! -f "$et_core" ] ; then
 		logg "主程序${et_core}不存在，开始在线下载..."
-  		[ -z "$tag" ] && tag="v2.2.2"
+  		[ -z "$tag" ] && tag="v2.2.3"
   		dowload_et $tag
   	fi
 	sed -Ei '/【EasyTier_core】|^$/d' /tmp/script/_opt_script_check
