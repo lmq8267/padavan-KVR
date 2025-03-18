@@ -61,11 +61,11 @@ get_tag() {
 	curltest=`which curl`
 	logg "开始获取最新版本..."
     	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
-      		tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --output-document=-  https://api.github.com/repos/EasyTier/EasyTier/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-	 	[ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/EasyTier/EasyTier/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+      		tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --output-document=-  https://api.github.com/repos/lmq8267/EasyTier/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+	 	[ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/EasyTier/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
     	else
-      		tag="$( curl -k --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/EasyTier/EasyTier/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
-       	[ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/EasyTier/EasyTier/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+      		tag="$( curl -k --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/EasyTier/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       	[ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/EasyTier/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
         fi
 	[ -z "$tag" ] && logg "无法获取最新版本"  
 	nvram set easytier_ver_n=$tag
@@ -84,16 +84,17 @@ dowload_et() {
 	tag="$1"
 	bin_path=$(dirname "$et_core")
 	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
-	logg "开始下载 https://github.com/EasyTier/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip"
+	logg "开始下载 https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-mipsel-linux-muslsf.tar.gz"
 	for proxy in $github_proxys ; do
- 	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/EasyTier/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
+ 	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-mipsel-linux-muslsf.tar.gz" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
  	length=`expr $length + 512000`
 	length=`expr $length / 1048576`
  	et_size0="$(check_disk_size $bin_path)"
  	[ ! -z "$length" ] && logg "程序大小 ${length}M， 程序路径可用空间 ${et_size0}M "
-        curl -Lko /tmp/easytier.zip "${proxy}https://github.com/EasyTier/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip" || wget --no-check-certificate -O /tmp/easytier.zip "${proxy}https://github.com/EasyTier/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip"
+        curl -Lko /tmp/easytier-mipsel-linux-muslsf.tar.gz "${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-mipsel-linux-muslsf.tar.gz" || wget --no-check-certificate -O /tmp/easytier-mipsel-linux-muslsf.tar.gz "${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-mipsel-linux-muslsf.tar.gz"
 	if [ "$?" = 0 ] ; then
-		unzip -j /tmp/easytier.zip -d "$bin_path"
+		tar -xzf /tmp/easytier-mipsel-linux-muslsf.tar.gz -O easytier-core > "$bin_path/easytier-core"
+  		tar -xzf /tmp/easytier-mipsel-linux-muslsf.tar.gz -O easytier-cli > "$bin_path/easytier-cli"
 		chmod +x $et_core
 		if [[ "$($et_core -h 2>&1 | wc -l)" -gt 3 ]] ; then
 			logg "$et_core 下载成功"
@@ -103,13 +104,45 @@ dowload_et() {
 			else
 				nvram set easytier_ver="v${et_ver}"
 			fi
+   			rm -rf /tmp/easytier-mipsel-linux-muslsf.tar.gz
 			break
        		else
-	   		logg "下载不完整，请手动下载 ${proxy}https://github.com/EasyTier/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip 解压上传到  $et_core"
+	   		logg "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip 解压上传到  $et_core"
 	   		rm -f $et_core
+      			rm -rf /tmp/easytier-mipsel-linux-muslsf.tar.gz
 	  	fi
 	else
-		log "下载失败，请手动下载 ${proxy}https://github.com/EasyTier/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip 上传到  $et_core"
+		log "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip 上传到  $et_core"
+   	fi
+	done
+}
+
+dowload_web() {
+	tag="$1"
+	webbin_path=$(dirname "$et_web_bin")
+	[ ! -d "$webbin_path" ] && mkdir -p "$webbin_path"
+	logg "开始下载 https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-mipsel-linux-muslsf.tar.gz"
+	for proxy in $github_proxys ; do
+ 	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-mipsel-linux-muslsf.tar.gz" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
+ 	length=`expr $length + 512000`
+	length=`expr $length / 1048576`
+ 	et_size0="$(check_disk_size $webbin_path)"
+ 	[ ! -z "$length" ] && logg "程序大小 ${length}M， 程序路径可用空间 ${et_size0}M "
+        curl -Lko /tmp/easytier-mipsel-linux-muslsf.tar.gz "${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-mipsel-linux-muslsf.tar.gz" || wget --no-check-certificate -O /tmp/easytier-mipsel-linux-muslsf.tar.gz "${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-mipsel-linux-muslsf.tar.gz"
+	if [ "$?" = 0 ] ; then
+		tar -xzf /tmp/easytier-mipsel-linux-muslsf.tar.gz -O easytier-web > "$webbin_path/easytier-web"
+		chmod +x $et_web_bin
+		if [[ "$($et_web_bin -h 2>&1 | wc -l)" -gt 3 ]] ; then
+			logg "$et_web_bin 下载成功"
+   			rm -rf /tmp/easytier-mipsel-linux-muslsf.tar.gz
+			break
+       		else
+	   		logg "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip 解压上传到  $et_web_bin"
+	   		rm -f $et_web_bin
+      			rm -rf /tmp/easytier-mipsel-linux-muslsf.tar.gz
+	  	fi
+	else
+		log "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip 上传到  $et_web_bin"
    	fi
 	done
 }
@@ -283,8 +316,10 @@ start_web() {
   		[[ "$($et_web_bin -h 2>&1 | wc -l)" -lt 2 ]] && logg "程序${et_web_bin}不完整！" && rm -rf $et_web_bin
   	fi
  	if [ ! -f "$et_web_bin" ] ; then
-		logg "程序${et_web_bin}不存在，请下载后重试，程序退出！"
-  		return 1
+  		get_tag
+		logg "程序${et_web_bin}不存在，开始在线下载..."
+  		[ -z "$tag" ] && tag="v2.2.3"
+  		dowload_web $tag
   	fi
 	sed -Ei '/【EasyTier_web】|^$/d' /tmp/script/_opt_script_check
 	webCMD=""
