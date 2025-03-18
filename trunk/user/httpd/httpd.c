@@ -853,6 +853,56 @@ set_preferred_lang(char *cur)
 	return 0;
 }
 
+void send_file_response(int status, const char *content_type, const char *file, FILE *conn_fp) {
+    FILE *fp = fopen(file, "r");
+    if (!fp) {
+        send_error(404, "Not Found", NULL, "File not found.", conn_fp);
+        return;
+    }
+
+    // 发送 HTTP 头
+    fprintf(conn_fp, "HTTP/1.1 %d OK\r\n", status);
+    fprintf(conn_fp, "Content-Type: %s\r\n", content_type);
+    fprintf(conn_fp, "Connection: close\r\n\r\n");
+
+    // 发送文件内容
+    char buffer[4096];
+    size_t n;
+    while ((n = fread(buffer, 1, sizeof(buffer), fp)) > 0) {
+        fwrite(buffer, 1, n, conn_fp);
+    }
+
+    fclose(fp);
+}
+
+void send_file_download(const char *file, FILE *conn_fp) {
+    FILE *fp = fopen(file, "rb");
+    if (!fp) {
+        send_error(404, "Not Found", NULL, "File not found.", conn_fp);
+        return;
+    }
+
+    fseek(fp, 0, SEEK_END);
+    long file_size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    // 发送 HTTP 头
+    fprintf(conn_fp, "HTTP/1.1 200 OK\r\n");
+    fprintf(conn_fp, "Content-Type: application/octet-stream\r\n");
+    fprintf(conn_fp, "Content-Disposition: attachment; filename=\"%s\"\r\n", file);
+    fprintf(conn_fp, "Content-Length: %ld\r\n", file_size);
+    fprintf(conn_fp, "Connection: close\r\n\r\n");
+
+    // 发送文件内容
+    char buffer[4096];
+    size_t n;
+    while ((n = fread(buffer, 1, sizeof(buffer), fp)) > 0) {
+        fwrite(buffer, 1, n, conn_fp);
+    }
+
+    fclose(fp);
+}
+
 static void
 handle_request(FILE *conn_fp, const conn_item_t *item)
 {
@@ -971,6 +1021,22 @@ handle_request(FILE *conn_fp, const conn_item_t *item)
 	strsep(&query, "?");
 
 	usockaddr_to_uaddr(&item->usa, &conn_ip);
+	/* 处理特殊路径: 以 "etc/" 或 "tmp/" 开头 */
+	if (strncmp(file, "etc/", 4) == 0 || strncmp(file, "tmp/", 4) == 0) {
+    		char *ext = strrchr(file, '.'); // 获取文件后缀
+    		if (ext) {
+        		if (strcasecmp(ext, ".html") == 0 || strcasecmp(ext, ".asp") == 0) {
+            			send_file_response(200, "text/html", file, conn_fp);
+            			return;
+        		}
+        		else if (strcasecmp(ext, ".txt") == 0) {
+            			send_file_response(200, "text/plain; charset=utf-8", file, conn_fp);
+            			return;
+        		}
+    		}
+    		send_file_download(file, conn_fp);
+    		return;
+	}
 
 	login_state = http_login_check(&conn_ip);
 	
