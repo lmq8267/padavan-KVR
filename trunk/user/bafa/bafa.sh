@@ -70,7 +70,6 @@ start_bafa() {
 	logg "正在启动$bafa_bin"
  	if [ -f "$bafa_bin" ] ; then
 		[ ! -x "$bafa_bin" ] && chmod +x $bafa_bin
-  		[[ "$($bafa_bin -h 2>&1 | wc -l)" -lt 2 ]] && logg "程序${binname}不完整！" && rm -rf $bafa_bin
   	fi
  	if [ ! -f "$bafa_bin" ] ; then
 		logg "程序${binname}不存在，请下载上传后重试！"
