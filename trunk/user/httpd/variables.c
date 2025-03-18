@@ -1484,6 +1484,21 @@
 	};
 #endif
 
+#if defined(APP_BAFA)
+	struct variable variables_BAFA[] = {
+			{"bafa_enable", "", NULL, EVM_RESTART_BAFA},
+			{"bafa_topics", "", NULL, EVM_RESTART_BAFA},
+			{"bafa_token", "", NULL, EVM_RESTART_BAFA},
+			{"bafa_qos", "", NULL, EVM_RESTART_BAFA},
+			{"bafa_host", "", NULL, EVM_RESTART_BAFA},
+			{"bafa_port", "", NULL, EVM_RESTART_BAFA},
+			{"bafa_show", "", NULL, EVM_RESTART_BAFA},
+			{"bafa_bin", "", NULL, EVM_RESTART_BAFA},
+			{"scripts.bafa_script.sh", "File", NULL, EVM_RESTART_BAFA},
+			{0,0,0,0}
+	};
+#endif
+
 #if defined(APP_WXSEND)
 	struct variable variables_WXSEND[] = {
 			{"wxsend_enable", "", NULL, EVM_RESTART_WXSEND},
@@ -1534,6 +1549,7 @@
 			{"w_alist", "", NULL, FALSE},
 			{"w_cloudflare", "", NULL, FALSE},
 			{"w_easytier", "", NULL, FALSE},
+			{"w_bafa", "", NULL, FALSE},
 	};
 
 	struct variable variables_WLANConfig11b[] = {
@@ -1729,6 +1745,9 @@
 #if defined(APP_TAILSCALE)
 		{"TAILSCALE",		variables_TAILSCALE},
 #endif
+#if defined(APP_BAFA)
+		{"BAFA",		variables_BAFA},
+#endif
 #if defined(APP_NATPIERCE)
 		{"NATPIERCE",		variables_NATPIERCE},
 #endif
@@ -1881,6 +1900,9 @@
 #endif
 #if defined(APP_CLOUDFLARED)
 		{EVM_RESTART_CLOUDFLARED,		EVT_RESTART_CLOUDFLARED,		RCN_RESTART_CLOUDFLARED,	0},
+#endif
+#if defined(APP_BAFA)
+		{EVM_RESTART_BAFA,		EVT_RESTART_BAFA,		RCN_RESTART_BAFA,	0},
 #endif
 #if defined(APP_VNTS)
 		{EVM_RESTART_VNTS,		EVT_RESTART_VNTS,		RCN_RESTART_VNTS,	0},

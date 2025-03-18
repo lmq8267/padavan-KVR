@@ -55,6 +55,7 @@ $j(document).ready(function() {
 	init_itoggle('w_alist');
 	init_itoggle('w_cloudflare');
 	init_itoggle('w_easytier');
+	init_itoggle('w_bafa');
 
 });
 </script>
@@ -130,6 +131,9 @@ if (found_app_cloudflare()){
 }
 if (found_app_easytier()){
 	showhide_div('row_weasytier', true);
+}
+if (found_app_bafa()){
+	showhide_div('row_wbafa', true);
 }
 
 }
@@ -605,6 +609,20 @@ function applyRule(){
 												<div style="position: absolute; margin-left: -10000px;">
 													<input type="radio" value="1" name="w_easytier" id="w_easytier_1" class="input" <% nvram_match_x("", "w_easytier", "1", "checked"); %> /><#checkbox_Yes#>
 													<input type="radio" value="0" name="w_easytier" id="w_easytier_0" class="input" <% nvram_match_x("", "w_easytier", "0", "checked"); %> /><#checkbox_No#>
+												</div>
+											</td>
+										</tr>
+										<tr id="row_wbafa" style="display:none">
+											<th width="50%" >巴法云</th>
+											<td>
+													<div class="main_itoggle">
+													<div id="w_bafa_on_of">
+														<input type="checkbox" id="w_bafa_fake" <% nvram_match_x("", "w_bafa", "1", "value=1 checked"); %><% nvram_match_x("", "w_bafa", "0", "value=0"); %>  />
+													</div>
+												</div>
+												<div style="position: absolute; margin-left: -10000px;">
+													<input type="radio" value="1" name="w_bafa" id="w_bafa_1" class="input" <% nvram_match_x("", "w_bafa", "1", "checked"); %> /><#checkbox_Yes#>
+													<input type="radio" value="0" name="w_bafa" id="w_bafa_0" class="input" <% nvram_match_x("", "w_bafa", "0", "checked"); %> /><#checkbox_No#>
 												</div>
 											</td>
 										</tr>

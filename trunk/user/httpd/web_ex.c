@@ -2412,6 +2412,15 @@ static int easytier_web_status_hook(int eid, webs_t wp, int argc, char **argv)
 }
 #endif
 
+#if defined (APP_BAFA)
+static int bafa_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int bafa_status_code = pids("stdoutsubc") || pids("stdoutsub");
+	websWrite(wp, "function bafa_status() { return %d;}\n", bafa_status_code);
+	return 0;
+}
+#endif
+
 #if defined (APP_NATPIERCE)
 static int natpierce_status_hook(int eid, webs_t wp, int argc, char **argv)
 {
@@ -2758,6 +2767,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_easytier = 0;
 #endif
+#if defined(APP_BAFA)
+	int found_app_bafa = 1;
+#else
+	int found_app_bafa = 0;
+#endif
 #if defined(APP_NATPIERCE)
 	int found_app_natpierce = 1;
 #else
@@ -3005,6 +3019,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_natpierce() { return %d;}\n"
 		"function found_app_tailscale() { return %d;}\n"
 		"function found_app_easytier() { return %d;}\n"
+		"function found_app_bafa() { return %d;}\n"
 		"function found_app_cloudflared() { return %d;}\n"
 		"function found_app_cloudflare() { return %d;}\n"
 		"function found_app_alist() { return %d;}\n"
@@ -3052,6 +3067,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_natpierce,
 		found_app_tailscale,
 		found_app_easytier,
+		found_app_bafa,
 		found_app_cloudflared,
 		found_app_cloudflare,
 		found_app_alist,
@@ -4272,6 +4288,13 @@ apply_cgi(const char *url, webs_t wp)
 	{
 #if defined(APP_NATPIERCE)
 		system("/usr/bin/natpierce.sh restart &");
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " RestartBAFA "))
+	{
+#if defined(APP_BAFA)
+		system("/usr/bin/bafa.sh restart &");
 #endif
 		return 0;
 	}

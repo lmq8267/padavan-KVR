@@ -115,6 +115,7 @@ typedef u_int8_t u8;
 #define EVM_RESTART_VNTS			(1ULL << 58)
 #define EVM_RESTART_VNTCLI			(1ULL << 59)
 //#define EVM_RESTART_NVPPROXY		(1ULL << 60)
+//#define EVM_RESTART_BAFA		(1ULL << 60)
 #define EVM_RESTART_NATPIERCE			(1ULL << 60)
 #define EVM_RESTART_TAILSCALE			(1ULL << 61)
 #define EVM_RESTART_REBOOT			(1ULL << 62)
@@ -199,6 +200,7 @@ typedef u_int8_t u8;
 #define EVT_RESTART_CLOUDFLARE	    	2
 #define EVT_RESTART_ALIST	    	2
 #define EVT_RESTART_EASYTIER	    	2
+#define EVT_RESTART_BAFA	    	2
 #define EVT_RESTART_REBOOT			40
 
 struct variable

@@ -645,6 +645,22 @@ void restart_lucky(void){
 	start_lucky();
 }
 #endif
+#if defined(APP_BAFA)
+void stop_bafa(void){
+	eval("/usr/bin/bafa.sh","stop");
+}
+
+void start_bafa(void){
+	int bafa_enable = nvram_get_int("bafa_enable");
+	if ( bafa_enable == 1)
+		eval("/usr/bin/bafa.sh","start");
+}
+
+void restart_bafa(void){
+	stop_bafa();
+	start_bafa();
+}
+#endif
 #if defined(APP_ALIST)
 void stop_alist(void){
 	eval("/usr/bin/alist.sh","stop");
@@ -1086,6 +1102,9 @@ stop_services(int stopall)
 #endif
 #if defined(APP_FRP)
 	stop_frp();
+#endif
+#if defined(APP_BAFA)
+	stop_bafa();
 #endif
 #if defined(APP_VNTS)
 	stop_vnts();

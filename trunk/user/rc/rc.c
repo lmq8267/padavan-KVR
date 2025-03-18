@@ -1384,6 +1384,12 @@ handle_notifications(void)
 			restart_frp();
 		}
 #endif
+#if defined(APP_BAFA)
+		else if (strcmp(entry->d_name, RCN_RESTART_BAFA) == 0)
+		{
+			restart_bafa();
+		}
+#endif
 #if defined(APP_VNTS)
 		else if (strcmp(entry->d_name, RCN_RESTART_VNTS) == 0)
 		{

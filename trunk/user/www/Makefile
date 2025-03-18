@@ -281,6 +281,9 @@ endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_EASYTIER),y)
 	rm -f $(INSTALLDIR)/www/Advanced_easytier.asp
 endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_BAFA),y)
+	rm -f $(INSTALLDIR)/www/Advanced_bafa.asp
+endif
 
 clean:
 	@echo "Clean www romfs"
