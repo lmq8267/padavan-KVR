@@ -544,6 +544,7 @@ struct nvram_pair router_defaults[] = {
 	{ "w_alist", "1" },
 	{ "w_cloudflare", "1" },
 	{ "w_easytier", "1" },
+	{ "w_bafa", "1" },
 
 	{ "ip6_service", "" },
 	{ "ip6_ppe_on", "0" },
