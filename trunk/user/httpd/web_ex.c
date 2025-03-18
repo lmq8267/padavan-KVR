@@ -5414,6 +5414,9 @@ struct ej_handler ej_handlers[] =
 #if defined (APP_ALIST)
 	{ "alist_status", alist_status_hook},
 #endif
+#if defined (APP_BAFA)
+	{ "bafa_status", bafa_status_hook},
+#endif
 #if defined (APP_TAILSCALE)
 	{ "tailscale_status", tailscale_status_hook},
 	{ "tailscaled_status", tailscaled_status_hook},
