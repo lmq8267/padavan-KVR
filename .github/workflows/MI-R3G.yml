@@ -42,7 +42,7 @@ jobs:
         ##### 修改内存空间和 storage空间10m
         sed -i 's/SIZ=0x0400000/SIZ=0xa00000/g' /opt/rt-n56u/trunk/configs/boards/MI-R3G/kernel-3.4.x.config
         sed -i 's/size_etc="6M"/size_etc="10M"/g' /opt/rt-n56u/trunk/user/scripts/dev_init.sh
-        sed -i 's/size_tmp="24M"/size_tmp="60M"/g' /opt/rt-n56u/trunk/user/scripts/dev_init.sh
+        sed -i 's/size_tmp="24M"/size_tmp="30M"/g' /opt/rt-n56u/trunk/user/scripts/dev_init.sh
         sed -i 's/mtd_part_size=65536/mtd_part_size=10485760/g' /opt/rt-n56u/trunk/user/scripts/mtd_storage.sh
     - name: Build Firmware
       env:
@@ -440,7 +440,7 @@ jobs:
     - name : Upload packages
       uses: actions/upload-artifact@master
       with:
-        name: 小米MI-R3G
+        name: MI-R3G
         path: /opt/images
 
     - name: Release

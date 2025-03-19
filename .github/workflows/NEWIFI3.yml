@@ -440,7 +440,7 @@ jobs:
       uses: actions/upload-artifact@master
       if: always()
       with:
-        name: 新三NEWIFI3
+        name: NEWIFI3
         path: /opt/images
 
     - name: Release

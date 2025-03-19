@@ -243,7 +243,7 @@ start_core() {
   	fi
  	if [ ! -f "$et_core" ] ; then
 		logg "主程序${et_core}不存在，开始在线下载..."
-  		[ -z "$tag" ] && tag="v2.2.3"
+  		[ -z "$tag" ] && tag="v2.2.4"
   		dowload_et $tag
   	fi
 	sed -Ei '/【EasyTier_core】|^$/d' /tmp/script/_opt_script_check
@@ -255,10 +255,8 @@ start_core() {
 			logg "Web服务器地址或用户名不能为空！程序退出！"
 			exit 1
 		fi
-		if [ ! -f /etc/storage/et_machine_id ] ; then 
-			touch /etc/storage/et_machine_id
-			ln -sf /etc/storage/et_machine_id ${bin_path}/et_machine_id
-		fi
+		[ -f /etc/storage/et_machine_id ] || touch /etc/storage/et_machine_id
+		[ -f "${bin_path}/et_machine_id" ] || ln -sf /etc/storage/et_machine_id ${bin_path}/et_machine_id
 		[ "$et_log" = "1" ] && CMD="--console-log-level warn"
 		[ "$et_log" = "2" ] && CMD="--console-log-level info"
 		[ "$et_log" = "3" ] && CMD="--console-log-level debug"
@@ -313,7 +311,7 @@ start_web() {
 	 		lan_ip=`nvram get lan_ipaddr`
   			nvram set easytier_api="http://${lan_ip}/file/et.html"
     			logg "Web控制台：http://${lan_ip}/file/et.html"
-       		fi
+       	fi
   	fi
     	if [ -f "$et_web_bin" ] ; then
 		[ ! -x "$et_web_bin" ] && chmod +x $et_web_bin
@@ -322,7 +320,7 @@ start_web() {
  	if [ ! -f "$et_web_bin" ] ; then
   		get_tag
 		logg "程序${et_web_bin}不存在，开始在线下载..."
-  		[ -z "$tag" ] && tag="v2.2.3"
+  		[ -z "$tag" ] && tag="v2.2.4"
   		dowload_web $tag
   	fi
 	sed -Ei '/【EasyTier_web】|^$/d' /tmp/script/_opt_script_check

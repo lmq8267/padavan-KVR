@@ -440,7 +440,7 @@ jobs:
     - name : Upload packages
       uses: actions/upload-artifact@master
       with:
-        name: 硬改K2P-USB-32M-512M
+        name: K2P-USB-32M-512M
         path: /opt/images
 
     - name: Release
