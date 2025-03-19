@@ -152,7 +152,11 @@ vnt_keep() {
 	[ -z "\`pidof vnt-cli\`" ] && logger -t "进程守护" "VNT客户端 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check #【VNT客户端】
 	[ -z "\$(iptables -L -n -v | grep '$tunname')" ] && logger -t "进程守护" "vnt-cli 防火墙规则失效" && eval "$scriptfilepath start &" && sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check #【VNT客户端】
 	OSC
-
+	if [ ! -z "$vnt_tcp_port" ] ; then
+		cat >> "/tmp/script/_opt_script_check" <<-OSC
+	[ -z "\$(iptables -L -n -v | grep '$vnt_tcp_port')" ] && logger -t "进程守护" "vnt-cli 防火墙规则失效" && eval "$scriptfilepath start &" && sed -Ei '/【VNT客户端】|^$/d' /tmp/script/_opt_script_check #【VNT客户端】
+	OSC
+	fi
 	fi
 
 
