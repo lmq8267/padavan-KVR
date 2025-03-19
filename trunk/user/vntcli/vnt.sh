@@ -198,7 +198,7 @@ start_vntcli() {
   		[[ "$($VNTCLI -h 2>&1 | wc -l)" -lt 2 ]] && logger -t "【VNT客户端】" "程序${VNTCLI}不完整！" && rm -rf $VNTCLI
   	fi
  	if [ ! -f "$VNTCLI" ] ; then
-		logger -t "VNT客户端" "主程序${VNTCLI}不存在，开始在线下载..."
+		logger -t "【VNT客户端】" "主程序${VNTCLI}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
   		[ -z "$tag" ] && tag="v1.2.16"
   		dowload_vntcli $tag
