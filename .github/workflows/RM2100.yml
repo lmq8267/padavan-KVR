@@ -41,7 +41,7 @@ jobs:
         ##### 修改内存空间和 storage空间13m
         sed -i 's/SIZ=0x0400000/SIZ=0x0d00000/g' /opt/rt-n56u/trunk/configs/boards/RM2100/kernel-3.4.x-5.0.config
         sed -i 's/size_etc="6M"/size_etc="13M"/g' /opt/rt-n56u/trunk/user/scripts/dev_init.sh
-        #sed -i 's/size_tmp="24M"/size_tmp="60M"/g' /opt/rt-n56u/trunk/user/scripts/dev_init.sh
+        sed -i 's/size_tmp="24M"/size_tmp="60M"/g' /opt/rt-n56u/trunk/user/scripts/dev_init.sh
         sed -i 's/mtd_part_size=65536/mtd_part_size=13631488/g' /opt/rt-n56u/trunk/user/scripts/mtd_storage.sh
     - name: Build Firmware
       env:
@@ -411,7 +411,8 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_WXSEND=y" >> .config #微信推送 约50k
         echo "CONFIG_FIRMWARE_INCLUDE_UUPLUGIN=y" >> .config #网易UU加速器 约50k
         echo "CONFIG_FIRMWARE_INCLUDE_ALDRIVER=y" >> .config #阿里云盘 约50k
-        echo "CONFIG_FIRMWARE_INCLUDE_WYY=y" >> .config #网易云解锁 约80k
+        echo "CONFIG_FIRMWARE_INCLUDE_WYY=n" >> .config #网易云解锁 约80k 已删除 /trunk/user/httpd/common.h
+        echo "CONFIG_FIRMWARE_INCLUDE_BAFA=y" >> .config #巴法云 约90k
         echo "CONFIG_FIRMWARE_INCLUDE_CADDY=y" >> .config #在线文件管理服务不占空间(4.0kb左右)
         echo "CONFIG_FIRMWARE_INCLUDE_SMARTDNS=y" >> .config #smartdns
         echo "CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME=y" >> .config #adguardhome不占空间(7.2kb左右)
@@ -439,7 +440,7 @@ jobs:
       uses: actions/upload-artifact@master
       if: always()
       with:
-        name: MI-RM2100
+        name: 红米MI-RM2100
         path: /opt/images
 
     - name: Release

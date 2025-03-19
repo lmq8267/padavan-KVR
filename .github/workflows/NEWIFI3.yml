@@ -411,7 +411,8 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_WXSEND=y" >> .config #微信推送 约50k
         echo "CONFIG_FIRMWARE_INCLUDE_UUPLUGIN=y" >> .config #网易UU加速器 约50k
         echo "CONFIG_FIRMWARE_INCLUDE_ALDRIVER=y" >> .config #阿里云盘 约50k
-        echo "CONFIG_FIRMWARE_INCLUDE_WYY=y" >> .config #网易云解锁 约80k
+        echo "CONFIG_FIRMWARE_INCLUDE_WYY=n" >> .config #网易云解锁 约80k 已删除 /trunk/user/httpd/common.h
+        echo "CONFIG_FIRMWARE_INCLUDE_BAFA=y" >> .config #巴法云 约90k
         echo "CONFIG_FIRMWARE_INCLUDE_CADDY=y" >> .config #在线文件管理服务不占空间(4.0kb左右)
         echo "CONFIG_FIRMWARE_INCLUDE_SMARTDNS=y" >> .config #smartdns
         echo "CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME=y" >> .config #adguardhome不占空间(7.2kb左右)
@@ -439,7 +440,7 @@ jobs:
       uses: actions/upload-artifact@master
       if: always()
       with:
-        name: NEWIFI3
+        name: 新三NEWIFI3
         path: /opt/images
 
     - name: Release

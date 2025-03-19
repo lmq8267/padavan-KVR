@@ -107,12 +107,12 @@ dowload_et() {
    			rm -rf /tmp/easytier-mipsel-linux-muslsf.tar.gz
 			break
        		else
-	   		logg "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip 解压上传到  $et_core"
+	   		logg "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-mipsel-linux-muslsf.tar.gz 解压上传到  $et_core"
 	   		rm -f $et_core
       			rm -rf /tmp/easytier-mipsel-linux-muslsf.tar.gz
 	  	fi
 	else
-		log "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip 上传到  $et_core"
+		log "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-mipsel-linux-muslsf.tar.gz 上传到  $et_core"
    	fi
 	done
 }
@@ -137,12 +137,12 @@ dowload_web() {
    			rm -rf /tmp/easytier-mipsel-linux-muslsf.tar.gz
 			break
        		else
-	   		logg "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip 解压上传到  $et_web_bin"
+	   		logg "下载不完整，请手动下载 ${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-mipsel-linux-muslsf.tar.gz 解压上传到  $et_web_bin"
 	   		rm -f $et_web_bin
       			rm -rf /tmp/easytier-mipsel-linux-muslsf.tar.gz
 	  	fi
 	else
-		log "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-linux-mipsel-${tag}.zip 上传到  $et_web_bin"
+		log "下载失败，请手动下载 ${proxy}https://github.com/lmq8267/EasyTier/releases/download/${tag}/easytier-mipsel-linux-muslsf.tar.gz 上传到  $et_web_bin"
    	fi
 	done
 }
@@ -198,7 +198,7 @@ web_keep() {
 	[ -z "\`pidof easytier-web\`" ] && logger -t "进程守护" "EasyTier_web 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【EasyTier_web】|^$/d' /tmp/script/_opt_script_check #【EasyTier_web】
  	[ -z "\$(iptables -L -n -v | grep '$et_web_port')" ] && logger -t "进程守护" "EasyTier_web 防火墙规则失效" && eval "$scriptfilepath start &" && sed -Ei '/【EasyTier_web】|^$/d' /tmp/script/_opt_script_check #【EasyTier_web】
   	[ -z "\$(iptables -L -n -v | grep '$et_web_api')" ] && logger -t "进程守护" "EasyTier_web 防火墙规则失效" && eval "$scriptfilepath start &" && sed -Ei '/【EasyTier_web】|^$/d' /tmp/script/_opt_script_check #【EasyTier_web】
-  	[ -s /tmp/easytier_web.log ] && [ "\$(stat -c %s /tmp/easytier_web.log)" -gt 4194304 ] && echo "" > /tmp/easytier_web.log & #【EasyTier_web】
+ 	[ -s /tmp/easytier_web.log ] && [ "\$(stat -c %s /tmp/easytier_web.log)" -gt 4194304 ] && echo "" > /tmp/easytier_web.log & #【EasyTier_web】
 	OSC
 
 	fi
@@ -248,11 +248,16 @@ start_core() {
   	fi
 	sed -Ei '/【EasyTier_core】|^$/d' /tmp/script/_opt_script_check
 	killall easytier-core >/dev/null 2>&1
+	bin_path=$(dirname "$et_core")
 	CMD=""
 	if [ "$et_enable" = "1" ] ; then
 		if [ -z "$config_server" ] ; then
 			logg "Web服务器地址或用户名不能为空！程序退出！"
 			exit 1
+		fi
+		if [ ! -f /etc/storage/et_machine_id ] ; then 
+			touch /etc/storage/et_machine_id
+			ln -sf /etc/storage/et_machine_id ${bin_path}/et_machine_id
 		fi
 		[ "$et_log" = "1" ] && CMD="--console-log-level warn"
 		[ "$et_log" = "2" ] && CMD="--console-log-level info"
@@ -268,7 +273,6 @@ start_core() {
 		[ "$et_log" = "5" ] && CMD="--console-log-level error"
 		CMD="-c /etc/storage/easytier.toml $CMD"
 	fi
-	bin_path=$(dirname "$et_core")
 	etcmd="cd $bin_path ; ./easytier-core ${CMD} >/tmp/easytier.log 2>&1"
 	echo "$etcmd" >/tmp/easytier.CMD 
 	logg "运行${etcmd}"
