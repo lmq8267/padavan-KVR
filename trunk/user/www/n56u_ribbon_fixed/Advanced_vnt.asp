@@ -139,6 +139,7 @@ function change_vntcli_enable(mflag){
 
 	var is_vntcli_file = (m == "2") ? 1 : 0;
 	showhide_div("vntcli_file_tr", is_vntcli_file);
+	showhide_div("vntcli_pri_table", is_vntcli_file);
 	
 	var is_vntcli_log = (m == "1" || m == "2") ? 1 : 0;
 	showhide_div("vntcli_log_tr", is_vntcli_log);
