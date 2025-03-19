@@ -139,11 +139,11 @@ function change_vntcli_enable(mflag){
 
 	var is_vntcli_file = (m == "2") ? 1 : 0;
 	showhide_div("vntcli_file_tr", is_vntcli_file);
-	showhide_div("vntcli_pri_table", is_vntcli_file);
 	
 	var is_vntcli_log = (m == "1" || m == "2") ? 1 : 0;
 	showhide_div("vntcli_log_tr", is_vntcli_log);
 	showhide_div("vntcli_log_td", is_vntcli_log);
+	showhide_div("vntcli_pri_table", 1);
 
 	var is_vntcli_cmd = (m == "1") ? 1 : 0;
 	showhide_div("vntcli_token_tr", is_vntcli_cmd);
@@ -157,7 +157,6 @@ function change_vntcli_enable(mflag){
 	showhide_div("vntcli_model_tr", is_vntcli_cmd);
 	showhide_div("vntcli_model_td", is_vntcli_cmd);
 	showhide_div("vntcli_subnet_table", is_vntcli_cmd);
-	showhide_div("vntcli_pri_table", is_vntcli_cmd);
 	showhide_div("vntcli_mapping_table", is_vntcli_cmd);
 
 	var is_vntcli_mtu = (m == "1") ? 1 : 0;
