@@ -2,6 +2,7 @@
 
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Flmq8267%2Fpadavan-KVR&count_bg=%2395C10D&title_bg=%23555555&icon=github.svg&icon_color=%238DC409&title=%E8%AE%BF%E9%97%AE%E6%95%B0&edge_flat=false)](https://hits.seeyoufarm.com)
 
+不需要WireGuard的可以去`trunk/configs/boards/型号/kernel-3.4.x**.config`文件里找到 **`CONFIG_WIREGUARD=y`** 改成 **`# CONFIG_WIREGUARD is not set`** 去掉wg内核模块 约900多k
 ![](./UI.png)
 ![image](https://github.com/user-attachments/assets/5496dceb-0b01-423d-894a-7795889cece4)
 
