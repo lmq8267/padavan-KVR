@@ -303,14 +303,14 @@ start_web() {
   	if [ -f "$et_web_html" ] ; then
   		cp -rf "$et_web_html" /tmp/file/et.html
   		lan_ip=`nvram get lan_ipaddr`
-  		nvram set easytier_api="http://${lan_ip}/file/et.html"
-    		logg "Web控制台：http://${lan_ip}/file/et.html"
+  		nvram set easytier_api="http://${lan_ip}/tmp/et.html"
+    		logg "Web控制台：http://${lan_ip}/tmp/et.html"
       	else
        		curl -Lko /tmp/file/et.html https://easytier.cn/web || curl -Lko /tmp/file/et.html https://easytier.cn/web/index.html
 	 	if [ "$?" = 0 ] ; then
 	 		lan_ip=`nvram get lan_ipaddr`
-  			nvram set easytier_api="http://${lan_ip}/file/et.html"
-    			logg "Web控制台：http://${lan_ip}/file/et.html"
+  			nvram set easytier_api="http://${lan_ip}/tmp/et.html"
+    			logg "Web控制台：http://${lan_ip}/tmp/et.html"
        	fi
   	fi
     	if [ -f "$et_web_bin" ] ; then
