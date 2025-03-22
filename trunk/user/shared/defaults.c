@@ -545,6 +545,7 @@ struct nvram_pair router_defaults[] = {
 	{ "w_cloudflare", "1" },
 	{ "w_easytier", "1" },
 	{ "w_bafa", "1" },
+	{ "w_virtualhere", "1" },
 
 	{ "ip6_service", "" },
 	{ "ip6_ppe_on", "0" },
@@ -876,6 +877,14 @@ struct nvram_pair router_defaults[] = {
 	{ "bafa_port", "9501" },
 	{ "bafa_show", "0" },
 	{ "bafa_bin", "/usr/bin/stdoutsubc" },
+#endif
+
+#if defined(APP_VIRTUALHERE)
+	/*virtualhere*/
+	{ "virtualhere_enable", "0" },
+	{ "virtualhere_wan", "0" },
+	{ "virtualhere_v6", "0" },
+	{ "virtualhere_bin", "/etc/storage/bin/virtualhere" },
 #endif
 
 #if defined(APP_VNTS)

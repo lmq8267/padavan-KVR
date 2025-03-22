@@ -1390,6 +1390,12 @@ handle_notifications(void)
 			restart_bafa();
 		}
 #endif
+#if defined(APP_VIRTUALHERE)
+		else if (strcmp(entry->d_name, RCN_RESTART_VIRTUALHERE) == 0)
+		{
+			restart_virtualhere();
+		}
+#endif
 #if defined(APP_VNTS)
 		else if (strcmp(entry->d_name, RCN_RESTART_VNTS) == 0)
 		{

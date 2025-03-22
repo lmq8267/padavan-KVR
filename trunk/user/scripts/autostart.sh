@@ -151,6 +151,11 @@ logger -t "自动启动" "正在启动阿里云盘"
 /usr/bin/aliyundrive-webdav.sh start &
 fi
 
+if [ $(nvram get virtualhere_enable) = 1 ] ; then
+logger -t "自动启动" "正在启动Virtualhere"
+/usr/bin/virtualhere.sh start &
+fi
+
 if [ $(nvram get uu_enable) = 1 ] ; then
 logger -t "自动启动" "正在启动网易UU游戏加速器"
 /usr/bin/uuplugin.sh start &

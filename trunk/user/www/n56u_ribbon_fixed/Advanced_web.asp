@@ -56,6 +56,7 @@ $j(document).ready(function() {
 	init_itoggle('w_cloudflare');
 	init_itoggle('w_easytier');
 	init_itoggle('w_bafa');
+	init_itoggle('w_virtualhere');
 
 });
 </script>
@@ -134,6 +135,9 @@ if (found_app_easytier()){
 }
 if (found_app_bafa()){
 	showhide_div('row_wbafa', true);
+}
+if (found_app_virtualhere()){
+	showhide_div('row_wvirtualhere', true);
 }
 
 }
@@ -626,6 +630,21 @@ function applyRule(){
 												</div>
 											</td>
 										</tr>
+										<tr id="row_wvirtualhere" style="display:none">
+											<th width="50%" >VirtualHere</th>
+											<td>
+													<div class="main_itoggle">
+													<div id="w_virtualhere_on_of">
+														<input type="checkbox" id="w_virtualhere_fake" <% nvram_match_x("", "w_virtualhere", "1", "value=1 checked"); %><% nvram_match_x("", "w_virtualhere", "0", "value=0"); %>  />
+													</div>
+												</div>
+												<div style="position: absolute; margin-left: -10000px;">
+													<input type="radio" value="1" name="w_virtualhere" id="w_virtualhere_1" class="input" <% nvram_match_x("", "w_virtualhere", "1", "checked"); %> /><#checkbox_Yes#>
+													<input type="radio" value="0" name="w_virtualhere" id="w_virtualhere_0" class="input" <% nvram_match_x("", "w_virtualhere", "0", "checked"); %> /><#checkbox_No#>
+												</div>
+											</td>
+										</tr>
+										
 											<td colspan="2">
 												<br />
 												<center><input class="btn btn-primary" style="width: 219px" type="button" value="<#CTL_apply#>" onclick="applyRule()" /></center>

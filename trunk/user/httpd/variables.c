@@ -1499,6 +1499,17 @@
 	};
 #endif
 
+#if defined(APP_VIRTUALHERE)
+	struct variable variables_VIRTUALHERE[] = {
+			{"virtualhere_enable", "", NULL, EVM_RESTART_VIRTUALHERE},
+			{"virtualhere_wan", "", NULL, EVM_RESTART_VIRTUALHERE},
+			{"virtualhere_v6", "", NULL, EVM_RESTART_VIRTUALHERE},
+			{"virtualhere_bin", "", NULL, EVM_RESTART_VIRTUALHERE},
+			{"scripts.virtualhere.ini", "File", NULL, EVM_RESTART_VIRTUALHERE},
+			{0,0,0,0}
+	};
+#endif
+
 #if defined(APP_WXSEND)
 	struct variable variables_WXSEND[] = {
 			{"wxsend_enable", "", NULL, EVM_RESTART_WXSEND},
@@ -1550,6 +1561,7 @@
 			{"w_cloudflare", "", NULL, FALSE},
 			{"w_easytier", "", NULL, FALSE},
 			{"w_bafa", "", NULL, FALSE},
+			{"w_virtualhere", "", NULL, FALSE},
 	};
 
 	struct variable variables_WLANConfig11b[] = {
@@ -1748,6 +1760,9 @@
 #if defined(APP_BAFA)
 		{"BAFA",		variables_BAFA},
 #endif
+#if defined(APP_VIRTUALHERE)
+		{"VIRTUALHERE",		variables_VIRTUALHERE},
+#endif
 #if defined(APP_NATPIERCE)
 		{"NATPIERCE",		variables_NATPIERCE},
 #endif
@@ -1903,6 +1918,9 @@
 #endif
 #if defined(APP_BAFA)
 		{EVM_RESTART_BAFA,		EVT_RESTART_BAFA,		RCN_RESTART_BAFA,	0},
+#endif
+#if defined(APP_VIRTUALHERE)
+		{EVM_RESTART_VIRTUALHERE,		EVT_RESTART_VIRTUALHERE,		RCN_RESTART_VIRTUALHERE,	0},
 #endif
 #if defined(APP_VNTS)
 		{EVM_RESTART_VNTS,		EVT_RESTART_VNTS,		RCN_RESTART_VNTS,	0},

@@ -587,10 +587,15 @@ void stop_easytier(void);
 void start_easytier(void);
 void restart_easytier(void);
 #endif
-#if defined(APP_EBAFA)
+#if defined(APP_BAFA)
 void stop_bafa(void);
 void start_bafa(void);
 void restart_bafa(void);
+#endif
+#if defined(APP_VIRTUALHERE)
+void stop_virtualhere(void);
+void start_virtualhere(void);
+void restart_virtualhere(void);
 #endif
 #if defined(APP_VNTS)
 void stop_vnts(void);

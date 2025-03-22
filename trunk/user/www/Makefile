@@ -284,6 +284,9 @@ endif
 ifneq ($(CONFIG_FIRMWARE_INCLUDE_BAFA),y)
 	rm -f $(INSTALLDIR)/www/Advanced_bafa.asp
 endif
+ifneq ($(CONFIG_FIRMWARE_INCLUDE_VIRTUALHERE),y)
+	rm -f $(INSTALLDIR)/www/Advanced_virtualhere.asp
+endif
 
 clean:
 	@echo "Clean www romfs"

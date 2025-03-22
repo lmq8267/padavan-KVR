@@ -661,6 +661,22 @@ void restart_bafa(void){
 	start_bafa();
 }
 #endif
+#if defined(APP_VIRTUALHERE)
+void stop_virtualhere(void){
+	eval("/usr/bin/virtualhere.sh","stop");
+}
+
+void start_virtualhere(void){
+	int virtualhere_enable = nvram_get_int("virtualhere_enable");
+	if ( virtualhere_enable == 1)
+		eval("/usr/bin/virtualhere.sh","start");
+}
+
+void restart_virtualhere(void){
+	stop_virtualhere();
+	start_virtualhere();
+}
+#endif
 #if defined(APP_ALIST)
 void stop_alist(void){
 	eval("/usr/bin/alist.sh","stop");
@@ -1105,6 +1121,9 @@ stop_services(int stopall)
 #endif
 #if defined(APP_BAFA)
 	stop_bafa();
+#endif
+#if defined(APP_VIRTUALHERE)
+	stop_virtualhere();
 #endif
 #if defined(APP_VNTS)
 	stop_vnts();
