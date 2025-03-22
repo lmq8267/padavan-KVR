@@ -57,10 +57,10 @@ typedef u_int8_t u8;
 #define EVM_RESTART_VPNCLI			(1ULL << 11)
 #define EVM_RESTART_WIFI2			(1ULL << 12)
 #define EVM_RESTART_WIFI5			(1ULL << 13)
-#define EVM_RESTART_SWITCH_CFG		(1ULL << 14)
-#define EVM_RESTART_SWITCH_VLAN		(1ULL << 15)
-#define EVM_RESTART_LAN			(1ULL << 17)
-#define EVM_RESTART_WAN			(1ULL << 18)
+#define EVM_RESTART_SWITCH_CFG			(1ULL << 14)
+#define EVM_RESTART_SWITCH_VLAN			(1ULL << 15)
+#define EVM_RESTART_LAN				(1ULL << 17)
+#define EVM_RESTART_WAN				(1ULL << 18)
 #define EVM_RESTART_IPV6			(1ULL << 19)
 #define EVM_RESTART_HTTPD			(1ULL << 20)
 #define EVM_RESTART_TELNETD			(1ULL << 21)
@@ -72,7 +72,7 @@ typedef u_int8_t u8;
 #define EVM_RESTART_CROND			(1ULL << 27)
 #define EVM_RESTART_SYSCTL			(1ULL << 28)
 #define EVM_RESTART_TWEAKS			(1ULL << 29)
-#define EVM_RESTART_WDG			(1ULL << 30)
+#define EVM_RESTART_WDG				(1ULL << 30)
 #define EVM_RESTART_DI				(1ULL << 31)
 #define EVM_RESTART_SPOOLER			(1ULL << 32)
 #define EVM_RESTART_MODEM			(1ULL << 33)
@@ -80,13 +80,14 @@ typedef u_int8_t u8;
 #define EVM_RESTART_FTPD			(1ULL << 35) //ftp
 #define EVM_RESTART_NMBD			(1ULL << 36) //smb
 #define EVM_RESTART_SMBD			(1ULL << 37) //smb
+
 //如果你要修改的话 请注意后面的序号，每个插件对应的序号不能相同  不能超过63 你可以删掉不需要的 把序号给你需要的插件
 //#define EVM_RESTART_NFSD			(1ULL << 38) //nfsd文件系统
 #define EVM_RESTART_EASYTIER			(1ULL << 38) // Easyier异地组网
-#define EVM_RESTART_DMS			(1ULL << 39) //Minidlna UPnP 媒体服务器
+#define EVM_RESTART_DMS				(1ULL << 39) //Minidlna UPnP 媒体服务器
 #define EVM_RESTART_ITUNES			(1ULL << 40)
 //#define EVM_RESTART_TRMD			(1ULL << 41) //#TRANSMISSION
-#define EVM_RESTART_CLOUDFLARE		(1ULL << 41)  //CF的ddns
+#define EVM_RESTART_CLOUDFLARE			(1ULL << 41)  //CF的ddns
 #define EVM_RESTART_ARIA			(1ULL << 42) //aria2c文件下载
 //#define EVM_RESTART_SCUT			(1ULL << 43) //校园网
 #define EVM_RESTART_TTYD			(1ULL << 43) //ttyd网页终端
@@ -94,13 +95,13 @@ typedef u_int8_t u8;
 #define EVM_RESTART_ALIST			(1ULL << 44) //alist文件列表
 #define EVM_RESTART_ALIDDNS			(1ULL << 45) //阿里ddns
 #define EVM_RESTART_SMARTDNS	    		(1ULL << 46) //smartdns加速
-#define EVM_RESTART_FRP	    		(1ULL << 47) //frp内网穿透
+#define EVM_RESTART_FRP	    			(1ULL << 47) //frp内网穿透
 //#define EVM_RESTART_DNSFORWARDER		(1ULL << 47) //dns转发
 //#define EVM_RESTART_SHADOWSOCKS		(1ULL << 48) //科学上网ss
 #define EVM_RESTART_CADDY			(1ULL << 48) //caddy文件管理
-//#define EVM_RESTART_SS_TUNNEL		(1ULL << 49) //科学上网插件
-#define EVM_RESTART_ADGUARDHOME		(1ULL << 49) //adg去广告
-//#define EVM_RESTART_MENTOHUST		(1ULL << 50) //校园认证
+//#define EVM_RESTART_SS_TUNNEL			(1ULL << 49) //科学上网插件
+#define EVM_RESTART_ADGUARDHOME			(1ULL << 49) //adg去广告
+//#define EVM_RESTART_MENTOHUST			(1ULL << 50) //校园认证
 //#define EVM_RESTART_WYY			(1ULL << 50) //网易云
 #define EVM_RESTART_BAFA			(1ULL << 50) //巴法云
 //#define EVM_RESTART_ADBYBY			(1ULL << 51) //adb去广告
@@ -110,13 +111,13 @@ typedef u_int8_t u8;
 #define EVM_RESTART_ALDRIVER			(1ULL << 53) //阿里云盘挂载
 //#define EVM_RESTART_VIRTUALHERE		(1ULL << 53) //virtualhere
 #define EVM_RESTART_UUPLUGIN			(1ULL << 54) //UU加速器
-//#define EVM_RESTART_KOOLPROXY		(1ULL << 55) //kp去广告
+//#define EVM_RESTART_KOOLPROXY			(1ULL << 55) //kp去广告
 #define EVM_RESTART_LUCKY			(1ULL << 55) //lucky
 #define EVM_RESTART_WXSEND			(1ULL << 56) //微信推送
-#define EVM_RESTART_CLOUDFLARED		(1ULL << 57) //CF隧道免费内网穿透
+#define EVM_RESTART_CLOUDFLARED			(1ULL << 57) //CF隧道免费内网穿透
 #define EVM_RESTART_VNTS			(1ULL << 58) //vnt服务器
 #define EVM_RESTART_VNTCLI			(1ULL << 59) //vnt客户端
-//#define EVM_RESTART_NVPPROXY		(1ULL << 60) 
+//#define EVM_RESTART_NVPPROXY			(1ULL << 60) 
 #define EVM_RESTART_NATPIERCE			(1ULL << 60) //皎月连
 #define EVM_RESTART_TAILSCALE			(1ULL << 61) //taislacle
 #define EVM_RESTART_REBOOT			(1ULL << 62) //重启
