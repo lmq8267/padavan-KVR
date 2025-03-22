@@ -70,7 +70,7 @@ echo "CONFIG_FIRMWARE_INCLUDE_TAILSCALE=n" >> .config #tailscale
 echo "CONFIG_FIRMWARE_INCLUDE_EASYTIER=n" >> .config #EasyTier
 echo "CONFIG_FIRMWARE_INCLUDE_BAFA=n" >> .config #巴法云
 ##内网穿透服务##
-echo "CONFIG_FIRMWARE_INCLUDE_VIRTUALHERE=y" >> .config # virtualhere
+echo "CONFIG_FIRMWARE_INCLUDE_VIRTUALHERE=n" >> .config # virtualhere
 echo "CONFIG_FIRMWARE_INCLUDE_UUPLUGIN=n" >> .config #UU加速器
 echo "CONFIG_FIRMWARE_INCLUDE_LUCKY=n" >> .config # lucky
 
