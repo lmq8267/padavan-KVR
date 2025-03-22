@@ -8,7 +8,7 @@ virtualhere_renum=`nvram get virtualhere_renum`
 if [ ! -z "$vhusbd_bin" ] ; then
 	binname=$(basename $vhusbd_bin)
 else
-	nvram get virtualhere_bin="/etc/storage/bin/virtualhere"
+	nvram set virtualhere_bin="/etc/storage/bin/virtualhere"
 	vhusbd_bin="/etc/storage/bin/virtualhere"
 	binname="virtualhere"
 fi
