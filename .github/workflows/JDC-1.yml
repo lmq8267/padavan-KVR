@@ -447,14 +447,14 @@ jobs:
         name: JDC-1
         path: /opt/images
 
-    #- name: Release
-      #uses: softprops/action-gh-release@v2
-      #with:
-        #token: ${{ secrets.GITHUB_TOKEN }}
-        #body: |
-          # > ### ![](https://img.shields.io/badge/%E7%BC%96%E8%AF%91%E6%97%B6%E9%97%B4-${{ env.build_time }}-8267?logo=github&labelColor=%E9%A1%BB)![](https://img.shields.io/github/downloads/${{ github.repository }}/${{ env.tag }}/total?label=%E4%B8%8B%E8%BD%BD%E6%AC%A1%E6%95%B0&logo=github) 
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        body: |
+           > ### ![](https://img.shields.io/badge/%E7%BC%96%E8%AF%91%E6%97%B6%E9%97%B4-${{ env.build_time }}-8267?logo=github&labelColor=%E9%A1%BB)![](https://img.shields.io/github/downloads/${{ github.repository }}/${{ env.tag }}/total?label=%E4%B8%8B%E8%BD%BD%E6%AC%A1%E6%95%B0&logo=github) 
 
-          # `型号.config` 是集成的插件模板
+           `型号.config` 是集成的插件模板
 
-        #tag_name: ${{ env.tag }}
-        #files: /opt/images/*
+        tag_name: ${{ env.tag }}
+        files: /opt/images/*
