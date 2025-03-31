@@ -1396,6 +1396,12 @@ handle_notifications(void)
 			restart_virtualhere();
 		}
 #endif
+#if defined(APP_V2RAYA)
+		else if (strcmp(entry->d_name, RCN_RESTART_V2RAYA) == 0)
+		{
+			restart_v2raya();
+		}
+#endif
 #if defined(APP_VNTS)
 		else if (strcmp(entry->d_name, RCN_RESTART_VNTS) == 0)
 		{

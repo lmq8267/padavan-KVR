@@ -597,6 +597,11 @@ void stop_virtualhere(void);
 void start_virtualhere(void);
 void restart_virtualhere(void);
 #endif
+#if defined(APP_V2RAYA)
+void stop_v2raya(void);
+void start_v2raya(void);
+void restart_v2raya(void);
+#endif
 #if defined(APP_VNTS)
 void stop_vnts(void);
 void start_vnts(void);

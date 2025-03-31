@@ -1510,6 +1510,27 @@
 	};
 #endif
 
+#if defined(APP_V2RAYA)
+	struct variable variables_V2RAYA[] = {
+			{"v2raya_enable", "", NULL, EVM_RESTART_V2RAYA},
+			{"v2raya_address", "", NULL, EVM_RESTART_V2RAYA},
+			{"v2raya_config", "", NULL, EVM_RESTART_V2RAYA},
+			{"v2raya_confdir", "", NULL, EVM_RESTART_V2RAYA},
+			{"v2raya_assetsdir", "", NULL, EVM_RESTART_V2RAYA},
+			{"v2raya_transparent", "", NULL, EVM_RESTART_V2RAYA},
+			{"v2raya_core_hook", "", NULL, EVM_RESTART_V2RAYA},
+			{"v2raya_plugin", "", NULL, EVM_RESTART_V2RAYA},
+			{"v2raya_ipv6", "", NULL, EVM_RESTART_V2RAYA},
+			{"v2raya_log", "", NULL, EVM_RESTART_V2RAYA},
+			{"v2raya_bin", "", NULL, EVM_RESTART_V2RAYA},
+			{"v2raya_v2ray", "", NULL, EVM_RESTART_V2RAYA},
+			{"v2raya_cmd", "", NULL, EVM_RESTART_V2RAYA},
+			{"v2raya_env", "", NULL, EVM_RESTART_V2RAYA},
+			{"scripts.v2raya.toml", "File", NULL, EVM_RESTART_V2RAYA},
+			{0,0,0,0}
+	};
+#endif
+
 #if defined(APP_WXSEND)
 	struct variable variables_WXSEND[] = {
 			{"wxsend_enable", "", NULL, EVM_RESTART_WXSEND},
@@ -1562,6 +1583,7 @@
 			{"w_easytier", "", NULL, FALSE},
 			{"w_bafa", "", NULL, FALSE},
 			{"w_virtualhere", "", NULL, FALSE},
+			{"w_v2raya", "", NULL, FALSE},
 	};
 
 	struct variable variables_WLANConfig11b[] = {
@@ -1763,6 +1785,9 @@
 #if defined(APP_VIRTUALHERE)
 		{"VIRTUALHERE",		variables_VIRTUALHERE},
 #endif
+#if defined(APP_V2RAYA)
+		{"V2RAYA",		variables_V2RAYA},
+#endif
 #if defined(APP_NATPIERCE)
 		{"NATPIERCE",		variables_NATPIERCE},
 #endif
@@ -1921,6 +1946,9 @@
 #endif
 #if defined(APP_VIRTUALHERE)
 		{EVM_RESTART_VIRTUALHERE,		EVT_RESTART_VIRTUALHERE,		RCN_RESTART_VIRTUALHERE,	0},
+#endif
+#if defined(APP_V2RAYA)
+		{EVM_RESTART_V2RAYA,		EVT_RESTART_V2RAYA,		RCN_RESTART_V2RAYA,	0},
 #endif
 #if defined(APP_VNTS)
 		{EVM_RESTART_VNTS,		EVT_RESTART_VNTS,		RCN_RESTART_VNTS,	0},

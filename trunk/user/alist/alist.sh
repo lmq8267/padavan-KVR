@@ -111,7 +111,7 @@ dowload_al() {
  	length=`expr $length + 512000`
 	length=`expr $length / 1048576`
  	alist_size0="$(check_disk_size $bin_path)"
- 	[ ! -z "$length" ] && logger -t "【Alist】" "程序大小 ${length}M， 程序路径可用空间 ${alist}M "
+ 	[ ! -z "$length" ] && logger -t "【Alist】" "程序大小 ${length}M， 程序路径可用空间 ${alist_size0}M "
         curl -Lko "/tmp/alist.tar.gz" "${proxy}${url}" || wget --no-check-certificate -O "/tmp/alist.tar.gz" "${proxy}${url}"
 	if [ "$?" = 0 ] ; then
 		logger -t "【Alist】" "开始解压..."

@@ -887,6 +887,24 @@ struct nvram_pair router_defaults[] = {
 	{ "virtualhere_bin", "/etc/storage/bin/virtualhere" },
 #endif
 
+#if defined(APP_V2RAYA)
+	/*v2raya*/
+	{ "v2raya_enable", "0" },
+	{ "v2raya_address", "" },
+	{ "v2raya_config", "/etc/storage/v2raya_config" },
+	{ "v2raya_confdir", "" },
+	{ "v2raya_assetsdir", "/tmp/var" },
+	{ "v2raya_transparent", "" },
+	{ "v2raya_core_hook", "" },
+	{ "v2raya_plugin", "" },
+	{ "v2raya_ipv6", "auto" },
+	{ "v2raya_log", "info" },
+	{ "v2raya_bin", "/tmp/var/v2raya" },
+	{ "v2raya_v2ray", "" },
+	{ "v2raya_cmd", "--log-disable-color" },
+	{ "v2raya_env", "" },
+#endif
+
 #if defined(APP_VNTS)
 	/*vnts*/
 	{ "vnts_enable", "0" },

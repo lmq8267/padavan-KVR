@@ -85,7 +85,8 @@ typedef u_int8_t u8;
 //#define EVM_RESTART_NFSD			(1ULL << 38) //nfsd文件系统
 #define EVM_RESTART_EASYTIER			(1ULL << 38) // Easyier异地组网
 #define EVM_RESTART_DMS				(1ULL << 39) //Minidlna UPnP 媒体服务器
-#define EVM_RESTART_ITUNES			(1ULL << 40)
+#define EVM_RESTART_V2RAYA			(1ULL << 40) //V2RAYA
+//#define EVM_RESTART_ITUNES			(1ULL << 40) //Firefly iTunes 媒体服务器
 //#define EVM_RESTART_TRMD			(1ULL << 41) //#TRANSMISSION
 #define EVM_RESTART_CLOUDFLARE			(1ULL << 41)  //CF的ddns
 #define EVM_RESTART_ARIA			(1ULL << 42) //aria2c文件下载
@@ -204,6 +205,7 @@ typedef u_int8_t u8;
 #define EVT_RESTART_EASYTIER	    	2
 #define EVT_RESTART_BAFA	    	2
 #define EVT_RESTART_VIRTUALHERE    	2
+#define EVT_RESTART_V2RAYA    	2
 #define EVT_RESTART_REBOOT			40
 
 struct variable

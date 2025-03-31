@@ -57,6 +57,7 @@ $j(document).ready(function() {
 	init_itoggle('w_easytier');
 	init_itoggle('w_bafa');
 	init_itoggle('w_virtualhere');
+	init_itoggle('w_v2raya');
 
 });
 </script>
@@ -138,6 +139,9 @@ if (found_app_bafa()){
 }
 if (found_app_virtualhere()){
 	showhide_div('row_wvirtualhere', true);
+}
+if (found_app_v2raya()){
+	showhide_div('row_wv2raya', true);
 }
 
 }
@@ -641,6 +645,20 @@ function applyRule(){
 												<div style="position: absolute; margin-left: -10000px;">
 													<input type="radio" value="1" name="w_virtualhere" id="w_virtualhere_1" class="input" <% nvram_match_x("", "w_virtualhere", "1", "checked"); %> /><#checkbox_Yes#>
 													<input type="radio" value="0" name="w_virtualhere" id="w_virtualhere_0" class="input" <% nvram_match_x("", "w_virtualhere", "0", "checked"); %> /><#checkbox_No#>
+												</div>
+											</td>
+										</tr>
+										<tr id="row_wv2raya" style="display:none">
+											<th width="50%" >V2RayA</th>
+											<td>
+													<div class="main_itoggle">
+													<div id="w_v2raya_on_of">
+														<input type="checkbox" id="w_v2raya_fake" <% nvram_match_x("", "w_v2raya", "1", "value=1 checked"); %><% nvram_match_x("", "w_v2raya", "0", "value=0"); %>  />
+													</div>
+												</div>
+												<div style="position: absolute; margin-left: -10000px;">
+													<input type="radio" value="1" name="w_v2raya" id="w_v2raya_1" class="input" <% nvram_match_x("", "w_v2raya", "1", "checked"); %> /><#checkbox_Yes#>
+													<input type="radio" value="0" name="w_v2raya" id="w_v2raya_0" class="input" <% nvram_match_x("", "w_v2raya", "0", "checked"); %> /><#checkbox_No#>
 												</div>
 											</td>
 										</tr>

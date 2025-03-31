@@ -2430,6 +2430,15 @@ static int virtualhere_status_hook(int eid, webs_t wp, int argc, char **argv)
 }
 #endif
 
+#if defined (APP_V2RAYA)
+static int v2raya_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int v2raya_status_code = pids("v2raya") || pids("v2ray") || pids("xray");
+	websWrite(wp, "function v2raya_status() { return %d;}\n", v2raya_status_code);
+	return 0;
+}
+#endif
+
 #if defined (APP_NATPIERCE)
 static int natpierce_status_hook(int eid, webs_t wp, int argc, char **argv)
 {
@@ -2786,6 +2795,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_virtualhere = 0;
 #endif
+#if defined(APP_V2RAYA)
+	int found_app_v2raya = 1;
+#else
+	int found_app_v2raya = 0;
+#endif
 #if defined(APP_NATPIERCE)
 	int found_app_natpierce = 1;
 #else
@@ -3035,6 +3049,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_easytier() { return %d;}\n"
 		"function found_app_bafa() { return %d;}\n"
 		"function found_app_virtualhere() { return %d;}\n"
+		"function found_app_v2raya() { return %d;}\n"
 		"function found_app_cloudflared() { return %d;}\n"
 		"function found_app_cloudflare() { return %d;}\n"
 		"function found_app_alist() { return %d;}\n"
@@ -3084,6 +3099,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_easytier,
 		found_app_bafa,
 		found_app_virtualhere,
+		found_app_v2raya,
 		found_app_cloudflared,
 		found_app_cloudflare,
 		found_app_alist,
@@ -4321,6 +4337,56 @@ apply_cgi(const char *url, webs_t wp)
 #endif
 		return 0;
 	}
+	else if (!strcmp(value, " Clearv2rayaLog "))
+	{
+#if defined(APP_V2RAYA)
+		unlink("/tmp/v2raya.log");
+#endif
+		websRedirect(wp, current_url);
+		return 0;
+	}
+	else if (!strcmp(value, " Restartv2raya "))
+	{
+#if defined(APP_V2RAYA)
+		system("/usr/bin/v2raya.sh restart &");
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " Updatev2raya "))
+	{
+#if defined(APP_V2RAYA)
+		system("/usr/bin/v2raya.sh update &");
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " v2rayaRESET "))
+	{
+#if defined(APP_V2RAYA)
+		system("/usr/bin/v2raya.sh reset &");
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " v2rayaConfig "))
+	{
+#if defined(APP_V2RAYA)
+		system("/usr/bin/v2raya.sh config &");
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " v2rayaConnection "))
+	{
+#if defined(APP_V2RAYA)
+		system("/usr/bin/v2raya.sh connection &");
+#endif
+		return 0;
+	}
+	else if (!strcmp(value, " v2rayaKernel "))
+	{
+#if defined(APP_V2RAYA)
+		system("/usr/bin/v2raya.sh kernel &");
+#endif
+		return 0;
+	}
 	else if (!strcmp(value, " Restartwg "))
 	{
 #if defined(APP_WIREGUARD)
@@ -5442,6 +5508,9 @@ struct ej_handler ej_handlers[] =
 #endif
 #if defined (APP_VIRTUALHERE)
 	{ "virtualhere_status", virtualhere_status_hook},
+#endif
+#if defined (APP_V2RAYA)
+	{ "v2raya_status", v2raya_status_hook},
 #endif
 #if defined (APP_TAILSCALE)
 	{ "tailscale_status", tailscale_status_hook},

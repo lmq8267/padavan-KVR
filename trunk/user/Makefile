@@ -259,6 +259,7 @@ dir_$(CONFIG_FIRMWARE_INCLUDE_CLOUDFLARE)	                       += cloudflare
 dir_$(CONFIG_FIRMWARE_INCLUDE_EASYTIER)	                       += easytier
 dir_$(CONFIG_FIRMWARE_INCLUDE_BAFA)	                       += bafa
 dir_$(CONFIG_FIRMWARE_INCLUDE_VIRTUALHERE)	                       += virtualhere
+dir_$(CONFIG_FIRMWARE_INCLUDE_V2RAYA)	                       += v2raya
 ifdef CONFIG_MTD_UBI
 ifneq ($(STORAGE_ENABLED),y)
 dir_y											+= optware

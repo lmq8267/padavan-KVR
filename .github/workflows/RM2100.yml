@@ -292,7 +292,7 @@ jobs:
         ##包含 Minidlna UPnP 媒体服务器。约 1.6MB
         echo "CONFIG_FIRMWARE_INCLUDE_MINIDLNA=n" >> .config
 
-        ##包含 Firefly iTunes 媒体服务器。约 1.0MB
+        ##包含 Firefly iTunes 媒体服务器。约 1.0MB 已删除 请查看/trunk/user/httpd/common.h
         echo "CONFIG_FIRMWARE_INCLUDE_FIREFLY=n" >> .config
 
         ##为 Minidlna 和 Firefly 包含 ffmpeg 0.11.x（替代 0.6.x）。约 0.1MB
@@ -420,7 +420,7 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_MSD_LITE=y" >> .config #MSD_LITE工具
         
         
-        #echo "CONFIG_FIRMWARE_INCLUDE_FIREFLY=n" >> .config #FIREFLY
+        echo "CONFIG_FIRMWARE_INCLUDE_V2RAYA=n" >> .config #V2RAYA
         #echo "CONFIG_FIRMWARE_INCLUDE_NVPPROXY=n" >> .config #NVPPROXY 已删除 请查看/trunk/user/httpd/common.h
         ##科学上网## 已删除 请查看/trunk/user/httpd/common.h
         #echo "CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS=n" >> .config #SS plus+ 科学上网插件

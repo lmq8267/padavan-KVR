@@ -98,6 +98,7 @@
 #define RCN_RESTART_EASYTIER	"restart_easytier"
 #define RCN_RESTART_BAFA	"restart_bafa"
 #define RCN_RESTART_VIRTUALHERE	"restart_virtualhere"
+#define RCN_RESTART_V2RAYA	"restart_v2raya"
 #define RCN_RESTART_NATPIERCE	"restart_natpierce"
 #define RCN_RESTART_ALIST	"restart_alist"
 #define RCN_RESTART_CLOUDFLARE	"restart_cloudflare"

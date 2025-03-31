@@ -677,6 +677,22 @@ void restart_virtualhere(void){
 	start_virtualhere();
 }
 #endif
+#if defined(APP_V2RAYA)
+void stop_v2raya(void){
+	eval("/usr/bin/v2raya.sh","stop");
+}
+
+void start_v2raya(void){
+	int v2raya_enable = nvram_get_int("v2raya_enable");
+	if ( v2raya_enable == 1)
+		eval("/usr/bin/v2raya.sh","start");
+}
+
+void restart_v2raya(void){
+	stop_v2raya();
+	start_v2raya();
+}
+#endif
 #if defined(APP_ALIST)
 void stop_alist(void){
 	eval("/usr/bin/alist.sh","stop");
@@ -1124,6 +1140,9 @@ stop_services(int stopall)
 #endif
 #if defined(APP_VIRTUALHERE)
 	stop_virtualhere();
+#endif
+#if defined(APP_V2RAYA)
+	stop_v2raya();
 #endif
 #if defined(APP_VNTS)
 	stop_vnts();

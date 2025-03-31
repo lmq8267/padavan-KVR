@@ -389,7 +389,7 @@ function button_et_status() {
 	<option value="2" <% nvram_match_x("","easytier_log", "2","selected"); %>>信息</option>
 	<option value="3" <% nvram_match_x("","easytier_log", "3","selected"); %>>调试</option>
 	<option value="4" <% nvram_match_x("","easytier_log", "4","selected"); %>>跟踪</option>
-	<option value="4" <% nvram_match_x("","easytier_log", "5","selected"); %>>错误</option>
+	<option value="5" <% nvram_match_x("","easytier_log", "5","selected"); %>>错误</option>
 	</select>
 	</td>
 	</tr><td colspan="3"></td>
