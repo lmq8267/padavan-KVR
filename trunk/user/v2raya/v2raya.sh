@@ -264,12 +264,20 @@ update)
 	update_v2 &
 	;;
 reset)
-	logger -t "【V2RayA】" "正在重置密码，等待几秒后请重启插件生效"
-	logger -t "【V2RayA】" "若无效请手动执行 ${v2raya} -c ${v2raya_config} --reset-password"
-	echo "正在重置密码，等待几秒后请重启插件生效" >>/tmp/v2raya.log 
-	echo "${v2raya} -c ${v2raya_config} --reset-password" >>/tmp/v2raya.log 
-	set_env
-	${v2raya} -c ${v2raya_config} --reset-password >/tmp/v2raya_repo.log 2>&1 &
+	logger -t "【V2RayA】" "正在重置密码..."
+	echo "正在重置密码..." >>/tmp/v2raya.log 
+	stop_v2
+	Rst=$(${v2raya} -c ${v2raya_config} --reset-password)
+	Rst0=$(echo ${Rst} | grep -o 'Succeed')
+	echo "${Rst}" >/tmp/v2raya_repo.log
+	if [ "$Rst0" = "Succeed" ] ; then
+		echo "重置密码成功，重启插件后将生效"
+    		logger -t "【V2RayA】" "重置密码成功，重启插件后将生效"
+    	else
+    		echo "重置密码失败"
+		logger -t "【V2RayA】" "重置密码失败 ${Rst}"
+	fi
+	start_v2 &
 	;;
 config)
 	set_env

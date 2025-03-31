@@ -546,6 +546,7 @@ struct nvram_pair router_defaults[] = {
 	{ "w_easytier", "1" },
 	{ "w_bafa", "1" },
 	{ "w_virtualhere", "1" },
+	{ "w_v2raya", "1" },
 
 	{ "ip6_service", "" },
 	{ "ip6_ppe_on", "0" },

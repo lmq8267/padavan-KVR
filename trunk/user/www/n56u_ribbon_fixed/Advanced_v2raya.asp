@@ -395,7 +395,7 @@ function button_v2_kernel(){
 	</tr>
 	<tr>
 		<td colspan="5" style="border-top: 0 none; text-align: center; padding-top: 5px;">
-			<span style="color:#888;">🔄 点击上方按钮刷新查看</span>
+			<span style="color:#888;">🔄 点击上方按钮刷新查看,重置密码将会重启一次插件</span>
 		</td>
 	</tr>
 	</table>
