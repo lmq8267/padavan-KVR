@@ -422,8 +422,8 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_NETCAT=y" >> .config #nc工具
         echo "CONFIG_FIRMWARE_INCLUDE_MSD_LITE=y" >> .config #MSD_LITE工具
         
-	sed -i 's/EVM_RESTART_SMARTDNS/EVM_RESTART_V2RAYA/g' ./user/httpd/common.h
-        echo "CONFIG_FIRMWARE_INCLUDE_V2RAYA=n" >> .config 
+        sed -i 's/EVM_RESTART_SMARTDNS/EVM_RESTART_V2RAYA/g' ./user/httpd/common.h
+        echo "CONFIG_FIRMWARE_INCLUDE_V2RAYA=y" >> .config #v2raya 
         #echo "CONFIG_FIRMWARE_INCLUDE_NVPPROXY=n" >> .config #NVPPROXY 已删除 /trunk/user/httpd/common.h
         ##科学上网## 已删除 请查看/trunk/user/httpd/common.h
         #echo "CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS=n" >> .config #SS plus+ 科学上网插件
