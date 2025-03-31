@@ -85,8 +85,7 @@ typedef u_int8_t u8;
 //#define EVM_RESTART_NFSD			(1ULL << 38) //nfsd文件系统
 #define EVM_RESTART_EASYTIER			(1ULL << 38) // Easyier异地组网
 #define EVM_RESTART_DMS				(1ULL << 39) //Minidlna UPnP 媒体服务器
-#define EVM_RESTART_V2RAYA			(1ULL << 40) //V2RAYA
-//#define EVM_RESTART_ITUNES			(1ULL << 40) //Firefly iTunes 媒体服务器
+#define EVM_RESTART_ITUNES			(1ULL << 40) //Firefly iTunes 媒体服务器
 //#define EVM_RESTART_TRMD			(1ULL << 41) //#TRANSMISSION
 #define EVM_RESTART_CLOUDFLARE			(1ULL << 41)  //CF的ddns
 #define EVM_RESTART_ARIA			(1ULL << 42) //aria2c文件下载
@@ -119,6 +118,7 @@ typedef u_int8_t u8;
 #define EVM_RESTART_VNTS			(1ULL << 58) //vnt服务器
 #define EVM_RESTART_VNTCLI			(1ULL << 59) //vnt客户端
 //#define EVM_RESTART_NVPPROXY			(1ULL << 60) 
+//#define EVM_RESTART_V2RAYA			(1ULL << 60) //V2RAYA
 #define EVM_RESTART_NATPIERCE			(1ULL << 60) //皎月连
 #define EVM_RESTART_TAILSCALE			(1ULL << 61) //taislacle
 #define EVM_RESTART_REBOOT			(1ULL << 62) //重启

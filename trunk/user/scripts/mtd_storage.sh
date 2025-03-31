@@ -296,7 +296,9 @@ https://ghproxy.net/
 #**************替换背景图片******************
 #上传图片命名为wood.jpg到/etc/storage/bg/目录里即可，刷新浏览器缓存
 #**************替换背景图片*******************
-
+##挂载内存多少M，如果你觉得你tmp目录空间不够，可以去掉下方的#修改下方的50为你需要的大小，不可超出设备硬件内存大小##
+ #mount -t tmpfs -o remount,rw,size=50M tmpfs /tmp
+ 
 EOF
 		chmod 755 "$script_started"
 	fi

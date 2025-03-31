@@ -266,6 +266,7 @@ update)
 reset)
 	logger -t "【V2RayA】" "正在重置密码..."
 	echo "正在重置密码..." >>/tmp/v2raya.log 
+	set_env
 	Rst=$(${v2raya} -c ${v2raya_config} --reset-password)
 	Rst0=$(echo ${Rst} | grep -o 'Succeed')
 	echo "${Rst}" >/tmp/v2raya_repo.log
@@ -278,12 +279,15 @@ reset)
 	fi
 	;;
 config)
+	set_env
 	${v2raya} -c ${v2raya_config} --report config >/tmp/v2raya_repo.log 2>&1 &
 	;;
 connection)
+	set_env
 	${v2raya} -c ${v2raya_config} --report connection >/tmp/v2raya_repo.log 2>&1 &
 	;;
 kernel)
+	set_env
 	${v2raya} -c ${v2raya_config} --report kernel >/tmp/v2raya_repo.log 2>&1 &
 	;;
 *)
