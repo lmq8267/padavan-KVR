@@ -1724,7 +1724,7 @@ var w_cloudflare = '<% nvram_get_x("", "w_cloudflare"); %>';
 var w_easytier = '<% nvram_get_x("", "w_easytier"); %>';
 var w_bafa = '<% nvram_get_x("", "w_bafa"); %>';
 var w_virtualhere = '<% nvram_get_x("", "w_virtualhere"); %>';
-var w_virtualhere = '<% nvram_get_x("", "w_v2raya"); %>';
+var w_v2raya = '<% nvram_get_x("", "w_v2raya"); %>';
 
 if (w_ai==0){
 	menuL1_link[2] = "";

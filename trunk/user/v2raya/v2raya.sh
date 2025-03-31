@@ -183,8 +183,8 @@ start_v2() {
  	if [ ! -f "$v2raya" ] ; then
 		logger -t "【V2RayA】" "主程序${v2raya}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
-  		
-  		[ -z "$tag" ] && tag="v2.2.6.7"
+  		tag="$(echo $tag | tr -d 'v')"
+  		[ -z "$tag" ] && tag="2.2.6.7"
   		dowload_v2 $tag
   	fi
 	killall $binname >/dev/null 2>&1
@@ -199,7 +199,7 @@ start_v2() {
 	[ -z "$v2raya_transparent" ] || CMD="${CMD} --transparent-hook $v2raya_transparent"
 	[ -z "$v2raya_core_hook" ] || CMD="${CMD} --core-hook $v2raya_core_hook"
 	[ -z "$v2raya_plugin" ] || CMD="${CMD} --plugin-manager $v2raya_plugin"
-	[ "$v2raya_ipv6" != "auto" ] || CMD="${CMD} --ipv6-support $v2raya_ipv6"
+	[ "$v2raya_ipv6" = "auto" ] || CMD="${CMD} --ipv6-support $v2raya_ipv6"
 	[ -z "$v2raya_log" ] || CMD="${CMD} --log-level $v2raya_log"
 	[ -z "$v2raya_v2ray" ] || CMD="${CMD} -b $v2raya_v2ray"
 	[ -z "$v2raya_cmd" ] || CMD="${CMD} $v2raya_cmd"
@@ -215,16 +215,16 @@ start_v2() {
 		v2_keep
 		lan_ip=`nvram get lan_ipaddr`
 		if [ -z "$v2raya_address" ] ; then
-			nvram set v2raya_web="http://${lan_ip}:2017"
+			nvram set v2raya_web="${lan_ip}:2017"
 			logger -t "【V2RayA】" "WEB访问地址：http://${lan_ip}:2017"
 		else
 			v2ip=$(echo "$v2raya_address" | cut -d':' -f1)
 			v2port=$(echo "$v2raya_address" | cut -d':' -f2)
 			if [ "$v2ip" = "127.0.0.1" ] || [ "$v2ip" = "0.0.0.0" ] ; then
-    				nvram set v2raya_web="http://${lan_ip}:${v2port}"
+    				nvram set v2raya_web="${lan_ip}:${v2port}"
     				logger -t "【V2RayA】" "WEB访问地址：http://${lan_ip}:${v2port}"
 			else
-    				nvram set v2raya_web="http://${v2ip}:${v2port}"
+    				nvram set v2raya_web="${v2ip}:${v2port}"
     				logger -t "【V2RayA】" "WEB访问地址：http://${v2ip}:${v2port}"
 			fi
 		fi
@@ -264,19 +264,12 @@ update)
 	update_v2 &
 	;;
 reset)
-	logger -t "【V2RayA】" "正在重置密码..."
-	echo "正在重置密码..." >>/tmp/v2raya.log 
+	logger -t "【V2RayA】" "正在重置密码，等待几秒后请重启插件生效"
+	logger -t "【V2RayA】" "若无效请手动执行 ${v2raya} -c ${v2raya_config} --reset-password"
+	echo "正在重置密码，等待几秒后请重启插件生效" >>/tmp/v2raya.log 
+	echo "${v2raya} -c ${v2raya_config} --reset-password" >>/tmp/v2raya.log 
 	set_env
-	Rst=$(${v2raya} -c ${v2raya_config} --reset-password)
-	Rst0=$(echo ${Rst} | grep -o 'Succeed')
-	echo "${Rst}" >/tmp/v2raya_repo.log
-	if [ "$Rst0" = "Succeed" ] ; then
-		echo "重置密码成功，请重启插件后将生效"
-    		logger -t "【V2RayA】" "重置密码成功，请重启插件后将生效"
-    	else
-    		echo "重置密码失败"
-		logger -t "【V2RayA】" "重置密码失败 ${Rst}"
-	fi
+	${v2raya} -c ${v2raya_config} --reset-password >/tmp/v2raya_repo.log 2>&1 &
 	;;
 config)
 	set_env

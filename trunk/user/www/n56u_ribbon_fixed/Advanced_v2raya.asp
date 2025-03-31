@@ -48,7 +48,7 @@ function initial(){
 	fill_status(v2raya_status());
 	change_v2raya_enable(1);
 	if (!login_safe())
-        		textarea_scripts_enabled(0);
+        		$j('#btn_password').attr('disabled', 'disabled');
 
 }
 
@@ -133,7 +133,7 @@ function button_v2_password(){
 	if (!login_safe())
 		return false;
 	var $j = jQuery.noConflict();
-	$j('#button_password').attr('disabled', 'disabled');
+	$j('#btn_password').attr('disabled', 'disabled');
 	$j.post('/apply.cgi', {
 		'action_mode': ' v2rayaRESET ',
 		'next_host': 'Advanced_v2raya.asp#sta'
@@ -146,7 +146,7 @@ function button_v2_password(){
 
 function button_v2_config(){
 	var $j = jQuery.noConflict();
-	$j('#button_config').attr('disabled', 'disabled');
+	$j('#btn_config').attr('disabled', 'disabled');
 	$j.post('/apply.cgi', {
 		'action_mode': ' v2rayaConfig ',
 		'next_host': 'Advanced_v2raya.asp#sta'
@@ -159,7 +159,7 @@ function button_v2_config(){
 
 function button_v2_connection(){
 	var $j = jQuery.noConflict();
-	$j('#button_connection').attr('disabled', 'disabled');
+	$j('#btn_connection').attr('disabled', 'disabled');
 	$j.post('/apply.cgi', {
 		'action_mode': ' v2rayaConnection ',
 		'next_host': 'Advanced_v2raya.asp#sta'
@@ -172,7 +172,7 @@ function button_v2_connection(){
 
 function button_v2_kernel(){
 	var $j = jQuery.noConflict();
-	$j('#button_kernel').attr('disabled', 'disabled');
+	$j('#btn_kernel').attr('disabled', 'disabled');
 	$j.post('/apply.cgi', {
 		'action_mode': ' v2rayaKernel ',
 		'next_host': 'Advanced_v2raya.asp#sta'
