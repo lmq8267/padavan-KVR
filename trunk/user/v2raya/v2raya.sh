@@ -73,6 +73,43 @@ fi
 start_v2
 }
 
+dowload_core() {
+	curltest=`which curl`
+	logger -t "【V2RayA】" "开始获取v2fly/v2ray-core最新版本..."
+    	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
+      		coretag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --output-document=-  https://api.github.com/repos/v2fly/v2ray-core/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+	 	[ -z "$coretag" ] && coretag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/v2fly/v2ray-core/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+    	else
+      		coretag="$( curl -k --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/v2fly/v2ray-core/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+       	[ -z "$coretag" ] && coretag="$( curl -Lk --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/v2fly/v2ray-core/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+        fi
+	[ -z "$coretag" ] && logger -t "【V2RayA】" "无法获取v2fly/v2ray-core最新版本，使用v5.29.3" && coretag="v5.29.3"
+	coreurl="https://github.com/v2fly/v2ray-core/releases/download/${coretag}/v2ray-linux-mips32le.zip"
+	logger -t "【V2RayA】" "开始下载 ${coreurl} "
+	[ -z "$github_proxys" ] && logger -t "【V2RayA】" "加速镜像地址为空.."
+	for proxy in $github_proxys ; do
+ 	length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}${coreurl}" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
+ 	length=`expr $length + 512000`
+	length=`expr $length / 1048576`
+ 	core_size0="$(check_disk_size $v2raya_assetsdir)"
+ 	[ ! -z "$length" ] && logger -t "【V2RayA】" "程序大小 ${length}M， 程序路径可用空间 ${core_size0}M "
+        curl -Lko /tmp/v2ray-core.zip "${proxy}${coreurl}" || wget --no-check-certificate -O /tmp/v2ray-core.zip "${proxy}${coreurl}"
+	if [ "$?" = 0 ] ; then
+ 		unzip -o -j /tmp/v2ray-core.zip v2ray '*.dat' -d "$v2raya_assetsdir"
+		chmod +x "${v2raya_assetsdir}/v2ray"
+		if [[ "$($v2raya_assetsdir/v2ray -h 2>&1 | wc -l)" -gt 3 ]]  ; then
+			logger -t "【V2RayA】" "${v2raya_assetsdir}/v2ray下载成功"
+			break
+   			rm -rf /tmp/v2ray-core.zip
+       		else
+	   		logger -t "【V2RayA】" "v2ray-core下载不完整，请手动下载 ${proxy}${coreurl} 解压上传到路由器并设置v2ray路径"
+	  	fi
+	else
+		logger -t "【V2RayA】" "v2ray-core下载失败，请手动下载 ${proxy}${coreurl} 解压上传到路由器并设置v2ray路径"
+   	fi
+	done
+}
+
 get_tag() {
 	curltest=`which curl`
 	logger -t "【V2RayA】" "开始获取最新版本..."
@@ -113,7 +150,7 @@ dowload_v2() {
 	if [ "$?" = 0 ] ; then
 		chmod +x $v2raya
 		if [[ "$($v2raya -h 2>&1 | wc -l)" -gt 3 ]]  ; then
-			logger -t "【V2RayA】" "解压成功"
+			logger -t "【V2RayA】" "下载成功"
 			v2_ver=$($v2raya --version)
 			if [ -z "$v2_ver" ] ; then
 				nvram set v2raya_ver=""
@@ -186,6 +223,25 @@ start_v2() {
   		tag="$(echo $tag | tr -d 'v')"
   		[ -z "$tag" ] && tag="2.2.6.7"
   		dowload_v2 $tag
+  	fi
+   	if [ -z "$v2raya_v2ray" ] || [ ! -f "$v2raya_v2ray" ] ; then
+    		[ -f "$v2raya_assetsdir/v2ray" ] && chmod +x "$v2raya_assetsdir/v2ray"
+    		if [[ "$($v2raya_assetsdir/v2ray -h 2>&1 | wc -l)" -lt 3 ]] ; then
+			logger -t "【V2RayA】" "v2ray-core不存在，开始在线下载..."
+  			[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
+  			if [ ! -f "$v2raya_v2ray" ] ; then
+				logger -t "【V2RayA】" "由于v2ray-core不存在，现将v2ray路径改为$v2raya_assetsdir/v2ray"
+   				v2raya_v2ray="$v2raya_assetsdir/v2ray"
+				nvram set v2raya_v2ray="$v2raya_assetsdir/v2ray"
+      			fi
+  			dowload_core
+     		else
+       			if [ ! -f "$v2raya_v2ray" ] ; then
+				logger -t "【V2RayA】" "由于v2ray-core不存在，现将v2ray路径改为$v2raya_assetsdir/v2ray"
+   				v2raya_v2ray="$v2raya_assetsdir/v2ray"
+				nvram set v2raya_v2ray="$v2raya_assetsdir/v2ray"
+      			fi
+     		fi
   	fi
 	killall $binname >/dev/null 2>&1
 	killall -9 $binname >/dev/null 2>&1
