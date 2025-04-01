@@ -298,7 +298,7 @@ function button_v2_kernel(){
 	<textarea maxlength="1024" class="input" name="v2raya_confdir" id="v2raya_confdir" placeholder="/etc/storage/v2raya_config" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","v2raya_confdir"); %></textarea>
 	</tr><td colspan="3"></td>
 	<tr>
-	<th style="border: 0 none;" title="v2ray-core 资源目录，用于搜索和下载如 geoip.dat 等文件">资源目录</th>
+	<th style="border: 0 none;" title="v2ray-core 资源目录，用于搜索和下载如 geoip.dat 等文件和存放v2ray-core拓展规则库 .dat 等文件的目录">资源目录</th>
 	<td style="border: 0 none;">
 	<textarea maxlength="1024" class="input" name="v2raya_assetsdir" id="v2raya_assetsdir" placeholder="/etc/storage/v2raya_config" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","v2raya_assetsdir"); %></textarea>
 	</tr><td colspan="3"></td>
