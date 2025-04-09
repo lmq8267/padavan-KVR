@@ -866,7 +866,7 @@ void stop_wxsend(void){
 
 void start_wxsend(void){
 	int wxsend_enable = nvram_get_int("wxsend_enable");
-	if ( wxsend_enable == 1)
+	if ( wxsend_enable == 1 || wxsend_enable == 2)
 		eval("/usr/bin/wxsend.sh","start");
 }
 

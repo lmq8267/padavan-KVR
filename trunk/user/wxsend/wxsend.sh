@@ -278,14 +278,14 @@ http_type="$(curl -Lk -s "https://api.weixin.qq.com/cgi-bin/token?grant_type=cli
 access_token="$(echo $http_type | grep -o "\"access_token\":\"[^\,\"\}]*" | awk -F 'access_token":"' '{print $2}')"
 if [ ! -z "$access_token" ] ; then
 expires_in="$(echo $http_type | grep -o "\"expires_in\":[^\,\"\}]*" | awk -F 'expires_in":' '{print $2}')"
-logger -t "【微信推送】" "获取 Access token 成功，凭证有效时间，单位： $expires_in 秒"
+logger -t "【微信推送】" "自建微信获取 Access token 成功，凭证有效时间，单位： $expires_in 秒"
 echo -n "$access_token" > /tmp/wx_access_token
 else
 errcode="$(echo $http_type | grep -o "\"errcode\":[^\,\"\}]*" | awk -F ':' '{print $2}')"
 if [ ! -z "$errcode" ] ; then
 errmsg="$(echo $http_type | grep -o "\"errmsg\":\"[^\,\"\}]*" | awk -F 'errmsg":"' '{print $2}')"
-logger -t "【微信推送】" "获取 Access token 返回错误码: $errcode"
-logger -t "【微信推送】" "错误信息: $errmsg"
+logger -t "【微信推送】" "自建微信获取 Access token 返回错误码: $errcode"
+logger -t "【微信推送】" "自建微信错误信息: $errmsg"
 access_token=""
 echo -n "" > /tmp/wx_access_token
 fi
@@ -338,9 +338,9 @@ status=$(curl -Lk "${wxsend_webhook}" \
 }")
 
 if echo "$status" | grep -q '"ok"'; then
-  logger -t "【微信推送】" "推送成功"
+  logger -t "【微信推送】" "企业微信推送成功"
 else
-  logger -t "【微信推送】" "推送失败, 状态码：${status}"
+  logger -t "【微信推送】" "企业微信推送失败, 状态码：${status}"
 fi
 else
 logger -t "【微信推送】" "推送失败, 企业微信推送机器人webhook地址为空!"
@@ -381,9 +381,10 @@ for(i=1;i<=NF;++i) { \
 curl -Lk -s -H "Content-type: application/json;charset=UTF-8" -H "Accept: application/json" -H "Cache-Control: no-cache" -H "Pragma: no-cache" -X POST -d '{"touser":"'"$wxsend_touser"'","template_id":"'"$wxsend_template_id"'","data":{"title":{"value":"'" "'"},'"$content_value"'}}' "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=$access_token"
 
 else
-logger -t "【微信推送】" "获取 Access token 错误，请看看哪里问题？"
+logger -t "【微信推送】" "自建微信获取 Access token 错误，请看看哪里问题？"
 fi
 fi
+exit 0
 }
 
 
