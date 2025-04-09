@@ -2,7 +2,7 @@
 <!--Copyright by hiboy-->
 <html>
 <head>
-<title><#Web_Title#> - 自建微信推送</title>
+<title><#Web_Title#> - 微信推送</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
@@ -26,11 +26,6 @@
 var $j = jQuery.noConflict();
 <% wxsend_status(); %>
 <% login_state_hook(); %>
-$j(document).ready(function() {
-
-	init_itoggle('wxsend_enable',change_wxsend_enable);
-
-});
 
 </script>
 <script>
@@ -40,7 +35,7 @@ function initial(){
 	show_menu(5, 24, 0);
 	show_footer();
 	fill_status(wxsend_status());
-	change_wxsend_enable(1);
+	change_wxsend_enable();
 	if (!login_safe())
         		textarea_scripts_enabled(0);
 
@@ -75,17 +70,34 @@ function textarea_scripts_enabled(v){
     	inputCtrl(document.form['scripts.wxsend_script.sh'], v);
 }
 
-function change_wxsend_enable(mflag){
+function change_wxsend_enable(){
 	var m = document.form.wxsend_enable.value;
-	var is_wxsend_enable = (m == "1") ? "重启" : "清空以往接入设备名称";
+	var is_wxsend_enable = (m == "1" || m == "2") ? "重启" : "清空以往接入设备名称";
 	document.form.restartwxsend.value = is_wxsend_enable;
+	
+	if (m == "1") {
+		showhide_div("appid_tr", 1);
+		showhide_div("appsecret_tr", 1);
+		showhide_div("touser_tr", 1);
+		showhide_div("template_tr", 1);
+		
+    		showhide_div("webhook_tr", 0);   
+	} 
+	if (m == "2") {
+		showhide_div("appid_tr", 0);
+		showhide_div("appsecret_tr", 0);
+		showhide_div("touser_tr", 0);
+		showhide_div("template_tr", 0);
+		
+    		showhide_div("webhook_tr", 1);  
+	} 
 }
 function button_restartwxsend() {
     var m = document.form.wxsend_enable.value;
 
-    var actionMode = (m == "1") ? ' Restartwxsend ' : ' Delwxsend ';
+    var actionMode = (m == "1" || m == "2") ? ' Restartwxsend ' : ' Delwxsend ';
 
-    change_wxsend_enable(m); 
+    change_wxsend_enable(); 
 
     var $j = jQuery.noConflict(); 
     $j.post('/apply.cgi', {
@@ -146,15 +158,13 @@ function button_restartwxsend() {
 	<div class="row-fluid">
 	<div class="span12">
 	<div class="box well grad_colour_dark_blue">
-	<h2 class="box_head round_top">自建微信推送</h2>
+	<h2 class="box_head round_top">微信推送</h2>
 	<div class="round_bottom">
 	<div class="row-fluid">
 	<div id="tabMenu" class="submenuBlock"></div>
-	<div class="alert alert-info" style="margin: 10px;">欢迎使用 自建微信推送 - 这是一个使用自建微信测试号的接口权限推送微信消息的工具，可以发送路由日志消息到手机，也可部署 api 提供外部程序使用消息推送。使用前先进行<a href="https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="blank">(点这里)配置测试号</a>吧！
-	<div>项目地址：<a href="https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Template_Message_Interface.html" target="blank">发送模板消息接口文档</a></div>
-	<div>使用方法：①打开图文教程设置测试号信息【<a href="https://opt.cn2qq.com/opt-file/测试号配置.pdf" target="blank">https://opt.cn2qq.com/opt-file/测试号配置.pdf</a>】</div>
-	<div>②依次填写对应的测试号信息保存</div>
-	<div>③准备完成后，在下面【消息内容】填入字符测试一下吧！（每日调用上限：100000次）</div>
+	<div class="alert alert-info" style="margin: 10px;">欢迎使用 微信推送 - 这是一个使用微信官方的接口权限推送微信消息的工具，可以发送路由日志消息到手机，也可部署 api 提供外部程序使用消息推送。
+	<br><div>①自建微信推送：查看 <a href="https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Template_Message_Interface.html" target="blank">【发送模板消息接口文档】</a> ，打开图文教程设置测试号信息【<a href="https://opt.cn2qq.com/opt-file/测试号配置.pdf" target="blank">https://opt.cn2qq.com/opt-file/测试号配置.pdf</a>】（每日调用上限：100000次）</div>
+	<div>②企业微信推送：下载企业微信APP，查看<a href="https://open.work.weixin.qq.com/wwopen/helpguide/detail?t=register" target="blank">【创建&注册文档】</a> 无需认证，然后在群里新建机器人，<a href="https://work.weixin.qq.com/wework_admin/frame#/profile/wxPlugin" target="blank">打开【PC端管理平台】</a>，普通微信扫描二维码接收消息推送<a href="https://open.work.weixin.qq.com/help/wap/detail?docid=14797" target="blank">【接收微信插件消息】</a>（每分钟调用上限：20次）</div>
 	<span style="color:#FF0000;" class=""></span></div>
 
 	<table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
@@ -164,24 +174,20 @@ function button_restartwxsend() {
 	<tr id="wxsend_enable_tr" >
 	<th width="30%">启用微信推送</th>
 	<td>
-	<div class="main_itoggle">
-	<div id="wxsend_enable_on_of">
-	<input type="checkbox" id="wxsend_enable_fake" <% nvram_match_x("", "wxsend_enable", "1", "value=1 checked"); %><% nvram_match_x("", "wxsend_enable", "0", "value=0"); %>  />
-	</div>
-	</div>
-	<div style="position: absolute; margin-left: -10000px;">
-	<input type="radio" value="1" name="wxsend_enable" id="wxsend_enable_1" class="input" value="1" onClick="change_wxsend_enable(1);" <% nvram_match_x("", "wxsend_enable", "1", "checked"); %> /><#checkbox_Yes#>
-	<input type="radio" value="0" name="wxsend_enable" id="wxsend_enable_0" class="input" value="0" onClick="change_wxsend_enable(1);" <% nvram_match_x("", "wxsend_enable", "0", "checked"); %> /><#checkbox_No#>
-	</div>
+	<select name="wxsend_enable" class="input" onChange="change_wxsend_enable();" style="width: 185px;">
+	<option value="0" <% nvram_match_x("","wxsend_enable", "0","selected"); %>>【关闭】</option>
+	<option value="1" <% nvram_match_x("","wxsend_enable", "1","selected"); %>>【自建微信推送】</option>
+	<option value="2" <% nvram_match_x("","wxsend_enable", "2","selected"); %>>【企业微信推送】</option>
+	</select>
 	</td>
 	<td>
 	<input class="btn btn-success" style="width:150px" type="button" name="restartwxsend" value="清空以往接入设备名称" onclick="button_restartwxsend()" />
 	</td>
 	</tr>
 	<tr>
-	<th colspan="4" style="background-color: #756c78;" >测试号信息</th>
+	<th colspan="4" style="background-color: #756c78;" >账户信息</th>
 	</tr>
-	<tr>
+	<tr id="appid_tr" style="display:none;">
 	<th style="border-top: 0 none;">appID:</th>
 	<td style="border-top: 0 none;">
 	<div class="input-append">
@@ -192,7 +198,7 @@ function button_restartwxsend() {
 	&nbsp;<span style="color:#888;"><a href="https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login" target="_blank">测试号管理（申请）页面</a></span>
 	</td>
 	</tr>
-	<tr>
+	<tr id="appsecret_tr" style="display:none;">
 	<th style="border-top: 0 none;">appsecret:</th>
 	<td style="border-top: 0 none;">
 	<div class="input-append">
@@ -200,7 +206,7 @@ function button_restartwxsend() {
 	</div>
 	</td>
 	</tr>
-	<tr>
+	<tr id="touser_tr" style="display:none;">
 	<th style="border-top: 0 none;">微信号:</th>
 	<td style="border-top: 0 none;">
 	<div class="input-append">
@@ -208,11 +214,19 @@ function button_restartwxsend() {
 	</div>
 	</td>
 	</tr>
-	<tr>
+	<tr id="template_tr" style="display:none;">
 	<th style="border-top: 0 none;">模板ID:</th>
 	<td style="border-top: 0 none;">
 	<div class="input-append">
 	<input maxlength="512" class="input" size="15" name="wxsend_template_id" id="wxsend_template_id" placeholder="13HLGhTDVTbG" style="width: 175px;" value="<% nvram_get_x("","wxsend_template_id"); %>" onKeyPress="return is_string(this,event);"/>
+	</div>
+	</td>
+	</tr>
+	<tr id="webhook_tr" style="display:none;">
+	<th style="border-top: 0 none;">webhook地址:</th>
+	<td style="border-top: 0 none;">
+	<div class="input-append">
+	<input maxlength="512" class="input" size="15" name="wxsend_webhook" id="wxsend_webhook" placeholder="https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=693axxx6-7aoc-4bc4-97a0-0ec2sifa5aaa" style="width: 175px;" value="<% nvram_get_x("","wxsend_webhook"); %>" onKeyPress="return is_string(this,event);"/>
 	</div>
 	</td>
 	</tr>
@@ -225,7 +239,7 @@ function button_restartwxsend() {
 	</td>
 	</tr>
 	<tr>
-	<th colspan="4" style="background-color: #756c78;" >在线发送（每日调用上限：100000次）</th>
+	<th colspan="4" style="background-color: #756c78;" >在线发送（测试消息）</th>
 	</tr>
 	<tr>
 	<th style="border: 0 none;">消息内容:</th>
@@ -331,4 +345,5 @@ function button_restartwxsend() {
 </div>
 </body>
 </html>
+
 

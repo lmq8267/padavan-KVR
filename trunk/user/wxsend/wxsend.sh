@@ -7,6 +7,7 @@ wxsend_appid=`nvram get wxsend_appid`
 wxsend_appsecret=`nvram get wxsend_appsecret`
 wxsend_touser=`nvram get wxsend_touser`
 wxsend_template_id=`nvram get wxsend_template_id`
+wxsend_webhook=`nvram get wxsend_webhook`
 
 wxsend_title=`nvram get wxsend_title`
 [ -z "$wxsend_title" ] && wxsend_title=`nvram get computer_name` && nvram set wxsend_title="$wxsend_title"
@@ -40,7 +41,7 @@ wx_keep() {
 }
 
 wxsend_start () {
-[ "$wxsend_enable" = "1" ] || exit 1
+[ "$wxsend_enable" = "0" ] && exit 1
 sed -Ei '/【微信推送】|^$/d' /tmp/script/_opt_script_check
 killall wxsend_script.sh >/dev/null 2>&1
 curltest=`which curl`
@@ -48,7 +49,12 @@ if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
 	logger -t "【微信推送】" "找不到 curl ，请安装 curl 程序"
 	exit 1
 fi
-[ -z "$wxsend_appid" ] || [ -z "$wxsend_appsecret" ] || [ -z "$wxsend_touser" ] || [ -z "$wxsend_template_id" ] && { logger -t "【微信推送】" "启动失败, 注意检查[测试号信息]里的参数是否完填写整！" && exit 1 ; }
+if [ "$wxsend_enable" = "1" ] ; then
+	[ -z "$wxsend_appid" ] || [ -z "$wxsend_appsecret" ] || [ -z "$wxsend_touser" ] || [ -z "$wxsend_template_id" ] && { logger -t "【微信推送】" "启动失败, 注意检查[自建微信推送信息]里的参数是否完填写整！" && exit 1 ; }
+fi
+if [ "$wxsend_enable" = "2" ] ; then
+	[ -z "$wxsend_webhook" ] && { logger -t "【微信推送】" "启动失败, 注意[企业微信推送机器人webhook]不能为空！" && exit 1 ; }
+fi
 logger -t "【微信推送】" "运行 /etc/storage/wxsend_script.sh"
 /etc/storage/wxsend_script.sh &
 sleep 3
@@ -114,7 +120,7 @@ user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
         cat $inter
     }
 
-while [ "$wxsend_enable" = "1" ];
+while [ "$wxsend_enable" = "1" ] || [ "$wxsend_enable" = "2" ] ;
 do
 wxsend_enable=`nvram get wxsend_enable`
 wxsend_enable=${wxsend_enable:-"0"}
@@ -288,9 +294,7 @@ fi
 }
 
 send_message () {
-get_token
-access_token="$(cat /tmp/wx_access_token)"
-if [ ! -z "$access_token" ] ; then
+
 new_time=$(date +%Y年%m月%d日\ %X)
 # 删除首个参数
 shift
@@ -309,7 +313,44 @@ content7=${7:-"$new_time"}
 [ "$content3" == "$content2" ] && content3=""
 [ "$content2" == "$content1" ] && content2=""
 [ "$content1" == "" ] && content1="$new_time"
+if [ "$wxsend_enable" = "2" ] ; then
+# 把 | 替换成换行，然后拼接成总内容
+content_value="$(
+  printf "%s\n%s\n%s\n%s\n%s\n%s\n%s\n" \
+    "${content1//|/$'\n'}" \
+    "${content2//|/$'\n'}" \
+    "${content3//|/$'\n'}" \
+    "${content4//|/$'\n'}" \
+    "${content5//|/$'\n'}" \
+    "${content6//|/$'\n'}" \
+    "${content7//|/$'\n'}"
+)"
+if [ ! -z "$wxsend_webhook" ] ; then
+# 调用企业微信机器人发送消息
+status=$(curl -Lk "${wxsend_webhook}" \
+  -H "Content-Type: application/json;charset=UTF-8" \
+  -H "Cache-Control: no-cache" -H "Pragma: no-cache" \
+  -d "{
+    \"msgtype\": \"text\",
+    \"text\": {
+        \"content\": \"${content_value}\"
+    }
+}")
 
+if echo "$status" | grep -q '"ok"'; then
+  logger -t "【微信推送】" "推送成功"
+else
+  logger -t "【微信推送】" "推送失败, 状态码：${status}"
+fi
+else
+logger -t "【微信推送】" "推送失败, 企业微信推送机器人webhook地址为空!"
+fi
+fi
+
+if [ "$wxsend_enable" = "1" ] ; then
+get_token
+access_token="$(cat /tmp/wx_access_token)"
+if [ ! -z "$access_token" ] ; then
 # 空格分割消息：最多 7 段字符
 content_value="$(echo "$content1
 $content2
@@ -342,6 +383,7 @@ curl -Lk -s -H "Content-type: application/json;charset=UTF-8" -H "Accept: applic
 else
 logger -t "【微信推送】" "获取 Access token 错误，请看看哪里问题？"
 fi
+fi
 }
 
 
@@ -349,20 +391,38 @@ wxsend_title="$wxsend_title"
 wxsend_content="$(nvram get wxsend_content)"
 # 在线发送wxsend推送
 if [ ! -z "$wxsend_content" ] ; then
-if [ ! -z "$wxsend_appid" ] && [ ! -z "$wxsend_appsecret" ] && [ ! -z "$wxsend_touser" ] && [ ! -z "$wxsend_template_id" ] ; then
-	curltest=`which curl`
-	if [ -z "$curltest" ] ; then
-		logger -t "【微信推送】" "找不到 curl ，请安装 curl 程序"
-		nvram set wxsend_content=""
-		exit 1 
+   if [ "$wxsend_enable" = "1" ] ; then
+	if [ ! -z "$wxsend_appid" ] && [ ! -z "$wxsend_appsecret" ] && [ ! -z "$wxsend_touser" ] && [ ! -z "$wxsend_template_id" ] ; then
+		curltest=`which curl`
+		if [ -z "$curltest" ] ; then
+			logger -t "【微信推送】" "找不到 curl ，请安装 curl 程序"
+			nvram set wxsend_content=""
+			exit 1 
+		else
+			send_message "$wxsend_title" "【""$wxsend_title""】" "$wxsend_content"
+			logger -t "【微信推送】" "消息内容: $wxsend_content"
+			nvram set wxsend_content=""
+		fi
 	else
-		send_message "$wxsend_title" "【""$wxsend_title""】" "$wxsend_content"
-		logger -t "【微信推送】" "消息内容: $wxsend_content"
-		nvram set wxsend_content=""
+		logger -t "【微信推送】" "测试发送失败, 注意检查自建微信推送参数是否填写完整!!!"
 	fi
-else
-logger -t "【微信推送】" "测试发送失败, 注意检查[测试号信息]是否填写完整!!!"
-fi
+   fi
+   if [ "$wxsend_enable" = "2" ] ; then
+	if [ ! -z "$wxsend_webhook" ] ; then
+		curltest=`which curl`
+		if [ -z "$curltest" ] ; then
+			logger -t "【微信推送】" "找不到 curl ，请安装 curl 程序"
+			nvram set wxsend_content=""
+			exit 1 
+		else
+			send_message "$wxsend_title" "【""$wxsend_title""】" "$wxsend_content"
+			logger -t "【微信推送】" "消息内容: $wxsend_content"
+			nvram set wxsend_content=""
+		fi
+	else
+		logger -t "【微信推送】" "测试发送失败, 企业微信推送机器人webhook地址不能为空!!!"
+	fi
+   fi
 fi
 
 case $1 in
@@ -385,8 +445,7 @@ del_hostname)
 	echo "接入设备名称" > /etc/storage/wxsend_hostname.txt
 	;;
 *)
-	wxsend_close
-	wxsend_start
+	echo "check"
 	;;
 esac
 
