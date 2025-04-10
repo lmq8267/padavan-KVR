@@ -96,12 +96,12 @@ logger -t "自动启动" "正在启动VNT服务端"
 /usr/bin/vnts.sh start &
 fi
 
-if [ $(nvram get vntcli_enable) = 1 ] ; then
+if [ $(nvram get vntcli_enable) = 1 ] || [ $(nvram get vntcli_enable) = 2 ]  ; then
 logger -t "自动启动" "正在启动VNT客户端"
 /usr/bin/vnt.sh start &
 fi
 
-if [ $(nvram get easytier_enable) = 1 ] || [ $(nvram get easytier_web_enable) = 1 ] ; then
+if [ $(nvram get easytier_enable) = 1 ] || [ $(nvram get easytier_enable) = 2 ] || [ $(nvram get easytier_web_enable) = 1 ] ; then
 logger -t "自动启动" "正在启动EasyTier"
 /usr/bin/easytier.sh start &
 fi
@@ -181,7 +181,7 @@ logger -t "自动启动" "正在启动皎月连"
 /usr/bin/natpierce.sh start &
 fi
 
-if [ $(nvram get tailscale_enable) = 1 ] ; then
+if [ $(nvram get tailscale_enable) = 1 ] || [ $(nvram get tailscale_enable) = 2 ] ; then
 logger -t "自动启动" "正在启动tailscale"
 /usr/bin/tailscale.sh start &
 fi
