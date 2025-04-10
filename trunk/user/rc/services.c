@@ -588,7 +588,7 @@ void stop_tailscale(void){
 
 void start_tailscale(void){
 	int tailscale_enable = nvram_get_int("tailscale_enable");
-	if ( tailscale_enable == 1)
+	if ( tailscale_enable == 1 || tailscale_enable == 2)
 		eval("/usr/bin/tailscale.sh","start");
 }
 
@@ -605,7 +605,7 @@ void stop_vntcli(void){
 
 void start_vntcli(void){
 	int vntcli_enable = nvram_get_int("vntcli_enable");
-	if ( vntcli_enable == 1)
+	if ( vntcli_enable == 1 || vntcli_enable == 2)
 		eval("/usr/bin/vnt.sh","start");
 }
 
