@@ -87,9 +87,11 @@ lucky_dl() {
 	new_tag="$(echo $tag | tr -d 'v' | tr -d ' ')"
  	if [ "$lucky_daji" = "1" ] ; then
  		lk_url="https://6.66666.host:66/release/${tag}/${new_tag}_万吉/lucky_${new_tag}_Linux_mipsle_softfloat_wanji.tar.gz"
+   		lk_url1="http://release.ilucky.net:66/release/${tag}/${new_tag}_wanji/lucky_${new_tag}_Linux_mipsle_softfloat_wanji.tar.gz"
    		lk_url2="https://6.666666.host:66/release/${tag}/${new_tag}_万吉/lucky_${new_tag}_Linux_mipsle_softfloat_wanji.tar.gz"
    	else
     		lk_url="https://6.66666.host:66/release/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
+      		lk_url1="http://release.ilucky.net:66/release/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
       		lk_url2="https://6.666666.host:66/release/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
   	fi
 	logg "开始下载 ${lk_url}"
@@ -101,7 +103,7 @@ lucky_dl() {
 	length=`expr $length / 1048576`
  	lucky_size0="$(check_disk_size $bin_path)"
  	[ ! -z "$length" ] && logg "程序大小 ${length}M， 程序路径可用空间 ${lucky_size0}M "
-        curl -Lko "/tmp/lucky.tar.gz" "${lk_url}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url}" || curl -Lko "/tmp/lucky.tar.gz" "${lk_url2}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url2}" || curl -Lko "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
+        curl -Lko "/tmp/lucky.tar.gz" "${lk_url}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url}" || curl -Lko "/tmp/lucky.tar.gz" "${lk_url1}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url1}" || curl -Lko "/tmp/lucky.tar.gz" "${lk_url2}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url2}" || curl -Lko "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
 	if [ "$?" = 0 ] ; then
 		tar -xzf /tmp/lucky.tar.gz -C /tmp/var
 		
