@@ -864,7 +864,7 @@ struct nvram_pair router_defaults[] = {
 	{ "easytier_web_protocol", "" },
 	{ "easytier_web_api", "11211" },
 	{ "easytier_web_log", "2" },
-	{ "easytier_web_html", "" },
+	{ "easytier_html_port", "11210" },
 	{ "easytier_web_bin", "/tmp/var/easytier-web" },
 #endif
 

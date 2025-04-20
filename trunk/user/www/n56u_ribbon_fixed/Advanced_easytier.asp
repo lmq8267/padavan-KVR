@@ -265,6 +265,15 @@ function button_et_status() {
 	});
 }
 
+function button_etweb(){
+	var port = document.form.easytier_html_port.value;
+	if (port == '')
+	var port = '11210';
+	var porturl =window.location.protocol + '//' + window.location.hostname + ":" + port;
+	//alert(porturl);
+	window.open(porturl,'easytier-web');
+}
+
 </script>
 </head>
 
@@ -421,8 +430,7 @@ function button_et_status() {
 	<div id="wnd_et_web" style="display:none">
 	<table width="100%" cellpadding="4" cellspacing="0" class="table">
 <div class="alert alert-info" style="margin: 10px;">
-	自建WEB服务器，需要自行下载easytier-web程序和静态html文件上传并指定路径，也会自动在线下载。<br>
-<br><div>WEB控制台:【<a href="<% nvram_get_x("", "easytier_api"); %>" target="_blank"><% nvram_get_x("", "easytier_api"); %></a>】 </div>
+	自建WEB服务器，需要自行下载easytier-web-embed程序并更名为easytier-web上传并指定路径，也会自动在线下载。<br>
 	</div>
 	<table id="web_table" width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
 	<tr>
@@ -474,6 +482,13 @@ function button_et_status() {
 	<td style="border-top: 0 none;">
 	<input name="easytier_web_api" type="text" class="input" id="easytier_web_api" placeholder="11211" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","easytier_web_api"); %>" size="32" maxlength="55" />
 	</td>
+	</tr><td colspan="3"></td>
+	<tr>
+	<th width="30%" style="border-top: 0 none;" title="-l  web 前端使用的端口">WEB端口</th>
+	<td style="border-top: 0 none;">
+	<input name="easytier_html_port" type="text" class="input" id="easytier_html_port" placeholder="11210" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","easytier_html_port"); %>" size="32" maxlength="55" />
+	&nbsp;<input class="btn btn-success" style="" type="button" value="打开WEB控制台" onclick="button_etweb()" />
+	</td>
 	</tr><td colspan="3"></td>	
 	<tr> 
 	<th width="30%" style="border-top: 0 none;" title="--console-log-level  控制台日志级别">日志等级</th>
@@ -489,11 +504,11 @@ function button_et_status() {
 	</td>
 	</tr><td colspan="3"></td>
 	<tr>
-	<th style="border: 0 none;">html路径</th>
+	<!-- <th style="border: 0 none;">html路径</th>
 	<td style="border: 0 none;">
 	<textarea maxlength="1024" class="input" name="easytier_web_html" id="easytier_web_html" placeholder="/etc/storage/easytier/web.html" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","easytier_web_html"); %></textarea>
 	</div><br><span style="color:#888;">自定义前端html的存放路径，填写完整的路径和文件名称</span>
-	</tr><td colspan="3"></td>
+	</tr><td colspan="3"></td> -->
 	<tr>
 	<th style="border: 0 none;">程序路径</th>
 	<td style="border: 0 none;">

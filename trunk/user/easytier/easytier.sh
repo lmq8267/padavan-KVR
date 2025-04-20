@@ -12,7 +12,7 @@ et_web_port="$(nvram get easytier_web_port)"
 et_web_protocol="$(nvram get easytier_web_protocol)"
 et_web_api="$(nvram get easytier_web_api)"
 et_web_log="$(nvram get easytier_web_log)"
-et_web_html="$(nvram get easytier_web_html)"
+et_html_port="$(nvram get easytier_html_port)"
 et_web_bin="$(nvram get easytier_web_bin)"
 [ -z "$et_web_port" ] && et_web_port=22020
 [ -z "$et_web_api" ] && et_web_port=11211
@@ -200,7 +200,12 @@ web_keep() {
   	[ -z "\$(iptables -L -n -v | grep '$et_web_api')" ] && logger -t "进程守护" "EasyTier_web 防火墙规则失效" && eval "$scriptfilepath start &" && sed -Ei '/【EasyTier_web】|^$/d' /tmp/script/_opt_script_check #【EasyTier_web】
  	[ -s /tmp/easytier_web.log ] && [ "\$(stat -c %s /tmp/easytier_web.log)" -gt 4194304 ] && echo "" > /tmp/easytier_web.log & #【EasyTier_web】
 	OSC
-
+	
+	if [ ! -z "$et_html_port" ] ; then
+	cat >> "/tmp/script/_opt_script_check" <<-OSC
+ 	[ -z "\$(iptables -L -n -v | grep '$et_html_port')" ] && logger -t "进程守护" "EasyTier_web 防火墙规则失效" && eval "$scriptfilepath start &" && sed -Ei '/【EasyTier_web】|^$/d' /tmp/script/_opt_script_check #【EasyTier_web】
+	OSC
+	fi
 	fi
 
 }
@@ -299,20 +304,7 @@ start_web() {
 		et_core=/tmp/var/easytier-web
   		nvram set easytier_web_bin=$et_web_bin
     	fi
-     	mkdir -p /tmp/file
-  	if [ -f "$et_web_html" ] ; then
-  		cp -rf "$et_web_html" /tmp/file/et.html
-  		lan_ip=`nvram get lan_ipaddr`
-  		nvram set easytier_api="http://${lan_ip}/tmp/et.html"
-    		logg "Web控制台：http://${lan_ip}/tmp/et.html"
-      	else
-       		curl -Lko /tmp/file/et.html https://easytier.cn/web || curl -Lko /tmp/file/et.html https://easytier.cn/web/index.html
-	 	if [ "$?" = 0 ] ; then
-	 		lan_ip=`nvram get lan_ipaddr`
-  			nvram set easytier_api="http://${lan_ip}/tmp/et.html"
-    			logg "Web控制台：http://${lan_ip}/tmp/et.html"
-       	fi
-  	fi
+     	
     	if [ -f "$et_web_bin" ] ; then
 		[ ! -x "$et_web_bin" ] && chmod +x $et_web_bin
   		[[ "$($et_web_bin -h 2>&1 | wc -l)" -lt 2 ]] && logg "程序${et_web_bin}不完整！" && rm -rf $et_web_bin
@@ -333,6 +325,11 @@ start_web() {
 	[ -z "$et_web_port" ] || webCMD="${webCMD} -c $et_web_port" 
 	[ -z "$et_web_protocol" ] || webCMD="${webCMD} -p $et_web_protocol" 
 	[ -z "$et_web_api" ] || webCMD="${webCMD} -a $et_web_api" 
+	if [ -z "$et_html_port" ] ; then
+		webCMD="${webCMD} --no-web" 
+	else
+		webCMD="${webCMD} -l $et_html_port" 
+	fi
   	[ "$et_web_log" = "1" ] && webCMD="${webCMD} --console-log-level warn"
 	[ "$et_web_log" = "2" ] && webCMD="${webCMD} --console-log-level info"
 	[ "$et_web_log" = "3" ] && webCMD="${webCMD} --console-log-level debug"
@@ -358,6 +355,10 @@ start_web() {
 		ip6tables -I INPUT -p tcp --dport "$et_web_api" -j ACCEPT
 		iptables -I INPUT -p udp --dport "$et_web_api" -j ACCEPT
 		ip6tables -I INPUT -p udp --dport "$et_web_api" -j ACCEPT
+		if [ ! -z "$et_html_port" ] ; then
+			iptables -I INPUT -p tcp --dport "$et_html_port" -j ACCEPT 
+			ip6tables -I INPUT -p tcp --dport "$et_html_port" -j ACCEPT
+		fi
 	else
 		logg "运行失败, 注意检查${et_web_bin}是否下载完整,10 秒后自动尝试重新启动"
   		sleep 10
@@ -406,6 +407,10 @@ stop_et() {
 	ip6tables -D INPUT -p tcp --dport "$et_web_api" -j ACCEPT >/dev/null 2>&1
 	iptables -D INPUT -p udp --dport "$et_web_api" -j ACCEPT >/dev/null 2>&1
 	ip6tables -D INPUT -p udp --dport "$et_web_api" -j ACCEPT >/dev/null 2>&1
+	if [ ! -z "$et_html_port" ] ; then
+		iptables -D INPUT -p tcp --dport "$et_html_port" -j ACCEPT >/dev/null 2>&1
+		ip6tables -D INPUT -p tcp --dport "$et_html_port" -j ACCEPT >/dev/null 2>&1
+	fi
 	[ -z "`pidof easytier-core`" ] && [ -z "`pidof easytier-web`" ] && logg "进程已关闭!"
 	if [ ! -z "$scriptname" ] ; then
 		eval $(ps -w | grep "$scriptname" | grep -v $$ | grep -v grep | awk '{print "kill "$1";";}')
