@@ -85,12 +85,14 @@ done
 lucky_dl() {
 	tag="$1"
 	new_tag="$(echo $tag | tr -d 'v' | tr -d ' ')"
+	#这里获取你的链接，自定义下载链接在开机启动脚本设置 nvram set lucky_url="你的下载链接"
+	lk_url=`nvram get lucky_url`
  	if [ "$lucky_daji" = "1" ] ; then
- 		lk_url="https://6.66666.host:66/release/${tag}/${new_tag}_万吉/lucky_${new_tag}_Linux_mipsle_softfloat_wanji.tar.gz"
+ 		[ -z "$lk_url" ] && lk_url="https://6.66666.host:66/release/${tag}/${new_tag}_万吉/lucky_${new_tag}_Linux_mipsle_softfloat_wanji.tar.gz"
    		lk_url1="http://release.ilucky.net:66/release/${tag}/${new_tag}_wanji/lucky_${new_tag}_Linux_mipsle_softfloat_wanji.tar.gz"
    		lk_url2="https://6.666666.host:66/release/${tag}/${new_tag}_万吉/lucky_${new_tag}_Linux_mipsle_softfloat_wanji.tar.gz"
    	else
-    		lk_url="https://6.66666.host:66/release/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
+    		[ -z "$lk_url" ] && lk_url="https://6.66666.host:66/release/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
       		lk_url1="http://release.ilucky.net:66/release/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
       		lk_url2="https://6.666666.host:66/release/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
   	fi
