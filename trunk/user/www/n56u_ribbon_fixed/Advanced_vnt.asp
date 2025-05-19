@@ -888,7 +888,7 @@ function button_vntcli_status() {
 	服务器地址
 	</td>
 	<td style="color: white; width: 85%; text-align: left;">
-	【-s】填写域名或IP地址，相同的服务器，相同token的设备才会组成一个局域网，协议支持使用tcp://和ws://和wss://和txt://,不填协议默认为udp://<br>如果使用txt记录，需要选择协议的话 需要提前将协议前缀连同IP和端口一并记录到txt记录值里
+	【-s】填写域名或IP地址，相同的服务器，相同token的设备才会组成一个局域网，协议支持使用tcp://和ws://和wss://和txt://,不填协议默认为udp://<br>使用txt记录，只需要将 IP:端口 记录到域名的txt记录即可
 	</td>
 	</tr>
 	<tr style="border-bottom: 1px solid #ccc;">
