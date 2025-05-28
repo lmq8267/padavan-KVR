@@ -435,7 +435,7 @@ function Internetfalse(){
 	<div id="tabMenu" class="submenuBlock"></div>
 	<div id="wnd_lucky_cfg">
 	<div class="alert alert-info" style="margin: 10px;">
-	lucky是一款软硬路由公网神器,集成了多种工具，ipv6/ipv4 端口转发,反向代理,DDNS,WOL,ipv4 stun内网穿透,cron,acme,阿里云盘,ftp,webdav,filebrowser<br>
+	lucky是一款软硬路由公网神器,集成了多种工具，ipv6/ipv4 端口转发,反向代理,DDNS,WOL,ipv4 stun内网穿透,cron,acme,阿里云盘,ftp,webdav,filebrowser<br>官网：<a href="https://lucky666.cn" target="blank">https://lucky666.cn</a><br><br>由于Padavan固件防火墙容易初始化，若lucky里设置自动放行防火墙失效建议手动放行。
 	<br><div>当前版本:【<span style="color: #FFFF00;"><% nvram_get_x("", "lucky_ver"); %></span>】&nbsp;&nbsp;最新版本:【<span style="color: #FD0187;"><% nvram_get_x("", "lucky_ver_n"); %></span>】 </div>
 	</div>
 	<table width="100%" cellpadding="4" cellspacing="0" class="table">
@@ -492,6 +492,14 @@ function Internetfalse(){
 	<div class="input-append">
 	<input name="lucky_tag" type="text" class="input" id="lucky_tag" placeholder="<% nvram_get_x("","lucky_ver_n"); %>" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","lucky_tag"); %>" size="32" maxlength="128" />
 	</div><br><span style="color:#888;">用于在线下载时指定lucky版本，防止不同版本配置文件不兼容。</span>
+	</td>
+	</tr><td colspan="4"></td>
+	<tr>
+	<th width="30%" style="border-top: 0 none;">额外参数</th>
+	<td style="border-top: 0 none;" colspan="3">
+	<div class="input-append">
+	<input name="lucky_extra" type="text" class="input" id="lucky_extra" placeholder="-initFirewall" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","lucky_extra"); %>" size="32" maxlength="128" />
+	</div><br><span style="color:#888;">默认启动参数【lucky -cd 配置文件目录】<br>在上述基础上增加的启动参数，如 -initFirewall</span>
 	</td>
 	</tr><td colspan="4"></td>
 	<tr>
@@ -569,3 +577,4 @@ function Internetfalse(){
 </body>
 
 </html>
+

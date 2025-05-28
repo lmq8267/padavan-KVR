@@ -7,6 +7,7 @@ lucky_daji=`nvram get lucky_daji`
 lucky_cmd=`nvram get lucky_cmd`
 PROG=`nvram get lucky_bin`
 lucky_tag=`nvram get lucky_tag`
+lucky_extra=`nvram get lucky_extra`
 [ -z "$lucky_cmd" ] && lucky_cmd="/etc/storage/lucky"
 [ -z "$lucky_enable" ] && lucky_enable=0 && nvram set lucky_enable=0
 github_proxys="$(nvram get github_proxy)"
@@ -175,7 +176,7 @@ lucky_start () {
   if [ ! -f "$PROG" ] ; then
      logg "未找到程序$PROG ，开始在线下载..."
      if [ -z "$lucky_tag" ] ; then
-     	[ -z "$tag" ] && tag="v2.15.7" && logg "未获取到最新版本，暂用$tag"
+     	[ -z "$tag" ] && tag="v2.17.3" && logg "未获取到最新版本，暂用$tag"
 	lucky_dl $tag
      else
         logg "下载指定版本 $lucky_tag "
@@ -189,7 +190,7 @@ if [ -z "$lk_ver" ] ; then
 else
 	nvram set lucky_ver=$lk_ver
 fi
-cmd="${PROG} -cd ${lucky_cmd}"
+cmd="${PROG} -cd ${lucky_cmd} ${lucky_extra}"
 logg "运行${cmd}"
 eval "$cmd >/tmp/lucky.log 2>&1" &
 sleep 6

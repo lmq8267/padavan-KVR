@@ -847,6 +847,7 @@ struct nvram_pair router_defaults[] = {
 	{ "lucky_cmd", "" },
 	{ "lucky_bin", "" },
 	{ "lucky_tag", "" },
+	{ "lucky_extra", "" },
 	{ "lucky_daji", "0" },
 #endif
 
