@@ -9,6 +9,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include <netinet/in.h>
 #include <netinet/if_ether.h>
 #include <linux/if_packet.h>
@@ -545,6 +546,12 @@ nmap_receive_arp(void)
 	NET_CLIENT *item;
 	ARP_HEADER *arp_ptr;
 
+	// 设置 arp_sockfd 的接收超时为 30 秒，避免阻塞过久
+    	struct timeval tv;
+    	tv.tv_sec = 30;       // 秒
+    	tv.tv_usec = 0;       // 微秒
+    	setsockopt(arp_sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
+    	
 	arp_count = 0;
 	need_update_file = 0;
 
@@ -554,8 +561,17 @@ nmap_receive_arp(void)
 		nmap_changed = 0;
 		
 		recvsize = recvfrom(arp_sockfd, buffer, sizeof(buffer), 0, NULL, NULL);
-		if (recvsize < (int)(sizeof(ARP_HEADER)))
-			break;
+		// 如果收到的数据小于ARP包头大小，可能超时或错误，跳出循环
+        	if (recvsize < (int)(sizeof(ARP_HEADER)))
+        	{
+            		// 也可以判断errno是否为超时错误(EAGAIN或EWOULDBLOCK)
+            		if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                		// 超时，退出循环，继续后续处理
+                		break;
+            		}
+            		// 其他错误也跳出循环
+            		break;
+        	}
 		
 		/* prevent arp storm deadlock */
 		arp_count++;
