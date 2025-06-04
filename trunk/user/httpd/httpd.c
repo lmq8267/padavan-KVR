@@ -681,7 +681,7 @@ auth_check( const char *authorization, const char *conn_ip, int do_wxsend )
                  	"用户IP:【%s】 用户名:【%s】 密码:【%s】 登录管理界面验证失败！", 
                  	conn_ip, username ? username : "未知", password ? password : "未知");
                  	logmessage("httpd", "%s", log_message);
-                 	if ((nvram_get_int("wxsend_login") == 2 || nvram_get_int("wxsend_login") == 3) && nvram_get_int("wxsend_enable") == 1) {
+                 	if ((nvram_get_int("wxsend_login") == 2 || nvram_get_int("wxsend_login") == 3) && (nvram_get_int("wxsend_enable") == 1 || nvram_get_int("wxsend_enable") == 2)) {
 				const char *wx_title = nvram_get("wxsend_title");
 				if (!wx_title || strlen(wx_title) == 0) {
 					wx_title = "WEB登录";
@@ -1090,7 +1090,7 @@ handle_request(FILE *conn_fp, const conn_item_t *item)
 			char log_message[512];
 			snprintf(log_message, sizeof(log_message), "用户IP:【%s】 成功登录管理界面！", ip_str);
 			logmessage("httpd", "%s", log_message);
-			if ((nvram_get_int("wxsend_login") == 1 || nvram_get_int("wxsend_login") == 3) && nvram_get_int("wxsend_enable") == 1) {
+			if ((nvram_get_int("wxsend_login") == 1 || nvram_get_int("wxsend_login") == 3) && (nvram_get_int("wxsend_enable") == 1 || nvram_get_int("wxsend_enable") == 2)) {
 				const char *wx_title = nvram_get("wxsend_title");
 				if (!wx_title || strlen(wx_title) == 0) {
 					wx_title = "WEB登录";

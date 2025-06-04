@@ -6,7 +6,7 @@ scriptfilepath=$(cd "$(dirname "$0")"; pwd)/$(basename $0)
 natpierce_port=`nvram get natpierce_port`
 natpierce=`nvram get natpierce_bin`
 jyl_url=`nvram get natpierce_url`
-[ -z "$jyl_url" ] && jyl_url="https://natpierce.oss-cn-beijing.aliyuncs.com/linux/natpierce-mipsel-v1.03.tar.gz"
+[ -z "$jyl_url" ] && jyl_url="https://natpierce.oss-cn-beijing.aliyuncs.com/linux/natpierce-mipsel-v1.06.tar.gz"
 jyl_conf="/etc/storage/jyl/config"
 [ -z "$natpierce" ] && natpierce="/tmp/jyl/natpierce"
 [ ! -d "/etc/storage/jyl" ] && mkdir -p /etc/storage/jyl

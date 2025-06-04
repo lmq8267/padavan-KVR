@@ -1467,6 +1467,7 @@
 	struct variable variables_EASYTIER[] = {
 			{"easytier_enable", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_config_server", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_hostname", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_bin", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_log", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_bin", "", NULL, EVM_RESTART_EASYTIER},

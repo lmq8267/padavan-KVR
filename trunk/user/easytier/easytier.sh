@@ -6,6 +6,7 @@ et_core="$(nvram get easytier_bin)"
 et_log="$(nvram get easytier_log)"
 et_ports="$(nvram get easytier_ports)"
 et_tunname="$(nvram get easytier_tunname)"
+et_hostname="$(nvram get easytier_hostname)"
 et_web_enable="$(nvram get easytier_web_enable)"
 et_web_db="$(nvram get easytier_web_db)"
 et_web_port="$(nvram get easytier_web_port)"
@@ -248,7 +249,7 @@ start_core() {
   	fi
  	if [ ! -f "$et_core" ] ; then
 		logg "主程序${et_core}不存在，开始在线下载..."
-  		[ -z "$tag" ] && tag="v2.2.4"
+  		[ -z "$tag" ] && tag="v2.3.0"
   		dowload_et $tag
   	fi
 	sed -Ei '/【EasyTier_core】|^$/d' /tmp/script/_opt_script_check
@@ -261,12 +262,19 @@ start_core() {
 			exit 1
 		fi
 		[ -f /etc/storage/et_machine_id ] || touch /etc/storage/et_machine_id
+		if [ ! -s /etc/storage/et_machine_id ]; then
+			cat /proc/sys/kernel/random/uuid > /etc/storage/et_machine_id
+			logg "/etc/storage/et_machine_id 为空，生成新的设备uuid "
+		fi
+		mkdir -p /var/lib/dbus
+		ln -sf /etc/storage/et_machine_id /var/lib/dbus/machine-id
 		[ -f "${bin_path}/et_machine_id" ] || ln -sf /etc/storage/et_machine_id ${bin_path}/et_machine_id
 		[ "$et_log" = "1" ] && CMD="--console-log-level warn"
 		[ "$et_log" = "2" ] && CMD="--console-log-level info"
 		[ "$et_log" = "3" ] && CMD="--console-log-level debug"
 		[ "$et_log" = "4" ] && CMD="--console-log-level trace"
 		[ "$et_log" = "5" ] && CMD="--console-log-level error"
+		[ ! -z "$et_hostname" ] && CMD="--hostname $et_hostname $CMD"
 		CMD="-w $config_server $CMD"
 	else
 		[ "$et_log" = "1" ] && CMD="--console-log-level warn"
@@ -312,7 +320,7 @@ start_web() {
  	if [ ! -f "$et_web_bin" ] ; then
   		get_tag
 		logg "程序${et_web_bin}不存在，开始在线下载..."
-  		[ -z "$tag" ] && tag="v2.2.4"
+  		[ -z "$tag" ] && tag="v2.3.0"
   		dowload_web $tag
   	fi
 	sed -Ei '/【EasyTier_web】|^$/d' /tmp/script/_opt_script_check

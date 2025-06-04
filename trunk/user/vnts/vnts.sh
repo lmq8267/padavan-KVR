@@ -126,7 +126,7 @@ vnts_keep() {
 	sed -Ei '/【VNT服务端】|^$/d' /tmp/script/_opt_script_check
 	cat >> "/tmp/script/_opt_script_check" <<-OSC
 	[ -z "\`pidof vnts\`" ] && logger -t "进程守护" "VNT服务端 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【VNT服务端】|^$/d' /tmp/script/_opt_script_check #【VNT服务端】
-	[ -z "\$(iptables -L -n -v | grep '$vnts_port')" ] && logger -t "进程守护" "vnt-cli 防火墙规则失效" && eval "$scriptfilepath start &" && sed -Ei '/【VNT服务端】|^$/d' /tmp/script/_opt_script_check #【VNT服务端】
+	[ -z "\$(iptables -L -n -v | grep '$vnts_port')" ] && logger -t "进程守护" "vnts 防火墙规则失效" && eval "$scriptfilepath start &" && sed -Ei '/【VNT服务端】|^$/d' /tmp/script/_opt_script_check #【VNT服务端】
 	OSC
 
 	fi

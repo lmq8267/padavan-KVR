@@ -210,7 +210,7 @@ function button_restartJYL(){
 	<th width="30%" style="border-top: 0 none;">程序链接</th>
 	<td style="border-top: 0 none;">
 	<div class="input-append">
-	<textarea maxlength="1024" class="input" name="natpierce_url" id="natpierce_url" placeholder="https://natpierce.oss-cn-beijing.aliyuncs.com/linux/natpierce-mipsel-v1.03.tar.gz" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","natpierce_url"); %></textarea>
+	<textarea maxlength="1024" class="input" name="natpierce_url" id="natpierce_url" placeholder="https://natpierce.oss-cn-beijing.aliyuncs.com/linux/natpierce-mipsel-v1.06.tar.gz" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","natpierce_url"); %></textarea>
 	</div><span style="color:#888;">下载地址：<a href="https://www.natpierce.cn/pc/downloads/index_new.html" target="blank">Linux二进制文件</a>&nbsp;&nbsp;选 mipsel 右键复制链接</span>
 	</td>
 	</tr>			

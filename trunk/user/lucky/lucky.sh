@@ -176,7 +176,7 @@ lucky_start () {
   if [ ! -f "$PROG" ] ; then
      logg "未找到程序$PROG ，开始在线下载..."
      if [ -z "$lucky_tag" ] ; then
-     	[ -z "$tag" ] && tag="v2.17.3" && logg "未获取到最新版本，暂用$tag"
+     	[ -z "$tag" ] && tag="v2.17.7" && logg "未获取到最新版本，暂用$tag"
 	lucky_dl $tag
      else
         logg "下载指定版本 $lucky_tag "

@@ -120,6 +120,8 @@ function change_easytier_enable(mflag){
 	var is_config_server = (m == "1") ? 1 : 0;
 	showhide_div("config_server_tr", is_config_server);
 	showhide_div("config_server_td", is_config_server);
+	showhide_div("hostname_tr", is_config_server);
+	showhide_div("hostname_td", is_config_server);
 
 }
 
@@ -383,6 +385,12 @@ function button_etweb(){
 	<input class="btn btn-success" style="width:150px" type="button" value="官方Web控制台" onclick="window.open('https://easytier.cn/web', '_blank')" />
 	</td>
 	</tr><tr id="config_server_td"><td colspan="3"></td></tr>
+	<tr id="hostname_tr">
+	<th width="30%" style="border-top: 0 none;" title="--hostname  指定主机名，用于在web控制台识别设备的名称">主机名</th>
+	<td style="border-top: 0 none;">
+	<input name="easytier_hostname" type="text" class="input" id="easytier_hostname" placeholder="<% nvram_get_x("","computer_name"); %>" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","easytier_hostname"); %>" size="32" maxlength="35" /></td>
+	</td>
+	</tr><tr id="hostname_td"><td colspan="3"></td></tr>
 	<tr>
 	<th style="border: 0 none;">程序路径</th>
 	<td style="border: 0 none;">

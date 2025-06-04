@@ -321,7 +321,7 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 		int wxsend_enable = atoi(buffer); 
 		fclose(fp);
 
-		if (wxsend_enable == 1) {
+		if (wxsend_enable == 1 || wxsend_enable == 2) {
 			char title[128] = "SSH登录";
 			fp = popen("nvram get wxsend_title", "r");
 			if (fp != NULL) {
@@ -365,7 +365,7 @@ auth_log(struct ssh *ssh, int authenticated, int partial,
 		int wxsend_enable = atoi(buffer); 
 		fclose(fp);
 
-		if (wxsend_enable == 1) {
+		if (wxsend_enable == 1 || wxsend_enable == 2) {
 			char title[128] = "SSH登录";
 			fp = popen("nvram get wxsend_title", "r");
 			if (fp != NULL) {
