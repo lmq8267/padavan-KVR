@@ -1480,6 +1480,7 @@
 			{"easytier_web_api", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_web_log", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_html_port", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_api_host", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_web_bin", "", NULL, EVM_RESTART_EASYTIER},
 			{"scripts.easytier.toml", "File", NULL, EVM_RESTART_EASYTIER},
 			{0,0,0,0}

@@ -868,6 +868,7 @@ struct nvram_pair router_defaults[] = {
 	{ "easytier_web_log", "2" },
 	{ "easytier_html_port", "11211" },
 	{ "easytier_web_bin", "/tmp/var/easytier-web" },
+	{ "easytier_api_host", "" },
 #endif
 
 #if defined(APP_BAFA)

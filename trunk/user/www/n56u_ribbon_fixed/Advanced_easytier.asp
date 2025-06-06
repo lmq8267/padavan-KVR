@@ -497,6 +497,12 @@ function button_etweb(){
 	<input name="easytier_html_port" type="text" class="input" id="easytier_html_port" placeholder="11210" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","easytier_html_port"); %>" size="32" maxlength="55" />
 	&nbsp;<input class="btn btn-success" style="" type="button" value="打开WEB控制台" onclick="button_etweb()" />
 	</td>
+	</tr><td colspan="3"></td>
+	<tr>
+	<th style="border: 0 none;" title="--api-host  API 服务器的 URL，用于 web 前端连接">API服务器URL</th>
+	<td style="border: 0 none;">
+	<textarea maxlength="1024" class="input" name="easytier_api_host" id="easytier_api_host" placeholder="https://config-server.easytier.cn" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","easytier_api_host"); %></textarea>
+	</div>
 	</tr><td colspan="3"></td>	
 	<tr> 
 	<th width="30%" style="border-top: 0 none;" title="--console-log-level  控制台日志级别">日志等级</th>
@@ -611,4 +617,5 @@ function button_etweb(){
 </body>
 
 </html>
+
 
