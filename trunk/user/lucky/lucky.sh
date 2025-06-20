@@ -91,11 +91,11 @@ lucky_dl() {
  	if [ "$lucky_daji" = "1" ] ; then
  		[ -z "$lk_url" ] && lk_url="https://6.66666.host:66/release/${tag}/${new_tag}_万吉/lucky_${new_tag}_Linux_mipsle_softfloat_wanji.tar.gz"
    		lk_url1="http://release.ilucky.net:66/release/${tag}/${new_tag}_wanji/lucky_${new_tag}_Linux_mipsle_softfloat_wanji.tar.gz"
-   		lk_url2="https://6.666666.host:66/release/${tag}/${new_tag}_万吉/lucky_${new_tag}_Linux_mipsle_softfloat_wanji.tar.gz"
+   		lk_url2="http://release.66666.host/${tag}/${new_tag}_万吉/lucky_${new_tag}_Linux_mipsle_softfloat_wanji.tar.gz"
    	else
     		[ -z "$lk_url" ] && lk_url="https://6.66666.host:66/release/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
       		lk_url1="http://release.ilucky.net:66/release/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
-      		lk_url2="https://6.666666.host:66/release/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
+      		lk_url2="http://release.66666.host/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
   	fi
 	logg "开始下载 ${lk_url}"
  	bin_path=$(dirname "$PROG")
@@ -176,7 +176,7 @@ lucky_start () {
   if [ ! -f "$PROG" ] ; then
      logg "未找到程序$PROG ，开始在线下载..."
      if [ -z "$lucky_tag" ] ; then
-     	[ -z "$tag" ] && tag="v2.17.7" && logg "未获取到最新版本，暂用$tag"
+     	[ -z "$tag" ] && tag="v2.17.8" && logg "未获取到最新版本，暂用$tag"
 	lucky_dl $tag
      else
         logg "下载指定版本 $lucky_tag "

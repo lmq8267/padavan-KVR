@@ -16,6 +16,7 @@ et_web_log="$(nvram get easytier_web_log)"
 et_html_port="$(nvram get easytier_html_port)"
 et_web_bin="$(nvram get easytier_web_bin)"
 et_api_host="$(nvram get easytier_api_host)"
+et_uuid="$(nvram get easytier_uuid)"
 [ -z "$et_web_port" ] && et_web_port=22020
 [ -z "$et_web_api" ] && et_web_port=11211
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
@@ -250,7 +251,7 @@ start_core() {
   	fi
  	if [ ! -f "$et_core" ] ; then
 		logg "主程序${et_core}不存在，开始在线下载..."
-  		[ -z "$tag" ] && tag="v2.3.1"
+  		[ -z "$tag" ] && tag="v2.3.2"
   		dowload_et $tag
   	fi
 	sed -Ei '/【EasyTier_core】|^$/d' /tmp/script/_opt_script_check
@@ -264,17 +265,26 @@ start_core() {
 		fi
 		[ -f /etc/storage/et_machine_id ] || touch /etc/storage/et_machine_id
 		if [ ! -s /etc/storage/et_machine_id ]; then
-			cat /proc/sys/kernel/random/uuid > /etc/storage/et_machine_id
-			logg "/etc/storage/et_machine_id 为空，生成新的设备uuid "
+			if [ -z "$et_uuid" ] ; then
+				cat /proc/sys/kernel/random/uuid > /etc/storage/et_machine_id
+				et_uuid="$(cat /etc/storage/et_machine_id | tr -d ' \n')"
+				nvram set easytier_uuid="$et_uuid"
+				nvram commit
+				logg "/etc/storage/et_machine_id 为空，生成新的设备uuid $et_uuid"
+			else
+				echo "$et_uuid" > /etc/storage/et_machine_id
+			fi
 		fi
-		mkdir -p /var/lib/dbus
-		ln -sf /etc/storage/et_machine_id /var/lib/dbus/machine-id
-		[ -f "${bin_path}/et_machine_id" ] || ln -sf /etc/storage/et_machine_id ${bin_path}/et_machine_id
+		core_uuid="$(cat /etc/storage/et_machine_id | tr -d ' \n')"
+		#mkdir -p /var/lib/dbus
+		#ln -sf /etc/storage/et_machine_id /var/lib/dbus/machine-id
+		#[ -f "${bin_path}/et_machine_id" ] || ln -sf /etc/storage/et_machine_id ${bin_path}/et_machine_id
 		[ "$et_log" = "1" ] && CMD="--console-log-level warn"
 		[ "$et_log" = "2" ] && CMD="--console-log-level info"
 		[ "$et_log" = "3" ] && CMD="--console-log-level debug"
 		[ "$et_log" = "4" ] && CMD="--console-log-level trace"
 		[ "$et_log" = "5" ] && CMD="--console-log-level error"
+		[ -z "$core_uuid" ] || CMD=" --machine-id $core_uuid $CMD"
 		[ ! -z "$et_hostname" ] && CMD="--hostname $et_hostname $CMD"
 		CMD="-w $config_server $CMD"
 	else
@@ -321,7 +331,7 @@ start_web() {
  	if [ ! -f "$et_web_bin" ] ; then
   		get_tag
 		logg "程序${et_web_bin}不存在，开始在线下载..."
-  		[ -z "$tag" ] && tag="v2.3.1"
+  		[ -z "$tag" ] && tag="v2.3.2"
   		dowload_web $tag
   	fi
 	sed -Ei '/【EasyTier_web】|^$/d' /tmp/script/_opt_script_check
