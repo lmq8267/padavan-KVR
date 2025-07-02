@@ -2376,7 +2376,7 @@ static int lucky_status_hook(int eid, webs_t wp, int argc, char **argv)
 #if defined (APP_ALIST)
 static int alist_status_hook(int eid, webs_t wp, int argc, char **argv)
 {
-	int alist_status_code = pids("alist");
+	int alist_status_code = pids("alist") || pids("openlist");
 	websWrite(wp, "function alist_status() { return %d;}\n", alist_status_code);
 	return 0;
 }

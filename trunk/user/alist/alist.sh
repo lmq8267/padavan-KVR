@@ -32,7 +32,7 @@ s3_port="$(nvram get alist_s3_port)"
 s3_ssl="$(nvram get alist_s3_ssl)"
 alist="$(nvram get alist_bin)"
 alist_upx="$(nvram get alist_upx)"
-repo="AlistGo/alist"
+repo="OpenListTeam/OpenList"
 [ "$alist_upx" = "1" ] && repo="lmq8267/alist"
 [ -z "$alist" ] && alist="/tmp/alist/alist" && nvram set alist_bin=$alist
 [ ! -d /tmp/alist ] && mkdir -p /tmp/alist
@@ -102,7 +102,7 @@ dowload_al() {
 	if [ "$alist_upx" = "1" ] ; then
 		url="https://github.com/lmq8267/alist/releases/download/${tag}/alist.tar.gz"
 	else
-		url="https://github.com/AlistGo/alist/releases/download/${tag}/alist-linux-musl-mipsle.tar.gz"
+		url="https://github.com/OpenListTeam/OpenList/releases/download/${tag}/openlist-linux-musl-mipsle.tar.gz"
 	fi
 	logger -t "【Alist】" "开始下载 ${url} "
 	[ -z "$github_proxys" ] && logger -t "【Alist】" "加速镜像地址为空.."
@@ -158,7 +158,7 @@ al_keep() {
 	if [ -s /tmp/script/_opt_script_check ]; then
 	sed -Ei '/【Alist】|^$/d' /tmp/script/_opt_script_check
 	cat >> "/tmp/script/_opt_script_check" <<-OSC
-	[ -z "\`pidof alist\`" ] && logger -t "进程守护" "alist 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【Alist】|^$/d' /tmp/script/_opt_script_check #【Alist】
+	[ -z "\`pidof openlist\`" ] && [ -z "\`pidof alist\`" ] && logger -t "进程守护" "alist 进程掉线" && eval "$scriptfilepath start &" && sed -Ei '/【Alist】|^$/d' /tmp/script/_opt_script_check #【Alist】
 	[ -s /tmp/alist.log ] && [ "\$(stat -c %s /tmp/alist.log)" -gt 681984 ] && echo "" > /tmp/alist.log & #【Alist】
 	OSC
 
@@ -356,7 +356,7 @@ start_al() {
 		logger -t "【Alist】" "主程序${alist}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
   		
-  		[ -z "$tag" ] && tag="v3.39.4"
+  		[ -z "$tag" ] && tag="v4.0.5"
   		dowload_al $tag
   	fi
 	kill_al
@@ -384,9 +384,11 @@ start_al() {
 	logger -t "【Alist】" "运行${cmd}"
 	eval "$cmd >>/tmp/alist.log 2>&1" &
 	sleep 4
-	if [ ! -z "`pidof alist`" ] ; then
+	if [ ! -z "`pidof alist`" ] || [ ! -z "`pidof openlist`" ] ; then
  		mem=$(cat /proc/$(pidof alist)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
    		cpui="$(top -b -n1 | grep -E "$(pidof alist)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /alist/) break; else cpu=i}} END {print $cpu}')"
+   		[ -z "$mem" ] && mem=$(cat /proc/$(pidof openlist)/status | grep -w VmRSS | awk '{printf "%.1f MB", $2/1024}')
+   		[ -z "$cpui" ] && cpui="$(top -b -n1 | grep -E "$(pidof openlist)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /openlist/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【Alist】" "运行成功！"
  	 	logger -t "【Alist】" "内存占用 ${mem} CPU占用 ${cpui}%"
   		alist_restart o

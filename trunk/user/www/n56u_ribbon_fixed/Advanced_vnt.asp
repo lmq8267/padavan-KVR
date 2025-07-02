@@ -137,38 +137,122 @@ function change_vntcli_enable(mflag){
 	var is_vntcli_enable = (m == "1" || m == "2") ? "重启" : "更新";
 	document.form.restartvntcli.value = is_vntcli_enable;
 
-	var is_vntcli_file = (m == "2") ? 1 : 0;
-	showhide_div("vntcli_file_tr", is_vntcli_file);
+	if(m == "2"){
+		showhide_div("vntcli_file_tr", 1);
+		showhide_div("vntcli_token_tr", 0);
+		showhide_div("vntcli_token_td", 0);
+		showhide_div("vntcli_ip_tr", 0);
+		showhide_div("vntcli_ip_td", 0);
+		showhide_div("vntcli_localadd_tr", 0);
+		showhide_div("vntcli_localadd_td", 0);
+		showhide_div("vntcli_serip_tr", 0);
+		showhide_div("vntcli_serip_td", 0);
+		showhide_div("vntcli_model_tr", 0);
+		showhide_div("vntcli_model_td", 0);
+		showhide_div("vntcli_key_tr", 0);
+		showhide_div("vntcli_key_td", 0);
+		showhide_div("vntcli_subnet_table", 0);
+		
+		showhide_div("vntcli_proxy_tr", 0);
+		showhide_div("vntcli_proxy_td", 0);
+		showhide_div("vntcli_first_tr", 0);
+		showhide_div("vntcli_first_td", 0);
+		showhide_div("vntcli_wg_tr", 0);
+		showhide_div("vntcli_wg_td", 0);
+		showhide_div("vntcli_finger_tr", 0);
+		showhide_div("vntcli_finger_td", 0);
+		showhide_div("vntcli_serverw_tr", 0);
+		showhide_div("vntcli_serverw_td", 0);
+		showhide_div("vntcli_desname_tr", 0);
+		showhide_div("vntcli_desname_td", 0);
+		showhide_div("vntcli_id_tr", 0);
+		showhide_div("vntcli_id_td", 0);
+		showhide_div("vntcli_tunname_tr", 0);
+		showhide_div("vntcli_tunname_td", 0);
+		showhide_div("vntcli_mtu_tr", 0);
+		showhide_div("vntcli_mtu_td", 0);
+		showhide_div("vntcli_dns_tr", 0);
+		showhide_div("vntcli_dns_td", 0);
+		showhide_div("vntcli_stun_tr", 0);
+		showhide_div("vntcli_stun_td", 0);
+		showhide_div("vntcli_port_tr", 0);
+		showhide_div("vntcli_port_td", 0);
+		showhide_div("vntcli_wan_tr", 0);
+		showhide_div("vntcli_wan_td", 0);
+		showhide_div("vntcli_punch_tr", 0);
+		showhide_div("vntcli_punch_td", 0);
+		showhide_div("vntcli_comp_tr", 0);
+		showhide_div("vntcli_comp_td", 0);
+		showhide_div("vntcli_relay_tr", 0);
+		showhide_div("vntcli_relay_td", 0);
+		showhide_div("vntcli_ip_tr", 0);
+		showhide_div("vntcli_ip_td", 0);
 	
-	var is_vntcli_log = (m == "1" || m == "2") ? 1 : 0;
-	showhide_div("vntcli_log_tr", is_vntcli_log);
-	showhide_div("vntcli_log_td", is_vntcli_log);
-	showhide_div("vntcli_pri_table", 1);
-
-	var is_vntcli_cmd = (m == "1") ? 1 : 0;
-	showhide_div("vntcli_token_tr", is_vntcli_cmd);
-	showhide_div("vntcli_token_td", is_vntcli_cmd);
-	showhide_div("vntcli_ip_tr", is_vntcli_cmd);
-	showhide_div("vntcli_ip_td", is_vntcli_cmd);
-	showhide_div("vntcli_localadd_tr", is_vntcli_cmd);
-	showhide_div("vntcli_localadd_td", is_vntcli_cmd);
-	showhide_div("vntcli_serip_tr", is_vntcli_cmd);
-	showhide_div("vntcli_serip_td", is_vntcli_cmd);
-	showhide_div("vntcli_model_tr", is_vntcli_cmd);
-	showhide_div("vntcli_model_td", is_vntcli_cmd);
-	showhide_div("vntcli_subnet_table", is_vntcli_cmd);
-	showhide_div("vntcli_mapping_table", is_vntcli_cmd);
-
-	var is_vntcli_mtu = (m == "1") ? 1 : 0;
-	if(is_vntcli_mtu){
+		showhide_div("vntcli_mapping_table", 0);
+	} 
+	
+	if(m == "1"){	
+		showhide_div("vntcli_file_tr", 0);
+		showhide_div("vntcli_token_tr", 1);
+		showhide_div("vntcli_token_td", 1);
+		showhide_div("vntcli_ip_tr", 1);
+		showhide_div("vntcli_ip_td", 1);
+		showhide_div("vntcli_localadd_tr", 1);
+		showhide_div("vntcli_localadd_td", 1);
+		showhide_div("vntcli_serip_tr", 1);
+		showhide_div("vntcli_serip_td", 1);
+		showhide_div("vntcli_model_tr", 1);
+		showhide_div("vntcli_model_td", 1);
+		showhide_div("vntcli_key_tr", 1);
+		showhide_div("vntcli_key_td", 1);
+		showhide_div("vntcli_subnet_table", 1);
+		
+		showhide_div("vntcli_proxy_tr", 1);
+		showhide_div("vntcli_proxy_td", 1);
+		showhide_div("vntcli_first_tr", 1);
+		showhide_div("vntcli_first_td", 1);
+		showhide_div("vntcli_wg_tr", 1);
+		showhide_div("vntcli_wg_td", 1);
+		showhide_div("vntcli_finger_tr", 1);
+		showhide_div("vntcli_finger_td", 1);
+		showhide_div("vntcli_serverw_tr", 1);
+		showhide_div("vntcli_serverw_td", 1);
+		showhide_div("vntcli_desname_tr", 1);
+		showhide_div("vntcli_desname_td", 1);
+		showhide_div("vntcli_id_tr", 1);
+		showhide_div("vntcli_id_td", 1);
+		showhide_div("vntcli_tunname_tr", 1);
+		showhide_div("vntcli_tunname_td", 1);
+		showhide_div("vntcli_mtu_tr", 1);
+		showhide_div("vntcli_mtu_td", 1);
+		showhide_div("vntcli_dns_tr", 1);
+		showhide_div("vntcli_dns_td", 1);
+		showhide_div("vntcli_stun_tr", 1);
+		showhide_div("vntcli_stun_td", 1);
+		showhide_div("vntcli_port_tr", 1);
+		showhide_div("vntcli_port_td", 1);
+		showhide_div("vntcli_wan_tr", 1);
+		showhide_div("vntcli_wan_td", 1);
+		showhide_div("vntcli_punch_tr", 1);
+		showhide_div("vntcli_punch_td", 1);
+		showhide_div("vntcli_comp_tr", 1);
+		showhide_div("vntcli_comp_td", 1);
+		showhide_div("vntcli_relay_tr", 1);
+		showhide_div("vntcli_relay_td", 1);
+		showhide_div("vntcli_ip_tr", 1);
+		showhide_div("vntcli_ip_td", 1);
+	
+		showhide_div("vntcli_mapping_table", 1);
 		o_mtu = document.form.vntcli_mtu;
+		
 		if (o_mtu && parseInt(o_mtu.value) == 0)
 			o_mtu.value = "";
+			
 		if (o_mtu && parseInt(o_mtu.value) > 1500)
 			o_mru.value = "1500";
 	}
+	
 }
-
 function button_restartvntcli() {
     var m = document.form.vntcli_enable.value;
 
@@ -486,7 +570,7 @@ function button_vntcli_status() {
 	<tr>
 	<th colspan="4" style="background-color: #756c78;">基础设置</th>
 	</tr>
-	<tr id="vntcli_file_tr">
+	<tr id="vntcli_file_tr" style="display:none">
 	<td colspan="4" style="border-top: 0 none;">
 	<i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('scripts.vnt')"><span>点此修改 /etc/storage/vnt.conf 配置文件</span></a>&nbsp;&nbsp;&nbsp;&nbsp;配置文件模板：<a href="https://github.com/vnt-dev/vnt/blob/main/vnt-cli/README.md#-f-conf" target="blank">点此查看</a>
 	<div id="scripts.vnt">
@@ -594,7 +678,7 @@ function button_vntcli_status() {
 	<tr>
 	<th colspan="4" style="background-color: #756c78;">进阶设置</th>
 	</tr>
-	<tr id="vntcli_proxy_tr" >
+	<tr id="vntcli_proxy_tr">
 	<th style="border-top: 0 none;">启用IP转发</th>
 	<td style="border-top: 0 none;">
 	<div class="main_itoggle">
@@ -607,8 +691,8 @@ function button_vntcli_status() {
 	<input type="radio" value="0" name="vntcli_proxy" id="vntcli_proxy_0" class="input" value="0" <% nvram_match_x("", "vntcli_proxy", "0", "checked"); %> /><#checkbox_No#>
 	</div>
 	</td>
-	</tr><td colspan="2"></td>
-	<tr>
+	</tr><td id="vntcli_proxy_td" colspan="2"></td>
+	<tr id="vntcli_first_tr">
 	<th style="border-top: 0 none;">启用优化传输</th>
 	<td style="border-top: 0 none;">
 	<div class="main_itoggle">
@@ -621,8 +705,8 @@ function button_vntcli_status() {
 	<input type="radio" value="0" name="vntcli_first" id="vntcli_first_0" class="input" value="0" <% nvram_match_x("", "vntcli_first", "0", "checked"); %> /><#checkbox_No#>
 	</div>
 	</td>
-	</tr><td colspan="2"></td>
-	<tr>
+	</tr><td colspan="2" id="vntcli_first_td"></td>
+	<tr id="vntcli_wg_tr">
 	<th style="border-top: 0 none;">允许WireGuard访问</th>
 	<td style="border-top: 0 none;">
 	<div class="main_itoggle">
@@ -635,8 +719,8 @@ function button_vntcli_status() {
 	<input type="radio" value="0" name="vntcli_wg" id="vntcli_wg_0" class="input" value="0" <% nvram_match_x("", "vntcli_wg", "0", "checked"); %> /><#checkbox_No#>
 	</div>
 	</td>
-	</tr><td colspan="2"></td>
-	<tr>
+	</tr><td colspan="2" id="vntcli_wg_td"></td>
+	<tr id="vntcli_finger_tr">
 	<th style="border-top: 0 none;">启用数据指纹校验</th>
 	<td style="border-top: 0 none;">
 	<div class="main_itoggle">
@@ -649,8 +733,8 @@ function button_vntcli_status() {
 	<input type="radio" value="0" name="vntcli_finger" id="vntcli_finger_0" class="input" value="0" <% nvram_match_x("", "vntcli_finger", "0", "checked"); %> /><#checkbox_No#>
 	</div>
 	</td>
-	</tr><td colspan="2"></td>
-	<tr>
+	</tr><td colspan="2" id="vntcli_finger_td"></td>
+	<tr id="vntcli_serverw_tr">
 	<th style="border-top: 0 none;">启用服务端客户端加密</th>
 	<td style="border-top: 0 none;">
 	<div class="main_itoggle">
@@ -663,59 +747,59 @@ function button_vntcli_status() {
 	<input type="radio" value="0" name="vntcli_serverw" id="vntcli_serverw_0" class="input" value="0" <% nvram_match_x("", "vntcli_serverw", "0", "checked"); %> /><#checkbox_No#>
 	</div>
 	</td>
-	</tr><td colspan="2"></td>
-	<tr>
+	</tr><td colspan="2" id="vntcli_serverw_td"></td>
+	<tr id="vntcli_desname_tr">
 	<th width="30%" style="border-top: 0 none;">设备名称</th>
 	<td style="border-top: 0 none;">
 	<input name="vntcli_desname" type="text" class="input" id="vntcli_desname" placeholder="<% nvram_get_x("","computer_name"); %>" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","vntcli_desname"); %>" size="32" maxlength="15" /></td>
 	</td>
-	</tr><td colspan="3"></td>
-	<tr>
+	</tr><td colspan="3" id="vntcli_desname_td"></td>
+	<tr id="vntcli_id_tr">
 	<th width="30%" style="border-top: 0 none;">设备ID</th>
 	<td style="border-top: 0 none;">
 	<input type="text" maxlength="128" class="input" size="15" placeholder="建议与接口IP一致" id="vntcli_id" name="vntcli_id" value="<% nvram_get_x("","vntcli_id"); %>" onKeyPress="return is_string(this,event);" />
 	</td>
-	</tr><td colspan="3"></td>
-	<tr>
+	</tr><td colspan="3" id="vntcli_id_td"></td>
+	<tr id="vntcli_tunname_tr">
 	<th width="30%" style="border-top: 0 none;">TUN网卡名</th>
 	<td style="border-top: 0 none;">
 	<input name="vntcli_tunname" type="text" class="input" id="vntcli_tunname" placeholder="vnt-tun" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","vntcli_tunname"); %>" size="32" maxlength="15" /></td>
 	</td>
-	</tr><td colspan="3"></td>
-	<tr>
+	</tr><td colspan="3" id="vntcli_tunname_td"></td>
+	<tr id="vntcli_mtu_tr">
           <th width="30%" style="border-top: 0 none;">MTU</th>
           <td style="border-top: 0 none;">
           <input type="text" name="vntcli_mtu" maxlength="4" class="input" placeholder="1450" size="5" value="<% nvram_get_x("","vntcli_mtu"); %>" onkeypress="return is_number(this,event);"/> 
           </td>
-          </tr><td colspan="3"></td>
-	<tr>
+          </tr><td colspan="3" id="vntcli_mtu_td"></td>
+	<tr id="vntcli_dns_tr">
 	<th width="30%" style="border-top: 0 none;">自定义DNS</th>
 	<td style="border-top: 0 none;">
 	<textarea maxlength="128" class="input" name="vntcli_dns" id="vntcli_dns" placeholder="223.5.5.5" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","vntcli_dns"); %></textarea>
 	<br>&nbsp;<span style="color:#888;">多个DNS使用换行分隔</span>
 	</td>
-	</tr><td colspan="3"></td>
-	<tr>
+	</tr><td colspan="3" id="vntcli_dns_td"></td>
+	<tr id="vntcli_stun_tr">
 	<th width="30%" style="border-top: 0 none;">STUN服务地址</th>
 	<td style="border-top: 0 none;">
 	<textarea maxlength="128" class="input" name="vntcli_stun" id="vntcli_stun" placeholder="stun.qq.com:3478" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","vntcli_stun"); %></textarea>
 	<br>&nbsp;<span style="color:#888;">多个STUN地址使用换行分隔</span>
 	</td>
-	</tr><td colspan="3"></td>
-	<tr>
+	</tr><td colspan="3" id="vntcli_stun_td"></td>
+	<tr id="vntcli_port_tr">
 	<th width="30%" style="border-top: 0 none;">监听端口</th>
 	<td style="border-top: 0 none;">
 	<input name="vntcli_port" type="text" class="input" id="vntcli_port" placeholder="0,0" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","vntcli_port"); %>" size="32" maxlength="55" />
 	</td>
-	</tr><td colspan="3"></td>
-	<tr>
+	</tr><td colspan="3" id="vntcli_port_td"></td>
+	<tr id="vntcli_wan_tr">
 	<th width="30%" style="border-top: 0 none;">出口网卡名</th>
 	<td style="border-top: 0 none;">
 	<input name="vntcli_wan" type="text" class="input" id="vntcli_wan" placeholder="eth2.2" onkeypress="return is_string(this,event);" value="<% nvram_get_x("","vntcli_wan"); %>" size="32" maxlength="12" />
 	<br>⚠️&nbsp;<span style="color:#888;">错误网卡名将导致无法上网</span>
 	</td>
-	</tr><td colspan="3"></td>
-	<tr>
+	</tr><td colspan="3" id="vntcli_wan_td"></td>
+	<tr id="vntcli_punch_tr">
 	<th width="30%" style="border-top: 0 none;">打洞模式</th>
 	<td style="border-top: 0 none;">
 	<select name="vntcli_punch" class="input" style="width: 218px;">
@@ -728,8 +812,8 @@ function button_vntcli_status() {
 	<option value="ipv6-udp" <% nvram_match_x("","vntcli_punch", "ipv6-udp","selected"); %>>仅IPV6-UDP</option>
 	</select>
 	</td>
-	</tr><td colspan="3"></td>
-	<tr>
+	</tr><td colspan="3" id="vntcli_punch_td"></td>
+	<tr id="vntcli_comp_tr">
 	<th width="30%" style="border-top: 0 none;">启用压缩</th>
 	<td style="border-top: 0 none;">
 	<select name="vntcli_comp" class="input" style="width: 218px;">
@@ -738,8 +822,8 @@ function button_vntcli_status() {
 	<option value="zstd" <% nvram_match_x("","vntcli_comp", "zstd","selected"); %>>启用zstd压缩</option>
 	</select><br>⚠️&nbsp;<span style="color:#888;">启用zstd压缩请自行编译程序</span>
 	</td>
-	</tr><td colspan="3"></td>
-	<tr>
+	</tr><td colspan="3" id="vntcli_comp_td"></td>
+	<tr id="vntcli_relay_tr">
 	<th width="30%" style="border-top: 0 none;">传输模式</th>
 	<td style="border-top: 0 none;">
 	<select name="vntcli_relay" class="input" style="width: 218px;">
@@ -748,7 +832,7 @@ function button_vntcli_status() {
 	<option value="p2p" <% nvram_match_x("","vntcli_relay", "p2p","selected"); %>>仅P2P直连</option>
 	</select><br>⚠️&nbsp;<span style="color:#888;">无法P2P的网络下选择仅P2P直连将会无法连接对端</span>
 	</td>
-	</tr><td colspan="3"></td>
+	</tr><td colspan="3" id="vntcli_relay_td"></td>
 	<tr>
 	<th style="border: 0 none;">程序路径</th>
 	<td style="border: 0 none;">
@@ -756,7 +840,7 @@ function button_vntcli_status() {
 	</div><br><span style="color:#888;">自定义程序的存放路径，填写完整的路径和程序名称</span>
 	</tr>
 	</table>
-	<table  id="vntcli_mapping_table" width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
+	<table id="vntcli_mapping_table" width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
 	<tr> <th colspan="5" style="background-color: #756c78;">端口映射 (将本地服务的端口映射到对端进行访问)</th></tr>
 	<tr id="row_rules_caption">
 	<th width="10%">服务协议 </th>
@@ -792,12 +876,13 @@ function button_vntcli_status() {
 	</tr>
 	<tr>
 	<td colspan="5" style="border-top: 0 none; padding-bottom: 20px;">
+	
+	</table>
+	</table>
 	<br />
 	<center><input class="btn btn-primary" style="width: 219px" type="button" value="<#CTL_apply#>" onclick="applyRule()" /></center>
 	</td></td>
-	</tr>
-	</table>
-	</table>
+	</tr><br />
 	</div>
 	<!-- 状态 -->
 	<div id="wnd_vntcli_sta" style="display:none">
