@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title><#Web_Title#> - virtualhere</title>
+<title><#Web_Title#> - VirtualHere</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
@@ -129,11 +129,11 @@ function button_restartvirtualhere(){
                 <div class="row-fluid">
                     <div class="span12">
                         <div class="box well grad_colour_dark_blue">
-                            <h2 class="box_head round_top">virtualhere</h2>
+                            <h2 class="box_head round_top">VirtualHere</h2>
                             <div class="round_bottom">
                                 <div class="row-fluid">
                                     <div id="tabMenu" class="submenuBlock"></div>
-                                    <div class="alert alert-info" style="margin: 10px;">欢迎使用 virtualhere，让我们可以通过网络（局域网、互联网）远程使用USB设备，就像在本地连接一样。
+                                    <div class="alert alert-info" style="margin: 10px;">欢迎使用 VirtualHere，让我们可以通过网络（局域网、互联网）远程使用USB设备，就像在本地连接一样。
                                     <div>项目地址：<a href="http://www.virtualhere.com" target="blank">http://www.virtualhere.com</a></div>
                                     <div>服务器配置FAQ：<a href="http://www.virtualhere.com/configuration_faq" target="blank">http://www.virtualhere.com/configuration_faq</a></div>
                                     <div>客户端使用教程：<a href="http://www.virtualhere.com/usb_client_software" target="blank">http://www.virtualhere.com/usb_client_software</a></div>
@@ -186,6 +186,14 @@ function button_restartvirtualhere(){
                                             </td>
                                         </tr>
 					<tr>
+					<tr>
+						<th width="30%" style="border-top: 0 none;">密码验证</th>
+						<td style="border: 0 none;">
+						<input maxlength="128" type="password" class="input" size="32" placeholder="留空无需密码即可连接"name="virtualhere_pass" id="virtualhere_pass" value="<% nvram_get_x("","virtualhere_pass"); %>" />
+					<button style="margin-left: -5px;" class="btn" type="button" onclick="passwordShowHide('virtualhere_pass')"><i class="icon-eye-close"></i></button>
+					</div><br>⚠️<span style="color:#888;">此功能仅限高级版才能使用！填写密码后，客户端连接时需要正确的密码才能连接。</span>
+					</td>
+					</tr>
 					<th width="30%" style="border-top: 0 none;">程序路径</th>
 						<td style="border-top: 0 none;">
 						<div class="input-append">

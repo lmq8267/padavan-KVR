@@ -17,6 +17,7 @@ et_html_port="$(nvram get easytier_html_port)"
 et_web_bin="$(nvram get easytier_web_bin)"
 et_api_host="$(nvram get easytier_api_host)"
 et_uuid="$(nvram get easytier_uuid)"
+et_geoip="$(nvram get easytier_geoip)"
 [ -z "$et_web_port" ] && et_web_port=22020
 [ -z "$et_web_api" ] && et_web_port=11211
 user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
@@ -350,6 +351,7 @@ start_web() {
 		webCMD="${webCMD} -l $et_html_port" 
 	fi
 	[ -z "$et_api_host" ] || webCMD="${webCMD} --api-host $et_api_host"
+	[ -z "$et_geoip" ] || webCMD="${webCMD} --geoip-db $et_geoip"
   	[ "$et_web_log" = "1" ] && webCMD="${webCMD} --console-log-level warn"
 	[ "$et_web_log" = "2" ] && webCMD="${webCMD} --console-log-level info"
 	[ "$et_web_log" = "3" ] && webCMD="${webCMD} --console-log-level debug"

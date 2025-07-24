@@ -98,6 +98,7 @@ lucky_dl() {
       		lk_url2="http://release.66666.host/${tag}/${new_tag}_lucky/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
   	fi
 	logg "开始下载 ${lk_url}"
+	logg "如下载失败请在开机启动脚本里自定义下载地址 nvram set lucky_url=你的下载链接.tar.gz"
  	bin_path=$(dirname "$PROG")
 	[ ! -d "$bin_path" ] && mkdir -p "$bin_path"
 	for proxy in $github_proxys ; do

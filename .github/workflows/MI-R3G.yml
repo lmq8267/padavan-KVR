@@ -308,10 +308,10 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_TRANSMISSION_WEB_CONTROL=n" >> .config
 
         ##包含 Aria2 下载管理器。openssl 约 1.2MB，aria2 约 3.5MB
-        echo "CONFIG_FIRMWARE_INCLUDE_ARIA=y" >> .config
+        echo "CONFIG_FIRMWARE_INCLUDE_ARIA=n" >> .config
 
         ##包含 Aria2 WEB 控制界面。约 0.7MB。
-        echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=y" >> .config
+        echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=n" >> .config
 
         
 

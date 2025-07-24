@@ -1483,6 +1483,7 @@
 			{"easytier_api_host", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_web_bin", "", NULL, EVM_RESTART_EASYTIER},
 			{"easytier_uuid", "", NULL, EVM_RESTART_EASYTIER},
+			{"easytier_geoip", "", NULL, EVM_RESTART_EASYTIER},
 			{"scripts.easytier.toml", "File", NULL, EVM_RESTART_EASYTIER},
 			{0,0,0,0}
 	};
@@ -1508,6 +1509,7 @@
 			{"virtualhere_enable", "", NULL, EVM_RESTART_VIRTUALHERE},
 			{"virtualhere_wan", "", NULL, EVM_RESTART_VIRTUALHERE},
 			{"virtualhere_v6", "", NULL, EVM_RESTART_VIRTUALHERE},
+			{"virtualhere_pass", "", NULL, EVM_RESTART_VIRTUALHERE},
 			{"virtualhere_bin", "", NULL, EVM_RESTART_VIRTUALHERE},
 			{"scripts.virtualhere.ini", "File", NULL, EVM_RESTART_VIRTUALHERE},
 			{0,0,0,0}

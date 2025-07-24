@@ -1,5 +1,5 @@
-SRC_NAME = iperf-3.18
-SRC_URL = https://downloads.es.net/pub/iperf/iperf-3.18.tar.gz
+SRC_NAME = iperf-3.19
+SRC_URL = https://downloads.es.net/pub/iperf/iperf-3.19.tar.gz
 THISDIR = $(shell pwd)
 
 all: download_test extract_test config_test
@@ -43,7 +43,6 @@ clean:
 
 romfs:
 	$(STRIP) $(THISDIR)/$(SRC_NAME)/src/iperf3
-	upx --lzma --best $(THISDIR)/$(SRC_NAME)/src/iperf3
 	$(ROMFSINST) -p +x $(THISDIR)/$(SRC_NAME)/src/iperf3 /usr/bin/iperf3
 	cp -fP $(CONFIG_CROSS_COMPILER_ROOT)/mipsel-linux-uclibc/sysroot/lib/libatomic.so* $(ROMFSDIR)/lib
 

@@ -503,7 +503,13 @@ function button_etweb(){
 	<td style="border: 0 none;">
 	<textarea maxlength="1024" class="input" name="easytier_api_host" id="easytier_api_host" placeholder="https://config-server.easytier.cn" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","easytier_api_host"); %></textarea>
 	</div>
-	</tr><td colspan="3"></td>	
+	</tr><td colspan="3"></td>
+	<tr> 
+	<th style="border: 0 none;" title="--geoip-db  数据库文件路径，用于查找客户端的位置，默认为嵌入文件（仅国家信息），推荐https://github.com/P3TERX/GeoLite.mmdb">IP数据库</th>
+	<td style="border: 0 none;">
+	<textarea maxlength="1024" class="input" name="easytier_geoip" id="easytier_geoip" placeholder="/etc/storage/easytier/GeoLite.mmdb" style="width: 210px; height: 20px; resize: both; overflow: auto;"><% nvram_get_x("","easytier_geoip"); %></textarea>
+	</div>
+	</tr><td colspan="3"></td>
 	<tr> 
 	<th width="30%" style="border-top: 0 none;" title="--console-log-level  控制台日志级别">日志等级</th>
 	<td style="border-top: 0 none;">

@@ -356,7 +356,7 @@ start_al() {
 		logger -t "【Alist】" "主程序${alist}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
   		
-  		[ -z "$tag" ] && tag="v4.0.5"
+  		[ -z "$tag" ] && tag="v4.0.8"
   		dowload_al $tag
   	fi
 	kill_al

@@ -456,7 +456,7 @@ vnt_status() {
 			[ "$day" = "0" ] && day=''|| day=" $day天"
 			time=`date -u -d @${time} +%H小时%M分%S秒`
 		fi
-		[ ! -z "$time" ] && echo "已运行 $time" >>$cmdfile 2>&1
+		[ ! -z "$time" ] && echo "已运行 ${day}${time}" >>$cmdfile 2>&1
 		cmdtart=$(cat /tmp/vnt-cli.CMD)
 		[ ! -z "$cmdtart" ] && echo "启动参数  $cmdtart" >>$cmdfile 2>&1
 		

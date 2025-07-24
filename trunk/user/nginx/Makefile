@@ -77,5 +77,4 @@ clean:
 
 romfs:
 	$(STRIP) $(THISDIR)/$(SRC_NAME)/objs/nginx
-	upx --lzma --best $(THISDIR)/$(SRC_NAME)/objs/nginx
 	$(ROMFSINST) -p +x $(THISDIR)/$(SRC_NAME)/objs/nginx /usr/bin/nginx

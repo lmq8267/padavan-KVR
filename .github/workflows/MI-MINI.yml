@@ -384,7 +384,7 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_SOCAT=n" >> .config
 
         ## SRELAY代理
-        echo "CONFIG_FIRMWARE_INCLUDE_SRELAY=y" >> .config
+        echo "CONFIG_FIRMWARE_INCLUDE_SRELAY=n" >> .config
 
         ## MENTOHUST校园认证 已删除 请查看/trunk/user/httpd/common.h
         echo "CONFIG_FIRMWARE_INCLUDE_MENTOHUST=n" >> .config
@@ -421,7 +421,7 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_SMARTDNS=n" >> .config #smartdns
         echo "CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME=n" >> .config #adguardhome不占空间(7.2kb左右)
         echo "CONFIG_FIRMWARE_INCLUDE_NETCAT=n" >> .config #nc工具
-        echo "CONFIG_FIRMWARE_INCLUDE_MSD_LITE=n" >> .config #MSD_LITE工具
+        echo "CONFIG_FIRMWARE_INCLUDE_MSD_LITE=y" >> .config #MSD_LITE工具
         
         
         #echo "CONFIG_FIRMWARE_INCLUDE_V2RAYA=n" >> .config #v2raya 已删除 /trunk/user/httpd/common.h

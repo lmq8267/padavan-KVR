@@ -1,5 +1,5 @@
 
-name: K2P
+name: 原版K2P
 
 on: 
   workflow_dispatch:
@@ -408,7 +408,7 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_CLOUDFLARE=y" >> .config #CF-ddns 约50k
         echo "CONFIG_FIRMWARE_INCLUDE_EASYTIER=y" >> .config #EasyTier 约50k
         
-        echo "CONFIG_FIRMWARE_INCLUDE_ALIST=y" >> .config #ALIST文件列表 约80k
+        echo "CONFIG_FIRMWARE_INCLUDE_ALIST=n" >> .config #ALIST文件列表 约80k
         echo "CONFIG_FIRMWARE_INCLUDE_WXSEND=y" >> .config #微信推送 约50k
         echo "CONFIG_FIRMWARE_INCLUDE_UUPLUGIN=y" >> .config #网易UU加速器 约50k
         echo "CONFIG_FIRMWARE_INCLUDE_ALDRIVER=y" >> .config #阿里云盘 约50k
@@ -416,7 +416,7 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_BAFA=y" >> .config #巴法云 约90k
         echo "CONFIG_FIRMWARE_INCLUDE_CADDY=y" >> .config #在线文件管理服务不占空间(4.0kb左右)
         echo "CONFIG_FIRMWARE_INCLUDE_SMARTDNS=y" >> .config #smartdns
-        echo "CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME=y" >> .config #adguardhome不占空间(7.2kb左右)
+        echo "CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME=n" >> .config #adguardhome不占空间(7.2kb左右)
         echo "CONFIG_FIRMWARE_INCLUDE_NETCAT=n" >> .config #nc工具
         echo "CONFIG_FIRMWARE_INCLUDE_MSD_LITE=y" >> .config #MSD_LITE工具
         

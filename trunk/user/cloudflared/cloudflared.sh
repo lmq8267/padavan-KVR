@@ -135,7 +135,7 @@ start_cf() {
  	if [ ! -f "$PROG" ] ; then
 		logger -t "【cloudflared】" "主程序${PROG}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
-  		[ -z "$tag" ] && tag="2024.11.0"
+  		[ -z "$tag" ] && tag="2025.7.0"
   		dowload_cf $tag
   	fi
 	kill_cf

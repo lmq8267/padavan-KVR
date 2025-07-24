@@ -3,6 +3,7 @@
 vhusbd_enable=$(nvram get virtualhere_enable)
 vhusbd_wan="$(nvram get virtualhere_wan)"
 vhusbd_v6="$(nvram get virtualhere_v6)"
+vhusbd_pass="$(nvram get virtualhere_pass)"
 vhusbd_bin="$(nvram get virtualhere_bin)"
 virtualhere_renum=`nvram get virtualhere_renum`
 if [ ! -z "$vhusbd_bin" ] ; then
@@ -93,6 +94,33 @@ AutoAttachToKernel=1
 
 VVR
 	
+	fi
+	auth=$(grep -E "^clientAuthorization=" /etc/storage/virtualhere.ini)
+	auth_script="/tmp/vhusbd_auth.sh"
+	if [ -n "$vhusbd_pass" ] ; then
+    		if [ -z "$auth" ] ; then
+        		echo 'clientAuthorization=/tmp/vhusbd_auth.sh "$VENDOR_ID$" "$PRODUCT_ID$" "$CLIENT_ID$" "$CLIENT_IP$" "$PRODUCT_SERIAL$" "$PASSWORD$" "$DEVPATH$" "$NICKNAME$" "$NUM_BINDINGS$"' >> /etc/storage/virtualhere.ini
+    		fi
+    		md5=$(echo -n "$vhusbd_pass" | md5sum | awk '{print $1}')
+    		cat > "$auth_script" <<EOF
+#!/bin/sh
+PASS_MD5="\$6"
+CORRECT="$md5"
+logger -t "【VirtualHere】" "供应商ID=【\$1】  产品ID=【\$2】  客户端账户=【\$3】  客户端IP=【\$4】  序列号=【\$5】  密码MD5=【\$6】  设备路径=【\$7】  客户端名称=【\$8】  当前连接数量=【\$9】"
+if [ "\$PASS_MD5" = "\$CORRECT" ]; then
+    logger -t "【VirtualHere】" "密码验证通过"
+    exit 1  # 密码正确
+else
+    logger -t "【VirtualHere】" "密码验证错误"
+    exit 2  # 密码错误
+fi
+EOF
+
+    		chmod +x "$auth_script"
+	else
+    		if [ -n "$auth" ]; then
+        		sed -i '/^clientAuthorization=/d' /etc/storage/virtualhere.ini
+    		fi
 	fi
 	vhusbdcmd="${vhusbd_bin} ${CMD} -b -c /etc/storage/virtualhere.ini"
 	logg "运行${vhusbdcmd}"
