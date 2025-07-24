@@ -890,7 +890,7 @@ struct nvram_pair router_defaults[] = {
 	{ "virtualhere_enable", "0" },
 	{ "virtualhere_wan", "0" },
 	{ "virtualhere_v6", "0" },
-	{ "virtualhere_pass, "" },
+	{ "virtualhere_pass", "" },
 	{ "virtualhere_bin", "/etc/storage/bin/virtualhere" },
 #endif
 
