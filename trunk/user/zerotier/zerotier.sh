@@ -44,11 +44,16 @@ start_instance() {
 	nwid="$(nvram get zerotier_id)"
 	moonid="$(nvram get zerotier_moonid)"
 	secret="$(nvram get zerotier_secret)"
-	mkdir -p $config_path/networks.d
-	mkdir -p $config_path/moons.d
+	[ -d "$config_path/networks.d" ] || mkdir -p $config_path/networks.d
+	[ -d "$config_path/moons.d" ] || mkdir -p "$config_path/moons.d"
 	if [ -n "$port" ]; then
 		args="$args -p$port"
 	fi
+ 	if [ ! -z "$nwid" ] ; then
+		[ ! -f "$config_path/networks.d/$nwid.conf" ] && touch $config_path/networks.d/$nwid.conf
+  	else
+		logger -t "【zerotier】" "ZeroTier 网络ID为空，请正确填写！"
+   	fi
  	if [ -s "$config_path/identity.secret" ] ; then
 		secret="$(cat $config_path/identity.secret)"
   	fi
@@ -73,6 +78,31 @@ start_instance() {
   		$PROGIDT getpublic $config_path/identity.secret >$config_path/identity.public
 
   	fi
+   	mkdir -p /tmp/zero/peers.d
+    	if [ ! -L /etc/storage/zerotier-one/peers.d ] ; then
+     		rm -rf /etc/storage/zerotier-one/peers.d
+		ln -sf /tmp/zero/peers.d /etc/storage/zerotier-one/peers.d
+     	fi
+      	mkdir -p /tmp/zero/controller.d
+    	if [ ! -L /etc/storage/zerotier-one/controller.d ] ; then
+     		rm -rf /etc/storage/zerotier-one/controller.d
+		ln -sf /tmp/zero/controller.d /etc/storage/zerotier-one/controller.d
+     	fi
+      	touch /tmp/zero/zerotier-one.port
+    	if [ ! -L /etc/storage/zerotier-one/zerotier-one.port ] ; then
+     		rm -rf /etc/storage/zerotier-one/zerotier-one.port
+		ln -sf /tmp/zero/zerotier-one.port /etc/storage/zerotier-one/zerotier-one.port
+     	fi
+      	touch /tmp/zero/zerotier-one.pid
+    	if [ ! -L /etc/storage/zerotier-one/zerotier-one.pid ] ; then
+     		rm -rf /etc/storage/zerotier-one/zerotier-one.pid
+		ln -sf /tmp/zero/zerotier-one.pid /etc/storage/zerotier-one/zerotier-one.pid
+     	fi
+      	touch /tmp/zero/metrics.prom
+    	if [ ! -L /etc/storage/zerotier-one/metrics.prom ] ; then
+     		rm -rf /etc/storage/zerotier-one/metrics.prom
+		ln -sf /tmp/zero/metrics.prom /etc/storage/zerotier-one/metrics.prom
+     	fi
 	logger -t "【zerotier】" "启动 $PROG $args $config_path"
 	$PROG $args $config_path >/dev/null 2>&1 &
 
