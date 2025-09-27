@@ -308,6 +308,8 @@ start_zero() {
    		else
      			PROG=/tmp/var/zerotier-one
 		fi
+		nvram set zerotier_bin="$PROG"
+		nvram commit
  	fi
   	get_zttag
   	zt_dir="$(dirname $PROG)"
@@ -321,7 +323,7 @@ start_zero() {
 		logger -t "【zerotier】" "主程序${PROG}不存在，开始在线下载..."
   		[ ! -d /etc/storage/bin ] && mkdir -p /etc/storage/bin
     		
-  		[ -z "$tag" ] && tag="1.14.2"
+  		[ -z "$tag" ] && tag="1.16.0"
   		dowload_zero $tag
   	fi
   	
