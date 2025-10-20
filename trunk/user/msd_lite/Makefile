@@ -1,7 +1,7 @@
 SRC_NAME=msd_lite
 THISDIR = $(shell pwd)
 
-CFLAGS += -fno-unwind-tables -fno-asynchronous-unwind-tables
+CFLAGS += -fno-unwind-tables -fno-asynchronous-unwind-tables -DSYS_pidfd_open=434
 
 all: download_test config_test
 	$(MAKE) -j$(HOST_NCPU) -C $(SRC_NAME)/build
@@ -10,9 +10,9 @@ download_test:
 	( if [ ! -d $(THISDIR)/$(SRC_NAME) ]; then \
 		git clone https://github.com/rozhuk-im/msd_lite.git ; \
 		cd $(SRC_NAME) ; \
-		git checkout db58338 ; \
-		git submodule update --init --no-fetch ; \
+		git submodule update --init --recursive ; \
 		patch -p1 -i ../msd_lite.diff ; \
+		sed -i 's/-D__USE_GNU=1//g' CMakeCache.txt \
 		sed -i '/if (0 == (req->flags & HTTP_SRV_RD_F_HOST_IS_LOCAL)) {/,+3d' src/msd_lite.c; \
 		cd src/liblcb ; \
 		patch -p1 -i ../../../liblcb_msd_lite.diff ; \
@@ -28,7 +28,7 @@ config_test:
 
 configure:
 	( mkdir -p $(SRC_NAME)/build && cd $(SRC_NAME)/build ; \
-	cmake -DCMAKE_TOOLCHAIN_FILE=../../cross-mipsel-linux.cmake -DCMAKE_BUILD_TYPE=RELEASE .. \
+	cmake -DCMAKE_TOOLCHAIN_FILE=../../cross-mipsel-linux.cmake -DCMAKE_BUILD_TYPE=RELEASE -DBUILD_CPU_MODE=32 .. \
 	)
 
 clean:
