@@ -1,0 +1,460 @@
+
+name: 优酷-L1
+
+on: 
+  workflow_dispatch:
+
+#设置仓库的读写权限
+permissions:
+  contents: write
+env:
+  TZ: Asia/Shanghai
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install unzip libtool-bin curl cmake gperf gawk flex bison nano xxd fakeroot \
+        cpio git python3-docutils gettext automake autopoint texinfo build-essential help2man \
+        pkg-config zlib1g-dev libgmp3-dev libmpc-dev libmpfr-dev libncurses5-dev libltdl-dev wget
+    - name: Install UPX
+      uses: crazy-max/ghaction-upx@v3
+      with:
+        version: v4.2.4
+        install-only: true
+    - name: Clone source code
+      env:
+        KERNEL: 3.4
+      run: |
+        git clone --depth=1 https://github.com/${GITHUB_REPOSITORY}.git /opt/rt-n56u
+        cd /opt/rt-n56u/toolchain-mipsel
+        sh dl_toolchain.sh
+        mkdir -p /opt/images/
+        
+        ##### 修改内存空间和 storage空间， 集成下方插件后固件大小约10M多， 因此这里修改storage可用空间为32-11=21M   计算得出 21*1024*1024=十进制 22020096  十六进制 0x1500000
+        sed -i 's/SIZ=0x80000/SIZ=0x1500000/g' /opt/rt-n56u/trunk/configs/boards/YK-L1/kernel-3.4.x.config
+        sed -i 's/size_etc="6M"/size_etc="21M"/g' /opt/rt-n56u/trunk/user/scripts/dev_init.sh
+        sed -i 's/size_tmp="24M"/size_tmp="30M"/g' /opt/rt-n56u/trunk/user/scripts/dev_init.sh
+        sed -i 's/mtd_part_size=65536/mtd_part_size=22020096/g' /opt/rt-n56u/trunk/user/scripts/mtd_storage.sh
+    - name: Build Firmware
+      env:
+        TNAME: YK-L1
+        KERNEL: 3.4
+      run: |
+        cd /opt/rt-n56u/trunk
+        if [ ! -f configs/templates/$TNAME.config ] ; then
+        echo "configs/templates/$TNAME.config 没有找到 "
+        exit 1
+        fi
+        cp -f configs/templates/$TNAME.config .config
+        sed -i 's/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=y/g' .config
+        ################################################################################################
+        ###  清除默认配置###
+        sed -i '/CONFIG_FIRMWARE_ENABLE_IPV6/d' .config
+        sed -i '/CONFIG_FIRMWARE_ENABLE_USB/d' .config
+        sed -i '/CONFIG_FIRMWARE_ENABLE_UFSD/d' .config
+        sed -i '/CONFIG_FIRMWARE_ENABLE_FAT/d' .config
+        sed -i '/CONFIG_FIRMWARE_ENABLE_EXFAT/d' .config
+        sed -i '/CONFIG_FIRMWARE_ENABLE_EXT2/d' .config
+        sed -i '/CONFIG_FIRMWARE_ENABLE_EXT3/d' .config
+        sed -i '/CONFIG_FIRMWARE_ENABLE_EXT4/d' .config
+        sed -i '/CONFIG_FIRMWARE_ENABLE_XFS/d' .config
+        sed -i '/CONFIG_FIRMWARE_ENABLE_FUSE/d' .config
+        sed -i '/CONFIG_FIRMWARE_ENABLE_SWAP/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_UVC/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_HID/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SERIAL/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_AUDIO/d' .config
+
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_XFRM/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_QOS/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_IMQ/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_IFB/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_IPSET/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_NFSD/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_NFSC/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_CIFS/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_NTFS_3G/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_LPRD/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_U2EC/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_TCPDUMP/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_HDPARM/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_PARTED/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SMBD/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SMBD36/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_WINS/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SMBD_SYSLOG/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_FTPD/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_RPL2TP/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_EAP_PEAP/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_DDNS_SSL/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_HTTPS/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SFTP/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_DROPBEAR/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_DROPBEAR_FAST_CODE/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSH/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENVPN/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SSWAN/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EC/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_XUPNPD/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_MINIDLNA/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_FIREFLY/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_FFMPEG_NEW/d' .config
+
+        
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_TRANSMISSION/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_TRANSMISSION_WEB_CONTROL/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_CURL/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SCUTCLIENT/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_GDUT_DRCOM/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_DOGCOM/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_MINIEAP/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_NJIT_CLIENT/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_NAPT66/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SSSERVER/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SOFTETHERVPN_SERVER/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SOFTETHERVPN_CLIENT/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SOFTETHERVPN_CMD/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_DNSFORWARDER/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_VLMCSD/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_TTYD/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_LRZSZ/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_HTOP/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_NANO/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_IPERF3/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_DUMP1090/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_RTL_SDR/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_MTR/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SOCAT/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SRELAY/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_MENTOHUST/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_FRPC/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_FRPS/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_TUNSAFE/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_WIREGUARD/d' .config   
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_ZEROTIER/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_ALIDDNS/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_V2RAY/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_XRAY/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_TROJAN/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SSOBFS/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_NPC/d' .config
+        sed -i '/CONFIG_FIRMWARE_WEBUI_HIDE_VPN/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_OPENVPN/d' .config
+        # 清除默认配置结束
+        ######################################################################
+        #以下选项是定义你需要的功能，（y=集成,n=忽略），重新写入到.config文件
+        ######################################################################
+        ##系统组件
+        #启用 IPv6 支持
+        echo "CONFIG_FIRMWARE_ENABLE_IPV6=y" >> .config
+        
+        #启用 USB 支持
+        echo "CONFIG_FIRMWARE_ENABLE_USB=y" >> .config
+        
+        #通过 Paragon 的 "ufsd" 驱动启用 NTFS 文件系统支持。约 0.4MB
+        echo "CONFIG_FIRMWARE_ENABLE_UFSD=n" >> .config
+        
+        #启用 FAT/FAT32 文件系统支持。约 0.1MB
+        echo "CONFIG_FIRMWARE_ENABLE_FAT=n" >> .config
+        
+        #启用 exFAT（同时支持 FAT/FAT32）文件系统支持。约 0.12MB
+        echo "CONFIG_FIRMWARE_ENABLE_EXFAT=n" >> .config
+        
+        #启用 EXT2 文件系统支持。约 0.1MB
+        echo "CONFIG_FIRMWARE_ENABLE_EXT2=n" >> .config
+        
+        #启用 EXT3 文件系统支持。约 0.2MB
+        echo "CONFIG_FIRMWARE_ENABLE_EXT3=y" >> .config
+        
+        #启用 EXT4（同时支持 EXT3/EXT2）文件系统支持。约 0.4MB
+        echo "CONFIG_FIRMWARE_ENABLE_EXT4=y" >> .config
+        
+        ##启用 XFS 文件系统支持。约 0.6MB
+        echo "CONFIG_FIRMWARE_ENABLE_XFS=n" >> .config 
+
+        ##启用 FUSE（用户空间文件系统）支持。约 0.1MB
+        echo "CONFIG_FIRMWARE_ENABLE_FUSE=y" >> .config
+
+        ##启用交换文件/分区支持。约 0.05MB
+        echo "CONFIG_FIRMWARE_ENABLE_SWAP=y" >> .config
+
+        ##包含 UVC 摄像头模块。约 0.2MB
+        echo "CONFIG_FIRMWARE_INCLUDE_UVC=n" >> .config
+
+        ##包含 USB-HID 模块。约 0.2MB
+        echo "CONFIG_FIRMWARE_INCLUDE_HID=n" >> .config
+
+        ##包含 USB-Serial 模块（例如 pl2303）。约 0.03MB
+        echo "CONFIG_FIRMWARE_INCLUDE_SERIAL=y" >> .config
+
+        ##包含 USB-Audio 模块。约 0.46MB
+        echo "CONFIG_FIRMWARE_INCLUDE_AUDIO=n" >> .config
+
+        ##包含 XFRM（IPsec）模块及 iptables 扩展。约 0.2MB
+        echo "CONFIG_FIRMWARE_INCLUDE_XFRM=y" >> .config
+
+        ##包含网络 QoS 调度模块。约 0.2MB
+        echo "CONFIG_FIRMWARE_INCLUDE_QOS=y" >> .config
+
+        ## 包含用于流量整形的 IMQ 模块（会略微降低性能）。约 0.02MB
+        echo "CONFIG_FIRMWARE_INCLUDE_IMQ=y" >> .config
+
+        ##包含用于流量整形的 IFB 模块。约 0.03MB
+        echo "CONFIG_FIRMWARE_INCLUDE_IFB=y" >> .config
+
+        ##包含 IPSet 工具和内核模块。约 0.4MB
+        #echo "CONFIG_FIRMWARE_INCLUDE_IPSET=y" >> .config
+
+        ##包含 NFSv3 服务器。约 0.6MB  已删除 /trunk/user/httpd/common.h
+        echo "CONFIG_FIRMWARE_INCLUDE_NFSD=n" >> .config
+
+        ## 包含 CIFS（SMB）客户端。约 0.2MB
+        echo "CONFIG_FIRMWARE_INCLUDE_CIFS=n" >> .config
+
+        ##包含 NTFS-3G FUSE 驱动（替代 Paragon 的 "ufsd" 驱动）。约 0.4MB
+        echo "CONFIG_FIRMWARE_INCLUDE_NTFS_3G=n" >> .config
+
+        ##包含 LPR 打印机守护程序。约 0.12MB
+        echo "CONFIG_FIRMWARE_INCLUDE_LPRD=y" >> .config
+
+        ##包含 USB-over-Ethernet 打印机守护程序。约 0.05MB
+        echo "CONFIG_FIRMWARE_INCLUDE_U2EC=y" >> .config
+
+        ##包含 "tcpdump" 工具。约 0.6MB
+        echo "CONFIG_FIRMWARE_INCLUDE_TCPDUMP=y" >> .config
+
+        ## 包含 "hdparm" 工具（允许设置硬盘节能超时时间和 APM）。约 0.1MB
+        echo "CONFIG_FIRMWARE_INCLUDE_HDPARM=y" >> .config
+
+        ##包含 "parted" 工具（允许创建 GPT 分区）。约 0.3MB
+        echo "CONFIG_FIRMWARE_INCLUDE_PARTED=y" >> .config
+
+        ##包含 SMB（和 WINS）服务器。约 1.5MB
+        echo "CONFIG_FIRMWARE_INCLUDE_SMBD=y" >> .config
+
+        ##使用 samba3.6 替代 samba3
+        echo "CONFIG_FIRMWARE_INCLUDE_SMBD36=y" >> .config
+
+        ##包含 SMB 和 WINS 服务器的日志功能。约 0.3MB
+        echo "CONFIG_FIRMWARE_INCLUDE_SMBD_SYSLOG=n" >> .config
+
+        ##包含 FTP 服务器。约 0.2MB
+        echo "CONFIG_FIRMWARE_INCLUDE_FTPD=y" >> .config
+
+        ##包含替代的 L2TP 控制客户端 RP-L2TP。约 0.1MB
+        echo "CONFIG_FIRMWARE_INCLUDE_RPL2TP=n" >> .config
+
+        ##包含 EAP-TTLS 和 EAP-PEAP 认证支持。openssl 约 1.2MB，wpa_supplicant 约 0.04MB
+        echo "CONFIG_FIRMWARE_INCLUDE_EAP_PEAP=y" >> .config
+
+        ##为 DDNS 客户端包含 HTTPS 支持。openssl 约 1.2MB
+        echo "CONFIG_FIRMWARE_INCLUDE_DDNS_SSL=y" >> .config
+
+        ##包含 HTTPS 支持。openssl 约 1.2MB
+        echo "CONFIG_FIRMWARE_INCLUDE_HTTPS=y" >> .config
+
+        ##包含 sftp 服务器。openssl 约 1.2MB，sftp-server 约 0.06MB
+        echo "CONFIG_FIRMWARE_INCLUDE_SFTP=y" >> .config
+
+        ##包含 dropbear SSH。约 0.3MB
+        echo "CONFIG_FIRMWARE_INCLUDE_DROPBEAR=y" >> .config
+
+        ## 加速 dropbear 的对称加密和哈希运算。约 0.06MB
+        echo "CONFIG_FIRMWARE_INCLUDE_DROPBEAR_FAST_CODE=y" >> .config
+
+        ##使用 OpenSSH 替代 dropbear。openssl 约 1.2MB，openssh 约 1.0MB
+        echo "CONFIG_FIRMWARE_INCLUDE_OPENSSH=y" >> .config
+
+        ##包含 StrongSwan。XFRM 模块约 0.2MB，strongswan 约 0.7MB
+        echo "CONFIG_FIRMWARE_INCLUDE_SSWAN=n" >> .config
+
+        ##为 openssl 库添加椭圆曲线（EC）支持。约 0.1MB
+        echo "CONFIG_FIRMWARE_INCLUDE_OPENSSL_EC=y" >> .config
+
+        ##包含 "openssl" 可执行程序，用于生成证书。约 0.4MB
+        echo "CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=y" >> .config
+
+        ##包含 xUPNPd IPTV 媒体服务器。约 0.3MB
+        echo "CONFIG_FIRMWARE_INCLUDE_XUPNPD=n" >> .config
+
+        ##包含 Minidlna UPnP 媒体服务器。约 1.6MB
+        echo "CONFIG_FIRMWARE_INCLUDE_MINIDLNA=n" >> .config
+
+        ##包含 Firefly iTunes 媒体服务器。约 1.0MB 
+        echo "CONFIG_FIRMWARE_INCLUDE_FIREFLY=n" >> .config
+
+        ##为 Minidlna 和 Firefly 包含 ffmpeg 0.11.x（替代 0.6.x）。约 0.1MB
+        echo "CONFIG_FIRMWARE_INCLUDE_FFMPEG_NEW=n" >> .config
+
+
+
+        ##包含 Transmission 种子下载工具。openssl 约 1.2MB，transmission 约 1.5MB 已删除 请查看/trunk/user/httpd/common.h
+        echo "CONFIG_FIRMWARE_INCLUDE_TRANSMISSION=n" >> .config
+
+        ##包含 Transmission-Web-Control（高级 WebUI）。约 0.8MB 已删除 /trunk/user/httpd/common.h
+        echo "CONFIG_FIRMWARE_INCLUDE_TRANSMISSION_WEB_CONTROL=n" >> .config
+
+        ##包含 Aria2 下载管理器。openssl 约 1.2MB，aria2 约 3.5MB
+        echo "CONFIG_FIRMWARE_INCLUDE_ARIA=n" >> .config
+
+        ##包含 Aria2 WEB 控制界面。约 0.7MB。
+        echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=n" >> .config
+
+        
+
+        ##下载工具 curl 必备
+        echo "CONFIG_FIRMWARE_INCLUDE_CURL=y" >> .config
+
+        ##校园网 已删除 /trunk/user/httpd/common.h
+        echo "CONFIG_FIRMWARE_INCLUDE_SCUTCLIENT=n" >> .config
+        
+        ## OpenVPN。需要 IPv6 支持。openssl 约 1.2MB，openvpn 约 0.4MB
+        echo "CONFIG_FIRMWARE_INCLUDE_OPENVPN=n" >> .config
+
+        ## 广东工业校园认证
+        echo "CONFIG_FIRMWARE_INCLUDE_GDUT_DRCOM=n" >> .config
+
+         ## 哆点校园认证
+        echo "CONFIG_FIRMWARE_INCLUDE_DOGCOM=n" >> .config
+
+         ## 锐捷认证
+        echo "CONFIG_FIRMWARE_INCLUDE_MINIEAP=n" >> .config
+
+         ## 南京校园？
+        echo "CONFIG_FIRMWARE_INCLUDE_NJIT_CLIENT=n" >> .config
+
+         ## IPV6中继
+        echo "CONFIG_FIRMWARE_INCLUDE_NAPT66=y" >> .config
+
+         ## ss服务器
+        echo "CONFIG_FIRMWARE_INCLUDE_SSSERVER=n" >> .config
+
+         ## SOFTETHERVPN服务器
+        echo "CONFIG_FIRMWARE_INCLUDE_SOFTETHERVPN_SERVER=n" >> .config
+
+         ## SOFTETHERVPN客户端
+        echo "CONFIG_FIRMWARE_INCLUDE_SOFTETHERVPN_CLIENT=n" >> .config
+ 
+         ## SOFTETHERVPN
+        echo "CONFIG_FIRMWARE_INCLUDE_SOFTETHERVPN_CMD=n" >> .config
+
+         ## DNS转发 已删除 请查看/trunk/user/httpd/common.h
+        echo "CONFIG_FIRMWARE_INCLUDE_DNSFORWARDER=n" >> .config
+
+         ## KMS服务器 已删除 /trunk/user/httpd/common.h
+        echo "CONFIG_FIRMWARE_INCLUDE_VLMCSD=n" >> .config
+
+         ## TTYD
+        echo "CONFIG_FIRMWARE_INCLUDE_TTYD=y" >> .config
+
+         ## 文件传输工具
+        echo "CONFIG_FIRMWARE_INCLUDE_LRZSZ=y" >> .config
+
+         ## 系统状态监控工具
+        echo "CONFIG_FIRMWARE_INCLUDE_HTOP=y" >> .config
+
+         ## 文本编辑器
+        echo "CONFIG_FIRMWARE_INCLUDE_NANO=y" >> .config
+
+         ## iperf3测速软件
+        echo "CONFIG_FIRMWARE_INCLUDE_IPERF3=y" >> .config
+
+        ## DUMP1090
+        echo "CONFIG_FIRMWARE_INCLUDE_DUMP1090=n" >> .config
+
+        ## RTL_SDR
+        echo "CONFIG_FIRMWARE_INCLUDE_RTL_SDR=n" >> .config
+
+        ## MTR
+        echo "CONFIG_FIRMWARE_INCLUDE_MTR=y" >> .config
+
+        ## ipv6端口转发工具
+        echo "CONFIG_FIRMWARE_INCLUDE_SOCAT=y" >> .config
+
+        ## SRELAY代理
+        echo "CONFIG_FIRMWARE_INCLUDE_SRELAY=n" >> .config
+
+        ## MENTOHUST校园认证 已删除 请查看/trunk/user/httpd/common.h
+        echo "CONFIG_FIRMWARE_INCLUDE_MENTOHUST=n" >> .config
+
+        ##################################
+        
+        echo "CONFIG_FIRMWARE_INCLUDE_FRPC=n" >> .config  ## FRPC 客户端 约8k
+        echo "CONFIG_FIRMWARE_INCLUDE_FRPS=n" >> .config  ## FRPS 服务端 约8k
+        echo "CONFIG_FIRMWARE_INCLUDE_WIREGUARD=n" >> .config  ## wireguard 约1M
+        echo "CONFIG_FIRMWARE_INCLUDE_TUNSAFE=n" >> .config ## tunsafe（wireguard的TCP方式）
+        echo "CONFIG_FIRMWARE_INCLUDE_ZEROTIER=y" >> .config ## zerotier 约 20k
+        echo "CONFIG_FIRMWARE_INCLUDE_ALIDDNS=y" >> .config #阿里DDNS ~20k
+        echo "CONFIG_FIRMWARE_INCLUDE_DDNSTO=n" >> .config #ddnsto 约800k  已删除 /trunk/user/httpd/common.h
+        echo "CONFIG_FIRMWARE_INCLUDE_TAILSCALE=n" >> .config #tailscale 约20k
+        echo "CONFIG_FIRMWARE_INCLUDE_NATPIERCE=n" >> .config #皎月连 约20k
+        echo "CONFIG_FIRMWARE_INCLUDE_VNTCLI=y" >> .config #vnt客户端 约80k
+        echo "CONFIG_FIRMWARE_INCLUDE_VNTS=y" >> .config #vnt服务端 约50k
+        echo "CONFIG_FIRMWARE_INCLUDE_CLOUDFLARED=n" >> .config #CF的隧道 约50k
+        echo "CONFIG_FIRMWARE_INCLUDE_LUCKY=n" >> .config #LUCKY 约50k
+        echo "CONFIG_FIRMWARE_INCLUDE_CLOUDFLARE=y" >> .config #CF-ddns 约50k
+        echo "CONFIG_FIRMWARE_INCLUDE_EASYTIER=n" >> .config #EasyTier 约50k
+        
+        echo "CONFIG_FIRMWARE_INCLUDE_ALIST=n" >> .config #ALIST文件列表 约80k
+        echo "CONFIG_FIRMWARE_INCLUDE_WXSEND=y" >> .config #微信推送 约50k
+        echo "CONFIG_FIRMWARE_INCLUDE_UUPLUGIN=y" >> .config #网易UU加速器 约50k
+        
+        echo "CONFIG_FIRMWARE_INCLUDE_ALDRIVER=n" >> .config #阿里云盘 约50k
+        sed -i 's/EVM_RESTART_ALDRIVER/EVM_RESTART_VIRTUALHERE/g' ./user/httpd/common.h
+        echo "CONFIG_FIRMWARE_INCLUDE_VIRTUALHERE=y" >> .config #virtualhere 约30k 后期需要自行下载可执行文件 在trunk/user/virtualhere 
+        
+        echo "CONFIG_FIRMWARE_INCLUDE_WYY=n" >> .config #网易云解锁 约80k 已删除 /trunk/user/httpd/common.h
+        echo "CONFIG_FIRMWARE_INCLUDE_BAFA=y" >> .config #巴法云 约90k
+        echo "CONFIG_FIRMWARE_INCLUDE_CADDY=n" >> .config #在线文件管理服务不占空间(4.0kb左右)
+        echo "CONFIG_FIRMWARE_INCLUDE_SMARTDNS=n" >> .config #smartdns
+        echo "CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME=n" >> .config #adguardhome不占空间(7.2kb左右)
+        echo "CONFIG_FIRMWARE_INCLUDE_NETCAT=y" >> .config #nc工具
+        echo "CONFIG_FIRMWARE_INCLUDE_MSD_LITE=y" >> .config #MSD_LITE工具
+        
+        
+        #echo "CONFIG_FIRMWARE_INCLUDE_V2RAYA=n" >> .config #v2raya 已删除 /trunk/user/httpd/common.h
+        #echo "CONFIG_FIRMWARE_INCLUDE_NVPPROXY=n" >> .config #NVPPROXY 已删除 请查看/trunk/user/httpd/common.h
+        ##科学上网## 已删除 请查看/trunk/user/httpd/common.h
+        #echo "CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS=n" >> .config #SS plus+ 科学上网插件
+        #echo "CONFIG_FIRMWARE_INCLUDE_V2RAY=n" >> .config #无需集成会在线下载
+        #echo "CONFIG_FIRMWARE_INCLUDE_XRAY=n" >> .config #无需集成会在线下载
+        #echo "CONFIG_FIRMWARE_INCLUDE_TROJAN=n" >> .config #无需集成会在线下载
+        #echo "CONFIG_FIRMWARE_INCLUDE_SSOBFS=n" >> .config # simple-obfs混淆插件
+        
+        #########################################################################################
+        sudo ./clear_tree
+        sudo ./build_firmware_modify $TNAME 0
+        sudo mv -f images/*.trx /opt/images/
+        cp -f .config /opt/images/${TNAME}.config
+        echo "build_time=$(date '+%Y年%m月%d日%H:%M:%S' | jq -sRr @uri)" >> $GITHUB_ENV
+        echo "tag=$(date '+%Y-%m-%d')" >> $GITHUB_ENV
+    - name : Upload packages
+      uses: actions/upload-artifact@master
+      if: always()
+      with:
+        name: YK-L1
+        path: /opt/images
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        body: |
+           > ### ![](https://img.shields.io/badge/%E7%BC%96%E8%AF%91%E6%97%B6%E9%97%B4-${{ env.build_time }}-8267?logo=github&labelColor=%E9%A1%BB)![](https://img.shields.io/github/downloads/${{ github.repository }}/${{ env.tag }}/total?label=%E4%B8%8B%E8%BD%BD%E6%AC%A1%E6%95%B0&logo=github)
+
+           `型号.config` 是集成的插件模板
+           
+        tag_name: ${{ env.tag }}
+        files: /opt/images/*
