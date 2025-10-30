@@ -1,6 +1,6 @@
 # Padavan-KVR #
 
-![](https://views.whatilearened.today/views/github/lmq8267/padavan-KVR.svg)
+![](https://views.whatilearened.today/views/github/lmq8267/padavan-KVR.svg)[![](https://deepwiki.com/badge.svg)](https://deepwiki.com/lmq8267/padavan-KVR)
 
 不需要WireGuard的可以去`trunk/configs/boards/型号/kernel-3.4.x**.config`文件里找到 **`CONFIG_WIREGUARD=y`** 改成 **`# CONFIG_WIREGUARD is not set`** 去掉wg内核模块 约900多k
 ![](./UI.png)
