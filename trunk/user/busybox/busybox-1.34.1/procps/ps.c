@@ -145,8 +145,14 @@ static unsigned long get_uptime(void)
 }
 #endif
 
-#if ENABLE_DESKTOP
-/* TODO:
+/*
+ * OpenList/PoE: 把 -o 列引擎从 ENABLE_DESKTOP 专属块中移出，
+ * 使非 DESKTOP 的 ps 也支持 "-o 列名"（如 -o pid,comm）。
+ * 非 DESKTOP 的默认列保持 "pid,user,vsz,stat,args"，与旧输出一致。
+ */
+
+/*
+ * TODO:
  * http://pubs.opengroup.org/onlinepubs/9699919799/utilities/ps.html
  * specifies (for XSI-conformant systems) following default columns
  * (l and f mark columns shown with -l and -f respectively):
@@ -397,7 +403,7 @@ static const ps_out_t out_spec[] ALIGN_PTR = {
 	{ 5                  , "time"  ,"TIME"   ,func_time  ,PSSCAN_STIME | PSSCAN_UTIME },
 #endif
 	{ 6                  , "tty"   ,"TT"     ,func_tty   ,PSSCAN_TTY     },
-	{ 4                  , "vsz"   ,"VSZ"    ,func_vsz   ,PSSCAN_VSZ     },
+	{ 5                  , "vsz"   ,"VSZ"    ,func_vsz   ,PSSCAN_VSZ     },
 /* Not mandated, but useful: */
 	{ 5                  , "sid"   ,"SID"    ,func_sid   ,PSSCAN_SID     },
 	{ 4                  , "stat"  ,"STAT"   ,func_state ,PSSCAN_STATE   },
@@ -544,6 +550,7 @@ static void format_process(const procps_status_t *ps)
 # define DEFAULT_O_STR    ("pid,user" IF_FEATURE_PS_TIME(",time") ",args")
 #endif
 
+#if ENABLE_DESKTOP /* 桌面版 ps：默认 -o 桌面列 */
 int ps_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
 int ps_main(int argc UNUSED_PARAM, char **argv)
 {
@@ -641,158 +648,122 @@ int ps_main(int argc UNUSED_PARAM, char **argv)
 
 
 int ps_main(int argc, char **argv) MAIN_EXTERNALLY_VISIBLE;
-int ps_main(int argc UNUSED_PARAM, char **argv UNUSED_PARAM)
+int ps_main(int argc, char **argv)
 {
 	procps_status_t *p;
-	int psscan_flags = PSSCAN_PID | PSSCAN_UIDGID
-			| PSSCAN_STATE | PSSCAN_VSZ | PSSCAN_COMM;
-	unsigned terminal_width IF_NOT_FEATURE_PS_WIDE(= 79);
+	llist_t* opt_o = NULL;
+	char default_o[] = "pid,user,vsz,stat,args";
 	enum {
-		OPT_Z = (1 << 0) * ENABLE_SELINUX,
-		OPT_T = (1 << ENABLE_SELINUX) * ENABLE_FEATURE_SHOW_THREADS,
-		OPT_l = (1 << ENABLE_SELINUX) * (1 << ENABLE_FEATURE_SHOW_THREADS) * ENABLE_FEATURE_PS_LONG,
+		OPTBIT_o,
+		IF_SELINUX(             OPTBIT_Z ,)
+		IF_FEATURE_SHOW_THREADS(OPTBIT_T ,)
+		IF_FEATURE_PS_LONG(     OPTBIT_l ,)
+		IF_FEATURE_PS_WIDE(     OPTBIT_w ,)
+		OPT_o = 1 << OPTBIT_o,
+		OPT_Z = IF_SELINUX((1 << OPTBIT_Z)) + 0,
+		OPT_T = IF_FEATURE_SHOW_THREADS((1 << OPTBIT_T)) + 0,
+		OPT_l = IF_FEATURE_PS_LONG((1 << OPTBIT_l)) + 0,
+		OPT_w = IF_FEATURE_PS_WIDE((1 << OPTBIT_w)) + 0,
 	};
+	int opts;
+
+	INIT_G();
+
 #if ENABLE_FEATURE_PS_LONG
 	time_t now = now; /* for compiler */
 	unsigned long uptime = uptime;
 #endif
-	/* If we support any options, parse argv */
-#if ENABLE_SELINUX || ENABLE_FEATURE_SHOW_THREADS || ENABLE_FEATURE_PS_WIDE || ENABLE_FEATURE_PS_LONG
-	int opts = 0;
-# if ENABLE_FEATURE_PS_WIDE
-	/* -w is a bit complicated */
-	int w_count = 0;
-	make_all_argv_opts(argv);
-	opts = getopt32(argv, "^"
-		IF_SELINUX("Z")IF_FEATURE_SHOW_THREADS("T")IF_FEATURE_PS_LONG("l")"w"
-		"\0" "ww",
-		&w_count
+
+	opts = getopt32(argv,
+		"o:*"
+		IF_SELINUX("Z") IF_FEATURE_SHOW_THREADS("T")
+		IF_FEATURE_PS_LONG("l") IF_FEATURE_PS_WIDE("w"),
+		&opt_o
 	);
-	/* if w is given once, GNU ps sets the width to 132,
-	 * if w is given more than once, it is "unlimited"
-	 */
-	if (w_count) {
-		terminal_width = (w_count == 1) ? 132 : MAX_WIDTH;
+
+	/* -w 宽屏：一次 = 132 列（与旧行为一致） */
+	if (opts & OPT_w) {
+		terminal_width = 132;
 	} else {
 		terminal_width = get_terminal_width(0);
 		/* Go one less... */
 		if (--terminal_width > MAX_WIDTH)
 			terminal_width = MAX_WIDTH;
 	}
-# else
-	/* -w is not supported, only -Z and/or -T */
-	make_all_argv_opts(argv);
-	opts = getopt32(argv, IF_SELINUX("Z")IF_FEATURE_SHOW_THREADS("T")IF_FEATURE_PS_LONG("l"));
-# endif
 
-# if ENABLE_SELINUX
-	if ((opts & OPT_Z) && is_selinux_enabled()) {
-		psscan_flags = PSSCAN_PID | PSSCAN_CONTEXT
-				| PSSCAN_STATE | PSSCAN_COMM;
-		puts("  PID CONTEXT                          STAT COMMAND");
-	} else
-# endif
-	if (opts & OPT_l) {
-		psscan_flags = PSSCAN_STATE | PSSCAN_UIDGID | PSSCAN_PID | PSSCAN_PPID
-			| PSSCAN_TTY | PSSCAN_STIME | PSSCAN_UTIME | PSSCAN_COMM
-			| PSSCAN_VSZ | PSSCAN_RSS;
-/* http://pubs.opengroup.org/onlinepubs/9699919799/utilities/ps.html
- * mandates for -l:
- * -F     Flags (?)
- * S      State
- * UID,PID,PPID
- * -C     CPU usage
- * -PRI   The priority of the process; higher numbers mean lower priority
- * -NI    Nice value
- * -ADDR  The address of the process (?)
- * SZ     The size in blocks of the core image
- * -WCHAN The event for which the process is waiting or sleeping
- * TTY
- * TIME   The cumulative execution time
- * CMD
- * We don't show fields marked with '-'.
- * We show VSZ and RSS instead of SZ.
- * We also show STIME (standard says that -f shows it, -l doesn't).
- */
-		puts("S   UID   PID  PPID   VSZ   RSS TTY   STIME TIME     CMD");
-# if ENABLE_FEATURE_PS_LONG
-		now = time(NULL);
-		uptime = get_uptime();
-# endif
-	}
-	else {
-		puts("  PID USER       VSZ STAT COMMAND");
-	}
-	if (opts & OPT_T) {
-		psscan_flags |= PSSCAN_TASKS;
-	}
+#if ENABLE_FEATURE_SHOW_THREADS
+	if (opts & OPT_T)
+		need_flags |= PSSCAN_TASKS;
 #endif
 
+	if (opts & OPT_o) {
+		do {
+			parse_o(llist_pop(&opt_o));
+		} while (opt_o);
+	} else if (opts & OPT_l) {
+		/* -l 长格式：扫描字段在下方手写输出分支处理 */
+		need_flags = PSSCAN_STATE | PSSCAN_UIDGID | PSSCAN_PID | PSSCAN_PPID
+			| PSSCAN_TTY | PSSCAN_STIME | PSSCAN_UTIME | PSSCAN_COMM
+			| PSSCAN_VSZ | PSSCAN_RSS;
+	} else {
+		/* 无 -o：保持传统默认列，与旧版输出格式一致 */
+		parse_o(default_o);
+	}
+
+	alloc_line_buffer();
+	format_header();
+
 	p = NULL;
-	while ((p = procps_scan(p, psscan_flags)) != NULL) {
-		int len;
-#if ENABLE_SELINUX
-		if (psscan_flags & PSSCAN_CONTEXT) {
-			len = printf("%5u %-32.32s %s  ",
-					p->pid,
-					p->context ? p->context : "unknown",
-					p->state);
+	while ((p = procps_scan(p, need_flags)) != NULL) {
+#if ENABLE_FEATURE_PS_LONG
+		if ((opts & OPT_l) && !(opts & OPT_o)) {
+			int len;
+			char buf6[6];
+			char bufr[6], stime_str[6];
+			char tty[2 * sizeof(int)*3 + 2];
+			char *endp;
+			unsigned sut = (p->stime + p->utime) / 100;
+			unsigned elapsed = uptime - (p->start_time / 100);
+			time_t start = now - elapsed;
+			struct tm *tm = localtime(&start);
+
+			smart_ulltoa5(p->vsz, buf6, " mgtpezy")[0] = '\0';
+
+			if (p->tty_major == 136)
+				/* It should be pts/N, not ptsN, but N > 9
+				 * will overflow field width...
+				 */
+				endp = stpcpy(tty, "pts");
+			else
+			if (p->tty_major == 4) {
+				endp = stpcpy(tty, "tty");
+				if (p->tty_minor >= 64) {
+					p->tty_minor -= 64;
+					*endp++ = 'S';
+				}
+			}
+			else
+				endp = tty + sprintf(tty, "%d:", p->tty_major);
+			strcpy(endp, utoa(p->tty_minor));
+
+			strftime(stime_str, 6, (elapsed >= (24 * 60 * 60)) ? "%b%d" : "%H:%M", tm);
+			stime_str[5] = '\0';
+			//            S  UID PID PPID VSZ RSS TTY STIME TIME        CMD
+			len = printf("%c %5u %5u %5u %5s %5s %-5s %s %02u:%02u:%02u ",
+				p->state[0], p->uid, p->pid, p->ppid, buf6, bufr, tty,
+				stime_str, sut / 3600, (sut % 3600) / 60, sut % 60);
+			{
+				int sz = terminal_width - len;
+				if (sz >= 0) {
+					char buf[sz + 1];
+					read_cmdline(buf, sz, p->pid, p->comm);
+					puts(buf);
+				}
+			}
 		} else
 #endif
 		{
-			char buf6[6];
-			smart_ulltoa5(p->vsz, buf6, " mgtpezy")[0] = '\0';
-#if ENABLE_FEATURE_PS_LONG
-			if (opts & OPT_l) {
-				char bufr[6], stime_str[6];
-				char tty[2 * sizeof(int)*3 + 2];
-				char *endp;
-				unsigned sut = (p->stime + p->utime) / 100;
-				unsigned elapsed = uptime - (p->start_time / 100);
-				time_t start = now - elapsed;
-				struct tm *tm = localtime(&start);
-
-				smart_ulltoa5(p->rss, bufr, " mgtpezy")[0] = '\0';
-
-				if (p->tty_major == 136)
-					/* It should be pts/N, not ptsN, but N > 9
-					 * will overflow field width...
-					 */
-					endp = stpcpy(tty, "pts");
-				else
-				if (p->tty_major == 4) {
-					endp = stpcpy(tty, "tty");
-					if (p->tty_minor >= 64) {
-						p->tty_minor -= 64;
-						*endp++ = 'S';
-					}
-				}
-				else
-					endp = tty + sprintf(tty, "%d:", p->tty_major);
-				strcpy(endp, utoa(p->tty_minor));
-
-				strftime(stime_str, 6, (elapsed >= (24 * 60 * 60)) ? "%b%d" : "%H:%M", tm);
-				stime_str[5] = '\0';
-				//            S  UID PID PPID VSZ RSS TTY STIME TIME        CMD
-				len = printf("%c %5u %5u %5u %5s %5s %-5s %s %02u:%02u:%02u ",
-					p->state[0], p->uid, p->pid, p->ppid, buf6, bufr, tty,
-					stime_str, sut / 3600, (sut % 3600) / 60, sut % 60);
-			} else
-#endif
-			{
-				const char *user = get_cached_username(p->uid);
-				len = printf("%5u %-8.8s %s %s  ",
-					p->pid, user, buf6, p->state);
-			}
-		}
-
-		{
-			int sz = terminal_width - len;
-			if (sz >= 0) {
-				char buf[sz + 1];
-				read_cmdline(buf, sz, p->pid, p->comm);
-				puts(buf);
-			}
+			format_process(p);
 		}
 	}
 	if (ENABLE_FEATURE_CLEAN_UP)
