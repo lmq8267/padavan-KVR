@@ -34,13 +34,20 @@ $j(document).ready(function() {
 <script>
 
 <% login_state_hook(); %>
+<% adguardhome_status(); %>
 
 function initial(){
 	show_banner(2);
 	show_menu(5,16);
 	showmenu();
 	show_footer();
+	fill_adg_status(adguardhome_status());
 
+}
+
+function fill_adg_status(code){
+	var stext = code == 0 ? "<#Stopped#>" : "<#Running#>";
+	$("adg_status").innerHTML = '<span class="label label-' + (code != 0 ? 'success' : 'warning') + '">' + stext + '</span>';
 }
 
 function textarea_scripts_enabled(v){
@@ -48,7 +55,11 @@ function textarea_scripts_enabled(v){
 }
 
 
+var adg_submitting = false;
 function applyRule(){
+	if (adg_submitting)
+		return;
+	adg_submitting = true;
 //	if(validForm()){
 		showLoading();
 		
@@ -140,10 +151,18 @@ function done_validating(action){
 									</p>
 									<a href="https://adguard.com/zh_cn/adguard-home/overview.html" target="blank">AdGuard 主页</a>
 									,项目地址：<a href="https://github.com/AdguardTeam/AdGuardHome" target="blank">https://github.com/AdguardTeam/AdGuardHome</a>
-									,备注：①安装需要 30M+ 的空间 ②默认帐号密码：admin  ③ 修改密码下方adg.sh的第四五行auth_name:账号 auth_pass:填写转换后的密码 ④ <a href="https://www.jisuan.mobi/nX7.html" target="blank">在线密码生成计算器</a>
+									,备注：①程序运行在 /tmp，约需 55M 可用空间 ②默认帐号密码：admin / admin，首次登录后请在 AdGuardHome 网页的“设置 - 常规设置”里修改 ③ 3030 端口只在内网使用，不要映射到公网 ④ 下方 adg.sh 为高级配置，修改前请先备份
 									</div>
 
 									<table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
+										<tr>
+											<th width="30%" style="border-top: 0 none;">运行状态</th>
+											<td id="adg_status" colspan="2" style="border-top: 0 none;"></td>
+										</tr>
+										<tr>
+											<th width="30%">当前版本</th>
+											<td colspan="2"><% nvram_get_x("","adg_ver"); %></td>
+										</tr>
 										<tr>
 											<th width="30%" style="border-top: 0 none;">启用AdGuardHome</th>
 											<td style="border-top: 0 none;">
@@ -157,7 +176,6 @@ function done_validating(action){
 													<input type="radio" value="0" name="adg_enable" id="adg_enable_0" class="input" value="0" <% nvram_match_x("", "adg_enable", "0", "checked"); %> /><#checkbox_No#>
 												</div>
 											</td>
-										</tr>
 										</tr>
                                          <tr>
 											<th><a class="help_tooltip" href="javascript: void(0)" onmouseover="openTooltip(this, 1, 1);">DNS重定向</a></th>

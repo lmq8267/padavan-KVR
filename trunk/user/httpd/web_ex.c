@@ -2338,6 +2338,15 @@ static int frps_status_hook(int eid, webs_t wp, int argc, char **argv)
 }
 #endif
 
+#if defined (APP_ADGUARDHOME)
+static int adguardhome_status_hook(int eid, webs_t wp, int argc, char **argv)
+{
+	int adg_status_code = pids("AdGuardHome");
+	websWrite(wp, "function adguardhome_status() { return %d;}\n", adg_status_code);
+	return 0;
+}
+#endif
+
 #if defined (APP_VNTS)
 static int vnts_status_hook(int eid, webs_t wp, int argc, char **argv)
 {
@@ -5487,6 +5496,9 @@ struct ej_handler ej_handlers[] =
 #if defined (APP_FRP)
 	{ "frpc_status", frpc_status_hook},
 	{ "frps_status", frps_status_hook},
+#endif
+#if defined (APP_ADGUARDHOME)
+	{ "adguardhome_status", adguardhome_status_hook},
 #endif
 #if defined (APP_VNTS)
 	{ "vnts_status", vnts_status_hook},
