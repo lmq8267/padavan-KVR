@@ -2849,6 +2849,11 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 #else
 	int found_app_xupnpd = 0;
 #endif
+#if defined(APP_RTP2HTTPD)
+	int found_app_rtp2httpd = 1;
+#else
+	int found_app_rtp2httpd = 0;
+#endif
 #if defined(USE_IPV6)
 	int has_ipv6 = 1;
 #else
@@ -3063,6 +3068,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		"function found_app_cloudflare() { return %d;}\n"
 		"function found_app_alist() { return %d;}\n"
 		"function found_app_xupnpd() { return %d;}\n"
+		"function found_app_rtp2httpd() { return %d;}\n"
 		"function found_app_vnts() { return %d;}\n"
 		"function found_app_vntcli() { return %d;}\n"
 		"function found_app_uuplugin() { return %d;}\n"
@@ -3113,6 +3119,7 @@ ej_firmware_caps_hook(int eid, webs_t wp, int argc, char **argv)
 		found_app_cloudflare,
 		found_app_alist,
 		found_app_xupnpd,
+		found_app_rtp2httpd,
 		found_app_vnts,
 		found_app_vntcli,
 		found_app_uuplugin,

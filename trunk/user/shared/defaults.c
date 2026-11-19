@@ -1220,6 +1220,11 @@ struct nvram_pair router_defaults[] = {
 	{ "force_igmp", "0" },
 	{ "force_mld", "0" },
 	{ "udpxy_enable_x", "0" },
+	{ "rtp2httpd_enable", "0" },
+	{ "rtp2httpd_dl", "1" },
+	{ "rtp2httpd_workers", "1" },
+	{ "rtp2httpd_ver", "" },
+	{ "rtp2httpd_ver_n", "" },
 	{ "udpxy_clients", "10" },
 	{ "udpxy_renew_period", "120" },
 #if defined(APP_XUPNPD)

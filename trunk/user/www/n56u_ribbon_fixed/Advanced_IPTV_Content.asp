@@ -26,6 +26,8 @@ var $j = jQuery.noConflict();
 $j(document).ready(function() {
 	init_itoggle('mr_enable_x', on_click_mroute);
 	init_itoggle('ether_igmp', on_click_snoop);
+	init_itoggle('rtp2httpd_enable', switch_rtp2httpd);
+	init_itoggle('rtp2httpd_dl');
 });
 
 </script>
@@ -47,6 +49,7 @@ function initial(){
 	show_banner(1);
 	show_menu(5,3,id_menu);
 	show_footer();
+	switch_rtp2httpd();
 
 	var o1 = document.form.ether_uport;
 	var num_ephy = support_num_ephy();
@@ -185,10 +188,29 @@ var window_xupnpd;
 var window_params="toolbar=yes,location=yes,directories=no,status=yes,menubar=yes,scrollbars=yes,resizable=yes,copyhistory=no,width=800,height=600";
 
 function on_udpxy_link(){
-	var path = ("<% nvram_get_x("","msd_lite_enable"); %>" === "1") ? "/stat" : "/status";
+	var path = "<% nvram_get_x("","msd_lite_enable"); %>" === "1" ? "/stat" : "/status";
+	if (document.form.rtp2httpd_enable.value == "1")
+		path = "/status";
 	var svc_url="http://" + lan_ipaddr + ":" + document.form.udpxy_enable_x.value + path;
 	window_udpxy = window.open(svc_url, "udpxy", window_params);
 	window_udpxy.focus();
+}
+
+function on_rtp2_link(path){
+	var svc_url="http://" + lan_ipaddr + ":" + document.form.udpxy_enable_x.value + path;
+	window.open(svc_url, "rtp2httpd", window_params).focus();
+}
+
+function switch_rtp2httpd(){
+	var rtp2_built = found_app_rtp2httpd();
+	var v = (document.form.rtp2httpd_enable.value == "1" && rtp2_built) ? 1 : 0;
+	showhide_div('row_rtp2_built', rtp2_built ? 0 : 1);
+	showhide_div('row_rtp2_enable', rtp2_built ? 1 : 0);
+	showhide_div('row_rtp2_dl', v);
+	showhide_div('row_rtp2_workers', v);
+	showhide_div('row_rtp2_links', v);
+	showhide_div('row_rtp2_conf', v);
+	showhide_div('row_rtp2_log', v);
 }
 
 function on_xupnpd_link(){
@@ -319,6 +341,71 @@ function on_xupnpd_link(){
                                                     <option value="0" <% nvram_match_x("", "xupnpd_udpxy", "0", "selected"); %>><#checkbox_No#></option>
                                                     <option value="1" <% nvram_match_x("", "xupnpd_udpxy", "1", "selected"); %>><#checkbox_Yes#></option>
                                                 </select>
+                                            </td>
+                                        </tr>
+                                        <tr id="row_rtp2_built" style="display:none;">
+                                            <th>rtp2httpd</th>
+                                            <td colspan="2"><span style="color:#f00;">当前固件未编译 rtp2httpd，请刷入包含该功能的固件后再启用。</span></td>
+                                        </tr>
+                                        <tr id="row_rtp2_enable">
+                                            <th>使用 rtp2httpd 替代 msd_lite / udpxy</th>
+                                            <td>
+                                                <div class="main_itoggle">
+                                                <div id="rtp2httpd_enable_on_of">
+                                                <input type="checkbox" id="rtp2httpd_enable_fake" <% nvram_match_x("", "rtp2httpd_enable", "1", "value=1 checked"); %><% nvram_match_x("", "rtp2httpd_enable", "0", "value=0"); %> />
+                                                </div>
+                                                </div>
+                                                <div style="position: absolute; margin-left: -10000px;">
+                                                <input type="radio" value="1" name="rtp2httpd_enable" id="rtp2httpd_enable_1" class="input" <% nvram_match_x("", "rtp2httpd_enable", "1", "checked"); %> /><#checkbox_Yes#>
+                                                <input type="radio" value="0" name="rtp2httpd_enable" id="rtp2httpd_enable_0" class="input" <% nvram_match_x("", "rtp2httpd_enable", "0", "checked"); %> /><#checkbox_No#>
+                                                </div>
+                                            </td>
+                                            <td>当前: <% nvram_get_x("","rtp2httpd_ver"); %> / 最新: <% nvram_get_x("","rtp2httpd_ver_n"); %></td>
+                                        </tr>
+                                        <tr id="row_rtp2_dl" style="display:none;">
+                                            <th>程序来源</th>
+                                            <td colspan="2">
+                                                <div class="main_itoggle">
+                                                <div id="rtp2httpd_dl_on_of">
+                                                <input type="checkbox" id="rtp2httpd_dl_fake" <% nvram_match_x("", "rtp2httpd_dl", "1", "value=1 checked"); %><% nvram_match_x("", "rtp2httpd_dl", "0", "value=0"); %> />
+                                                </div>
+                                                </div>
+                                                <div style="position: absolute; margin-left: -10000px;">
+                                                <input type="radio" value="1" name="rtp2httpd_dl" id="rtp2httpd_dl_1" class="input" <% nvram_match_x("", "rtp2httpd_dl", "1", "checked"); %> />在线下载最新
+                                                <input type="radio" value="0" name="rtp2httpd_dl" id="rtp2httpd_dl_0" class="input" <% nvram_match_x("", "rtp2httpd_dl", "0", "checked"); %> />使用内置
+                                                </div>
+                                                <br><span style="color:#888;">在线下载到 /tmp/rtp2httpd，重启后重新下载；内置版本不便更新</span>
+                                            </td>
+                                        </tr>
+                                        <tr id="row_rtp2_workers" style="display:none;">
+                                            <th>worker 数量 (-w)</th>
+                                            <td colspan="2">
+                                            <input type="number" min="1" max="64" class="input" name="rtp2httpd_workers" value="<% nvram_get_x("","rtp2httpd_workers"); %>" />
+                                            <br><span style="color:#888;">worker 越多占用内存越高，路由器建议 1~2</span>
+                                            </td>
+                                        </tr>
+                                        <tr id="row_rtp2_links" style="display:none;">
+                                            <th>快捷入口</th>
+                                            <td colspan="2">
+                                            <a href="javascript:on_rtp2_link('/status');">状态</a> &nbsp;
+                                            <a href="javascript:on_rtp2_link('/player');">播放器</a> &nbsp;
+                                            <a href="javascript:on_rtp2_link('/playlist.m3u');">播放列表</a>
+                                            </td>
+                                        </tr>
+                                        <tr id="row_rtp2_conf" style="display:none;">
+                                            <td colspan="3">
+                                            <i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('rtp2_conf')"><span>rtp2httpd 配置文件 (/etc/storage/rtp2httpd.conf)</span></a>
+                                            <div id="rtp2_conf" style="display:none;">
+                                            <textarea rows="14" wrap="off" spellcheck="false" class="span12" name="scripts.rtp2httpd.conf" style="font-family:'Courier New'; font-size:12px;"><% nvram_dump("scripts.rtp2httpd.conf",""); %></textarea>
+                                            </div>
+                                            </td>
+                                        </tr>
+                                        <tr id="row_rtp2_log" style="display:none;">
+                                            <td colspan="3">
+                                            <i class="icon-hand-right"></i> <a href="javascript:spoiler_toggle('rtp2_log')"><span>查看 rtp2httpd 日志 /tmp/rtp2httpd.log</span></a>
+                                            <div id="rtp2_log" style="display:none;">
+                                            <textarea rows="16" class="span12" readonly="readonly" wrap="off" id="rtp2httpd_log" style="font-family:'Courier New', Courier, mono; font-size:13px;"><% nvram_dump("rtp2httpd.log",""); %></textarea>
+                                            </div>
                                             </td>
                                         </tr>
                                     </table>

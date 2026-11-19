@@ -229,7 +229,7 @@ remove_vlan_iface(const char *vlan_ifname)
 void
 stop_udpxy(void)
 {
-	char* svcs[] = { "udpxy", NULL };
+	char* svcs[] = { "udpxy", "msd_lite", "rtp2httpd", NULL };
 
 	kill_services(svcs, 3, 1);
 }
@@ -240,7 +240,16 @@ start_udpxy(char *wan_ifname)
 	int port = nvram_get_int("udpxy_enable_x");
 	if (port < 1024)
 		return;
-	
+
+#if defined (APP_RTP2HTTPD)
+	/* rtp2httpd 与 msd_lite/udpxy 共用 udpxy_enable_x 端口，由前端开关切换 */
+	if (nvram_get_int("rtp2httpd_enable") == 1) {
+		nvram_set("msd_lite_enable", "0");
+		eval("/usr/bin/rtp2httpd.sh", "start", wan_ifname);
+		return;
+	}
+#endif
+
 #if defined (APP_MSD_LITE)
 	char *src_conf = "/etc_ro/msd_lite.conf";
 	char *dst_conf = "/etc/storage/msd_lite.conf";
@@ -267,8 +276,9 @@ start_udpxy(char *wan_ifname)
 	}
 	nvram_set("msd_lite_enable", "1");
 	eval("/usr/bin/msd_lite", "-d", "-c", dst_conf);
-#else
-	
+	return;
+#endif
+
 	eval("/usr/sbin/udpxy",
 		"-m", wan_ifname,
 		"-p", nvram_safe_get("udpxy_enable_x"),
@@ -411,7 +421,7 @@ start_xupnpd(char *wan_ifname)
 void
 stop_igmpproxy(char *wan_ifname)
 {
-	char *svcs[] = { "xupnpd", "udpxy", "msd_lite", "igmpproxy", NULL };
+	char *svcs[] = { "xupnpd", "udpxy", "msd_lite", "rtp2httpd", "igmpproxy", NULL };
 
 	/* check used IPTV via VLAN interface */
 	if (wan_ifname) {

@@ -594,6 +594,10 @@
 			{"force_mld", "", NULL, EVM_RESTART_SYSCTL},
 #endif
 			{"udpxy_enable_x", "", NULL, EVM_RESTART_IPTV},
+			{"rtp2httpd_enable", "", NULL, EVM_RESTART_IPTV},
+			{"rtp2httpd_dl", "", NULL, EVM_RESTART_IPTV},
+			{"rtp2httpd_workers", "", NULL, EVM_RESTART_IPTV},
+			{"scripts.rtp2httpd.conf", "File", NULL, EVM_RESTART_IPTV},
 			{"xupnpd_enable_x", "", NULL, EVM_RESTART_IPTV},
 			{"xupnpd_udpxy", "", NULL, EVM_RESTART_IPTV},
 			{"dhcp_enable_x", "", NULL, EVM_RESTART_DHCPD|EVM_REAPPLY_VPNSVR},
