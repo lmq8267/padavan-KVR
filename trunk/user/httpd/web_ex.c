@@ -3980,6 +3980,13 @@ apply_cgi(const char *url, webs_t wp)
 #endif
 		return 0;
 	}
+	else if (!strcmp(value, " Updatecaddy "))
+	{
+#if defined(APP_CADDY)
+		system("/usr/bin/caddy.sh update &");
+#endif
+		return 0;
+	}
 	else if (!strcmp(value, " Restartlucky "))
 	{
 #if defined(APP_LUCKY)

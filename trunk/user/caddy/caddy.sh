@@ -50,23 +50,23 @@ caddy_dl() {
        if [ ! -f "$caddy_dir" ] || [[ "$($caddy_dir -h 2>&1 | wc -l)" -lt 2 ]] ; then
 		logger -t "【caddy】" "找不到caddy_filebrowser文件，下载caddy_filebrowser程序"
 		for proxy in $github_proxys ; do
-  		length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/caddy/caddy_filebrowser" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
+  		length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://raw.githubusercontent.com/lmq8267/padavan-KVR/main/trunk/user/caddy/caddy_filebrowser" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
  		length=`expr $length + 512000`
 		length=`expr $length / 1048576`
  		caddy_size0="$(check_disk_size $bin_path)"
  		[ ! -z "$length" ] && logger -t "【caddy】" "程序大小 ${length}M， 程序路径可用空间 ${caddy_size0}M "
-		curl -L -k -o "$caddy_dir" --connect-timeout 10 --retry 3 "${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/caddy/caddy_filebrowser" || wget --no-check-certificate -O "$caddy_dir" "${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/caddy/caddy_filebrowser"
+		curl -L -k -o "$caddy_dir" --connect-timeout 10 --retry 3 "${proxy}https://raw.githubusercontent.com/lmq8267/padavan-KVR/main/trunk/user/caddy/caddy_filebrowser" || wget --no-check-certificate -O "$caddy_dir" "${proxy}https://raw.githubusercontent.com/lmq8267/padavan-KVR/main/trunk/user/caddy/caddy_filebrowser"
 		if [ "$?" = 0 ] ; then
 			chmod +x $caddy_dir
 			if [[ "$($caddy_dir -h 2>&1 | wc -l)" -gt 3 ]] ; then
 				logger -t "【caddy】" "$caddy_dir 下载成功"
 				break
        			else
-	   			logger -t "【caddy】" "下载不完整，删除...请手动下载 ${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/caddy/caddy_filebrowser 上传到  $caddy_dir"
+	   			logger -t "【caddy】" "下载不完整，删除...请手动下载 ${proxy}https://raw.githubusercontent.com/lmq8267/padavan-KVR/main/trunk/user/caddy/caddy_filebrowser 上传到  $caddy_dir"
 				rm -f $caddy_dir
 	  		fi
 		else
-			logger -t "【caddy】" "下载失败${proxy}https://github.com/lmq8267/padavan-KVR/blob/main/trunk/user/caddy/caddy_filebrowser"
+			logger -t "【caddy】" "下载失败${proxy}https://raw.githubusercontent.com/lmq8267/padavan-KVR/main/trunk/user/caddy/caddy_filebrowser"
    		fi
 		
 		done
@@ -87,7 +87,7 @@ caddy_dl2() {
       		tag="$( curl -k --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/caddy/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
        		[ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/caddy/releases/latest  2>&1 | grep 'tag_name' | cut -d\" -f4 )"
         	fi
-		[ -z "$tag" ] && logger -t "【caddy】" "无法获取最新版本,使用 v2.8.4" && tag="v2.8.4"
+		[ -z "$tag" ] && logger -t "【caddy】" "无法获取最新版本,使用 v2.11.9" && tag="v2.11.9"
 		for proxy in $github_proxys ; do
   		length=$(wget --no-check-certificate -T 5 -t 3 "${proxy}https://github.com/lmq8267/caddy/releases/download/${tag}/caddy-mipsel-upx" -O /dev/null --spider --server-response 2>&1 | grep "[Cc]ontent-[Ll]ength" | grep -Eo '[0-9]+' | tail -n 1)
  		length=`expr $length + 512000`
@@ -110,6 +110,44 @@ caddy_dl2() {
 		
 		done
 	fi		
+}
+
+caddy_get_tag() {
+	curltest=`which curl`
+	user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+	if [ -z "$curltest" ] || [ ! -s "`which curl`" ] ; then
+		tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --output-document=-  https://api.github.com/repos/lmq8267/caddy/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+		[ -z "$tag" ] && tag="$( wget --no-check-certificate -T 5 -t 3 --user-agent "$user_agent" --quiet --output-document=-  https://api.github.com/repos/lmq8267/caddy/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+	else
+		tag="$( curl -k --connect-timeout 3 --user-agent "$user_agent"  https://api.github.com/repos/lmq8267/caddy/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+		[ -z "$tag" ] && tag="$( curl -Lk --connect-timeout 3 --user-agent "$user_agent" -s  https://api.github.com/repos/lmq8267/caddy/releases/latest 2>&1 | grep 'tag_name' | cut -d\" -f4 )"
+	fi
+	[ -z "$tag" ] && logger -t "【caddy】" "无法获取最新版本，使用 v2.11.9" && tag="v2.11.9"
+	nvram set caddy_ver_n="$tag"
+}
+
+caddy_update() {
+	caddy_get_tag
+	if [ ! -f "$caddy_dir" ] ; then
+		logger -t "【caddy】" "程序不存在，下载最新版本 ${tag}"
+		caddy_dl2
+		exit 0
+	fi
+	caddy_ver_now="$($caddy_dir version 2>/dev/null | head -n 1)"
+	if [ -z "$caddy_ver_now" ] || [ "$caddy_ver_now" != "$tag" ] ; then
+		logger -t "【caddy】" "当前版本 ${caddy_ver_now:-未知}，最新版本 ${tag}，开始更新"
+		rm -f "$caddy_dir"
+		caddy_dl2
+		if [ -f "$caddy_dir" ] ; then
+			caddy_ver_now="$($caddy_dir version 2>/dev/null | head -n 1)"
+			[ -n "$caddy_ver_now" ] && nvram set caddy_ver="$caddy_ver_now"
+			logger -t "【caddy】" "更新完成，请点击重启使新版本生效"
+		fi
+	else
+		nvram set caddy_ver="$caddy_ver_now"
+		logger -t "【caddy】" "当前已是最新版本 ${tag}"
+	fi
+	exit 0
 }
 
 caddy_keep() {
@@ -149,7 +187,26 @@ caddy_start() {
  	killall $(basename $caddy_dir) >/dev/null 2>&1
   	logger -t "【caddy】" "运行配置脚本 /etc/storage/caddy_script.sh "
    	[ ! -s "/etc/storage/caddy_script.sh" ] && cp -rf /etc_ro/caddy_script.sh /etc/storage/caddy_script.sh
+	# 已保存的旧脚本里 basicauth 已废弃，就地迁移为 basic_auth，不影响 v1 的单行写法
+	sed -i 's/^[[:space:]]*basicauth {$/basic_auth {/' /etc/storage/caddy_script.sh 2>/dev/null
+	rm -f /tmp/caddy_validate_failed
 	/etc/storage/caddy_script.sh
+	if [ ! -f /tmp/caddy_validate_failed ] ; then
+		case "$caddy_file" in
+		3|4|5)
+			if [ -x "$caddy_dir" ] && [ -s /tmp/Caddyfile ] ; then
+				$caddy_dir validate --config /tmp/Caddyfile --adapter caddyfile >/tmp/caddy_validate.log 2>&1 || touch /tmp/caddy_validate_failed
+				while IFS= read -r caddy_vline ; do logger -t "【caddy】" "$caddy_vline" ; done < /tmp/caddy_validate.log
+				rm -f /tmp/caddy_validate.log
+			fi
+			;;
+		esac
+	fi
+	if [ -f /tmp/caddy_validate_failed ] ; then
+		logger -t "【caddy】" "Caddyfile 校验失败，停止启动，请查看系统日志"
+		rm -f /tmp/caddy_validate_failed
+		exit 1
+	fi
 			if [ "$caddy_file" = "0" ] || [ "$caddy_file" = "2" ] || [ "$caddy_file" = "3" ] || [ "$caddy_file" = "5" ] ; then
 				fport=$(iptables -t filter -L INPUT -v -n --line-numbers | grep dpt:$caddyf_wan_port | cut -d " " -f 1 | sort -nr | wc -l)
 				if [ "$fport" = 0 ] && [ "$caddy_wan" = "1" ] ; then
@@ -178,6 +235,8 @@ caddy_start() {
    		cpui="$(top -b -n1 | grep -E "$(pidof `basename $caddy_dir`)" 2>/dev/null| grep -v grep | awk '{for (i=1;i<=NF;i++) {if ($i ~ /'"$(basename $caddy_dir)"'/) break; else cpu=i}} END {print $cpu}')"
 		logger -t "【caddy】" "文件管理服务已启动" 
   		logger -t "【caddy】" "内存占用 ${mem} CPU占用 ${cpui}%"
+		caddy_ver_now="$($caddy_dir version 2>/dev/null | head -n 1)"
+		[ -n "$caddy_ver_now" ] && nvram set caddy_ver="$caddy_ver_now"
    		caddy_restart o
    		caddy_keep
    	else
@@ -215,5 +274,8 @@ caddy_start &
 ;;
 stop)
 caddy_close
+;;
+update)
+caddy_update &
 ;;
 esac

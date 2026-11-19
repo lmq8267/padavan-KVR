@@ -65,16 +65,18 @@ function fill_status(status_code){
 	$("caddy_status").innerHTML = '<span class="label label-' + (status_code != 0 ? 'success' : 'warning') + '">' + stext + '</span>';
 }
 
+var caddy_submitting = false;
 function applyRule(){
-//	if(validForm()){
-		showLoading();
-		
-		document.form.action_mode.value = " Apply ";
-		document.form.current_page.value = "/Advanced_caddy.asp";
-		document.form.next_page.value = "";
-		
-		document.form.submit();
-//	}
+	if (caddy_submitting)
+		return;
+	caddy_submitting = true;
+	showLoading();
+
+	document.form.action_mode.value = " Apply ";
+	document.form.current_page.value = "/Advanced_caddy.asp";
+	document.form.next_page.value = "";
+
+	document.form.submit();
 }
 
 
@@ -189,6 +191,8 @@ if (b=="5"){
 	showhide_div('row_fwan6', 1);
 
 }
+var caddy_show_update = (b == "3" || b == "4" || b == "5") ? 1 : 0;
+showhide_div('updatecaddy_btn', caddy_show_update);
 }
 function on_caddyf_wan_port(){
 	var port = document.form.caddyf_wan_port.value;
@@ -206,12 +210,26 @@ function on_caddyw_wan_port(){
 	//alert(porturl);
 	window.open(porturl,'alist');
 }
+var caddy_restarting = false;
 function button_restartcaddy(){
+	if (caddy_restarting)
+		return;
+	caddy_restarting = true;
     	var $j = jQuery.noConflict();
     	$j.post('/apply.cgi',
     	{
         		'action_mode': ' Restartcaddy ',
     	});
+	setTimeout(function(){ caddy_restarting = false; }, 3000);
+}
+function button_updatecaddy(){
+	if (!confirm("检查并下载最新版 Caddy？下载完成后需要点击重启才能生效。"))
+		return;
+	var $j = jQuery.noConflict();
+	$j.post('/apply.cgi',
+	{
+		'action_mode': ' Updatecaddy ',
+	});
 }
 </script>
 </head>
@@ -270,15 +288,22 @@ function button_restartcaddy(){
 	<div class="round_bottom">
 	<div class="row-fluid">
 	<div id="tabMenu" class="submenuBlock"></div>
-	<div class="alert alert-info" style="margin: 10px;">File Browser是一个基于GO的轻量级文件管理系统支持登录系统 角色系统、在线PDF、图片、视频浏览、上传下载、打包下载等功能。
-	WEBDAV 是一种文件服务，类似的服务有 SMB、NFS、FTP 等，特点是基于 HTTP/HTTPS 协议。
-									
+	<div class="alert alert-info" style="margin: 10px;">File Browser 是基于 Go 的轻量级文件管理系统，支持在线浏览、上传下载和打包下载；WebDAV 是基于 HTTP/HTTPS 的文件服务。
+	新版 Caddy 模式使用 lmq8267/caddy 构建（含 webdav、cgi、exec 插件），可用“检查更新”下载最新版；更新后需点击“重启”生效。
 	</div>
 
 	<table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
 	<tr> <th><#running_status#></th>
           <td id="caddy_status" colspan="4"></td>
-          </tr><td colspan="4"></td>
+          </tr>
+	<tr>
+	<th>当前版本</th>
+	<td colspan="4"><% nvram_get_x("","caddy_ver"); %></td>
+	</tr>
+	<tr>
+	<th>最新版本</th>
+	<td colspan="4"><% nvram_get_x("","caddy_ver_n"); %></td>
+	</tr>
 	<tr>
 	<th width="30%" style="border-top: 0 none;">总开关</th>
 	<td style="border-top: 0 none;">
@@ -294,8 +319,10 @@ function button_restartcaddy(){
 	</td>
 	<td colspan="4" style="border-top: 0 none;">
 	<input class="btn btn-success" style="width:150px" type="button" name="restartcaddy" value="重启" onclick="button_restartcaddy()" />
+	<span id="updatecaddy_btn">
+	<input class="btn btn-info" style="width:150px" type="button" name="updatecaddy" value="检查更新" onclick="button_updatecaddy()" />
+	</span>
 	</td>
-	</tr>
 	</tr>
 	<tr>
          <th width="30%">启动模式:</th>
@@ -333,7 +360,7 @@ function button_restartcaddy(){
 	<tr id="row_fport" style="display:none;">
           <th  width="30%">File Browser端口:</th>
           <td colspan="2">
-          <input type="text" name="caddyf_wan_port" maxlength="5"  class="input" placeholder="12101" size="60" value="<% nvram_get_x("","caddyf_wan_port"); %>" />
+          <input type="text" name="caddyf_wan_port" maxlength="5"  class="input" placeholder="12101" size="60" onkeypress="return is_number(this,event);" value="<% nvram_get_x("","caddyf_wan_port"); %>" />
 	<input class="btn btn-success" style="" type="button" value="File Browser界面" onclick="on_caddyf_wan_port()" /></td>
           </td>
           </tr>
@@ -374,7 +401,7 @@ function button_restartcaddy(){
 	<tr id="row_fpassword" style="display:none;">  
 	<th width="30%">File Browser密码</th>
 	<td colspan="2">
-	<input type="password" class="input" size="32" name="caddy_Fpassword" id="F_key" value="<% nvram_get_x("","caddy_Fpassword"); %>" />
+	<input type="password" class="input" size="32" name="caddy_Fpassword" id="F_key" onfocus="this.type='text'" onblur="this.type='password'" value="<% nvram_get_x("","caddy_Fpassword"); %>" />
 	<button style="margin-left: -5px;" class="btn" type="button" onclick="passwordShowHide('F_key')"><i class="icon-eye-close"></i></button>
 	</td>
 	</tr>
@@ -392,7 +419,7 @@ function button_restartcaddy(){
 	<tr id="row_davport" style="display:none;">
           <th  width="30%">Webdav端口</th>
           <td colspan="2">
-          <input type="text" name="caddyw_wan_port" maxlength="5"  class="input" size="60" placeholder="12102" value="<% nvram_get_x("","caddyw_wan_port"); %>" />
+          <input type="text" name="caddyw_wan_port" maxlength="5"  class="input" size="60" placeholder="12102" onkeypress="return is_number(this,event);" value="<% nvram_get_x("","caddyw_wan_port"); %>" />
           <input class="btn btn-success" style="" type="button" value="Webdav 界面" onclick="on_caddyw_wan_port()" /></td>
           </tr>
 	<tr id="row_wandav" style="display:none;">
@@ -433,7 +460,7 @@ function button_restartcaddy(){
 	<tr id="row_wpassword" style="display:none;">  
 	<th width="30%">webdav密码</th>
 	<td colspan="2">
-	<input type="password" class="input" size="32" name="caddy_wpassword" id="w_key" value="<% nvram_get_x("","caddy_wpassword"); %>" />
+	<input type="password" class="input" size="32" name="caddy_wpassword" id="w_key" onfocus="this.type='text'" onblur="this.type='password'" value="<% nvram_get_x("","caddy_wpassword"); %>" />
 	<button style="margin-left: -5px;" class="btn" type="button" onclick="passwordShowHide('w_key')"><i class="icon-eye-close"></i></button>
 	</td>
 	</tr>

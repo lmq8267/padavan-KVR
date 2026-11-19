@@ -81,7 +81,7 @@ if [ "$caddy_mode" = "3" ] || [ "$caddy_mode" = "5" ] ; then
 logger -t "【caddy】" "创建caddy的browser文件服务器配置..."
 if [ ! -z "$caddy_fname" ] && [ ! -z "$caddy_fpassword" ] ; then
 	      filepassword="$($caddy hash-password --plaintext $caddy_fpassword)"
-	      filebasicauth="basicauth {
+	      filebasicauth="basic_auth {
 $caddy_fname $filepassword
 }"
 fi
@@ -102,7 +102,7 @@ logger -t "【caddy】" "创建caddy的WebDav配置..."
 orderweb="order webdav before file_server # 启动 webdav 模块"
 if [ ! -z "$caddy_wname" ] && [ ! -z "$caddy_wpassword" ] ; then
 	      davpassword="$($caddy hash-password --plaintext $caddy_wpassword)"
-	      davbasicauth="basicauth {
+	      davbasicauth="basic_auth {
 $caddy_wname $davpassword
 }"
 fi
@@ -137,9 +137,17 @@ rm -f /tmp/cf
 $caddy fmt --overwrite $caddyfile
 #判断配置文件是否正确，通过系统日志查看 错误会提示哪里有问题
 logger -t "【caddy】" "检测配置文件格式是否正确..."
-$caddy validate --config $caddyfile --adapter caddyfile 2>&1 | while IFS= read -r line; do
+$caddy validate --config $caddyfile --adapter caddyfile >/tmp/caddy_validate.log 2>&1
+caddy_v_ret=$?
+while IFS= read -r line; do
     logger -t "【caddy】" "$line"
-done
+done < /tmp/caddy_validate.log
+rm -f /tmp/caddy_validate.log
+if [ "$caddy_v_ret" != "0" ] ; then
+    logger -t "【caddy】" "Caddyfile 校验失败，停止启动"
+    touch /tmp/caddy_validate_failed
+    exit 1
+fi
 
 #启动
 logger -t "【caddy】" "运行${caddy} run --config ${caddyfile} --adapter caddyfile"
