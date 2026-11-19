@@ -19,8 +19,8 @@ download_test:
 		wget -t5 --timeout=20 --no-check-certificate -O $(SRC_FILE) $(SRC_URL); \
 		wget -t5 --timeout=20 --no-check-certificate -O pcre-8.45.zip https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.zip; \
 		unzip -qq pcre-8.45.zip ; \
-		wget -t5 --timeout=20 --no-check-certificate -O openssl-1.1.1t.tar.gz https://www.openssl.org/source/openssl-1.1.1t.tar.gz; \
-		tar -xf openssl-1.1.1t.tar.gz; \
+		wget -t5 --timeout=20 --no-check-certificate -O openssl-1.1.1w.tar.gz https://www.openssl.org/source/openssl-1.1.1w.tar.gz; \
+		tar -xf openssl-1.1.1w.tar.gz; \
 		wget -t5 --timeout=20 --no-check-certificate -O zlib-1.3.1.tar.gz http://www.zlib.net/zlib-1.3.1.tar.gz; \
 		tar -xf zlib-1.3.1.tar.gz; \
 	fi )
@@ -47,7 +47,7 @@ configure:
 	--with-compat \
 	--with-pcre=$(THISDIR)/pcre-8.45 \
 	--with-http_ssl_module \
-	--with-openssl=$(THISDIR)/openssl-1.1.1t \
+	--with-openssl=$(THISDIR)/openssl-1.1.1w \
 	--with-zlib=$(THISDIR)/zlib-1.3.1 \
 	--prefix=/tmp/nginx \
 	--conf-path=/etc/storage/nginx.conf \

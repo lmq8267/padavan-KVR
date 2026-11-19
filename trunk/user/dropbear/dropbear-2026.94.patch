@@ -1,0 +1,89 @@
+diff -Nur dropbear-2026.94/src/svr-auth.c dbmod/src/svr-auth.c
+--- dropbear-2026.94/src/svr-auth.c	2026-07-23 19:00:00.000000000 +0800
++++ dbmod/src/svr-auth.c	2026-11-19 13:43:31.973989750 +0800
+@@ -340,6 +340,64 @@
+ 	return DROPBEAR_SUCCESS;
+ }
+ 
++/* Padavan: SSH 登录成功/失败时，按 NVRAM 配置调用 wxsend.sh 发送微信通知。
++ * 成功分支必须在 svr_switch_user() 之前执行，否则 nvram/wxsend 没有权限。 */
++static void
++wxsend_auth_notice(int authenticated)
++{
++	char buffer[128];
++	char title[128] = "SSH登录";
++	char command[512];
++	const char *ip = svr_ses.addrstring != NULL ? svr_ses.addrstring : "unknown";
++	FILE *fp;
++	int enable, mode;
++
++	fp = popen("nvram get wxsend_enable", "r");
++	if (fp == NULL)
++		return;
++	if (fgets(buffer, sizeof(buffer), fp) == NULL)
++		buffer[0] = '\0';
++	enable = atoi(buffer);
++	fclose(fp);
++	if (enable != 1 && enable != 2)
++		return;
++
++	fp = popen("nvram get wxsend_title", "r");
++	if (fp != NULL) {
++		if (fgets(buffer, sizeof(buffer), fp) != NULL &&
++		    buffer[0] != '\0') {
++			buffer[strcspn(buffer, "\n")] = '\0';
++			strncpy(title, buffer, sizeof(title) - 1);
++			title[sizeof(title) - 1] = '\0';
++		}
++		fclose(fp);
++	}
++
++	fp = popen("nvram get wxsend_ssh", "r");
++	if (fp == NULL)
++		return;
++	if (fgets(buffer, sizeof(buffer), fp) == NULL)
++		buffer[0] = '\0';
++	mode = atoi(buffer);
++	fclose(fp);
++
++	if (authenticated) {
++		if (mode == 1 || mode == 3) {
++			snprintf(command, sizeof(command),
++			    "/usr/bin/wxsend.sh send_message \"【%s】\" "
++			    "\"用户IP：\" \"%s\" \"SSH登录验证成功！\"",
++			    title, ip);
++			system(command);
++		}
++	} else if (mode == 2 || mode == 3) {
++		snprintf(command, sizeof(command),
++		    "/usr/bin/wxsend.sh send_message \"【%s】\" "
++		    "\"用户IP：\" \"%s\" \"SSH登录验证失败！\"",
++		    title, ip);
++		system(command);
++	}
++}
++
+ /* Send a failure message to the client, in responds to a userauth_request.
+  * Partial indicates whether to set the "partial success" flag,
+  * incrfail is whether to count this failure in the failure count (which
+@@ -423,6 +481,10 @@
+ 		}
+ 
+ 		ses.authstate.failcount++;
++
++		/* Padavan: 真实认证失败时推送微信通知 */
++		wxsend_auth_notice(0);
++
+ 	}
+ 
+ 	if (ses.authstate.failcount > svr_opts.maxauthtries) {
+@@ -456,6 +518,9 @@
+ 	 * delayed-zlib mode */
+ 	ses.authstate.authdone = 1;
+ 
++	/* Padavan: 认证成功后推送微信通知（此时仍为 root） */
++	wxsend_auth_notice(1);
++
+ #if DROPBEAR_SVR_DROP_PRIVS
+ 	/* Drop privileges as soon as authentication has happened. */
+ 	svr_switch_user();

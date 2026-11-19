@@ -1,5 +1,5 @@
-SRC_NAME=openssh-9.0p1
-SRC_URL=https://mirror.yandex.ru/pub/OpenBSD/OpenSSH/portable/$(SRC_NAME).tar.gz
+SRC_NAME=openssh-10.6p2
+SRC_URL=https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/$(SRC_NAME).tar.gz
 
 CFLAGS += -ffunction-sections -fdata-sections
 LDFLAGS += -Wl,--gc-sections
@@ -71,6 +71,8 @@ ifeq ($(CONFIG_FIRMWARE_INCLUDE_OPENSSH),y)
 	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/ssh /usr/bin/ssh
 	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/ssh-keygen /usr/bin/ssh-keygen
 	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/sshd /usr/sbin/sshd
+	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/sshd-session /usr/libexec/sshd-session
+	$(ROMFSINST) $(THISDIR)/$(SRC_NAME)/sshd-auth /usr/libexec/sshd-auth
 	$(ROMFSINST) -p +x /usr/bin/sshd.sh
 endif
 	mkdir -p $(INSTALLDIR)/usr/libexec
