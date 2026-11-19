@@ -17,6 +17,10 @@ if [ ! -f "/etc/storage/frp_script.sh" ] ; then
 cp -rf /etc_ro/frp_script.sh /etc/storage/
 chmod 755 "/etc/storage/frp_script.sh"
 fi
+# 老设备的 frp_script.sh 不会随固件更新，启动时清掉 INI 残留的 [common] 段并把字段改成 TOML 的 serverPort
+if [ -f "/etc/storage/frp_script.sh" ] ; then
+sed -i -e '/^[[:space:]]*\[common\]/d' -e 's/^server_port[[:space:]]*=/serverPort =/' "/etc/storage/frp_script.sh"
+fi
 if [ ! -f "/etc/storage/caddy_script.sh" ] ; then
 cp -rf /etc_ro/caddy_script.sh /etc/storage/
 chmod 755 "/etc/storage/caddy_script.sh"

@@ -12,9 +12,8 @@ mkdir -p /tmp/frp
 
 cat > "/tmp/frp/myfrpc.toml" <<-\EOF
 # ==========客户端配置：==========
-[common]
 serverAddr = "frps.com" # 远端frp服务器ip或域名
-server_port = 7000
+serverPort = 7000
 auth.token = "12345"
 
 loginFailExit = false
@@ -31,6 +30,11 @@ subdomain = "test"
 #hostHeaderRewrite = "test.frps.com" #实际你内网访问的域名，可以供公网的域名不一致，如果一致可以不写
 # ====================
 EOF
+
+# 兼容旧模板：frp 0.52+ 的 TOML 没有 [common] 段，字段名也是 serverPort。
+# 旧配置残留的 [common] 会让 serverAddr 等字段失效，实际连 0.0.0.0:7000；
+# server_port 在 v0.72.0 会报 unknown field（2026-11-19 实测）。
+sed -i -e '/^[[:space:]]*\[common\]/d' -e 's/^server_port[[:space:]]*=/serverPort =/' "/tmp/frp/myfrpc.toml"
 
 #请手动配置【外部网络 (WAN) - 端口转发 (UPnP)】开启 WAN 外网端口
 cat > "/tmp/frp/myfrps.toml" <<-\EOF

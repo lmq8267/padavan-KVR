@@ -5123,6 +5123,9 @@ struct mime_handler mime_handlers[] = {
 	{ "**.ico", "image/x-icon", NULL, NULL, do_file, 0 }, // 2013.04 Eagle23
 	{ "**.svg", "image/svg+xml", NULL, NULL, do_file, 0 }, // 2016.04 Volt1
 
+	/* watchdog 从 127.0.0.1 匿名探测这个文件；回环地址不再免登录，这里单独放行 */
+	{ "httpd_check.htm", "text/html", NULL, NULL, do_file, 0 },
+
 	/* no-cached html/asp files with translations */
 	{ "**.htm*", "text/html", no_cache_IE, do_html_apply_post, do_ej, 1 },
 	{ "**.asp*", "text/html", no_cache_IE, do_html_apply_post, do_ej, 1 },

@@ -97,26 +97,21 @@ fi
 
 get_ver() {
 	find_bin
+	frpc_ver=""
+	frps_ver=""
+	frpc_v=""
+	frps_v=""
 	if [ -f "$frpc" ] ; then
- 		[ ! -x "$frpc" ] && chmod +x $frps
-		frpc_ver="$($frpc --version)"
-		if [ -z "$frpc_ver" ] ; then
-			frpc_v=""
-		else
-			frpc_v="frpc-v${frpc_ver}"
-		fi
+		[ ! -x "$frpc" ] && chmod +x "$frpc"
+		frpc_ver="$($frpc --version 2>/dev/null)"
+		[ -n "$frpc_ver" ] && frpc_v="frpc-v${frpc_ver}"
 	fi
 	if [ -f "$frps" ] ; then
- 		[ ! -x "$frps" ] && chmod +x $frps
-		frpc_ver="$($frps --version)"
-		if [ -z "$frps_ver" ] ; then
-			frps_v=""
-		else
-			frps_v="frps-v${frps_ver}"
-		fi
+		[ ! -x "$frps" ] && chmod +x "$frps"
+		frps_ver="$($frps --version 2>/dev/null)"
+		[ -n "$frps_ver" ] && frps_v="frps-v${frps_ver}"
 	fi
-	nvram set frp_ver="$frpc_v  $frps_v"
-
+	nvram set frp_ver="${frpc_v} ${frps_v}"
 }
 
 get_tag() {
@@ -218,8 +213,16 @@ frps_keep() {
 
 frp_start () 
 {
-  [ ! -z "$frp_tag" ] && frp_tag="$(echo $frp_tag | tr -d ' ')"
-  get_tag
+  if [ -n "$frp_tag" ] ; then
+  	frp_tag="$(echo "$frp_tag" | tr -d ' ')"
+  	case "$frp_tag" in
+  		v*) ;;
+  		*) frp_tag="v${frp_tag}" ;;
+  	esac
+  	tag="$frp_tag"
+  else
+  	get_tag
+  fi
   get_ver
   [ ! -z "$tag" ] && newtag="$(echo "$tag" | tr -d 'v' | tr -d ' ')"
   if [ "$frpc_enable" = "1" ] ;then
@@ -237,7 +240,7 @@ frp_start ()
   		if [ ! -z "$frp_tag" ] ; then
   			frp_dl $frp_tag
   		else
-  			[ -z "$tag" ] && logger -t "【Frp】" "未获取到最新版本，暂用v0.61.0版本" && tag="v0.61.0"
+  			[ -z "$tag" ] && logger -t "【Frp】" "未获取到最新版本，暂用v0.72.0版本" && tag="v0.72.0"
   			frp_dl $tag
   		fi
   	fi
@@ -259,7 +262,7 @@ frp_start ()
   		if [ ! -z "$frp_tag" ] ; then
   			frp_dl $frp_tag
   		else
-  			[ -z "$tag" ] && logger -t "【Frp】" "未获取到最新版本，暂用v0.61.0版本" && tag="v0.61.0"
+  			[ -z "$tag" ] && logger -t "【Frp】" "未获取到最新版本，暂用v0.72.0版本" && tag="v0.72.0"
   			frp_dl $tag
   		fi
   	fi

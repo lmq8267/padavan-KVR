@@ -115,13 +115,6 @@ static uaddr login_ip;			// the logined ip
 static char login_mac[18] = {0};	// the logined mac
 static char auth_basic_data[MAX_AUTH_LEN];
 
-#if defined (USE_IPV6)
-static const struct in6_addr in6in4addr_loopback = {{{0x00, 0x00, 0x00, 0x00,
-                                                      0x00, 0x00, 0x00, 0x00,
-                                                      0x00, 0x00, 0xff, 0xff,
-                                                      0x7f, 0x00, 0x00, 0x01}}};
-#endif
-
 kw_t kw_EN = {0, 0, {0, 0, 0, 0}, NULL, NULL};
 kw_t kw_XX = {0, 0, {0, 0, 0, 0}, NULL, NULL};
 
@@ -186,24 +179,6 @@ static int
 is_uaddr_equal(const uaddr *ip1, const uaddr *ip2)
 {
 	if ((ip1->len > 0) && (ip1->len == ip2->len) && (memcmp(&ip1->addr, &ip2->addr, ip1->len) == 0))
-		return 1;
-
-	return 0;
-}
-
-static int
-is_uaddr_localhost(const uaddr *ip)
-{
-	if (
-#if defined (USE_IPV6)
-	    ((ip->family == AF_INET6) && 
-	    ((memcmp(&ip->addr.in6, &in6addr_loopback, sizeof(struct in6_addr)) == 0) ||
-	     (memcmp(&ip->addr.in6, &in6in4addr_loopback, sizeof(struct in6_addr)) == 0))) ||
-	    ((ip->family == AF_INET) && (ip->addr.in4.s_addr == 0x100007f))
-#else
-	     (ip->addr.in4.s_addr == 0x100007f)
-#endif
-	)
 		return 1;
 
 	return 0;
@@ -517,16 +492,15 @@ http_logout(const uaddr *ip_now)
 /*
  * attempt login check, result
  * 0: can not login, has other loginer
- * 1: can login, this is localhost (always allow w/o auth)
  * 2: can login, no loginer
  * 3: can login, loginer is our
+ *
+ * 不再把 127.0.0.1 当作已登录：frpc 等本地反代会把外部请求以回环地址
+ * 转进来，直接放行等于绕过管理界面密码（2026-11-19 实测 frpc -> 127.0.0.1:80）。
  */
 static int
 http_login_check(const uaddr *ip_now)
 {
-	if (is_uaddr_localhost(ip_now))
-		return 1;
-
 	if (login_ip.len == 0)
 		return 2;
 
